@@ -24,43 +24,23 @@ export default function AutocompleteMultipleCustomerFromDB({
     const [lstChosed, setLstChosed] = useState<IDataAutocomplete[]>([]);
     const [textSearch, setTextSearch] = useState('');
 
-    const getInforDatafromDB = async () => {
-        // if (arrIdChosed != null && arrIdChosed.length > 1) {
-        //     switch (type) {
-        //         case LoaiTin.TIN_THUONG:
-        //             {
-        //                 if (arrIdChosed.length > 0) {
-        //                     const data = await khachHangService.getKhachHang(arrIdChosed[0]);
-        //                     if (data !== null) {
-        //                         const itemMap = {
-        //                             id: data.id,
-        //                             text1: data.tenKhachHang,
-        //                             text2: data.soDienThoai
-        //                         } as unknown as IDataAutocomplete;
-        //                         setItemChosed(itemMap);
-        //                     }
-        //                 } else {
-        //                     setItemChosed(null);
-        //                 }
-        //             }
-        //             break;
-        //         case LoaiTin.TIN_SINH_NHAT:
-        //             {
-        //                 const data = await BrandnameService.GetInforBrandnamebyID(arrIdChosed);
-        //                 if (data !== null) {
-        //                     const itemMap = {
-        //                         id: data.id,
-        //                         text1: data.brandname,
-        //                         text2: data.sdtCuaHang
-        //                     };
-        //                     setItemChosed(itemMap);
-        //                 }
-        //             }
-        //             break;
-        //     }
-        // } else {
-        //     setItemChosed(() => null);
-        // }
+    const getInforCustomerFromDB = async () => {
+        if (arrIdChosed !== undefined && arrIdChosed != null) {
+            const arr: IDataAutocomplete[] = [];
+            for (let index = 0; index < arrIdChosed.length; index++) {
+                const element = arrIdChosed[index];
+                const customer = await khachHangService.getKhachHang(element);
+                arr.push({
+                    id: customer.id,
+                    text1: customer.tenKhachHang,
+                    text2: customer.soDienThoai
+                } as IDataAutocomplete);
+            }
+            setLstChosed(arr);
+            handleChoseItem(arr);
+        } else {
+            setLstChosed([]);
+        }
     };
 
     const debounceDropDown = useRef(
@@ -120,16 +100,8 @@ export default function AutocompleteMultipleCustomerFromDB({
     }, [paramFilter?.fromDate, paramFilter?.toDate, paramFilter?.idChiNhanhs, textSearch]);
 
     React.useEffect(() => {
-        setLstChosed(
-            arrIdChosed.map((x: string) => {
-                return {
-                    id: x,
-                    text1: '',
-                    text2: ''
-                };
-            })
-        );
-    }, arrIdChosed);
+        getInforCustomerFromDB();
+    }, [arrIdChosed]);
 
     const choseItem = (item: any) => {
         setLstChosed(item);
