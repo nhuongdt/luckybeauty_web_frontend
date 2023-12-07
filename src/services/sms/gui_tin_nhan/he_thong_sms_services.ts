@@ -23,7 +23,7 @@ class HeThongSMSServices {
     GetListCustomer_byIdLoaiTin = async (
         input: RequestFromToDto,
         idLoaiTin: number
-    ): Promise<PagedResultDto<CustomerSMSDto[]>> => {
+    ): Promise<PagedResultDto<CustomerSMSDto>> => {
         const result = await http.post(
             `api/services/app/HeThongSMS/GetListCustomer_byIdLoaiTin?idLoaiTin=${idLoaiTin}`,
             input
@@ -32,6 +32,17 @@ class HeThongSMSServices {
     };
     Insert_HeThongSMS = async (input: CreateOrEditSMSDto): Promise<CreateOrEditSMSDto> => {
         const result = await http.post(`api/services/app/HeThongSMS/Insert_HeThongSMS`, input);
+        return result.data.result;
+    };
+    Update_HeThongSMS = async (input: CreateOrEditSMSDto): Promise<CreateOrEditSMSDto> => {
+        const result = await http.post(`api/services/app/HeThongSMS/Update_HeThongSMS`, input);
+        return result.data.result;
+    };
+    GuiLai_TinNhan_ThatBai = async (listId: any, brandname: string): Promise<number> => {
+        const result = await http.post(
+            `api/services/app/HeThongSMS/GuiLai_TinNhan_ThatBai?brandname=${brandname}`,
+            listId
+        );
         return result.data.result;
     };
     GetListSMS = async (input: RequestFromToDto): Promise<PagedResultDto<CreateOrEditSMSDto>> => {
@@ -43,10 +54,7 @@ class HeThongSMSServices {
         const result = await http.post(`api/services/app/ESMS/SendSMS_Json`, input);
         return result.data.result;
     };
-    ThemMoi_NhatKyGuiTin = async (input: NhatKyGuiTinSMSDto): Promise<ResultESMSDto> => {
-        const result = await http.post(`api/services/app/HeThongSMS/ThemMoi_NhatKyGuiTin`, input);
-        return result.data.result;
-    };
+
     ExportToExcel_DanhSachTinNhan = async (input: RequestFromToDto): Promise<IFileDto> => {
         const result = await http.post(`api/services/app/HeThongSMS/ExportToExcel_DanhSachTinNhan`, input);
         return result.data.result;
@@ -54,6 +62,17 @@ class HeThongSMSServices {
     ExportToExcel_DanhSachKhachHang_SMS = async (input: RequestFromToDto, idLoaiTin: number): Promise<IFileDto> => {
         const result = await http.post(
             `api/services/app/HeThongSMS/ExportToExcel_DanhSachKhachHang_SMS?idLoaiTin=${idLoaiTin}`,
+            input
+        );
+        return result.data.result;
+    };
+    ThemMoi_NhatKyGuiTinSMS = async (input: NhatKyGuiTinSMSDto): Promise<ResultESMSDto> => {
+        const result = await http.post(`api/services/app/NhatKyGuiTinSMS/ThemMoi_NhatKyGuiTinSMS`, input);
+        return result.data.result;
+    };
+    ThemMoi_NhatKyGuiTin_TrongKhoangThoiGian = async (input: NhatKyGuiTinSMSDto): Promise<ResultESMSDto> => {
+        const result = await http.post(
+            `api/services/app/NhatKyGuiTinSMS/ThemMoi_NhatKyGuiTin_TrongKhoangThoiGian`,
             input
         );
         return result.data.result;
