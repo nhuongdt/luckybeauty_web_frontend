@@ -2,6 +2,7 @@ import { Guid } from 'guid-typescript';
 import { PagedResultDto } from '../../dto/pagedResultDto';
 import { CustomerBasicDto } from '../../khach-hang/dto/CustomerBasicDto';
 import { IDataAutocomplete } from '../../dto/IDataAutocomplete';
+import { format } from 'date-fns';
 
 export class CreateOrEditSMSDto {
     id = Guid.EMPTY;
@@ -82,6 +83,7 @@ export class ResultESMSDto {
 }
 
 export class CustomerSMSDto extends CustomerBasicDto {
+    id = '';
     ngaySinh?: Date | null;
 
     maHoaDon?: string | null;
@@ -124,4 +126,26 @@ export class NhatKyGuiTinSMSDto {
     idLoaiTin!: number;
     thoiGianTu!: string;
     thoiGianDen!: string;
+    idHoaDon: string | null = null;
+    idBooking: string | null = null;
+
+    constructor({
+        idHeThongSMS = '',
+        idKhachHang = '',
+        idChiNhanh = '',
+        idLoaiTin = 1,
+        thoiGianTu = format(new Date(), 'YYYY-MM-DD'),
+        thoiGianDen = format(new Date(), 'YYYY-MM-DD'),
+        idHoaDon = null,
+        idBooking = null
+    }) {
+        this.idHeThongSMS = idHeThongSMS;
+        this.idKhachHang = idKhachHang;
+        this.idChiNhanh = idChiNhanh;
+        this.idLoaiTin = idLoaiTin;
+        this.thoiGianTu = thoiGianTu;
+        this.thoiGianDen = thoiGianDen;
+        this.idHoaDon = idHoaDon;
+        this.idBooking = idBooking;
+    }
 }
