@@ -36,11 +36,12 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
     };
 
     const CreateConnectZOA = async () => {
-        const objnew = { ...zaloToken };
-        objnew.codeVerifier = ZaloService.CreateCodeVerifier();
-        objnew.codeChallenge = await ZaloService.GenerateCodeChallenge(objnew.codeVerifier);
-        setZaloToken({ ...zaloToken, codeVerifier: objnew.codeVerifier, codeChallenge: objnew.codeChallenge });
-        await ZaloService.InsertCodeVerifier(objnew);
+        // const objnew = { ...zaloToken };
+        // objnew.codeVerifier = ZaloService.CreateCodeVerifier();
+        // objnew.codeChallenge = await ZaloService.GenerateCodeChallenge(objnew.codeVerifier);
+        // setZaloToken({ ...zaloToken, codeVerifier: objnew.codeVerifier, codeChallenge: objnew.codeChallenge });
+        // await ZaloService.InsertCodeVerifier(objnew);
+        await ZaloService.CreateCodeVerifier_andCodeChallenge();
 
         const iframe = document.createElement('iframe');
         iframe.src = `https://oauth.zaloapp.com/v4/oa/permission?app_id=${process.env.REACT_APP_ZALO_APP_ID}&redirect_uri=${process.env.REACT_APP_APP_BASE_URL}/settings/ket-noi-zalo-gmail`;

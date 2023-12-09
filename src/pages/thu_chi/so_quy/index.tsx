@@ -1,10 +1,7 @@
-import { Box, Grid, Stack, TextField, IconButton, Button, SelectChangeEvent } from '@mui/material';
+import { Box, Grid, Stack, TextField, IconButton, Button, SelectChangeEvent, Dialog } from '@mui/material';
 import { useContext, useEffect, useRef, useState } from 'react';
 
-import { ReactComponent as FilterIcon } from '../../../images/filter-icon.svg';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
-import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
-import SearchIcon from '../../../images/search-normal.svg';
 
 import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import CreateOrEditSoQuyDialog from './components/CreateOrEditSoQuyDialog';
@@ -34,6 +31,8 @@ import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 import NapTienBrandname from '../../sms/brandname/nap_tien_brandname';
 import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
+import DetailHoaDon from '../../ban_hang/thu_ngan/DetailHoaDon';
+import ModalPhieuThuHoaDon from './components/modal_phieu_thu_hoa_don';
 
 const PageSoQuy = ({ xx }: any) => {
     const today = new Date();
@@ -71,6 +70,7 @@ const PageSoQuy = ({ xx }: any) => {
         }
     ]);
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
+    const [isShowThanhToanHD, setIsShowThanhToanHD] = useState(false);
 
     const GetListSoQuy = async () => {
         const data = await SoQuyServices.getAll(paramSearch);
@@ -153,6 +153,8 @@ const PageSoQuy = ({ xx }: any) => {
             } else {
                 if (utils.checkNull(itemSQ?.idHoaDonLienQuan)) {
                     setisShowModal(true);
+                } else {
+                    setIsShowThanhToanHD(true);
                 }
             }
         } else {
@@ -217,6 +219,7 @@ const PageSoQuy = ({ xx }: any) => {
 
     const saveSoQuy = async (dataSave: any, type: number) => {
         setisShowModal(false);
+        setIsShowThanhToanHD(false);
         switch (type) {
             case 1: // insert
                 {
@@ -417,17 +420,9 @@ const PageSoQuy = ({ xx }: any) => {
                         padding: '4px 8px',
                         borderRadius: '100px',
                         backgroundColor:
-                            params.value === 'Đã thanh toán'
-                                ? '#E8FFF3'
-                                : params.value === 'Chưa thanh toán'
-                                ? '#FFF8DD'
-                                : '#FFF5F8',
+                            params.row.trangThai === 1 ? '#E8FFF3' : params.row.trangThai === 0 ? '#FFF8DD' : '#FFF5F8',
                         color:
-                            params.value === 'Đã thanh toán'
-                                ? '#50CD89'
-                                : params.value === 'Chưa thanh toán'
-                                ? '#FF9900'
-                                : '#F1416C',
+                            params.row.trangThai === 1 ? '#50CD89' : params.row.trangThai === 0 ? '#FF9900' : '#F1416C',
                         margin: 'auto'
                     }}
                     className="state-thanh-toan">
@@ -451,6 +446,12 @@ const PageSoQuy = ({ xx }: any) => {
 
     return (
         <>
+            <ModalPhieuThuHoaDon
+                isShow={isShowThanhToanHD}
+                idQuyHD={selectedRowId}
+                onClose={() => setIsShowThanhToanHD(false)}
+                onOk={saveSoQuy}
+            />
             <CreateOrEditSoQuyDialog
                 onClose={() => {
                     setisShowModal(false);
@@ -601,6 +602,9 @@ const PageSoQuy = ({ xx }: any) => {
                             countRowSelected={rowSelectionModel.length}
                             title="sổ quỹ"
                             choseAction={DataGrid_handleAction}
+                            removeItemChosed={() => {
+                                setRowSelectionModel([]);
+                            }}
                         />
                     </div>
                 )}
@@ -625,7 +629,7 @@ const PageSoQuy = ({ xx }: any) => {
                                     typeSort: newSortModel[0].sort?.toString()
                                 });
                             } else {
-                                // vì fistload: mặc dịnh sort 'ngaylapHoaDon decs'
+                                // vì fistload: mặc dịnh sort 'ngaylapHoaDon desc'
                                 // nên nếu click cột ngaylapHoaDon luôn, thì newSortModel = []
                                 setParamSearch({
                                     ...paramSearch,

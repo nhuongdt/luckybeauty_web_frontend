@@ -15,7 +15,6 @@ import {
     Stack
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 
 import { ReactComponent as UploadIcon } from '../../images/upload.svg';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
@@ -53,7 +52,7 @@ import ZaloService from '../../services/sms/gui_tin_nhan/ZaloService';
 import { InforZOA, ZaloAuthorizationDto } from '../../services/sms/gui_tin_nhan/zalo_dto';
 import { Guid } from 'guid-typescript';
 import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
-import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
+import NearMeIcon from '@mui/icons-material/NearMe';
 
 const styleListItem = createTheme({
     components: {
@@ -693,8 +692,13 @@ const TinNhanPage = () => {
                                     fontSize: '12px',
                                     padding: '4px 8px',
                                     borderRadius: '1000px',
-                                    // backgroundColor: '#F1FAFF',
-                                    color: params.row?.trangThai !== 100 ? '#b16827' : '#009EF7'
+                                    backgroundColor: params.row?.trangThai !== 1 ? '' : '#F1FAFF',
+                                    color:
+                                        params.row?.trangThai === 100
+                                            ? '#009EF7'
+                                            : params.row?.trangThai === 1
+                                            ? ''
+                                            : '#b16827'
                                 }}>
                                 {params.value || ''}
                             </Box>

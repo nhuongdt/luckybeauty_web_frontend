@@ -25,5 +25,15 @@ class ChietKhauHoaDonService {
         const result = await http.post(`api/services/app/ChietKhauHoaDon/Delete?id=${id}`);
         return result.data.result;
     }
+    GetHoaHongNV_theoLoaiChungTu = async (
+        idChiNhanh: string,
+        idNhanVien: string,
+        loaiChungTu: string
+    ): Promise<ChietKhauHoaDonDto[]> => {
+        const result = await http.get(
+            `api/services/app/ChietKhauHoaDon/GetHoaHongNV_theoLoaiChungTu?idChiNhanh=${idChiNhanh}&idNhanVien=${idNhanVien}&loaiChungTu=${loaiChungTu}`
+        );
+        return result.data.result;
+    };
 }
 export default new ChietKhauHoaDonService();

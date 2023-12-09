@@ -16,8 +16,17 @@ import {
     Avatar,
     Dialog,
     DialogTitle,
-    DialogContent
+    DialogContent,
+    InputAdornment,
+    FilledInput,
+    Tabs,
+    Tab
 } from '@mui/material';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+import PercentIcon from '@mui/icons-material/Percent';
+import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Search } from '@mui/icons-material';
 import utils from '../../utils/utils';
@@ -36,6 +45,7 @@ import nhanVienService from '../../services/nhan-vien/nhanVienService';
 import { PagedNhanSuRequestDto } from '../../services/nhan-vien/dto/PagedNhanSuRequestDto';
 import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 import DialogButtonClose from '../../components/Dialog/ButtonClose';
+import { IOSSwitch } from '../../components/Switch/IOSSwitch';
 const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
     const [isShow, setIsShow] = useState(false);
     const [txtSearch, setTxtSearch] = useState('');
@@ -156,108 +166,195 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
         setIsShow(false);
         handleSave(lstNVThucHien);
     };
+    const [tabActive, setTabActive] = useState('2');
+
+    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+        setTabActive(newValue);
+    };
 
     return (
         <>
             <Dialog open={isShow} onClose={handleClose} fullWidth maxWidth="md">
                 <DialogTitle>
-                    <Typography className="modal-title">Chọn kỹ thuật viên</Typography>
+                    <Typography className="modal-title">Hoa hồng nhân viên</Typography>
                     <DialogButtonClose onClose={() => setIsShow(false)} />
                 </DialogTitle>
                 <DialogContent>
-                    <TextField
-                        size="small"
-                        sx={{
-                            width: '375px'
-                        }}
-                        type="search"
-                        placeholder="Tìm kiếm"
-                        value={txtSearch}
-                        onChange={(event) => {
-                            setTxtSearch(event.target.value);
-                        }}
-                        InputProps={{
-                            startAdornment: <Search />
-                        }}
-                    />
-                    <Typography
+                    {/* <Typography
                         variant="subtitle1"
                         fontWeight="700"
                         color="#999699"
                         marginTop="20px"
                         marginBottom={'8px'}>
                         Danh sách kỹ thuật viên
-                    </Typography>
-                    <Grid container className="list-persons" spacing={2}>
-                        {lstNhanVien?.map((person: any, index: any) => (
-                            <Grid
-                                className="person-item"
-                                item
-                                xs={12}
-                                md={4}
-                                lg={4}
-                                key={index}
-                                onClick={() => ChoseNhanVien(person)}>
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                        position: 'relative',
-                                        padding: '20px 12px',
-                                        borderRadius: '8px',
-                                        transition: '.4s',
-                                        cursor: 'pointer',
-                                        border: '1px solid #CDC9CD',
-                                        borderColor: person.isChosed ? 'var(--color-main)' : '',
+                    </Typography> */}
+                    <Grid container spacing={2}>
+                        <Grid item xs={4}>
+                            <Stack spacing={2}>
+                                <Stack>
+                                    <TextField
+                                        size="small"
+                                        fullWidth
+                                        placeholder="Tìm kiếm"
+                                        value={txtSearch}
+                                        onChange={(event) => {
+                                            setTxtSearch(event.target.value);
+                                        }}
+                                        InputProps={{
+                                            startAdornment: <Search />
+                                        }}
+                                    />
+                                </Stack>
 
-                                        '&:hover': {
-                                            borderColor: 'var(--color-main)'
-                                        },
-                                        '& .Check-icon': {
-                                            position: 'absolute',
-                                            right: '-10px',
-                                            height: '20px',
-                                            borderRadius: '50%',
-                                            top: '-5px',
-                                            zIndex: '2',
-                                            transition: '.4s',
-                                            opacity: person.isChosed ? '1' : '0'
-                                        }
-                                    }}>
-                                    <Box
-                                        bgcolor="#fff"
-                                        className="Check-icon"
-                                        sx={{
-                                            '& svg': {
-                                                verticalAlign: 'unset'
-                                            }
-                                        }}>
-                                        <CheckCircleIcon sx={{ color: 'var(--color-main)' }} />
-                                    </Box>
-                                    <div className="person-avatar">
-                                        {utils.checkNull(person?.avatar) ? (
-                                            <BadgeFistCharOfName
-                                                firstChar={utils.getFirstLetter(person?.tenNhanVien ?? '')}
-                                            />
-                                        ) : (
-                                            <Avatar sx={{ width: 40, height: 40 }} src={person?.avatar} />
-                                        )}
-                                    </div>
-                                    <Stack maxWidth="calc(100% - 50px)">
-                                        <Typography
-                                            title={person.tenNhanVien}
-                                            variant="subtitle2"
-                                            className="lableOverflow">
-                                            {person.tenNhanVien}
-                                        </Typography>
-                                        <Typography variant="caption" className="person-position" color={'#333233'}>
-                                            {person.tenChucVu}
-                                        </Typography>
-                                    </Stack>
-                                </Box>
-                            </Grid>
-                        ))}
+                                <Grid container spacing={2}>
+                                    {lstNhanVien?.map((person: any, index: any) => (
+                                        <Grid
+                                            className="person-item"
+                                            item
+                                            xs={12}
+                                            md={12}
+                                            lg={12}
+                                            key={index}
+                                            onClick={() => ChoseNhanVien(person)}>
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '8px',
+                                                    position: 'relative',
+                                                    padding: '20px 12px',
+                                                    borderRadius: '8px',
+                                                    transition: '.4s',
+                                                    cursor: 'pointer',
+                                                    border: '1px solid #CDC9CD',
+                                                    borderColor: person.isChosed ? 'var(--color-main)' : '',
+
+                                                    '&:hover': {
+                                                        borderColor: 'var(--color-main)'
+                                                    },
+                                                    '& .Check-icon': {
+                                                        position: 'absolute',
+                                                        right: '-10px',
+                                                        height: '20px',
+                                                        borderRadius: '50%',
+                                                        top: '-5px',
+                                                        zIndex: '2',
+                                                        transition: '.4s',
+                                                        opacity: person.isChosed ? '1' : '0'
+                                                    }
+                                                }}>
+                                                <Box
+                                                    bgcolor="#fff"
+                                                    className="Check-icon"
+                                                    sx={{
+                                                        '& svg': {
+                                                            verticalAlign: 'unset'
+                                                        }
+                                                    }}>
+                                                    <CheckCircleIcon sx={{ color: 'var(--color-main)' }} />
+                                                </Box>
+                                                <div className="person-avatar">
+                                                    {utils.checkNull(person?.avatar) ? (
+                                                        <BadgeFistCharOfName
+                                                            firstChar={utils.getFirstLetter(person?.tenNhanVien ?? '')}
+                                                        />
+                                                    ) : (
+                                                        <Avatar sx={{ width: 40, height: 40 }} src={person?.avatar} />
+                                                    )}
+                                                </div>
+                                                <Stack maxWidth="calc(100% - 50px)">
+                                                    <Typography
+                                                        title={person.tenNhanVien}
+                                                        variant="subtitle2"
+                                                        className="lableOverflow">
+                                                        {person.tenNhanVien}
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="caption"
+                                                        className="person-position"
+                                                        color={'#333233'}>
+                                                        {person.tenChucVu}
+                                                    </Typography>
+                                                </Stack>
+                                            </Box>
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={8}>
+                            <Stack padding={2}>
+                                <Stack spacing={2}>
+                                    {lstNVThucHien?.map((nvien: NhanVienThucHienDto, index: number) => (
+                                        <Stack
+                                            direction={'row'}
+                                            spacing={2}
+                                            key={index}
+                                            alignItems={'center'}
+                                            sx={{ borderBottom: '1px dashed #cccc' }}>
+                                            <Stack flex={1}>
+                                                {utils.checkNull(nvien?.avatar) ? (
+                                                    <BadgeFistCharOfName
+                                                        firstChar={utils.getFirstLetter(nvien?.tenNhanVien ?? '')}
+                                                    />
+                                                ) : (
+                                                    <Avatar sx={{ width: 40, height: 40 }} src={nvien?.avatar} />
+                                                )}
+                                            </Stack>
+                                            <Stack flex={6}>{nvien?.tenNhanVien}</Stack>
+                                            <Stack flex={3}>
+                                                <TextField
+                                                    value={
+                                                        nvien?.ptChietKhau > 0
+                                                            ? nvien?.ptChietKhau
+                                                            : nvien?.tienChietKhau
+                                                    }
+                                                    size="small"
+                                                    variant="standard"
+                                                    InputProps={{
+                                                        disableUnderline: true,
+                                                        inputProps: {
+                                                            style: { textAlign: 'right' }
+                                                        }
+                                                    }}
+                                                />
+                                            </Stack>
+                                            <Stack flex={1}>
+                                                {nvien?.ptChietKhau ? (
+                                                    <Avatar
+                                                        sx={{
+                                                            bgcolor: 'var(--color-main) ',
+                                                            width: 30,
+                                                            height: 30,
+                                                            fontSize: '16px'
+                                                        }}>
+                                                        %
+                                                    </Avatar>
+                                                ) : (
+                                                    <Avatar sx={{ width: 30, height: 30, fontSize: '16px' }}>đ</Avatar>
+                                                )}
+                                            </Stack>
+                                            <Stack flex={3}>
+                                                <TextField
+                                                    value={nvien?.tienChietKhau}
+                                                    size="small"
+                                                    variant="standard"
+                                                    InputProps={{
+                                                        disableUnderline: true,
+                                                        inputProps: {
+                                                            style: { textAlign: 'right' }
+                                                        }
+                                                    }}
+                                                />
+                                            </Stack>
+                                            <Stack>
+                                                <ClearOutlinedIcon sx={{ color: 'red' }} />
+                                            </Stack>
+                                        </Stack>
+                                    ))}
+                                </Stack>
+                            </Stack>
+                        </Grid>
                     </Grid>
 
                     <Stack

@@ -344,21 +344,6 @@ export default function ModalGuiTinNhanZalo({
         }
     };
 
-    const saveNhatKyGuiTin = async (idHeThongSMS: string, idKhachHang: string, idLoaiTin: number) => {
-        if (idLoaiTin !== 1) {
-            const nky = new NhatKyGuiTinSMSDto();
-            nky.idHeThongSMS = idHeThongSMS;
-            nky.idChiNhanh = idChiNhanh;
-            nky.idKhachHang = idKhachHang;
-            nky.idLoaiTin = idLoaiTin;
-            nky.thoiGianTu = fromDate;
-            nky.thoiGianDen = toDate;
-
-            // lưu nháp: vẫn lưu nhật ký, để check trangthai gửi tin
-            await HeThongSMSServices.ThemMoi_NhatKyGuiTin(nky);
-        }
-    };
-
     const saveDraft = async (params: CreateOrEditSMSDto) => {
         await GuiTinZalo(params);
         setObjAlert({ ...objAlert, mes: 'Gửi tin thành công', show: true });

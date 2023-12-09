@@ -16,6 +16,10 @@ class SoQuyServices {
         const result = await http.post('api/services/app/QuyHoaDon/UpdateQuyHoaDon', input);
         return result.data.result;
     };
+    UpdateQuyHD_RemoveCT_andAddAgain = async (input: QuyHoaDonDto) => {
+        const result = await http.post('api/services/app/QuyHoaDon/UpdateQuyHD_RemoveCT_andAddAgain', input);
+        return result.data.result;
+    };
     DeleteSoQuy = async (id: string) => {
         const result = await http.get('api/services/app/QuyHoaDon/Delete?id=' + id);
         return result.data.result;
@@ -217,7 +221,7 @@ class SoQuyServices {
                 lstQuyCT_After.push(newQCT);
             }
         } else {
-            lstQuyCT_After = [...lstQuyCT];
+            lstQuyCT_After = [...lstQuyCT.filter((x: QuyChiTietDto) => x.tienThu > 0)];
         }
         return lstQuyCT_After;
     };

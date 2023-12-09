@@ -4,8 +4,6 @@ import {
     Button,
     TextField,
     Typography,
-    IconButton,
-    ButtonGroup,
     Grid,
     RadioGroup,
     FormControlLabel,
@@ -15,7 +13,6 @@ import {
     DialogTitle,
     DialogContent
 } from '@mui/material';
-import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import React, { useContext, useEffect, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import { Guid } from 'guid-typescript';
@@ -56,6 +53,8 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
     const idChiNhanh = chinhanhCurrent?.id;
     const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
     const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
+    const [tienKhachTraMax, setTienKhachTraMax] = useState(0);
+
     const [idHinhThucTT, setIdHinhThucTT] = React.useState(1);
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(new PageHoaDonDto({ tenKhachHang: '' }));
     const [quyHDOld, setQuyHDOld] = useState(
@@ -91,65 +90,216 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
         if (data !== null) {
             const quyCT = data.quyHoaDon_ChiTiet;
             if (quyCT !== undefined && quyCT?.length > 0) {
+                let nguoiNopTien = 'Khách lẻ';
                 const dataHoaDon = await HoaDonService.GetInforHoaDon_byId(quyCT[0].idHoaDonLienQuan ?? '');
                 if (dataHoaDon.length > 0) {
                     setHoaDon(dataHoaDon[0]);
+                    nguoiNopTien = dataHoaDon[0].tenKhachHang;
                 }
 
-                setQuyHoaDon({
-                    ...quyHoaDon,
-                    id: data.id,
-                    idChiNhanh: data.idChiNhanh,
-                    idLoaiChungTu: data.idLoaiChungTu,
-                    ngayLapHoaDon: data.ngayLapHoaDon,
-                    maHoaDon: data.maHoaDon,
-                    noiDungThu: data.noiDungThu,
-                    tongTienThu: data.tongTienThu,
-                    hachToanKinhDoanh: data.hachToanKinhDoanh,
-                    loaiDoiTuong: quyCT[0]?.idNhanVien != null ? 3 : 1,
-                    idDoiTuongNopTien: quyCT[0]?.idNhanVien != null ? quyCT[0]?.idNhanVien : quyCT[0]?.idKhachHang,
-                    hinhThucThanhToan: quyCT[0].hinhThucThanhToan,
-                    idKhoanThuChi: quyCT[0].idKhoanThuChi,
-                    idTaiKhoanNganHang: quyCT[0].idTaiKhoanNganHang,
-                    quyHoaDon_ChiTiet: quyCT
-                });
+                setQuyHDOld(data);
                 setIdHinhThucTT(quyCT?.length > 1 ? 0 : quyCT[0].hinhThucThanhToan);
-                setSumTienKhachTra(data.tongTienThu);
 
-                // bind hoadonlienquan
+                if (quyCT?.length > 1) {
+                    // nếu thanh toán kết hợp: push hình thức thanh toán còn thiếu (gtrị tienthu = 0)
+                    const exMat = quyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 1);
+                    if (exMat.length === 0) {
+                        // tiemmat: luôn nằm ở vị trí đầu tiên
+                        quyCT.unshift(new QuyChiTietDto({ hinhThucThanhToan: 1, tienThu: 0 }));
+                    }
+                    const exPOS = quyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 2);
+                    if (exPOS.length === 0) {
+                        quyCT.push(new QuyChiTietDto({ hinhThucThanhToan: 2, tienThu: 0 }));
+                    }
+                    const exCK = quyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 3);
+                    if (exCK.length === 0) {
+                        quyCT.push(new QuyChiTietDto({ hinhThucThanhToan: 3, tienThu: 0 }));
+                    }
+
+                    setQuyHoaDon({
+                        ...quyHoaDon,
+                        id: data.id,
+                        idChiNhanh: data.idChiNhanh,
+                        idLoaiChungTu: data.idLoaiChungTu,
+                        ngayLapHoaDon: data.ngayLapHoaDon,
+                        maHoaDon: data.maHoaDon,
+                        noiDungThu: data.noiDungThu,
+                        tongTienThu: data.tongTienThu,
+                        hachToanKinhDoanh: data.hachToanKinhDoanh,
+                        loaiDoiTuong: quyCT[0]?.idNhanVien != null ? 3 : 1,
+                        idDoiTuongNopTien: quyCT[0]?.idNhanVien != null ? quyCT[0]?.idNhanVien : quyCT[0]?.idKhachHang,
+                        hinhThucThanhToan: quyCT[0].hinhThucThanhToan,
+                        idKhoanThuChi: quyCT[0].idKhoanThuChi,
+                        idTaiKhoanNganHang: quyCT[0].idTaiKhoanNganHang,
+                        quyHoaDon_ChiTiet: quyCT,
+                        tenNguoiNop: nguoiNopTien
+                    });
+                }
+
+                setSumTienKhachTra(data.tongTienThu);
+                setTienKhachTraMax(data.tongTienThu + (hoadon?.conNo ?? 0));
             }
         }
     };
 
-    // change at child --> update to parent
     useEffect(() => {
         getInforQuyHoaDon();
     }, [isShow]);
 
     const onChangeTienKhachTra = (gtri: string, loai: number) => {
-        //
+        const gtriNhapNew = utils.formatNumberToFloat(gtri);
+        if (idHinhThucTT === 0) {
+            // tinh lai  tien
+            switch (loai) {
+                case 1: // tinhtien chuyenkhoan
+                    {
+                        const conLai = tienKhachTraMax - gtriNhapNew;
+                        setQuyHoaDon({
+                            ...quyHoaDon,
+                            quyHoaDon_ChiTiet: quyHoaDon?.quyHoaDon_ChiTiet?.map((item: QuyChiTietDto) => {
+                                if (item.hinhThucThanhToan === 1) {
+                                    return { ...item, tienThu: gtriNhapNew };
+                                } else {
+                                    if (item.hinhThucThanhToan === 2) {
+                                        return { ...item, tienThu: conLai > 0 ? conLai : 0 };
+                                    } else {
+                                        return { ...item, tienThu: 0 };
+                                    }
+                                }
+                            })
+                        });
+                        setTienThuaTraKhach(0);
+                        setSumTienKhachTra(tienKhachTraMax);
+                    }
+
+                    break;
+                case 2: // tinhtien pos
+                    {
+                        const sumTienMat = quyHoaDon?.quyHoaDon_ChiTiet
+                            ?.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 1)
+                            .reduce((currentValue: number, item: QuyChiTietDto) => {
+                                return item.tienThu + currentValue;
+                            }, 0);
+                        const conLai = tienKhachTraMax - (sumTienMat ?? 0) - gtriNhapNew;
+
+                        setQuyHoaDon({
+                            ...quyHoaDon,
+                            quyHoaDon_ChiTiet: quyHoaDon?.quyHoaDon_ChiTiet?.map((item: QuyChiTietDto) => {
+                                if (item.hinhThucThanhToan === 1) {
+                                    return { ...item };
+                                } else {
+                                    if (item.hinhThucThanhToan === 2) {
+                                        return { ...item, tienThu: gtriNhapNew };
+                                    } else {
+                                        return { ...item, tienThu: conLai > 0 ? conLai : 0 };
+                                    }
+                                }
+                            })
+                        });
+                        setTienThuaTraKhach(0);
+                        setSumTienKhachTra(tienKhachTraMax);
+                    }
+                    break;
+                case 3:
+                    {
+                        const sumMatCK = quyHoaDon?.quyHoaDon_ChiTiet
+                            ?.filter((x: QuyChiTietDto) => x.hinhThucThanhToan !== 3)
+                            .reduce((currentValue: number, item: QuyChiTietDto) => {
+                                return item.tienThu + currentValue;
+                            }, 0);
+                        const tongTT = (sumMatCK ?? 0) + gtriNhapNew;
+                        let tienthua = 0;
+                        if (tongTT !== tienKhachTraMax) {
+                            tienthua = tongTT - tienKhachTraMax;
+
+                            setQuyHoaDon({
+                                ...quyHoaDon,
+                                quyHoaDon_ChiTiet: quyHoaDon?.quyHoaDon_ChiTiet?.map((item: QuyChiTietDto) => {
+                                    if (item.hinhThucThanhToan !== 3) {
+                                        return { ...item };
+                                    } else {
+                                        return { ...item, tienThu: gtriNhapNew };
+                                    }
+                                })
+                            });
+                        }
+                        setSumTienKhachTra(tongTT);
+                        setTienThuaTraKhach(tienthua);
+                    }
+                    break;
+            }
+        } else {
+            setQuyHoaDon({
+                ...quyHoaDon,
+                quyHoaDon_ChiTiet: quyHoaDon?.quyHoaDon_ChiTiet?.map((item: QuyChiTietDto) => {
+                    if (item.hinhThucThanhToan === loai) {
+                        return { ...item, tienThu: gtriNhapNew };
+                    } else {
+                        return { ...item };
+                    }
+                })
+            });
+            setSumTienKhachTra(gtriNhapNew);
+            setTienThuaTraKhach(gtriNhapNew - tienKhachTraMax);
+        }
     };
 
     const choseHinhThucThanhToan = (item: ISelect) => {
         setIdHinhThucTT(item.value as unknown as number);
         if (item.value !== 0) {
-            // setLstQuyCT(() => [
-            //     new QuyChiTietDto({
-            //         tienThu: khachPhaiTra,
-            //         hinhThucThanhToan: item.value as number
-            //     })
-            // ]);
+            setQuyHoaDon({
+                ...quyHoaDon,
+                quyHoaDon_ChiTiet: [
+                    new QuyChiTietDto({
+                        tienThu: quyHDOld.tongTienThu,
+                        hinhThucThanhToan: item.value as number
+                    })
+                ]
+            });
         } else {
-            //SetQuyCT_ifKetHop();
+            setQuyHoaDon({
+                ...quyHoaDon,
+                quyHoaDon_ChiTiet: [
+                    new QuyChiTietDto({
+                        tienThu: quyHDOld.tongTienThu,
+                        hinhThucThanhToan: 1
+                    }),
+                    new QuyChiTietDto({
+                        tienThu: 0,
+                        hinhThucThanhToan: 2
+                    }),
+                    new QuyChiTietDto({
+                        tienThu: 0,
+                        hinhThucThanhToan: 3
+                    })
+                ]
+            });
         }
     };
 
-    const clickThanhToan = async () => {
-        //
-    };
-
     const savePhieuThu = async () => {
-        //
+        if (quyHoaDon?.quyHoaDon_ChiTiet !== undefined && quyHoaDon?.quyHoaDon_ChiTiet.length > 0) {
+            const lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(
+                quyHoaDon?.quyHoaDon_ChiTiet,
+                sumTienKhachTra,
+                tienKhachTraMax
+            );
+            const tongThu = lstQCT_After.reduce((currentValue: number, item: any) => {
+                return currentValue + item.tienThu;
+            }, 0);
+            const objQuyHD = { ...quyHoaDon };
+            objQuyHD.tongTienThu = tongThu;
+
+            // assign idHoadonLienQuan, idKhachHang for quyCT
+            lstQCT_After.map((x: QuyChiTietDto) => {
+                x.idHoaDonLienQuan = hoadon?.id;
+                x.idKhachHang = hoadon?.idKhachHang == Guid.EMPTY ? null : hoadon?.idKhachHang;
+            });
+            objQuyHD.quyHoaDon_ChiTiet = lstQCT_After;
+            objQuyHD.sHinhThucThanhToan = ''; // tođo
+            await SoQuyServices.UpdateQuyHD_RemoveCT_andAddAgain(objQuyHD);
+            onOk(objQuyHD, 2);
+        }
     };
 
     return (
@@ -176,7 +326,7 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                                 paddingTop: 2,
                                 padding: '16px'
                             }}>
-                            <Grid container spacing={2}>
+                            <Grid container spacing={3}>
                                 <Grid item xs={6} padding={2}>
                                     <Stack spacing={2}>
                                         <Stack spacing={2} direction={'row'} alignItems={'end'}>
@@ -189,6 +339,12 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                                                     variant="standard"
                                                     size="small"
                                                     value={quyHoaDon.maHoaDon}
+                                                    onChange={(event) =>
+                                                        setQuyHoaDon({
+                                                            ...quyHoaDon,
+                                                            maHoaDon: event.target.value
+                                                        })
+                                                    }
                                                 />
                                             </Stack>
                                         </Stack>
@@ -202,7 +358,10 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                                                         props={{ width: '100%' }}
                                                         defaultVal={quyHoaDon.ngayLapHoaDon}
                                                         handleChangeDate={(dt: string) => {
-                                                            //
+                                                            setQuyHoaDon({
+                                                                ...quyHoaDon,
+                                                                ngayLapHoaDon: dt
+                                                            });
                                                         }}
                                                     />
                                                 </ThemeProvider>
@@ -211,23 +370,23 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={6} padding={2}>
-                                    <Stack spacing={2}>
+                                    <Stack spacing={2} marginTop={'10px'}>
                                         <Stack spacing={2} direction={'row'} alignItems={'end'}>
                                             <Stack flex={4}>
                                                 <Typography variant="body2">Hóa đơn</Typography>
                                             </Stack>
                                             <Stack flex={8}>
-                                                <Typography color="#29303D" fontWeight="600" fontSize="14px">
+                                                <Typography color="#29303D" fontWeight="600" fontSize="13px">
                                                     {hoadon.maHoaDon}
                                                 </Typography>
                                             </Stack>
                                         </Stack>
-                                        <Stack spacing={2} direction={'row'} alignItems={'end'}>
+                                        <Stack spacing={1} direction={'row'} alignItems={'end'}>
                                             <Stack flex={4}>
                                                 <Typography variant="body2">Khách hàng</Typography>
                                             </Stack>
                                             <Stack flex={8}>
-                                                <Typography color="#29303D" fontWeight="600" fontSize="14px">
+                                                <Typography color="#29303D" fontWeight="600" fontSize="13px">
                                                     {hoadon.tenKhachHang}
                                                 </Typography>
                                             </Stack>
@@ -291,26 +450,6 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                                     value={sumTienKhachTra}
                                     onChange={(event) => onChangeTienKhachTra(event.target.value, idHinhThucTT)}
                                 />
-
-                                {/* {hinhThucTT === 0 && (
-                                <NumericFormat
-                                    size="small"
-                                    fullWidth
-                                    sx={{
-                                        '& input': {
-                                            paddingY: '13.5px',
-                                            textAlign: 'right'
-                                        }
-                                    }}
-                                    decimalSeparator=","
-                                    thousandSeparator="."
-                                    customInput={TextField}
-                                    value={tienKhachTraMax}
-                                    onChange={(event) =>
-                                        setTienKhachTraMax(utils.formatNumberToFloat(event.target.value))
-                                    }
-                                />
-                            )} */}
                             </Grid>
                             {quyHoaDon?.quyHoaDon_ChiTiet !== undefined && quyHoaDon?.quyHoaDon_ChiTiet?.length > 1 ? (
                                 <Grid container spacing="16px">
@@ -410,7 +549,7 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                                     paddingY: '14px',
                                     fontSize: '16px'
                                 }}
-                                onClick={clickThanhToan}>
+                                onClick={savePhieuThu}>
                                 Cập nhật
                             </Button>
                         </Stack>

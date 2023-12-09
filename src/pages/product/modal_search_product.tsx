@@ -3,6 +3,7 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField, deb
 import { useRef, useState, useEffect } from 'react';
 import ListProductByGroup from './list_product_by_group';
 import ProductService from '../../services/product/ProductService';
+import DialogButtonClose from '../../components/Dialog/ButtonClose';
 
 export default function ModalSearchProduct({ isShow, handlClose, handleChoseProduct }: any) {
     const [txtSearch, setTxtSearch] = useState('');
@@ -53,6 +54,7 @@ export default function ModalSearchProduct({ isShow, handlClose, handleChoseProd
             <Dialog open={isShow} onClose={handlClose} fullWidth maxWidth="lg">
                 <DialogTitle>
                     <span style={{ fontWeight: 700 }}> Chọn dịch vụ</span>
+                    <DialogButtonClose onClose={handlClose} />
                 </DialogTitle>
                 <DialogContent>
                     <Grid container>

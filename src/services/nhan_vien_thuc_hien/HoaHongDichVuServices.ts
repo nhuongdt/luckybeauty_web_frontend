@@ -1,7 +1,7 @@
 import http from '../httpService';
 
 class HoaHongDichVuServices {
-    GetHoaHongNV_theoDichVu = async (idNhanVien: any, idDonViQuyDoi: string) => {
+    GetHoaHongNV_theoDichVu = async (idNhanVien: string, idDonViQuyDoi: string) => {
         const result = await http.get(
             `api/services/app/ChietKhauDichVu/GetHoaHongNV_theoDichVu?idNhanVien=${idNhanVien}&idDonViQuyDoi=${idDonViQuyDoi}`
         );
