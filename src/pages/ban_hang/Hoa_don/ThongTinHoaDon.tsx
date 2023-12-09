@@ -54,6 +54,7 @@ import { MauInDto } from '../../../services/mau_in/MauInDto';
 import MauInServices from '../../../services/mau_in/MauInServices';
 import TaiKhoanNganHangServices from '../../../services/so_quy/TaiKhoanNganHangServices';
 import { TaiKhoanNganHangDto } from '../../../services/so_quy/Dto/TaiKhoanNganHangDto';
+import HoaHongNhanVienHoaDon from '../../nhan_vien_thuc_hien/hoa_hong_nhan_vien_hoa_don';
 const themOutlineInput = createTheme({
     components: {
         MuiOutlinedInput: {
@@ -78,6 +79,8 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
     const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
     const [idCTHDChosing, setIdCTHDChosing] = useState('');
     const [typeAction, setTypeAction] = useState(0); // 1.update, 2.delete, 0. khong lam gi
+
+    const [isShowHoaHongHD, setIsShowHoaHongHD] = useState(false);
 
     const allChiNhanh = useContext(ChiNhanhContextbyUser);
 
@@ -199,6 +202,11 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
         });
     };
 
+    // hoahong NV theo hoadon
+    const showModalHoaHongHD = async () => {
+        setIsShowHoaHongHD(true);
+    };
+
     const InHoaDon = async () => {
         DataMauIn.hoadon = { ...hoadonChosed };
         DataMauIn.hoadonChiTiet = [...chitietHoaDon];
@@ -264,6 +272,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                     onClickThanhToan={savePhieuThuOK}
                 />
             </Dialog>
+            <HoaHongNhanVienHoaDon iShow={isShowHoaHongHD} onClose={() => setIsShowHoaHongHD(false)} />
             <Dialog open={open} onClose={gotoBack} maxWidth="xl" fullWidth>
                 <SnackbarAlert
                     showAlert={objAlert.show}
@@ -584,6 +593,13 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                             )}
                             {hoadonChosed?.trangThai !== 0 && (
                                 <>
+                                    <Button
+                                        variant="outlined"
+                                        sx={{ borderColor: '#3B4758', color: 'var(--color-main)' }}
+                                        className="btn-outline-hover"
+                                        onClick={showModalHoaHongHD}>
+                                        Hoa hồng nhân viên
+                                    </Button>
                                     {(hoadonChosed?.conNo ?? 0) > 0 && (
                                         <Button
                                             variant="outlined"
