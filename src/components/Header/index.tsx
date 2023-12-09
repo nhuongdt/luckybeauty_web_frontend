@@ -28,7 +28,7 @@ import {
     ListItem
 } from '@mui/material';
 import './header.css';
-import { ReactComponent as LogoNew } from '../../images/logoNew.svg';
+import { ReactComponent as LogoNew } from '../../images/Logo_Lucky_Beauty.svg';
 // import { ReactComponent as ToggleIcon } from '../../images/btntoggle.svg';
 //import { ReactComponent as SuportIcon } from '../../images/messageChat.svg';
 import * as React from 'react';
@@ -234,7 +234,8 @@ const Header: React.FC<HeaderProps> = (
                                 sx={{
                                     opacity: collapsed && !isChildHovered ? '0' : '1',
                                     transform: collapsed && !isChildHovered ? 'translateX(-40px)' : 'translateX(0)',
-                                    transition: '.4s'
+                                    transition: '.4s',
+                                    marginTop: '6px'
                                 }}>
                                 Lucky Beauty
                             </Typography>
@@ -244,6 +245,7 @@ const Header: React.FC<HeaderProps> = (
                         sx={{
                             minWidth: 'unset!important',
                             marginLeft: collapsed && !isChildHovered ? '-116px' : '0',
+                            marginTop: '8px',
                             backgroundColor: 'unset!important',
                             transition: '.4s',
                             ':hover': {

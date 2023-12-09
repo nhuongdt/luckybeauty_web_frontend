@@ -8,7 +8,7 @@ import AppConsts from '../../../lib/appconst';
 import './changePassword.css';
 import accountService from '../../../services/account/accountService';
 import { enqueueSnackbar } from 'notistack';
-import logo from '../../../images/logoNew.svg';
+import logo from '../../../images/Logo_Lucky_Beauty.svg';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 const ResetPassword = () => {
     const navigate = useNavigate();

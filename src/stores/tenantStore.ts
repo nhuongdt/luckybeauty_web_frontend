@@ -40,9 +40,7 @@ class TenantStore {
     }
     async delete(entityDto: number) {
         await tenantService.delete(entityDto);
-        this.tenants.items = this.tenants.items.filter(
-            (x: GetAllTenantOutput) => x.id !== entityDto
-        );
+        this.tenants.items = this.tenants.items.filter((x: GetAllTenantOutput) => x.id !== entityDto);
     }
     async get(entityDto: number) {
         const result = await tenantService.get(entityDto);
