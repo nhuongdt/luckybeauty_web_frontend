@@ -86,7 +86,7 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
     const getInforQuyHoaDon = async () => {
         if (utils.checkNull(idQuyHD)) return;
         const data = await SoQuyServices.GetInforQuyHoaDon_byId(idQuyHD ?? '');
-
+        console.log(33, data);
         if (data !== null) {
             const quyCT = data.quyHoaDon_ChiTiet;
             if (quyCT !== undefined && quyCT?.length > 0) {
@@ -115,26 +115,25 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                     if (exCK.length === 0) {
                         quyCT.push(new QuyChiTietDto({ hinhThucThanhToan: 3, tienThu: 0 }));
                     }
-
-                    setQuyHoaDon({
-                        ...quyHoaDon,
-                        id: data.id,
-                        idChiNhanh: data.idChiNhanh,
-                        idLoaiChungTu: data.idLoaiChungTu,
-                        ngayLapHoaDon: data.ngayLapHoaDon,
-                        maHoaDon: data.maHoaDon,
-                        noiDungThu: data.noiDungThu,
-                        tongTienThu: data.tongTienThu,
-                        hachToanKinhDoanh: data.hachToanKinhDoanh,
-                        loaiDoiTuong: quyCT[0]?.idNhanVien != null ? 3 : 1,
-                        idDoiTuongNopTien: quyCT[0]?.idNhanVien != null ? quyCT[0]?.idNhanVien : quyCT[0]?.idKhachHang,
-                        hinhThucThanhToan: quyCT[0].hinhThucThanhToan,
-                        idKhoanThuChi: quyCT[0].idKhoanThuChi,
-                        idTaiKhoanNganHang: quyCT[0].idTaiKhoanNganHang,
-                        quyHoaDon_ChiTiet: quyCT,
-                        tenNguoiNop: nguoiNopTien
-                    });
                 }
+                setQuyHoaDon({
+                    ...quyHoaDon,
+                    id: data.id,
+                    idChiNhanh: data.idChiNhanh,
+                    idLoaiChungTu: data.idLoaiChungTu,
+                    ngayLapHoaDon: data.ngayLapHoaDon,
+                    maHoaDon: data.maHoaDon,
+                    noiDungThu: data.noiDungThu,
+                    tongTienThu: data.tongTienThu,
+                    hachToanKinhDoanh: data.hachToanKinhDoanh,
+                    loaiDoiTuong: quyCT[0]?.idNhanVien != null ? 3 : 1,
+                    idDoiTuongNopTien: quyCT[0]?.idNhanVien != null ? quyCT[0]?.idNhanVien : quyCT[0]?.idKhachHang,
+                    hinhThucThanhToan: quyCT[0].hinhThucThanhToan,
+                    idKhoanThuChi: quyCT[0].idKhoanThuChi,
+                    idTaiKhoanNganHang: quyCT[0].idTaiKhoanNganHang,
+                    quyHoaDon_ChiTiet: quyCT,
+                    tenNguoiNop: nguoiNopTien
+                });
 
                 setSumTienKhachTra(data.tongTienThu);
                 setTienKhachTraMax(data.tongTienThu + (hoadon?.conNo ?? 0));
@@ -296,7 +295,25 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                 x.idKhachHang = hoadon?.idKhachHang == Guid.EMPTY ? null : hoadon?.idKhachHang;
             });
             objQuyHD.quyHoaDon_ChiTiet = lstQCT_After;
-            objQuyHD.sHinhThucThanhToan = ''; // tođo
+            const lstPTTT = lstQCT_After?.map((x: QuyChiTietDto) => {
+                return x.hinhThucThanhToan;
+            });
+            let sPThuc = '';
+            for (let i = 0; i < lstPTTT.length; i++) {
+                switch (lstPTTT[i]) {
+                    case 1:
+                        sPThuc = 'Tiền mặt, ';
+                        break;
+                    case 2:
+                        sPThuc += 'Chuyển khoản, ';
+                        break;
+                    case 3:
+                        sPThuc += 'Quẹt thẻ, ';
+                        break;
+                }
+            }
+
+            objQuyHD.sHinhThucThanhToan = utils.Remove_LastComma(sPThuc);
             await SoQuyServices.UpdateQuyHD_RemoveCT_andAddAgain(objQuyHD);
             onOk(objQuyHD, 2);
         }
@@ -371,7 +388,7 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                                 </Grid>
                                 <Grid item xs={6} padding={2}>
                                     <Stack spacing={2} marginTop={'10px'}>
-                                        <Stack spacing={2} direction={'row'} alignItems={'end'}>
+                                        <Stack spacing={1} direction={'row'} alignItems={'end'}>
                                             <Stack flex={4}>
                                                 <Typography variant="body2">Hóa đơn</Typography>
                                             </Stack>
