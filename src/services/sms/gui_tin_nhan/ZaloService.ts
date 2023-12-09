@@ -4,8 +4,10 @@ import { IInforUserZOA, IMemberZOA, InforZOA, ZaloAuthorizationDto } from './zal
 import http from '../../httpService';
 
 class ZaloService {
-    dec2hex = (dec: any) => {
-        return ('0' + dec.toString(16)).substring(-2);
+    CreateCodeVerifier_andCodeChallenge = async (): Promise<ZaloAuthorizationDto> => {
+        // use c#
+        const result = await http.get(`api/services/app/ZaloAuthorization/CreateCodeVerifier_andCodeChallenge`);
+        return result.data.result;
     };
     GenerateCodeVerifier = () => {
         /**
@@ -40,6 +42,8 @@ class ZaloService {
         return encoded;
     };
     GenerateCodeChallenge = async (code_verifier: string) => {
+        // hàm này chỉ áp dụng cho https
+        // nên đã viết thêm hàm cho code verifier + challenge trong c#
         const hashArray = await globalThis.crypto.subtle.digest(
             { name: 'SHA-256' },
             new TextEncoder().encode(code_verifier)
