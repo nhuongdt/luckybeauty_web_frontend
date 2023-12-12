@@ -1086,7 +1086,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 title="Thêm mới khách hàng"
                 formRef={newCus}
             />
-            <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
+            <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} idChiNhanh={idChiNhanh} />
             <ModalEditChiTietGioHang
                 formType={1}
                 isShow={isShowEditGioHang}
