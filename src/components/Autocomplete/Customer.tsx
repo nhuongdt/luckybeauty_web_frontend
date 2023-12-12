@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Autocomplete, Grid, TextField, Typography, Box } from '@mui/material';
-import CenterFocusWeakIcon from '@mui/icons-material/CenterFocusWeak';
+import { Autocomplete, Grid, TextField, Typography, Box, Avatar, InputAdornment } from '@mui/material';
 import { useState, useRef } from 'react';
 import { debounce } from '@mui/material/utils';
 import khachHangService from '../../services/khach-hang/khachHangService';
@@ -8,7 +7,8 @@ import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/Pa
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import utils from '../../utils/utils';
 import { Guid } from 'guid-typescript';
-import { DataArray } from '@mui/icons-material';
+import BadgeFistCharOfName from '../Badge/FistCharOfName';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
 export default function AutocompleteCustomer({ idChosed, handleChoseItem, helperText = '', err = false }: any) {
     const [listCustomer, setListCustomer] = useState([]);
@@ -81,7 +81,13 @@ export default function AutocompleteCustomer({ idChosed, handleChoseItem, helper
                             }}>
                             <Grid container alignItems="center">
                                 <Grid item sx={{ display: 'flex', width: 44 }}>
-                                    <CenterFocusWeakIcon sx={{ color: 'text.secondary' }} />
+                                    {option?.avatar ? (
+                                        <Avatar src={option?.avatar} sx={{ width: 24, height: 24 }} />
+                                    ) : (
+                                        <BadgeFistCharOfName
+                                            firstChar={utils.getFirstLetter(option?.tenKhachHang ?? '')}
+                                        />
+                                    )}
                                 </Grid>
                                 <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
                                     <Typography style={{ fontSize: '13px' }}>{option.tenKhachHang}</Typography>
