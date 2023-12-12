@@ -47,10 +47,11 @@ class ChietKhauDichVuService {
     }
     GetHoaHongNV_theoDichVu = async (
         idNhanVien: string,
-        idDonViQuyDoi: string
+        idDonViQuyDoi: string,
+        idChiNhanh: string
     ): Promise<CreateOrEditChietKhauDichVuDto[]> => {
         const result = await http.get(
-            `api/services/app/ChietKhauDichVu/GetHoaHongNV_theoDichVu?idNhanVien=${idNhanVien}&idDonViQuyDoi=${idDonViQuyDoi}`
+            `api/services/app/ChietKhauDichVu/GetHoaHongNV_theoDichVu?idNhanVien=${idNhanVien}&idDonViQuyDoi=${idDonViQuyDoi}&idChiNhanh=${idChiNhanh}`
         );
         return result.data.result;
     };
