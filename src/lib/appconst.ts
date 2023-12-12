@@ -131,7 +131,7 @@ const AppConsts = {
     ] as IList[],
     trangThaiCheckIn: [
         { value: 1, name: 'Đặt lịch' },
-        { value: 2, name: 'Đã gọi (nhắn tin) cho khách' },
+        { value: 2, name: 'Đã xác nhận' },
         { value: 3, name: 'Check in' },
         { value: 4, name: 'Hoàn thành' },
         { value: 0, name: 'Xóa' }
