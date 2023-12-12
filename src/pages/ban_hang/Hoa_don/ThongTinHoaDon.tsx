@@ -272,7 +272,13 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                     onClickThanhToan={savePhieuThuOK}
                 />
             </Dialog>
-            <HoaHongNhanVienHoaDon iShow={isShowHoaHongHD} onClose={() => setIsShowHoaHongHD(false)} />
+            <HoaHongNhanVienHoaDon
+                iShow={isShowHoaHongHD}
+                onClose={() => setIsShowHoaHongHD(false)}
+                doanhThu={hoadonChosed?.tongTienHang}
+                thucThu={hoadonChosed?.daThanhToan}
+                idHoaDon={hoadonChosed?.id}
+            />
             <Dialog open={open} onClose={gotoBack} maxWidth="xl" fullWidth>
                 <SnackbarAlert
                     showAlert={objAlert.show}
@@ -556,7 +562,11 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                         </Grid>
                         <Box sx={{ mt: '40px' }}>
                             <TabPanel value={activeTab} index={0}>
-                                <TabInfo hoadon={hoadonChosed} chitietHoaDon={chitietHoaDon} />
+                                <TabInfo
+                                    hoadon={hoadonChosed}
+                                    chitietHoaDon={chitietHoaDon}
+                                    onSaveOKNVThucHienDV={GetChiTietHoaDon_byIdHoaDon}
+                                />
                             </TabPanel>
                             <TabPanel value={activeTab} index={1}>
                                 <TabDiary idHoaDon={idHoaDon} />
