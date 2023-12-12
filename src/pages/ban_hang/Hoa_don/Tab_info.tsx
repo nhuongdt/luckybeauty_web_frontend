@@ -1,31 +1,21 @@
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography, Stack } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
 import utils from '../../../utils/utils';
+import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
+import HoaDonChiTietDto from '../../../services/ban_hang/HoaDonChiTietDto';
+import { useState } from 'react';
+import HoaHongNhanVienDichVu from '../../nhan_vien_thuc_hien/hoa_hong_nhan_vien_dich_vu';
 
-export default function TabInfo({ hoadon, chitietHoaDon }: any) {
+export default function TabInfo({ hoadon, chitietHoaDon, onSaveOKNVThucHienDV }: any) {
     const columns: GridColDef[] = [
-        // {
-        //     field: 'maHangHoa',
-        //     headerName: 'Mã hàng',
-        //     minWidth: 50,
-        //     flex: 0.8,
-        //     renderHeader: (params) => (
-        //         <Box>
-        //             {params.colDef.headerName}
-        //             <IconSorting />
-        //         </Box>
-        //     ),
-        //     renderCell: (params) => <Box title={params.value}>{params.value}</Box>
-        // },
         {
             field: 'tenHangHoa',
             headerName: 'Tên dịch vụ',
-            // minWidth: 150,
-            flex: 2,
+            flex: 1.5,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
-            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params) => <Stack>{params.value}</Stack>
         },
         {
             field: 'soLuong',
@@ -33,7 +23,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             headerAlign: 'center',
             align: 'center',
             minWidth: 80,
-            flex: 0.8,
+            flex: 0.2,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
                 <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
@@ -47,7 +37,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             headerAlign: 'right',
             align: 'right',
             minWidth: 90,
-            flex: 1,
+            flex: 0.5,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
                 <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
@@ -62,7 +52,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             headerAlign: 'right',
             align: 'right',
             minWidth: 100,
-            flex: 0.8,
+            flex: 0.5,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
                 <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
@@ -70,43 +60,69 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                 </Box>
             )
         },
-        // {
-        //     field: 'donGiaSauCK',
-        //     headerName: 'Giá bán',
-        //     headerAlign: 'right',
-        //     align: 'right',
-        //     minWidth: 100,
-        //     flex: 2,
-        //     renderHeader: (params) => (
-        //         <Box>
-        //             {params.colDef.headerName}
-        //             <IconSorting />
-        //         </Box>
-        //     ),
-        //     renderCell: (params) => (
-        //         <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
-        //             {new Intl.NumberFormat('vi-VN').format(params.value)}
-        //         </Box>
-        //     )
-        // },
         {
             field: 'thanhTienSauCK',
             headerName: 'Thành tiền',
             headerAlign: 'right',
             align: 'right',
             minWidth: 100,
-            flex: 1,
+            flex: 0.6,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
                 <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
+        },
+        {
+            field: 'tenNVThucHiens',
+            headerName: 'NV thực hiện',
+            minWidth: 100,
+            flex: 1,
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+            renderCell: (params) => (
+                <Stack sx={{ fontSize: '13px', fontStyle: 'italic' }}>{utils.Remove_LastComma(params.value)}</Stack>
+            )
+        },
+        {
+            field: '#',
+            headerName: '#',
+            headerAlign: 'center',
+            align: 'center',
+            minWidth: 50,
+            flex: 0.2,
+            sortable: false,
+            renderCell: (params) => (
+                <PermIdentityOutlinedIcon
+                    titleAccess="NV thực hiện"
+                    onClick={() => getNVThucHien_ofChiTiet(params.row)}
+                />
+            )
         }
     ];
 
+    const [isShowHoaHongDV, setIsShowHoaHongDV] = useState(false);
+    const [itemHoaDonChiTiet, setItemHoaDonChiTiet] = useState<HoaDonChiTietDto>({} as HoaDonChiTietDto);
+
+    const getNVThucHien_ofChiTiet = (itemCTHD: HoaDonChiTietDto) => {
+        // modal nvthuchien
+        setItemHoaDonChiTiet(itemCTHD);
+        setIsShowHoaHongDV(true);
+    };
+
+    const saveOKNVienDichVu = () => {
+        onSaveOKNVThucHienDV();
+        setIsShowHoaHongDV(false);
+    };
+
     return (
         <>
+            <HoaHongNhanVienDichVu
+                iShow={isShowHoaHongDV}
+                itemHoaDonChiTiet={itemHoaDonChiTiet}
+                onSaveOK={saveOKNVienDichVu}
+                onClose={() => setIsShowHoaHongDV(false)}
+            />
             <Grid container spacing={3}>
                 <Grid item xs={9}>
                     <DataGrid
