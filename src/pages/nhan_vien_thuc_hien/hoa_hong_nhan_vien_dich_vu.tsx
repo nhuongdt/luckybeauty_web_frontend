@@ -8,15 +8,13 @@ import {
     Stack,
     Avatar,
     DialogActions,
-    Button,
-    Radio,
-    Popover
+    Button
 } from '@mui/material';
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
 import DialogButtonClose from '../../components/Dialog/ButtonClose';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
 import { PagedNhanSuRequestDto } from '../../services/nhan-vien/dto/PagedNhanSuRequestDto';
-import { useContext, useEffect, useState, useRef } from 'react';
+import React, { KeyboardEventHandler, useContext, useEffect, useRef, useState } from 'react';
 import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 import NhanVienThucHienDto from '../../services/nhan_vien_thuc_hien/NhanVienThucHienDto';
 import { Search } from '@mui/icons-material';
@@ -26,15 +24,10 @@ import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { NumericFormat } from 'react-number-format';
 import NhanVienThucHienServices from '../../services/nhan_vien_thuc_hien/NhanVienThucHienServices';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
+import HoaDonChiTietDto from '../../services/ban_hang/HoaDonChiTietDto';
+import chietKhauDichVuService from '../../services/hoa_hong/chiet_khau_dich_vu/chietKhauDichVuService';
 
-export default function HoaHongNhanVienHoaDon({
-    iShow,
-    onClose,
-    doanhThu = 0,
-    thucThu = 0,
-    idHoaDon = '',
-    idQuyHoaDon = ''
-}: any) {
+export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTiet, onSaveOK }: any) {
     const appContext = useContext(AppContext);
     const chinhanhCurrent = appContext.chinhanhCurrent;
     const idChiNhanh = chinhanhCurrent?.id;
@@ -43,7 +36,6 @@ export default function HoaHongNhanVienHoaDon({
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
     const [lstNVThucHien, setLstNhanVienChosed] = useState<NhanVienThucHienDto[]>([]);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
-    const [itemNVienFocus, setItemNVienFocus] = useState<NhanVienThucHienDto>({} as NhanVienThucHienDto);
 
     const GetListNhanVien = async () => {
         const data = await nhanVienService.getAll({
@@ -55,11 +47,14 @@ export default function HoaHongNhanVienHoaDon({
         setLstNhanVien([...data.items]);
     };
 
-    const GetNhanVienThucHien_byIdHoaDon = async () => {
-        const data = await NhanVienThucHienServices.GetNhanVienThucHien_byIdHoaDon(idHoaDon, idQuyHoaDon);
-        console.log('GetNhanVienThucHien_byIdHoaDon ', data);
+    const GetNhanVienThucHien_byIdHoaDonChiTiet = async () => {
+        const data = await NhanVienThucHienServices.GetNhanVienThucHien_byIdHoaDonChiTiet(itemHoaDonChiTiet?.id);
+        console.log('GetNhanVienThucHien_byIdHoaDonChiTiet ', data);
         if (data != null && data.length > 0) {
-            setLstNhanVienChosed(data);
+            const arr = data.map((x: NhanVienThucHienDto) => {
+                return { ...x, laPhanTram: x.ptChietKhau > 0 };
+            });
+            setLstNhanVienChosed(arr);
         } else {
             setLstNhanVienChosed([]);
         }
@@ -71,7 +66,7 @@ export default function HoaHongNhanVienHoaDon({
 
     useEffect(() => {
         // get hoahongHD from db
-        GetNhanVienThucHien_byIdHoaDon();
+        GetNhanVienThucHien_byIdHoaDonChiTiet();
     }, [iShow]);
 
     const SearchNhanVienClient = () => {
@@ -111,34 +106,27 @@ export default function HoaHongNhanVienHoaDon({
             soDienThoai: item.soDienThoai,
             gioiTinh: item.gioiTinh,
             avatar: item.avatar,
-            loaiChietKhau: 1,
+            loaiChietKhau: 1, //  1.NV thực hiện, 2.NV tư vấn, 3. NV thực hiện theo yêu cầu
             ptChietKhau: 0,
-            tienChietKhau: 0
+            tienChietKhau: 0,
+            tinhHoaHongTruocCK: false
         });
-        const ckSetup = await chietKhauHoaDonService.GetHoaHongNVienSetup_theoLoaiChungTu(idChiNhanh, item.id, '1');
+        const ckSetup = await chietKhauDichVuService.GetHoaHongNV_theoDichVu(
+            newNV.idNhanVien as unknown as string,
+            itemHoaDonChiTiet.idDonViQuyDoi,
+            idChiNhanh
+        );
         if (ckSetup != null && ckSetup.length > 0) {
-            const gtriSetup = ckSetup[0].giaTriCHietKhau ?? 0;
-            switch (ckSetup[0].loaiChietKhau) {
-                case 1: // % thucthu
-                    {
-                        newNV.ptChietKhau = gtriSetup;
-                        newNV.tienChietKhau = (gtriSetup * thucThu) / 100;
-                    }
-                    break;
-                case 2: // % doanhthu
-                    {
-                        newNV.ptChietKhau = gtriSetup;
-                        newNV.tienChietKhau = (gtriSetup * doanhThu) / 100;
-                    }
-                    break;
-                case 3: // vnd
-                    {
-                        newNV.ptChietKhau = 0;
-                        newNV.tienChietKhau = gtriSetup;
-                    }
-                    break;
+            const gtriSetup = ckSetup[0].giaTri ?? 0;
+
+            newNV.ptChietKhau = ckSetup[0].laPhanTram ? gtriSetup : 0;
+            newNV.chietKhauMacDinh = gtriSetup;
+
+            if (newNV.ptChietKhau > 0) {
+                newNV.tienChietKhau = (newNV.ptChietKhau * itemHoaDonChiTiet?.thanhTienSauCK) / 100;
+            } else {
+                newNV.tienChietKhau = gtriSetup * itemHoaDonChiTiet?.soLuong;
             }
-            newNV.loaiChietKhau = ckSetup[0].loaiChietKhau;
         }
         setLstNhanVienChosed([newNV, ...lstNVThucHien]);
     };
@@ -147,50 +135,26 @@ export default function HoaHongNhanVienHoaDon({
         setLstNhanVienChosed(lstNVThucHien.filter((x: NhanVienThucHienDto) => x.idNhanVien !== nv.idNhanVien));
     };
 
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-    const openDivChietKhau = Boolean(anchorEl);
-    const handleClick = (event: any, nvien: NhanVienThucHienDto) => {
-        setAnchorEl(event.currentTarget);
-        setItemNVienFocus(nvien);
-    };
-
-    const changeLoaiChietKhau = (loaiChietKhau: number) => {
+    const onClickPtramVND = (laPhanTram: boolean, nv: NhanVienThucHienDto) => {
+        const laPtramNew = !laPhanTram;
         setLstNhanVienChosed(
             lstNVThucHien.map((x: NhanVienThucHienDto) => {
-                if (x.idNhanVien === itemNVienFocus.idNhanVien) {
-                    let ckNew = x.tienChietKhau;
+                if (x.idNhanVien === nv.idNhanVien) {
+                    const ckNew = x.tienChietKhau;
                     let ptChietKhau = x.ptChietKhau;
-                    switch (loaiChietKhau) {
-                        case 1:
-                            {
-                                // chuyen tu vnd -->% thucthu
-                                if (x.loaiChietKhau === 3) {
-                                    ptChietKhau = (ckNew / thucThu) * 100;
-                                } else {
-                                    ckNew = (x.ptChietKhau * thucThu) / 100;
-                                }
-                            }
-                            break;
-                        case 2: // chuyen tu vnd -->% doanhthu
-                            {
-                                if (x.loaiChietKhau === 3) {
-                                    ptChietKhau = (ckNew / doanhThu) * 100;
-                                } else {
-                                    ckNew = (x.ptChietKhau * doanhThu) / 100;
-                                }
-                            }
-                            break;
-                        case 3:
-                            ckNew = x.tienChietKhau;
-                            break;
+                    if (ptChietKhau > 0) {
+                        if (!laPtramNew) {
+                            // % --> vnd
+                            ptChietKhau = 0;
+                        }
+                    } else {
+                        // vnd --> %
+                        if (laPtramNew) {
+                            ptChietKhau = (ckNew / itemHoaDonChiTiet?.thanhTienSauCK) * 100;
+                        }
                     }
-                    setItemNVienFocus({
-                        ...itemNVienFocus,
-                        loaiChietKhau: loaiChietKhau,
-                        ptChietKhau: ptChietKhau,
-                        tienChietKhau: ckNew
-                    });
-                    return { ...x, loaiChietKhau: loaiChietKhau, ptChietKhau: ptChietKhau, tienChietKhau: ckNew };
+
+                    return { ...x, laPhanTram: laPtramNew, ptChietKhau: ptChietKhau, tienChietKhau: ckNew };
                 } else {
                     return x;
                 }
@@ -198,29 +162,22 @@ export default function HoaHongNhanVienHoaDon({
         );
     };
 
-    const changePTramChietKhau = (gtriNew: string) => {
-        let gtriPtram = utils.formatNumberToFloat(gtriNew);
+    const changeGtriChietKhau = (gtriNew: string, nv: NhanVienThucHienDto) => {
+        const gtriCK = utils.formatNumberToFloat(gtriNew);
 
         setLstNhanVienChosed(
             lstNVThucHien.map((x: NhanVienThucHienDto) => {
-                if (x.idNhanVien === itemNVienFocus.idNhanVien) {
-                    let ckNew = x.tienChietKhau;
-                    switch (x.loaiChietKhau) {
-                        case 1:
-                            ckNew = (gtriPtram * thucThu) / 100;
-                            break;
-                        case 2:
-                            ckNew = (gtriPtram * doanhThu) / 100;
-                            break;
-                        case 3:
-                            {
-                                ckNew = gtriPtram;
-                                gtriPtram = 0;
-                            }
-                            break;
+                if (x.idNhanVien === nv.idNhanVien) {
+                    let tienCKnew = x.tienChietKhau;
+                    let ptCKNew = x.ptChietKhau;
+                    if (x.laPhanTram) {
+                        ptCKNew = gtriCK;
+                        tienCKnew = (gtriCK * itemHoaDonChiTiet?.thanhTienSauCK) / 100;
+                    } else {
+                        ptCKNew = 0;
+                        tienCKnew = gtriCK;
                     }
-                    setItemNVienFocus({ ...itemNVienFocus, ptChietKhau: gtriPtram, tienChietKhau: ckNew });
-                    return { ...x, ptChietKhau: gtriPtram, tienChietKhau: ckNew };
+                    return { ...x, tienChietKhau: tienCKnew, ptChietKhau: ptCKNew };
                 } else {
                     return x;
                 }
@@ -229,24 +186,21 @@ export default function HoaHongNhanVienHoaDon({
     };
 
     const changeTienChietKhau = (gtriNew: string, nv: NhanVienThucHienDto) => {
+        console.log('changeTienChietKhau ');
         const tienCK = utils.formatNumberToFloat(gtriNew);
         setLstNhanVienChosed(
             lstNVThucHien.map((x: NhanVienThucHienDto) => {
                 if (x.idNhanVien === nv.idNhanVien) {
-                    let ptCK = 0;
-                    switch (x.loaiChietKhau) {
-                        case 1:
-                            ptCK = (tienCK / thucThu) * 100;
-                            break;
-                        case 2:
-                            ptCK = (tienCK / doanhThu) * 100;
-                            break;
-                        case 3:
-                            ptCK = 0;
-                            break;
+                    let tienCKnew = x.tienChietKhau;
+                    let ptCKNew = x.ptChietKhau;
+                    if (x.laPhanTram) {
+                        ptCKNew = (tienCK / itemHoaDonChiTiet?.thanhTienSauCK) * 100;
+                        tienCKnew = tienCK;
+                    } else {
+                        ptCKNew = 0;
+                        tienCKnew = tienCK;
                     }
-                    setItemNVienFocus({ ...itemNVienFocus, ptChietKhau: ptCK, tienChietKhau: tienCK });
-                    return { ...x, ptChietKhau: ptCK, tienChietKhau: tienCK };
+                    return { ...x, tienChietKhau: tienCKnew, ptChietKhau: ptCKNew };
                 } else {
                     return x;
                 }
@@ -257,21 +211,24 @@ export default function HoaHongNhanVienHoaDon({
     const removeAllNVienChosed = () => {
         setLstNhanVienChosed([]);
     };
+
+    const refInputCK: any = useRef([]);
     const refTienChietKhau: any = useRef([]);
+    const gotoNextInputCK = (e: React.KeyboardEvent<HTMLDivElement>, targetElem: any) => {
+        if (e.key === 'Enter' && targetElem) {
+            targetElem.focus();
+        }
+    };
     const gotoNextTienChietKhau = (e: React.KeyboardEvent<HTMLDivElement>, targetElem: any) => {
         if (e.key === 'Enter' && targetElem) {
             targetElem.focus();
         }
     };
 
-    const saveHoaHongHD = async () => {
-        if (utils.checkNull(idQuyHoaDon)) {
-            await NhanVienThucHienServices.UpdateNhanVienThucHienn_byIdHoaDon(idHoaDon, lstNVThucHien);
-        } else {
-            await NhanVienThucHienServices.UpdateNVThucHien_byIdQuyHoaDon(idHoaDon, idQuyHoaDon, lstNVThucHien);
-        }
-        setObjAlert({ ...objAlert, mes: 'Cập nhật hoa hồng hóa đơn thành công', show: true, type: 1 });
-        onClose();
+    const saveHoaHongDV = async () => {
+        setObjAlert({ ...objAlert, mes: 'Cập nhật hoa hồng dịch vụ thành công', show: true, type: 1 });
+        await NhanVienThucHienServices.UpdateNVThucHien_byIdHoaDonChiTiet(itemHoaDonChiTiet?.id, lstNVThucHien);
+        onSaveOK();
     };
 
     return (
@@ -283,7 +240,7 @@ export default function HoaHongNhanVienHoaDon({
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Dialog open={iShow} onClose={onClose} maxWidth="md" fullWidth>
                 <DialogTitle>
-                    <Typography className="modal-title">Hoa hồng theo hóa đơn</Typography>
+                    <Typography className="modal-title">Hoa hồng theo dịch vụ</Typography>
                     <DialogButtonClose onClose={onClose} />
                 </DialogTitle>
                 <DialogContent>
@@ -295,20 +252,16 @@ export default function HoaHongNhanVienHoaDon({
                                     direction={'row'}
                                     justifyContent={'center'}
                                     sx={{
-                                        // background: 'antiquewhite',
                                         padding: '10px',
                                         borderRadius: '4px'
                                     }}>
-                                    <Stack direction={'row'} spacing={1} flex={1}>
-                                        <Stack>Doanh thu</Stack>
-                                        <Stack sx={{ fontWeight: '600' }}>
-                                            {new Intl.NumberFormat('vi-VN').format(doanhThu)}
+                                    <Stack direction={'row'} spacing={1} flex={1} justifyContent={'space-between'}>
+                                        <Stack direction={'row'} spacing={1}>
+                                            <Stack sx={{ fontWeight: '600' }}>{itemHoaDonChiTiet?.tenHangHoa}</Stack>
                                         </Stack>
-                                    </Stack>
-                                    <Stack direction={'row'} spacing={1} flex={1}>
-                                        <Stack>Thực thu</Stack>
                                         <Stack sx={{ fontWeight: '600' }}>
-                                            {new Intl.NumberFormat('vi-VN').format(thucThu)}
+                                            Giá trị:{' '}
+                                            {new Intl.NumberFormat('vi-VN').format(itemHoaDonChiTiet?.thanhTienSauCK)}
                                         </Stack>
                                     </Stack>
                                 </Stack>
@@ -340,13 +293,6 @@ export default function HoaHongNhanVienHoaDon({
                                             sx={{ borderBottom: '1px dashed #cccc', padding: '8px' }}
                                             onClick={() => ChoseNhanVien(nvien)}>
                                             <Stack>
-                                                {/* {utils.checkNull(nvien?.avatar) ? (
-                                                    <BadgeFistCharOfName
-                                                        firstChar={utils.getFirstLetter(nvien?.tenNhanVien ?? '')}
-                                                    />
-                                                ) : (
-                                                    <Avatar sx={{ width: 40, height: 40 }} src={nvien?.avatar} />
-                                                )} */}
                                                 <Avatar
                                                     sx={{
                                                         width: 40,
@@ -380,6 +326,7 @@ export default function HoaHongNhanVienHoaDon({
                                     <Stack flex={1}>STT</Stack>
                                     <Stack flex={5}>Nhân viên</Stack>
                                     <Stack flex={3}>Chiết khấu</Stack>
+                                    <Stack flex={1}>%</Stack>
                                     <Stack flex={3}>Tiền được nhận</Stack>
                                     <Stack flex={1} alignItems={'end'}>
                                         <ClearOutlinedIcon sx={{ color: 'red' }} onClick={removeAllNVienChosed} />
@@ -399,88 +346,45 @@ export default function HoaHongNhanVienHoaDon({
                                                     variant="standard"
                                                     thousandSeparator={'.'}
                                                     decimalSeparator={','}
-                                                    onClick={(e: any) => handleClick(e, nv)}
-                                                    value={nv.loaiChietKhau !== 3 ? nv.ptChietKhau : nv.tienChietKhau}
+                                                    value={nv.laPhanTram ? nv.ptChietKhau : nv.tienChietKhau}
                                                     customInput={TextField}
                                                     InputProps={{
                                                         inputProps: {
                                                             style: { textAlign: 'right' }
                                                         }
                                                     }}
-                                                    onChange={(e) => changePTramChietKhau(e.target.value)}
+                                                    inputRef={(el: any) => (refInputCK.current[index] = el)}
+                                                    onChange={(e) => changeGtriChietKhau(e.target.value, nv)}
+                                                    onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) =>
+                                                        gotoNextInputCK(
+                                                            e,
+                                                            refInputCK.current[
+                                                                index === lstNVThucHien.length - 1 ? 0 : index + 1
+                                                            ]
+                                                        )
+                                                    }
                                                 />
                                             </Stack>
-
-                                            <Popover
-                                                anchorOrigin={{
-                                                    vertical: 'bottom',
-                                                    horizontal: 'left'
-                                                }}
-                                                open={openDivChietKhau}
-                                                anchorEl={anchorEl}
-                                                onClose={() => setAnchorEl(null)}>
-                                                <Stack padding={1}>
-                                                    <Stack direction={'row'} padding={'8px'} alignItems={'center'}>
-                                                        <Typography flex={4} fontSize={'13px'} fontWeight={600}>
-                                                            Chiết khấu
-                                                        </Typography>
-                                                        <Stack flex={6}>
-                                                            <NumericFormat
-                                                                fullWidth
-                                                                autoFocus
-                                                                size="small"
-                                                                variant="standard"
-                                                                thousandSeparator={'.'}
-                                                                decimalSeparator={','}
-                                                                value={
-                                                                    itemNVienFocus.loaiChietKhau !== 3
-                                                                        ? itemNVienFocus.ptChietKhau
-                                                                        : itemNVienFocus.tienChietKhau
-                                                                }
-                                                                customInput={TextField}
-                                                                InputProps={{
-                                                                    inputProps: {
-                                                                        style: { textAlign: 'right' }
-                                                                    }
-                                                                }}
-                                                                onChange={(e) => changePTramChietKhau(e.target.value)}
-                                                            />
-                                                        </Stack>
-                                                    </Stack>
-                                                    <Stack direction={'row'} spacing={1} fontSize={'13px'}>
-                                                        <Stack direction={'row'} alignItems={'center'}>
-                                                            <Radio
-                                                                size="small"
-                                                                checked={itemNVienFocus.loaiChietKhau === 1}
-                                                                onClick={() => changeLoaiChietKhau(1)}
-                                                            />
-                                                            <Typography fontSize={'13px'} fontWeight={600}>
-                                                                % Thực thu
-                                                            </Typography>
-                                                        </Stack>
-                                                        <Stack direction={'row'} alignItems={'center'}>
-                                                            <Radio
-                                                                size="small"
-                                                                checked={itemNVienFocus.loaiChietKhau === 2}
-                                                                onClick={() => changeLoaiChietKhau(2)}
-                                                            />
-                                                            <Typography fontSize={'13px'} fontWeight={600}>
-                                                                % Doanh thu
-                                                            </Typography>
-                                                        </Stack>
-                                                        <Stack direction={'row'} alignItems={'center'}>
-                                                            <Radio
-                                                                size="small"
-                                                                checked={itemNVienFocus.loaiChietKhau === 3}
-                                                                onClick={() => changeLoaiChietKhau(3)}
-                                                            />
-                                                            <Typography fontSize={'13px'} fontWeight={600}>
-                                                                VND
-                                                            </Typography>
-                                                        </Stack>
-                                                    </Stack>
-                                                </Stack>
-                                            </Popover>
+                                        </Stack>
+                                        <Stack direction={'row'} flex={1}>
+                                            {nv?.laPhanTram ? (
+                                                <Avatar
+                                                    style={{
+                                                        width: 25,
+                                                        height: 25,
+                                                        fontSize: '12px',
+                                                        backgroundColor: 'var(--color-main)'
+                                                    }}
+                                                    onClick={() => onClickPtramVND(true, nv)}>
+                                                    %
+                                                </Avatar>
+                                            ) : (
+                                                <Avatar
+                                                    style={{ width: 25, height: 25, fontSize: '12px' }}
+                                                    onClick={() => onClickPtramVND(false, nv)}>
+                                                    đ
+                                                </Avatar>
+                                            )}
                                         </Stack>
                                         <Stack flex={3} alignItems={'end'}>
                                             <NumericFormat
@@ -526,7 +430,7 @@ export default function HoaHongNhanVienHoaDon({
                     <Button variant="outlined" onClick={onClose}>
                         Bỏ qua
                     </Button>
-                    <Button variant="contained" onClick={saveHoaHongHD}>
+                    <Button variant="contained" onClick={saveHoaHongDV}>
                         Cập nhật
                     </Button>
                 </DialogActions>
