@@ -8,6 +8,9 @@ import { CreateBookingDto } from '../services/dat-lich/dto/CreateBookingDto';
 import { FullCalendarEvent } from '../services/dat-lich/dto/FullCalendarEvent';
 import { format as formatDate, parse } from 'date-fns';
 import suggestStore from './suggestStore';
+import utils from '../utils/utils';
+import { Guid } from 'guid-typescript';
+
 class BookingStore {
     selectedDate: string = new Date().toString();
     listBooking!: BookingGetAllItemDto[];
@@ -62,6 +65,9 @@ class BookingStore {
         this.createOrEditBookingDto = result;
     }
     async onCreateOrEditBooking(input: CreateBookingDto) {
+        if (utils.checkNull(input.idNhanVien)) {
+            input.idNhanVien = null;
+        }
         const result = await datLichService.CreateOrEditBooking(input);
         this.isShowCreateOrEdit = false;
         await this.createNewBookingDto();
