@@ -9,6 +9,7 @@ export default class PageHoaDonChiTietDto extends HoaDonChiTietDto {
     idNhomHangHoa = null;
     idHangHoa? = null;
     expanded? = false; // sử dụng khi cập nhật chi tiết, mở rộng để xem đầy đủ thông tin giỏ hàng
+    tenNVThucHiens = '';
 
     constructor({
         id = Guid.create().toString(),
