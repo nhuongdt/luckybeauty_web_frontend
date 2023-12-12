@@ -3,16 +3,11 @@ import { useState, useEffect } from 'react';
 import './modelNhanVienThucHien.css';
 import {
     Button,
-    ButtonGroup,
     Stack,
     Typography,
     Grid,
     Box,
     TextField,
-    IconButton,
-    Select,
-    MenuItem,
-    FormControl,
     Avatar,
     Dialog,
     DialogTitle,
@@ -21,22 +16,14 @@ import {
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Search } from '@mui/icons-material';
 import utils from '../../utils/utils';
-import { ReactComponent as Close } from '../../images/close-square.svg';
-import { PagedResultDto } from '../../services/dto/pagedResultDto';
-
 import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
-
-import NhanVienService from '../../services/nhan-vien/nhanVienService';
-import { dbDexie } from '../../lib/dexie/dexieDB';
 import NhanVienThucHienDto from '../../services/nhan_vien_thuc_hien/NhanVienThucHienDto';
-import HoaHongDichVuServices from '../../services/nhan_vien_thuc_hien/HoaHongDichVuServices';
-import { ReactComponent as CheckIcon } from '../../images/checkIcon.svg';
-import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
 import { PagedNhanSuRequestDto } from '../../services/nhan-vien/dto/PagedNhanSuRequestDto';
 import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 import DialogButtonClose from '../../components/Dialog/ButtonClose';
-const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
+import chietKhauDichVuService from '../../services/hoa_hong/chiet_khau_dich_vu/chietKhauDichVuService';
+const ModelNhanVienThucHien = ({ triggerModal, handleSave, idChiNhanh }: any) => {
     const [isShow, setIsShow] = useState(false);
     const [txtSearch, setTxtSearch] = useState('');
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
@@ -104,7 +91,11 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
     }, [txtSearch]);
 
     const ChoseNhanVien = async (item: NhanSuItemDto) => {
-        const hoahongDV = await HoaHongDichVuServices.GetHoaHongNV_theoDichVu(item.id, triggerModal.item.idDonViQuyDoi);
+        const hoahongDV = await chietKhauDichVuService.GetHoaHongNV_theoDichVu(
+            item.id,
+            triggerModal.item.idDonViQuyDoi,
+            idChiNhanh
+        );
 
         const newNV = new NhanVienThucHienDto({
             idNhanVien: item.id,
