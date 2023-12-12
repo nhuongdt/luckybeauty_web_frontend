@@ -81,6 +81,8 @@ const LichHen: React.FC = () => {
         setModalVisible(!modalVisible);
         await sendNotification();
         await notificationStore.GetUserNotification();
+        // Nếu đang mở xem thông tin lịch hẹn: không đóng form mà thực hiện gọi lại
+        await bookingStore.getBookingInfo(bookingStore.bookingInfoDto?.id);
     };
     useEffect(() => {
         createHubConnection();
