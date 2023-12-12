@@ -2,6 +2,7 @@ import NhanSuDto from '../nhan-vien/dto/nhanSuDto';
 export default class NhanVienThucHienDto extends NhanSuDto {
     idHoaDon?: string | null = null;
     idHoaDonChiTiet?: string | null = null;
+    idQuyHoaDon?: string | null = null;
     idNhanVien? = '';
     ptChietKhau = 0;
     tienChietKhau = 0;
@@ -10,11 +11,13 @@ export default class NhanVienThucHienDto extends NhanSuDto {
     tinhHoaHongTruocCK = false;
     loaiChietKhau = 1; // nvThucHien
     chietKhauMacDinh? = 0;
+    laPhanTram = true;
     constructor({
         idHoaDon = null,
         idHoaDonChiTiet = null,
         idNhanVien = '',
         ptChietKhau = 0,
+        laPhanTram = true,
         tienChietKhau = 0,
         heSo = 1,
         chiaDeuChietKhau = false,
@@ -31,6 +34,7 @@ export default class NhanVienThucHienDto extends NhanSuDto {
         this.idHoaDon = idHoaDon;
         this.idHoaDonChiTiet = idHoaDonChiTiet;
         this.idNhanVien = idNhanVien;
+        this.laPhanTram = laPhanTram;
         this.ptChietKhau = ptChietKhau;
         this.tienChietKhau = tienChietKhau;
         this.heSo = heSo;
