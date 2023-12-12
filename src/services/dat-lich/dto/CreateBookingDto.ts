@@ -5,7 +5,7 @@ export interface CreateBookingDto {
     trangThai: number;
     ghiChu: string;
     idKhachHang: string;
-    idNhanVien: string;
+    idNhanVien: string | null;
     idDonViQuiDoi: string;
     idChiNhanh: string;
 }
