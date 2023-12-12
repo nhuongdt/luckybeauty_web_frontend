@@ -7,13 +7,12 @@ import {
     DialogTitle,
     FormGroup,
     Grid,
-    IconButton,
     MenuItem,
     Select,
     TextField,
     Typography,
     Autocomplete,
-    InputAdornment,
+    Stack,
     InputLabel,
     FormControl,
     Avatar
@@ -39,6 +38,8 @@ import { SuggestDichVuDto } from '../../../services/suggests/dto/SuggestDichVuDt
 import { SuggestNhanVienDichVuDto } from '../../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import DatePickerRequiredCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
 import { format as formatDate } from 'date-fns';
+import AutocompleteCustomer from '../../../components/Autocomplete/Customer';
+import DialogButtonClose from '../../../components/Dialog/ButtonClose';
 interface ICreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
@@ -79,42 +80,30 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                       autoHideDuration: 3000
                   }
               )
-            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+            : enqueueSnackbar('Có lỗi xảy ra vui lòng thử lại sau!', {
                   variant: 'error',
                   autoHideDuration: 3000
               });
         this.props.onOk(createResult.id);
     };
+
     render(): ReactNode {
         const { visible, onCancel } = this.props;
         const initialValues = bookingStore.createOrEditBookingDto;
         return (
             <Dialog open={visible} onClose={onCancel} fullWidth maxWidth="md">
-                <DialogTitle sx={{ borderBottom: '1px solid #E6E1E6' }}>
-                    <Typography
-                        fontSize="24px"
-                        //color="rgb(51, 50, 51)"
-                        fontWeight="700">
-                        {initialValues.id === '' || initialValues.id === AppConsts.guidEmpty
-                            ? 'Thêm cuộc hẹn'
-                            : 'Cập hật lịch hẹn'}
-                    </Typography>
-                    <IconButton
-                        aria-label="close"
-                        onClick={onCancel}
-                        sx={{
-                            position: 'absolute',
-                            right: 8,
-                            top: 8,
-                            '&:hover svg': {
-                                filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
-                            }
-                        }}>
-                        <CloseIcon />
-                    </IconButton>
+                <DialogTitle className="modal-title">
+                    {initialValues.id === '' || initialValues.id === AppConsts.guidEmpty
+                        ? 'Thêm cuộc hẹn'
+                        : 'Cập nhật lịch hẹn'}
+                    <DialogButtonClose onClose={onCancel} />
                 </DialogTitle>
-                <DialogContent sx={{ pr: '0', pb: '0' }}>
-                    <Formik initialValues={initialValues} onSubmit={this.handleSubmit} validationSchema={rules}>
+                <DialogContent sx={{ pr: '0', pb: '0', pt: '16px!important' }}>
+                    <Formik
+                        initialValues={initialValues}
+                        onSubmit={this.handleSubmit}
+                        validationSchema={rules}
+                        enableReinitialize>
                         {({ errors, touched, values, handleChange, setFieldValue, isSubmitting }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
@@ -124,87 +113,45 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                 }}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={5}>
-                                        {/* <FormGroup> */}
                                         <Box
                                             display={'flex'}
                                             justifyContent={'space-between'}
                                             width={'100%'}
                                             height={'100%'}
                                             flexDirection={'column'}>
-                                            <Box>
-                                                <Autocomplete
-                                                    sx={{ pt: '24px' }}
-                                                    options={suggestStore.suggestKhachHang}
-                                                    getOptionLabel={(option) =>
-                                                        `${option.tenKhachHang} ${
-                                                            option.soDienThoai !== '' ? option.soDienThoai : ''
-                                                        }`
-                                                    }
-                                                    value={
-                                                        suggestStore.suggestKhachHang?.filter(
-                                                            (x) => x.id == values.idKhachHang
-                                                        )?.[0] ??
-                                                        ({
-                                                            id: '',
-                                                            soDienThoai: '',
-                                                            tenKhachHang: ''
-                                                        } as SuggestKhachHangDto)
-                                                    }
-                                                    size="small"
-                                                    fullWidth
-                                                    disablePortal
-                                                    onChange={(event, value) => {
-                                                        setFieldValue('idKhachHang', value ? value.id : ''); // Cập nhật giá trị id trong Formik
+                                            <Stack direction={'row'} spacing={0.5}>
+                                                <AutocompleteCustomer
+                                                    idChosed={values.idKhachHang}
+                                                    handleChoseItem={(item: any) => {
+                                                        {
+                                                            setFieldValue('idKhachHang', item?.id); // Cập nhật giá trị id trong Formik
+                                                        }
                                                     }}
-                                                    placeholder="Chọn khách hàng"
-                                                    renderInput={(params) => (
-                                                        <div
-                                                            style={{
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                gap: '8px'
-                                                            }}>
-                                                            <TextField
-                                                                {...params}
-                                                                placeholder="Chọn khách hàng"
-                                                                InputProps={{
-                                                                    ...params.InputProps,
-                                                                    startAdornment: (
-                                                                        <>
-                                                                            {params.InputProps.startAdornment}
-                                                                            <InputAdornment position="start">
-                                                                                <SearchIcon />
-                                                                            </InputAdornment>
-                                                                        </>
-                                                                    )
-                                                                }}
-                                                            />
-                                                            <Button
-                                                                size="small"
-                                                                variant="text"
-                                                                sx={{
-                                                                    color: 'var(--color-main)',
-                                                                    '& svg': {
-                                                                        filter: 'var(--color-hoverIcon)',
-                                                                        width: '24px',
-                                                                        height: '24px'
-                                                                    },
-                                                                    minWidth: '36px',
-                                                                    width: '36px',
-                                                                    height: '36px',
-                                                                    borderRadius: '4px',
-                                                                    border: '1px solid #319DFF'
-                                                                }}
-                                                                onClick={this.onOpenKhachHangModal}>
-                                                                <AddIcon />
-                                                            </Button>
-                                                        </div>
-                                                    )}
+                                                    error={errors.idKhachHang && touched.idKhachHang}
+                                                    helperText={errors.idKhachHang}
                                                 />
-                                                {errors.idKhachHang && touched.idKhachHang && (
-                                                    <small className="text-danger">{errors.idKhachHang}</small>
-                                                )}
-                                            </Box>
+
+                                                <Button
+                                                    size="small"
+                                                    variant="text"
+                                                    title="Thêm khách hàng"
+                                                    sx={{
+                                                        color: 'var(--color-main)',
+                                                        '& svg': {
+                                                            filter: 'var(--color-hoverIcon)',
+                                                            width: '24px',
+                                                            height: '24px'
+                                                        },
+                                                        minWidth: '36px',
+                                                        width: '36px',
+                                                        height: '36px',
+                                                        borderRadius: '4px',
+                                                        border: '1px solid #319DFF'
+                                                    }}
+                                                    onClick={this.onOpenKhachHangModal}>
+                                                    <AddIcon />
+                                                </Button>
+                                            </Stack>
                                             <Box
                                                 display={'flex'}
                                                 justifyContent={'center'}
@@ -280,7 +227,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                             <TextField
                                                                 {...params}
                                                                 label={
-                                                                    <Typography variant="subtitle2" fontSize="14px">
+                                                                    <Typography variant="subtitle2" fontSize="13px">
                                                                         Dịch vụ <span className="text-danger">*</span>
                                                                     </Typography>
                                                                 }
@@ -356,7 +303,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                                 <TextField
                                                                     {...params}
                                                                     label={
-                                                                        <Typography variant="body1" fontSize="14px">
+                                                                        <Typography variant="body2">
                                                                             Nhân viên
                                                                         </Typography>
                                                                     }
@@ -431,7 +378,8 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                         position: 'sticky',
                                         bgcolor: '#fff',
                                         bottom: '0',
-                                        left: '0'
+                                        left: '0',
+                                        pt: 2
                                     }}>
                                     <Grid container>
                                         <Grid item xs={12} sx={{ bgcolor: '#F9FAFC' }}>
@@ -488,8 +436,9 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                     visible={this.state.isShowKhachHangModal}
                     formRef={khachHangStore.createEditKhachHangDto}
                     onCancel={this.onOpenKhachHangModal}
-                    onOk={async (e: any) => {
-                        await suggestStore.getSuggestKhachHang();
+                    onOk={(e: any) => {
+                        // await suggestStore.getSuggestKhachHang();
+                        // todo: assign aagain idKhachHang?
                         this.onOpenKhachHangModal();
                     }}
                     title="Thêm mới khách hàng"
