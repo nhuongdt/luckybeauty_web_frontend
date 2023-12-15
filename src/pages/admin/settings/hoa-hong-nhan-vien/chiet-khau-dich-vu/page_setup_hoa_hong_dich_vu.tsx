@@ -2,11 +2,10 @@ import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Grid, Box, Stack, Typography, TextField, Button, Pagination, IconButton, Avatar, Link } from '@mui/material';
-import VerticalAlignBottomOutlinedIcon from '@mui/icons-material/VerticalAlignBottomOutlined';
-import { Add, LocalOfferOutlined, Search } from '@mui/icons-material';
+import { Add, Search } from '@mui/icons-material';
+import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
+import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import { PropConfirmOKCancel } from '../../../../../utils/PropParentToChild';
-import ProductService from '../../../../../services/product/ProductService';
-import { PagedProductSearchDto } from '../../../../../services/product/dto';
 import utils from '../../../../../utils/utils';
 import fileDowloadService from '../../../../../services/file-dowload.service';
 import ConfirmDelete from '../../../../../components/AlertDialog/ConfirmDelete';
@@ -15,18 +14,19 @@ import { TextTranslate } from '../../../../../components/TableLanguage';
 import { OptionPage } from '../../../../../components/Pagination/OptionPage';
 import { LabelDisplayedRows } from '../../../../../components/Pagination/LabelDisplayedRows';
 import { PagedResultDto } from '../../../../../services/dto/pagedResultDto';
-import { ChietKhauDichVuItemDto } from '../../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/ChietKhauDichVuItemDto';
+import { ChietKhauDichVuItemDto_TachRiengCot } from '../../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/ChietKhauDichVuItemDto';
 import nhanVienService from '../../../../../services/nhan-vien/nhanVienService';
 import { PagedNhanSuRequestDto } from '../../../../../services/nhan-vien/dto/PagedNhanSuRequestDto';
 import NhanSuItemDto from '../../../../../services/nhan-vien/dto/nhanSuItemDto';
-import { ParamSearchDto } from '../../../../../services/dto/ParamSearchDto';
 import { PagedRequestDto } from '../../../../../services/dto/pagedRequestDto';
 import chietKhauDichVuService from '../../../../../services/hoa_hong/chiet_khau_dich_vu/chietKhauDichVuService';
 import Cookies from 'js-cookie';
 import { Guid } from 'guid-typescript';
-import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
 import { NumericFormat } from 'react-number-format';
 import ModalSetupHoaHongDichVu from './modal_setup_hoa_hong_dich_vu';
+import { debounce } from '@mui/material/utils';
+import { CreateOrEditChietKhauDichVuDto } from '../../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/CreateOrEditChietKhauDichVuDto';
+import { LoaiHoaHongDichVu } from '../../../../../lib/appconst';
 
 export const PopperApplyNhom = () => {
     return <></>;
@@ -42,16 +42,20 @@ export default function PageSetupHoaHongDichVu() {
     const [idNhanVienChosed, setIdNhanVienChosed] = useState<string>(Guid.EMPTY);
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
+    const [rowChosed, setRowChosed] = useState<ChietKhauDichVuItemDto_TachRiengCot | null>(null);
+    const idChiNhanh = Cookies.get('IdChiNhanh') ?? Guid.EMPTY;
 
-    const [pageResultChietKhauDV, setPageResultChietKhauDV] = useState<PagedResultDto<ChietKhauDichVuItemDto>>({
+    const [pageResultChietKhauDV, setPageResultChietKhauDV] = useState<
+        PagedResultDto<ChietKhauDichVuItemDto_TachRiengCot>
+    >({
         items: [],
         totalCount: 0,
-        totalPage: 0
-    } as PagedResultDto<ChietKhauDichVuItemDto>);
+        totalPage: 1
+    } as PagedResultDto<ChietKhauDichVuItemDto_TachRiengCot>);
 
     const [paramSearch, setParamSearch] = useState<PagedRequestDto>({
         skipCount: 1,
-        maxResultCount: 50,
+        maxResultCount: 10,
         keyword: '',
         sortBy: 'tenNhanVien'
     } as PagedRequestDto);
@@ -67,14 +71,13 @@ export default function PageSetupHoaHongDichVu() {
     };
 
     const getListSetupHoaHongDV = async () => {
-        const idChiNhanh = Cookies.get('IdChiNhanh')?.toString() ?? undefined;
-        const data = await chietKhauDichVuService.GetAccordingByNhanVien(paramSearch, idNhanVienChosed, idChiNhanh);
+        const data = await chietKhauDichVuService.GetAllSetup_HoaHongDichVu(paramSearch, idNhanVienChosed, idChiNhanh);
         console.log(' pageResultChietKhauDV', data.items, 'allNhanVien ', allNhanVien);
 
         setPageResultChietKhauDV({
             items: data.items,
             totalCount: data.totalCount,
-            totalPage: 1
+            totalPage: Math.ceil(data.totalCount / paramSearch.maxResultCount)
         });
     };
 
@@ -119,6 +122,10 @@ export default function PageSetupHoaHongDichVu() {
         searchNhanVien();
     }, [txtSearchNV]);
 
+    useEffect(() => {
+        getListSetupHoaHongDV();
+    }, [paramSearch.skipCount, paramSearch.maxResultCount, idNhanVienChosed]);
+
     const handleChangePage = (event: any, value: number) => {
         setParamSearch({
             ...paramSearch,
@@ -150,31 +157,220 @@ export default function PageSetupHoaHongDichVu() {
     };
 
     const deleteRow = async () => {
-        //
+        let arrIdNhanVienDelete: string[] = [],
+            arrIdQuyDoiDelete: string[] = [];
+        let totalRowDelete = 1;
+        if (rowChosed === null) {
+            // delete all: get all idNhanVien, idQuyDoi of list
+            arrIdNhanVienDelete = pageResultChietKhauDV.items.map((x) => {
+                return x.idNhanVien;
+            });
+            arrIdQuyDoiDelete = pageResultChietKhauDV.items.map((x) => {
+                return x.idDonViQuiDoi;
+            });
+            totalRowDelete = pageResultChietKhauDV.totalCount;
+        } else {
+            arrIdNhanVienDelete = [rowChosed?.idNhanVien as string];
+            arrIdQuyDoiDelete = [rowChosed?.idDonViQuiDoi as string];
+        }
+        const deleteOK = await chietKhauDichVuService.DeleteSetup_DichVu_ofNhanVien(
+            arrIdNhanVienDelete,
+            arrIdQuyDoiDelete
+        );
+        if (deleteOK) {
+            setObjAlert({ ...objAlert, show: true, mes: 'Xóa thành công', type: 1 });
+        }
+        setPageResultChietKhauDV({
+            items: pageResultChietKhauDV.items.filter(
+                (x) =>
+                    !(
+                        arrIdNhanVienDelete.includes(x.idNhanVien) &&
+                        arrIdQuyDoiDelete.includes(x.idDonViQuiDoi as string)
+                    )
+            ),
+            totalCount: pageResultChietKhauDV.totalCount - totalRowDelete,
+            totalPage: Math.ceil((pageResultChietKhauDV.totalCount - totalRowDelete) / paramSearch.maxResultCount)
+        });
+
+        setInforDeleteProduct({
+            ...inforDeleteProduct,
+            show: false
+        });
+        // reset rowChosed
+        setRowChosed(null);
+    };
+
+    const onClickDeleteRow = async (rowItem: ChietKhauDichVuItemDto_TachRiengCot) => {
+        setRowChosed(rowItem);
+        setInforDeleteProduct({
+            ...inforDeleteProduct,
+            show: true,
+            title: 'Thông báo xóa',
+            mes: `Bạn có chắc chắn muốn xóa cài đặt dịch vụ ${rowItem.tenDichVu} của nhân viên ${rowItem.tenNhanVien} không?`
+        });
+    };
+
+    const onClickDeleteAll = async () => {
+        setInforDeleteProduct({
+            ...inforDeleteProduct,
+            show: true,
+            title: 'Thông báo xóa',
+            mes: `Bạn có chắc chắn muốn xóa tất cả cài đặt này không?`
+        });
     };
 
     const exportToExcel = async () => {
-        //fileDowloadService.downloadExportFile(result);
+        const param = { ...paramSearch };
+        param.skipCount = 1;
+        param.maxResultCount = pageResultChietKhauDV.totalCount;
+        const result = await chietKhauDichVuService.ExportToExcel_CaiDat_HoaHongDV(
+            paramSearch,
+            idNhanVienChosed,
+            idChiNhanh
+        );
+        fileDowloadService.downloadExportFile(result);
     };
 
-    const downloadImportTemplate = async () => {
-        // fileDowloadService.downloadExportFile(result);
+    const refInputThucHien: any = useRef([]);
+    const refInputTuVan: any = useRef([]);
+    const gotoNextInputThucHien = (e: React.KeyboardEvent<HTMLDivElement>, targetElem: any) => {
+        if (e.key === 'Enter' && targetElem) {
+            targetElem.focus();
+        }
     };
-
-    const refInputCK: any = useRef([]);
-    const refTienChietKhau: any = useRef([]);
-    const gotoNextInputCK = (e: React.KeyboardEvent<HTMLDivElement>, targetElem: any) => {
+    const gotoNextInputTuVan = (e: React.KeyboardEvent<HTMLDivElement>, targetElem: any) => {
         if (e.key === 'Enter' && targetElem) {
             targetElem.focus();
         }
     };
 
-    const changeGtriChietKhau = (gtriNew: string, itemCK: ChietKhauDichVuItemDto) => {
+    const updateHoaHongDV = useRef(
+        debounce(async (input: CreateOrEditChietKhauDichVuDto) => {
+            const data = await chietKhauDichVuService.UpdateSetup_HoaHongDichVu_ofNhanVien(input);
+            if (data) {
+                setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật thành công', type: 1 });
+            }
+        }, 500)
+    ).current;
+
+    const changeGtriChietKhau = async (
+        gtriNew: string,
+        itemCK: ChietKhauDichVuItemDto_TachRiengCot,
+        loaiChietKhau: number
+    ) => {
         const gtriCK = utils.formatNumberToFloat(gtriNew);
+        // get laPhanTram old: used to update
+        let laPhanTram = false;
+        switch (loaiChietKhau) {
+            case LoaiHoaHongDichVu.THUC_HIEN:
+                {
+                    laPhanTram = itemCK.laPhanTram_HoaHongThucHien;
+                }
+                break;
+            case LoaiHoaHongDichVu.YEU_CAU_THUC_HIEN:
+                {
+                    laPhanTram = itemCK.laPhanTram_HoaHongYeuCauThucHien;
+                }
+                break;
+            case LoaiHoaHongDichVu.TU_VAN:
+                {
+                    laPhanTram = itemCK.laPhanTram_HoaHongTuVan;
+                }
+                break;
+        }
+        const objUpdate = {
+            idChiNhanh: idChiNhanh,
+            idNhanViens: [itemCK.idNhanVien],
+            idDonViQuiDoi: itemCK.idDonViQuiDoi,
+            loaiChietKhau: loaiChietKhau,
+            giaTri: gtriCK,
+            laPhanTram: laPhanTram
+        } as CreateOrEditChietKhauDichVuDto;
+        await updateHoaHongDV(objUpdate);
+
+        setPageResultChietKhauDV({
+            ...pageResultChietKhauDV,
+            items: pageResultChietKhauDV.items.map((x) => {
+                if (x.idNhanVien === itemCK.idNhanVien && x.idDonViQuiDoi === itemCK.idDonViQuiDoi) {
+                    if (loaiChietKhau === LoaiHoaHongDichVu.THUC_HIEN) {
+                        return { ...x, hoaHongThucHien: gtriCK };
+                    } else {
+                        if (loaiChietKhau === LoaiHoaHongDichVu.YEU_CAU_THUC_HIEN) {
+                            return {
+                                ...x,
+                                hoaHongYeuCauThucHien: gtriCK
+                            };
+                        } else {
+                            return { ...x, hoaHongTuVan: gtriCK };
+                        }
+                    }
+                } else {
+                    return x;
+                }
+            })
+        });
     };
-    const onClickPtramVND = (itemCK: ChietKhauDichVuItemDto, laPhanTram: boolean) => {
-        //
-        console.log('itemCK ', itemCK);
+    const onClickPtramVND = async (
+        itemCK: ChietKhauDichVuItemDto_TachRiengCot,
+        laPhanTram: boolean,
+        loaiChietKhau: number
+    ) => {
+        // get gtriCK old: used to update
+        let gtriCKOld = 0;
+        switch (loaiChietKhau) {
+            case LoaiHoaHongDichVu.THUC_HIEN:
+                {
+                    gtriCKOld = itemCK.hoaHongThucHien;
+                }
+                break;
+            case LoaiHoaHongDichVu.YEU_CAU_THUC_HIEN:
+                {
+                    gtriCKOld = itemCK.hoaHongYeuCauThucHien;
+                }
+                break;
+            case LoaiHoaHongDichVu.TU_VAN:
+                {
+                    gtriCKOld = itemCK.hoaHongTuVan;
+                }
+                break;
+        }
+
+        const objUpdate = {
+            idChiNhanh: idChiNhanh,
+            idNhanViens: [itemCK.idNhanVien],
+            idDonViQuiDoi: itemCK.idDonViQuiDoi,
+            loaiChietKhau: loaiChietKhau,
+            giaTri: gtriCKOld,
+            laPhanTram: laPhanTram
+        } as CreateOrEditChietKhauDichVuDto;
+        await updateHoaHongDV(objUpdate);
+
+        setPageResultChietKhauDV({
+            ...pageResultChietKhauDV,
+            items: pageResultChietKhauDV.items.map((x) => {
+                if (x.idNhanVien === itemCK.idNhanVien && x.idDonViQuiDoi === itemCK.idDonViQuiDoi) {
+                    if (loaiChietKhau === LoaiHoaHongDichVu.THUC_HIEN) {
+                        return { ...x, laPhanTram_HoaHongThucHien: laPhanTram };
+                    } else {
+                        if (loaiChietKhau === LoaiHoaHongDichVu.YEU_CAU_THUC_HIEN) {
+                            return {
+                                ...x,
+                                laPhanTram_HoaHongYeuCauThucHien: laPhanTram
+                            };
+                        } else {
+                            return { ...x, laPhanTram_HoaHongTuVan: laPhanTram };
+                        }
+                    }
+                } else {
+                    return x;
+                }
+            })
+        });
+    };
+
+    const saveOKHoaHongDV = async () => {
+        await getListSetupHoaHongDV();
+        setIsShowModalSetup(false);
     };
 
     const columns: GridColDef[] = [
@@ -235,17 +431,34 @@ export default function PageSetupHoaHongDichVu() {
                                 style: { textAlign: 'right' }
                             }
                         }}
-                        // inputRef={(el: any) => (refInputCK.current[params.row.id] = el)}
-                        onChange={(e) => changeGtriChietKhau(e.target.value, params.row)}
-                        // onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) =>
-                        //     gotoNextInputCK(
-                        //         e,
-                        //         refInputCK.current[index === pageResultChietKhauDV?.totalCount - 1 ? 0 : index + 1]
-                        //     )
-                        // }
+                        onChange={(e) => changeGtriChietKhau(e.target.value, params.row, LoaiHoaHongDichVu.THUC_HIEN)}
+                        inputRef={(el: any) =>
+                            (refInputThucHien.current[params.row.idNhanVien + '_' + params.row.idDonViQuiDoi] = el)
+                        }
+                        onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) => {
+                            // find id of row next
+                            const indexCurrent = pageResultChietKhauDV.items.findIndex(
+                                (x) =>
+                                    x.idNhanVien + '_' + x.idDonViQuiDoi ===
+                                    params.row.idNhanVien + '_' + params.row.idDonViQuiDoi
+                            );
+                            let indexNext = indexCurrent + 1;
+                            if (indexNext > pageResultChietKhauDV.items.length - 1) {
+                                indexNext = 0;
+                            }
+                            const rowNext = pageResultChietKhauDV.items.filter(
+                                (x: ChietKhauDichVuItemDto_TachRiengCot, index: number) => {
+                                    return index === indexNext;
+                                }
+                            );
+                            gotoNextInputThucHien(
+                                e,
+                                refInputThucHien.current[rowNext[0].idNhanVien + '_' + rowNext[0].idDonViQuiDoi]
+                            );
+                        }}
                     />
                     <Stack>
-                        {params?.row?.laPhanTram ? (
+                        {params?.row?.laPhanTram_HoaHongThucHien ? (
                             <Avatar
                                 style={{
                                     width: 25,
@@ -253,13 +466,13 @@ export default function PageSetupHoaHongDichVu() {
                                     fontSize: '12px',
                                     backgroundColor: 'var(--color-main)'
                                 }}
-                                onClick={() => onClickPtramVND(params.row, true)}>
+                                onClick={() => onClickPtramVND(params.row, false, LoaiHoaHongDichVu.THUC_HIEN)}>
                                 %
                             </Avatar>
                         ) : (
                             <Avatar
                                 style={{ width: 25, height: 25, fontSize: '12px' }}
-                                onClick={() => onClickPtramVND(params.row, false)}>
+                                onClick={() => onClickPtramVND(params.row, true, LoaiHoaHongDichVu.THUC_HIEN)}>
                                 đ
                             </Avatar>
                         )}
@@ -289,17 +502,34 @@ export default function PageSetupHoaHongDichVu() {
                                 style: { textAlign: 'right' }
                             }
                         }}
-                        // inputRef={(el: any) => (refInputCK.current[params.row.id] = el)}
-                        onChange={(e) => changeGtriChietKhau(e.target.value, params.row)}
-                        // onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) =>
-                        //     gotoNextInputCK(
-                        //         e,
-                        //         refInputCK.current[index === pageResultChietKhauDV?.totalCount - 1 ? 0 : index + 1]
-                        //     )
-                        // }
+                        onChange={(e) => changeGtriChietKhau(e.target.value, params.row, LoaiHoaHongDichVu.TU_VAN)}
+                        inputRef={(el: any) =>
+                            (refInputTuVan.current[params.row.idNhanVien + '_' + params.row.idDonViQuiDoi] = el)
+                        }
+                        onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) => {
+                            // find id of row next
+                            const indexCurrent = pageResultChietKhauDV.items.findIndex(
+                                (x) =>
+                                    x.idNhanVien + '_' + x.idDonViQuiDoi ===
+                                    params.row.idNhanVien + '_' + params.row.idDonViQuiDoi
+                            );
+                            let indexNext = indexCurrent + 1;
+                            if (indexNext > pageResultChietKhauDV.items.length - 1) {
+                                indexNext = 0;
+                            }
+                            const rowNext = pageResultChietKhauDV.items.filter(
+                                (x: ChietKhauDichVuItemDto_TachRiengCot, index: number) => {
+                                    return index === indexNext;
+                                }
+                            );
+                            gotoNextInputTuVan(
+                                e,
+                                refInputTuVan.current[rowNext[0].idNhanVien + '_' + rowNext[0].idDonViQuiDoi]
+                            );
+                        }}
                     />
                     <Stack>
-                        {params?.row?.laPhanTram ? (
+                        {params?.row?.laPhanTram_HoaHongTuVan ? (
                             <Avatar
                                 style={{
                                     width: 25,
@@ -307,13 +537,13 @@ export default function PageSetupHoaHongDichVu() {
                                     fontSize: '12px',
                                     backgroundColor: 'var(--color-main)'
                                 }}
-                                onClick={() => onClickPtramVND(params.row, true)}>
+                                onClick={() => onClickPtramVND(params.row, false, LoaiHoaHongDichVu.TU_VAN)}>
                                 %
                             </Avatar>
                         ) : (
                             <Avatar
                                 style={{ width: 25, height: 25, fontSize: '12px' }}
-                                onClick={() => onClickPtramVND(params.row, false)}>
+                                onClick={() => onClickPtramVND(params.row, true, LoaiHoaHongDichVu.TU_VAN)}>
                                 đ
                             </Avatar>
                         )}
@@ -328,8 +558,18 @@ export default function PageSetupHoaHongDichVu() {
             flex: 0.2,
             headerAlign: 'center',
             align: 'center',
-            renderHeader: () => <ClearOutlinedIcon sx={{ color: 'red' }} titleAccess="Xóa tất cả" />,
-            renderCell: (params) => <ClearOutlinedIcon sx={{ color: 'red' }} titleAccess="Xóa dòng" />
+            sortable: false,
+            disableColumnMenu: true,
+            renderHeader: () => (
+                <ClearOutlinedIcon sx={{ color: 'red' }} titleAccess="Xóa tất cả" onClick={onClickDeleteAll} />
+            ),
+            renderCell: (params) => (
+                <ClearOutlinedIcon
+                    sx={{ color: 'red' }}
+                    titleAccess="Xóa dòng"
+                    onClick={() => onClickDeleteRow(params.row)}
+                />
+            )
         }
     ];
 
@@ -338,7 +578,7 @@ export default function PageSetupHoaHongDichVu() {
             <ConfirmDelete
                 isShow={inforDeleteProduct.show}
                 title={inforDeleteProduct.title}
-                mes={''}
+                mes={inforDeleteProduct.mes}
                 onOk={deleteRow}
                 onCancel={() => setInforDeleteProduct({ ...inforDeleteProduct, show: false })}></ConfirmDelete>
             <SnackbarAlert
@@ -350,6 +590,7 @@ export default function PageSetupHoaHongDichVu() {
                 isShow={isShowModalSetup}
                 allNhanVien={allNhanVien}
                 onClose={() => setIsShowModalSetup(false)}
+                onSaveOK={saveOKHoaHongDV}
             />
             <Grid container className="dich-vu-page" gap={4} paddingTop={2}>
                 <Grid item container alignItems="center" justifyContent="space-between">
@@ -374,6 +615,12 @@ export default function PageSetupHoaHongDichVu() {
                                             </IconButton>
                                         )
                                     }}
+                                    onChange={(event) =>
+                                        setParamSearch({
+                                            ...paramSearch,
+                                            keyword: event.target.value
+                                        })
+                                    }
                                     onKeyDown={(event) => {
                                         handleKeyDownTextSearch(event);
                                     }}
@@ -386,7 +633,7 @@ export default function PageSetupHoaHongDichVu() {
                             size="small"
                             onClick={exportToExcel}
                             variant="outlined"
-                            startIcon={<VerticalAlignBottomOutlinedIcon />}
+                            startIcon={<FileUploadOutlinedIcon />}
                             className="btnNhapXuat btn-outline-hover"
                             sx={{ bgcolor: '#fff!important', color: '#666466' }}>
                             Xuất
@@ -420,7 +667,7 @@ export default function PageSetupHoaHongDichVu() {
                                     Nhân viên
                                 </Typography>
 
-                                <Add
+                                {/* <Add
                                     sx={{
                                         transition: '.4s',
                                         height: '32px',
@@ -431,13 +678,12 @@ export default function PageSetupHoaHongDichVu() {
                                         border: '1px solid #cccc'
                                     }}
                                     onClick={() => showModalAddNhanVien()}
-                                />
+                                /> */}
                             </Box>
                             <Box
                                 sx={{
                                     overflow: 'auto',
                                     maxHeight: '66vh',
-                                    // padding: '0px 24px',
                                     '&::-webkit-scrollbar': {
                                         width: '7px'
                                     },
@@ -449,7 +695,7 @@ export default function PageSetupHoaHongDichVu() {
                                         bgcolor: 'var(--color-bg)'
                                     }
                                 }}>
-                                <Stack spacing={1} paddingTop={1}>
+                                <Stack paddingTop={1}>
                                     <TextField
                                         variant="standard"
                                         fullWidth
@@ -457,13 +703,28 @@ export default function PageSetupHoaHongDichVu() {
                                         InputProps={{ startAdornment: <Search /> }}
                                         onChange={(e) => setTxtSearchNV(e.target.value)}
                                     />
+                                    <Stack
+                                        padding={1}
+                                        sx={{ backgroundColor: 'var(--color-bg)', cursor: 'pointer' }}
+                                        onClick={() => setIdNhanVienChosed(Guid.EMPTY)}>
+                                        <Typography variant="body2" fontWeight={600}>
+                                            Tất cả
+                                        </Typography>
+                                    </Stack>
                                     <Stack sx={{ overflow: 'auto', maxHeight: 400 }}>
                                         {lstNhanVien?.map((nvien: NhanSuItemDto, index: number) => (
                                             <Stack
                                                 direction={'row'}
                                                 spacing={1}
                                                 key={index}
-                                                sx={{ borderBottom: '1px dashed #cccc', padding: '8px' }}
+                                                sx={{
+                                                    borderBottom: '1px dashed #cccc',
+                                                    padding: '8px',
+                                                    backgroundColor: idNhanVienChosed == nvien.id ? 'antiquewhite' : '',
+                                                    '&:hover': {
+                                                        bgcolor: 'var(--color-bg)'
+                                                    }
+                                                }}
                                                 onClick={() => setIdNhanVienChosed(nvien.id)}>
                                                 <Stack>
                                                     <Avatar
@@ -495,19 +756,18 @@ export default function PageSetupHoaHongDichVu() {
                             <DataGrid
                                 disableRowSelectionOnClick
                                 rowHeight={46}
+                                autoHeight={pageResultChietKhauDV.totalCount === 0}
                                 className={'data-grid-row'}
                                 rows={pageResultChietKhauDV.items}
                                 columns={columns}
                                 hideFooter
                                 localeText={TextTranslate}
+                                getRowId={(row) => row.idNhanVien + '_' + row.idDonViQuiDoi}
                             />
 
                             <Grid item container>
                                 <Grid item xs={4} md={4} lg={4} sm={4}>
-                                    <OptionPage
-                                        changeNumberOfpage={changeNumberOfpage}
-                                        totalRow={pageResultChietKhauDV.totalCount}
-                                    />
+                                    <OptionPage changeNumberOfpage={changeNumberOfpage} />
                                 </Grid>
                                 <Grid item xs={8} md={8} lg={8} sm={8}>
                                     <Stack direction="row" style={{ float: 'right' }}>
@@ -518,9 +778,8 @@ export default function PageSetupHoaHongDichVu() {
                                         />
                                         <Pagination
                                             shape="rounded"
-                                            // color="primary"
-                                            count={pageResultChietKhauDV.totalCount}
-                                            page={pageResultChietKhauDV.totalPage}
+                                            count={pageResultChietKhauDV.totalPage}
+                                            page={paramSearch.skipCount}
                                             defaultPage={paramSearch.skipCount}
                                             onChange={handleChangePage}
                                         />

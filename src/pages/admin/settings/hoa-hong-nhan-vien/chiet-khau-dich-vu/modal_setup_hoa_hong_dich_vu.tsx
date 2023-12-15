@@ -8,34 +8,44 @@ import {
     Checkbox,
     DialogTitle,
     Button,
-    DialogActions,
-    Link
+    DialogActions
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import utils from '../../../../../utils/utils';
 import NhanSuItemDto from '../../../../../services/nhan-vien/dto/nhanSuItemDto';
 import { useState, useEffect, useRef } from 'react';
 import { NumericFormat } from 'react-number-format';
-import { ParamSearchDto } from '../../../../../services/dto/ParamSearchDto';
 import { debounce } from '@mui/material/utils';
 import ProductService from '../../../../../services/product/ProductService';
 import { ModelHangHoaDto, PagedProductSearchDto } from '../../../../../services/product/dto';
 import DialogButtonClose from '../../../../../components/Dialog/ButtonClose';
+import SnackbarAlert from '../../../../../components/AlertDialog/SnackbarAlert';
+import chietKhauDichVuService from '../../../../../services/hoa_hong/chiet_khau_dich_vu/chietKhauDichVuService';
+import { ChietKhauDichVuDto_AddMultiple } from '../../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/CreateOrEditChietKhauDichVuDto';
+import Cookies from 'js-cookie';
+import { Guid } from 'guid-typescript';
 
-export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose }: any) {
-    const [txtSearch, setTxtSearch] = useState('');
+export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose, onSaveOK }: any) {
+    const [txtSearchNV, setTxtSearchNV] = useState('');
     const [txtSearchProduct, setTxtSearchProduct] = useState('');
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
     const [listProduct, setListProduct] = useState<ModelHangHoaDto[]>([]);
-    const [listProductChosed, setListProductChosed] = useState<ModelHangHoaDto[]>([]);
-    const [lstNhanVienChosed, setLstNhanVienChosed] = useState<NhanSuItemDto[]>([]);
+    const [arrIdQuyDoiChosed, setArrIdQuyDoiChosed] = useState<string[]>([]);
+    const [arrIdNhanVienChosed, setArrIdNhanVienChosed] = useState<string[]>([]);
 
     const [checkAllNVien, setCheckAllNVien] = useState(false);
     const [checkAllProdcuct, setCheckAllProdcuct] = useState(false);
 
+    const [objHoaHongThucHien, setObjHoaHongThucHien] = useState({ loaiChietKhau: 1, laPhanTram: true, giaTri: 0 });
+    const [objHoaHongTuVan, setObjHoaHongTuVan] = useState({ loaiChietKhau: 3, laPhanTram: true, giaTri: 0 });
+
+    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+    const [isSaving, setIsSaving] = useState(false);
+
     const SearchNhanVienClient = () => {
-        if (!utils.checkNull(txtSearch)) {
-            const txt = txtSearch.trim().toLowerCase();
+        console.log('midal _allnv ', allNhanVien);
+        if (!utils.checkNull(txtSearchNV)) {
+            const txt = txtSearchNV.trim().toLowerCase();
             const txtUnsign = utils.strToEnglish(txt);
             const data = allNhanVien.filter(
                 (x: NhanSuItemDto) =>
@@ -54,8 +64,21 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose }
     };
 
     useEffect(() => {
+        if (isShow) {
+            setLstNhanVien([...allNhanVien]);
+            setIsSaving(false);
+            setObjHoaHongThucHien({ loaiChietKhau: 1, laPhanTram: true, giaTri: 0 });
+            setObjHoaHongTuVan({ loaiChietKhau: 3, laPhanTram: true, giaTri: 0 });
+            setArrIdNhanVienChosed([]);
+            setArrIdQuyDoiChosed([]);
+            setTxtSearchNV('');
+            setTxtSearchProduct('');
+        }
+    }, [isShow]);
+
+    useEffect(() => {
         SearchNhanVienClient();
-    }, [txtSearch]);
+    }, [txtSearchNV]);
 
     const debounceProduct = useRef(
         debounce(async (input: string) => {
@@ -66,30 +89,144 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose }
     ).current;
 
     useEffect(() => {
-        if (isShow) {
-            debounceProduct(txtSearchProduct);
-        }
+        debounceProduct(txtSearchProduct);
     }, [txtSearchProduct]);
 
     const NVien_changeCheckAll = () => {
         const gtriNew = !checkAllNVien;
         setCheckAllNVien(gtriNew);
+        const arrIdNhanVienNew = lstNhanVien.map((x) => {
+            return x.id;
+        });
         if (gtriNew) {
-            //
-            setLstNhanVienChosed([...lstNhanVien]);
+            const arrAddIdUnique = Array.from(new Set([...arrIdNhanVienChosed, ...arrIdNhanVienNew]));
+            setArrIdNhanVienChosed(arrAddIdUnique);
+        } else {
+            setArrIdNhanVienChosed(arrIdNhanVienChosed.filter((x) => !arrIdNhanVienNew.includes(x)));
         }
     };
+    const NVien_changeCheckOne = (nvien: NhanSuItemDto) => {
+        // check exist this nvien in list chosed
+        const exist = arrIdNhanVienChosed.filter((x) => x == nvien.id);
+        if (exist.length > 0) {
+            // remove if exists
+            setArrIdNhanVienChosed(arrIdNhanVienChosed.filter((x) => x !== nvien.id));
+            setCheckAllNVien(false);
+        } else {
+            // add if not
+            const arrIdAfterChosed = [...arrIdNhanVienChosed, nvien.id];
+            setArrIdNhanVienChosed([...arrIdAfterChosed]);
+
+            // check length of listNVien - list idcurrent chosed
+            const arrIdNhanVienSearch = lstNhanVien.map((x) => {
+                return x.id;
+            });
+            // if all nvien search exist in newArray --> checkall
+            const arrFindAll = arrIdAfterChosed.filter((x) => arrIdNhanVienSearch.includes(x));
+            setCheckAllNVien(arrFindAll.length === arrIdNhanVienSearch.length);
+        }
+    };
+
+    const NVien_clickBoChon = () => {
+        setArrIdNhanVienChosed([]);
+        setCheckAllNVien(false);
+    };
+    const Product_clickBoChon = () => {
+        setArrIdQuyDoiChosed([]);
+        setCheckAllProdcuct(false);
+    };
+
     const Product_changeCheckAll = () => {
         const gtriNew = !checkAllProdcuct;
         setCheckAllProdcuct(!checkAllProdcuct);
+
+        const arrIdQuyDoiNew = listProduct.map((x) => {
+            return x.idDonViQuyDoi as string;
+        });
         if (gtriNew) {
-            //
-            setListProductChosed([...listProduct]);
+            const arrAddIdUnique = Array.from(new Set([...arrIdQuyDoiChosed, ...arrIdQuyDoiNew]));
+            setArrIdQuyDoiChosed(arrAddIdUnique);
+        } else {
+            setArrIdQuyDoiChosed(arrIdQuyDoiChosed.filter((x) => !arrIdQuyDoiNew.includes(x)));
         }
+    };
+    const Product_changeCheckOne = (product: ModelHangHoaDto) => {
+        const idQuyDoi = product.idDonViQuyDoi as string;
+        // check exist  in list chosed
+        const exist = arrIdQuyDoiChosed.filter((x) => x == idQuyDoi);
+        if (exist.length > 0) {
+            // remove if exists
+            setArrIdQuyDoiChosed(arrIdQuyDoiChosed.filter((x) => x !== idQuyDoi));
+            setCheckAllProdcuct(false);
+        } else {
+            // add if not
+            const arrIdAfterChosed = [...arrIdQuyDoiChosed, idQuyDoi];
+            setArrIdQuyDoiChosed([...arrIdAfterChosed]);
+
+            // check length of list search - list idcurrent chosed
+            const arrIdProductSearch = listProduct.map((x) => {
+                return x.idDonViQuyDoi as string;
+            });
+            // if all id in array search exist in newArray --> checkall
+            const arrFindAll = arrIdAfterChosed.filter((x) => arrIdProductSearch.includes(x));
+            setCheckAllProdcuct(arrFindAll.length === arrIdProductSearch.length);
+        }
+    };
+
+    const saveSetup = async () => {
+        if (arrIdNhanVienChosed.length === 0) {
+            setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng chọn nhân viên áp dụng' });
+            return;
+        }
+        if (arrIdQuyDoiChosed.length === 0) {
+            setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng chọn dịch vụ áp dụng', type: 2 });
+            return;
+        }
+        if (objHoaHongThucHien.giaTri === 0) {
+            setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng nhập giá trị hoa hồng', type: 2 });
+            return;
+        }
+        // todo check NVien has setup dichvu (check DB)
+        if (isSaving) return;
+        setIsSaving(true);
+
+        const idChiNhanh = Cookies.get('IdChiNhanh') ?? Guid.EMPTY;
+        const paramThucHien = {
+            idChiNhanh: idChiNhanh,
+            idNhanViens: arrIdNhanVienChosed,
+            idDonViQuyDois: arrIdQuyDoiChosed,
+            loaiChietKhau: objHoaHongThucHien.loaiChietKhau,
+            giaTri: objHoaHongThucHien.giaTri,
+            laPhanTram: objHoaHongThucHien.laPhanTram
+        } as ChietKhauDichVuDto_AddMultiple;
+        const dataTH = await chietKhauDichVuService.AddMultiple_ChietKhauDichVu_toMultipleNhanVien(paramThucHien);
+
+        const paramTuVan = {
+            idChiNhanh: idChiNhanh,
+            idNhanViens: arrIdNhanVienChosed,
+            idDonViQuyDois: arrIdQuyDoiChosed,
+            loaiChietKhau: objHoaHongTuVan.loaiChietKhau,
+            giaTri: objHoaHongTuVan.giaTri,
+            laPhanTram: objHoaHongTuVan.laPhanTram
+        } as ChietKhauDichVuDto_AddMultiple;
+        await chietKhauDichVuService.AddMultiple_ChietKhauDichVu_toMultipleNhanVien(paramTuVan);
+
+        setIsSaving(false);
+        if (dataTH === 0) {
+            setObjAlert({ ...objAlert, show: true, mes: 'Cài đặt hoa hồng dịch vụ thất bại', type: 2 });
+            return;
+        }
+        setObjAlert({ ...objAlert, show: true, mes: 'Cài đặt hoa hồng dịch vụ thành công', type: 1 });
+        onSaveOK();
     };
 
     return (
         <>
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Dialog open={isShow} maxWidth="lg" fullWidth onClose={onClose}>
                 <DialogTitle className="modal-title">
                     Cài đặt hoa hồng dịch vụ
@@ -103,9 +240,9 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose }
                                     size="small"
                                     fullWidth
                                     label="Tìm nhân viên"
-                                    value={txtSearch}
+                                    value={txtSearchNV}
                                     onChange={(event) => {
-                                        setTxtSearch(event.target.value);
+                                        setTxtSearchNV(event.target.value);
                                     }}
                                     InputProps={{
                                         startAdornment: <Search />
@@ -119,33 +256,30 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose }
                                     paddingRight={1}
                                     sx={{ backgroundColor: 'var(--color-bg)' }}>
                                     <Stack direction={'row'} alignItems={'center'} onClick={NVien_changeCheckAll}>
-                                        <Checkbox />
+                                        <Checkbox value={checkAllNVien} checked={checkAllNVien} />
                                         <span style={{ cursor: 'pointer' }}> Chọn tất cả</span>
                                     </Stack>
-                                    <Stack style={{ cursor: 'pointer' }}>Bỏ chọn</Stack>
+                                    <Stack style={{ cursor: 'pointer' }} onClick={NVien_clickBoChon}>
+                                        Bỏ chọn
+                                    </Stack>
                                 </Stack>
                                 <Stack sx={{ overflow: 'auto', maxHeight: 400 }}>
                                     {lstNhanVien?.map((nvien: NhanSuItemDto, index: number) => (
                                         <Stack
                                             direction={'row'}
                                             key={index}
-                                            sx={{ borderBottom: '1px dashed #cccc', padding: '6px' }}
-                                            // onClick={() => ChoseNhanVien(nvien)}
-                                        >
-                                            <Checkbox />
+                                            sx={{
+                                                borderBottom: `1px dashed ${
+                                                    arrIdNhanVienChosed.includes(nvien.id) ? '#ff7171' : '#cccc'
+                                                }`,
+                                                padding: '6px',
+                                                backgroundColor: arrIdNhanVienChosed.includes(nvien.id)
+                                                    ? 'antiquewhite'
+                                                    : ''
+                                            }}
+                                            onClick={() => NVien_changeCheckOne(nvien)}>
+                                            <Checkbox checked={arrIdNhanVienChosed.includes(nvien.id)} />
                                             <Stack direction={'row'} spacing={1}>
-                                                {/* <Stack>
-                                                    <Avatar
-                                                        sx={{
-                                                            width: 40,
-                                                            height: 40,
-                                                            backgroundColor: 'var(--color-bg)',
-                                                            color: 'var(--color-main)',
-                                                            fontSize: '14px'
-                                                        }}>
-                                                        {utils.getFirstLetter(nvien?.tenNhanVien ?? '')}
-                                                    </Avatar>
-                                                </Stack> */}
                                                 <Stack justifyContent={'center'} spacing={1}>
                                                     <Stack sx={{ fontSize: '14px' }}>{nvien?.tenNhanVien}</Stack>
                                                     <Stack sx={{ fontSize: '12px', color: '#839bb1' }}>
@@ -172,11 +306,7 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose }
                                         startAdornment: <Search />
                                     }}
                                 />
-                                {/* <Stack>
-                                    <Button variant="outlined" size="small" fullWidth>
-                                        Thêm theo nhóm
-                                    </Button>
-                                </Stack> */}
+
                                 <Stack
                                     justifyContent={'space-between'}
                                     direction={'row'}
@@ -185,10 +315,12 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose }
                                     paddingRight={1}
                                     sx={{ backgroundColor: 'var(--color-bg)' }}>
                                     <Stack direction={'row'} alignItems={'center'} onClick={Product_changeCheckAll}>
-                                        <Checkbox />
+                                        <Checkbox value={checkAllProdcuct} checked={checkAllProdcuct} />
                                         <span style={{ cursor: 'pointer' }}> Chọn tất cả</span>
                                     </Stack>
-                                    <Stack style={{ cursor: 'pointer' }}>Bỏ chọn</Stack>
+                                    <Stack style={{ cursor: 'pointer' }} onClick={Product_clickBoChon}>
+                                        Bỏ chọn
+                                    </Stack>
                                 </Stack>
                             </Stack>
 
@@ -199,10 +331,24 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose }
                                         justifyContent={'space-between'}
                                         key={index}
                                         padding={'8px 16px'}
-                                        borderBottom={'1px dashed #cccc'}
-                                        alignItems={'center'}>
+                                        // borderBottom={'1px dashed #cccc'}
+                                        alignItems={'center'}
+                                        sx={{
+                                            borderBottom: `1px dashed ${
+                                                arrIdQuyDoiChosed.includes(item?.idDonViQuyDoi as string)
+                                                    ? '#ff7171'
+                                                    : '#cccc'
+                                            }`,
+                                            padding: '6px',
+                                            backgroundColor: arrIdQuyDoiChosed.includes(item?.idDonViQuyDoi as string)
+                                                ? 'antiquewhite'
+                                                : ''
+                                        }}
+                                        onClick={() => Product_changeCheckOne(item)}>
                                         <Stack direction={'row'}>
-                                            <Checkbox />
+                                            <Checkbox
+                                                checked={arrIdQuyDoiChosed.includes(item?.idDonViQuyDoi as string)}
+                                            />
                                             <Stack spacing={1}>
                                                 <Stack sx={{ fontSize: '14px' }}>{item?.tenHangHoa}</Stack>
                                                 <Stack sx={{ fontStyle: 'italic', fontSize: '12px' }}>
@@ -237,16 +383,51 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose }
                                                     style: { textAlign: 'right' }
                                                 }
                                             }}
+                                            isAllowed={(values) => {
+                                                const floatValue = values.floatValue;
+                                                if (objHoaHongThucHien.laPhanTram) return (floatValue ?? 0) <= 100; // neu %: khong cho phep nhap qua 100%
+                                                return true;
+                                            }}
+                                            onChange={(e) =>
+                                                setObjHoaHongThucHien({
+                                                    ...objHoaHongThucHien,
+                                                    giaTri: utils.formatNumberToFloat(e.target.value)
+                                                })
+                                            }
+                                            value={objHoaHongThucHien.giaTri}
                                         />
-                                        <Avatar
-                                            style={{
-                                                width: 25,
-                                                height: 25,
-                                                fontSize: '12px',
-                                                backgroundColor: 'var(--color-main)'
-                                            }}>
-                                            %
-                                        </Avatar>
+                                        {objHoaHongThucHien.laPhanTram ? (
+                                            <Avatar
+                                                style={{
+                                                    width: 25,
+                                                    height: 25,
+                                                    fontSize: '12px',
+                                                    backgroundColor: 'var(--color-main)'
+                                                }}
+                                                onClick={() =>
+                                                    setObjHoaHongThucHien({
+                                                        ...objHoaHongThucHien,
+                                                        laPhanTram: !objHoaHongThucHien.laPhanTram
+                                                    })
+                                                }>
+                                                %
+                                            </Avatar>
+                                        ) : (
+                                            <Avatar
+                                                style={{
+                                                    width: 25,
+                                                    height: 25,
+                                                    fontSize: '12px'
+                                                }}
+                                                onClick={() =>
+                                                    setObjHoaHongThucHien({
+                                                        ...objHoaHongThucHien,
+                                                        laPhanTram: !objHoaHongThucHien.laPhanTram
+                                                    })
+                                                }>
+                                                đ
+                                            </Avatar>
+                                        )}
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={4}>
@@ -267,16 +448,51 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose }
                                                     style: { textAlign: 'right' }
                                                 }
                                             }}
+                                            isAllowed={(values) => {
+                                                const floatValue = values.floatValue;
+                                                if (objHoaHongTuVan.laPhanTram) return (floatValue ?? 0) <= 100; // neu %: khong cho phep nhap qua 100%
+                                                return true;
+                                            }}
+                                            onChange={(e) =>
+                                                setObjHoaHongTuVan({
+                                                    ...objHoaHongTuVan,
+                                                    giaTri: utils.formatNumberToFloat(e.target.value)
+                                                })
+                                            }
+                                            value={objHoaHongTuVan.giaTri}
                                         />
-                                        <Avatar
-                                            style={{
-                                                width: 25,
-                                                height: 25,
-                                                fontSize: '12px',
-                                                backgroundColor: 'var(--color-main)'
-                                            }}>
-                                            %
-                                        </Avatar>
+                                        {objHoaHongTuVan.laPhanTram ? (
+                                            <Avatar
+                                                style={{
+                                                    width: 25,
+                                                    height: 25,
+                                                    fontSize: '12px',
+                                                    backgroundColor: 'var(--color-main)'
+                                                }}
+                                                onClick={() =>
+                                                    setObjHoaHongTuVan({
+                                                        ...objHoaHongTuVan,
+                                                        laPhanTram: !objHoaHongTuVan.laPhanTram
+                                                    })
+                                                }>
+                                                %
+                                            </Avatar>
+                                        ) : (
+                                            <Avatar
+                                                style={{
+                                                    width: 25,
+                                                    height: 25,
+                                                    fontSize: '12px'
+                                                }}
+                                                onClick={() =>
+                                                    setObjHoaHongTuVan({
+                                                        ...objHoaHongTuVan,
+                                                        laPhanTram: !objHoaHongTuVan.laPhanTram
+                                                    })
+                                                }>
+                                                đ
+                                            </Avatar>
+                                        )}
                                     </Stack>
                                 </Grid>
                             </Grid>
@@ -285,7 +501,13 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose }
                 </DialogContent>
                 <DialogActions sx={{ paddingBottom: '16px!important' }}>
                     <Button variant="outlined"> Bỏ qua</Button>
-                    <Button variant="contained"> Áp dụng</Button>
+                    {isSaving ? (
+                        <Button variant="contained">Đang lưu</Button>
+                    ) : (
+                        <Button variant="contained" onClick={saveSetup}>
+                            Áp dụng
+                        </Button>
+                    )}
                 </DialogActions>
             </Dialog>
         </>
