@@ -24,7 +24,7 @@ class ProductService {
         });
         return data;
     };
-    Get_DMHangHoa = async (input: any) => {
+    Get_DMHangHoa = async (input: PagedProductSearchDto): Promise<PagedResultDto<ModelHangHoaDto>> => {
         const xx = await http
             .post(`api/services/app/HangHoa/GetDMHangHoa`, input)
             .then((res: { data: { result: any } }) => {
