@@ -2,9 +2,7 @@ const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 const phoneRegex = /(84[1-9]|0[1-9])+([0-9]{8})\b/g;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
 const yyyyMMddHHmmRegex = /^\d{4}-[0-1][0-2]-[0-3]\d\s([0-1][0-9]|2[0-3]):[0-5]\d$/;
-
 import { IList } from '../services/dto/IList';
-import { L } from './abpUtility';
 
 export interface ISelect {
     value: number | string;
@@ -57,6 +55,17 @@ export const TimeType = {
     MONTH: 5
 };
 
+export const LoaiHoaHongDichVu = {
+    THUC_HIEN: 1,
+    YEU_CAU_THUC_HIEN: 2,
+    TU_VAN: 3
+};
+export const LoaiHoaHongHoaDon = {
+    THUC_THU: 1,
+    DOANH_THU: 2,
+    VND: 3
+};
+
 const AppConsts = {
     userManagement: {
         defaultAdminUserName: 'admin'
@@ -72,7 +81,9 @@ const AppConsts = {
     guidEmpty: '00000000-0000-0000-0000-000000000000',
     pageOption: [
         { value: 10, text: '10/ trang' },
-        { value: 20, text: '20/ trang' }
+        { value: 20, text: '20/ trang' },
+        { value: 50, text: '50/ trang' },
+        { value: 100, text: '100/ trang' }
     ],
 
     TimeType: {
