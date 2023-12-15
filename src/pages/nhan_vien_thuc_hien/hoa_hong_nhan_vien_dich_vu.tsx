@@ -80,7 +80,8 @@ export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTie
                     (x.soDienThoai !== null && x.soDienThoai.trim().toLowerCase().indexOf(txt) > -1) ||
                     (x.maNhanVien !== null && utils.strToEnglish(x.maNhanVien).indexOf(txtUnsign) > -1) ||
                     (x.tenNhanVien !== null && utils.strToEnglish(x.tenNhanVien).indexOf(txtUnsign) > -1) ||
-                    (x.soDienThoai !== null && utils.strToEnglish(x.soDienThoai).indexOf(txtUnsign) > -1)
+                    (x.soDienThoai !== null && utils.strToEnglish(x.soDienThoai).indexOf(txtUnsign) > -1) ||
+                    (x.tenChucVu !== null && utils.strToEnglish(x.tenChucVu).indexOf(txtUnsign) > -1)
             );
             setLstNhanVien(data);
         } else {
@@ -284,7 +285,7 @@ export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTie
                                         startAdornment: <Search />
                                     }}
                                 />
-                                <Stack>
+                                <Stack sx={{ overflow: 'auto', maxHeight: 400 }}>
                                     {lstNhanVien?.map((nvien: NhanSuItemDto, index: number) => (
                                         <Stack
                                             direction={'row'}
@@ -306,7 +307,9 @@ export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTie
                                             </Stack>
                                             <Stack justifyContent={'center'} spacing={1}>
                                                 <Stack sx={{ fontSize: '14px' }}>{nvien?.tenNhanVien}</Stack>
-                                                <Stack sx={{ fontSize: '13px' }}>{nvien?.tenChucVu}</Stack>
+                                                <Stack sx={{ fontSize: '12px', color: '#839bb1' }}>
+                                                    {nvien?.tenChucVu}
+                                                </Stack>
                                             </Stack>
                                         </Stack>
                                     ))}
