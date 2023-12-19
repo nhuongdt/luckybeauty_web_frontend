@@ -243,8 +243,8 @@ const DetailHoaDon = ({
 
     const choseHinhThucThanhToan = (item: ISelect) => {
         setIdHinhThucTT(item.value);
-
-        const lstQuyCTNew = GetQuyCTNew(item.value as number, khachPhaiTra);
+        // keep value old of tienKhachDua
+        const lstQuyCTNew = GetQuyCTNew(item.value as number, sumTienKhachTra);
         setLstQuyCT(() => [...lstQuyCTNew]);
         onChangeQuyChiTiet(lstQuyCTNew);
     };
@@ -257,6 +257,7 @@ const DetailHoaDon = ({
             setTienKhachTraMax(khachPhaiTraNew);
             setSumTienKhachTra(khachPhaiTraNew);
             setKhachPhaiTra(khachPhaiTraNew);
+            setTienThuaTraKhach(0);
         } else {
             onChangeQuyChiTiet([...lstQuyCTNew]);
         }
@@ -551,7 +552,7 @@ const DetailHoaDon = ({
                         <Grid container justifyContent="space-between">
                             <Grid item xs="auto">
                                 <Typography variant="body1" color="#3D475C" fontWeight="400" fontSize="14px">
-                                    {tienThuaTraKhach > 0 ? 'Tiền thừa' : 'Tiên khách thiếu'}
+                                    {tienThuaTraKhach > 0 ? 'Tiền thừa' : 'Tiền khách thiếu'}
                                 </Typography>
                             </Grid>
                             <Grid xs="auto" item>
