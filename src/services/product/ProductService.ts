@@ -1,6 +1,6 @@
 import http from '../httpService';
 import { PagedResultDto } from '../dto/pagedResultDto';
-import { ModelHangHoaDto, PagedProductSearchDto } from './dto';
+import { IHangHoaGroupTheoNhomDto, ModelHangHoaDto, PagedProductSearchDto } from './dto';
 import Utils from '../../utils/utils';
 import { IFileDto } from '../dto/FileDto';
 import { FileUpload } from '../dto/FileUpload';
@@ -77,7 +77,7 @@ class ProductService {
     GetDMHangHoa_groupByNhom = async (input: any) => {
         const xx = await http
             .post(`api/services/app/HangHoa/GetDMHangHoa_groupByNhom`, input)
-            .then((res: { data: { result: any } }) => {
+            .then((res: { data: { result: IHangHoaGroupTheoNhomDto[] } }) => {
                 return res.data.result;
             });
         return xx;
