@@ -15,15 +15,16 @@ import { SuggestNhomKhachDto } from '../../../services/suggests/dto/SuggestNhomK
 import SuggestService from '../../../services/suggests/SuggestService';
 import { DataCustomerContext } from '../../../services/khach-hang/dto/DataContext';
 import SettingsBackupRestoreOutlinedIcon from '@mui/icons-material/SettingsBackupRestoreOutlined';
-import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import { IList } from '../../../services/dto/IList';
+import { handleClickOutside } from '../../../utils/customReactHook';
 
 export default function MainPageBanHang() {
     const [activeTab, setActiveTab] = useState(1);
     const [expandAction, setExpandAction] = useState(false);
+    const ref = handleClickOutside(() => setExpandAction(false));
 
     const lstOption: IList[] = [
         { id: '1', text: 'Trang chủ', icon: <HomeOutlinedIcon /> },
@@ -114,18 +115,6 @@ export default function MainPageBanHang() {
         Cookies.set('horizontalLayout', horizontalLayout.toString(), { expires: 7 });
     };
 
-    // useEffect(() => {
-    //     activeTab === 2
-    //         ? ((document.documentElement.style.overflowY = 'hidden'),
-    //           (document.documentElement.style.maxHeight = '100vh'))
-    //         : (document.documentElement.style.overflowY = 'auto');
-
-    //     return () => {
-    //         document.documentElement.style.maxHeight = 'unset';
-    //         document.documentElement.style.overflowY = 'auto';
-    //     };
-    // }, [activeTab]);
-
     return (
         <>
             <DataCustomerContext.Provider value={{ listNguonKhach: nguonKhachs, listNhomkhach: nhomKhachs }}>
@@ -192,48 +181,50 @@ export default function MainPageBanHang() {
                                 </Button>
                             </ButtonGroup>
 
-                            <Stack spacing={1} direction={'row'} alignItems={'center'}>
-                                <Box sx={{ position: 'relative' }}>
-                                    <Button
-                                        variant="contained"
-                                        endIcon={<SettingsBackupRestoreOutlinedIcon />}
-                                        onClick={() => setExpandAction(!expandAction)}>
-                                        Quay lại
-                                    </Button>
+                            <div ref={ref}>
+                                <Stack spacing={1} direction={'row'} alignItems={'center'}>
+                                    <Box sx={{ position: 'relative' }}>
+                                        <Button
+                                            variant="contained"
+                                            endIcon={<SettingsBackupRestoreOutlinedIcon />}
+                                            onClick={() => setExpandAction(!expandAction)}>
+                                            Quay lại
+                                        </Button>
 
-                                    <Box
-                                        sx={{
-                                            display: expandAction ? '' : 'none',
-                                            zIndex: 1,
-                                            position: 'absolute',
-                                            borderRadius: '4px',
-                                            border: '1px solid #cccc',
-                                            minWidth: 200,
-                                            backgroundColor: 'rgba(248,248,248,1)',
-                                            '& .MuiStack-root .MuiStack-root:hover': {
-                                                backgroundColor: '#cccc'
-                                            }
-                                        }}>
-                                        <Stack>
-                                            {lstOption?.map((item: IList, index: number) => (
-                                                <Stack
-                                                    direction={'row'}
-                                                    key={index}
-                                                    spacing={1}
-                                                    padding={'6px'}
-                                                    alignItems={'center'}
-                                                    sx={{ cursor: 'pointer' }}
-                                                    onClick={() => clickAction(item)}>
-                                                    {item.icon}
-                                                    <Typography variant="subtitle2" marginLeft={1}>
-                                                        {item.text}
-                                                    </Typography>
-                                                </Stack>
-                                            ))}
-                                        </Stack>
+                                        <Box
+                                            sx={{
+                                                display: expandAction ? '' : 'none',
+                                                zIndex: 1,
+                                                position: 'absolute',
+                                                borderRadius: '4px',
+                                                border: '1px solid #cccc',
+                                                minWidth: 200,
+                                                backgroundColor: 'rgba(248,248,248,1)',
+                                                '& .MuiStack-root .MuiStack-root:hover': {
+                                                    backgroundColor: '#cccc'
+                                                }
+                                            }}>
+                                            <Stack>
+                                                {lstOption?.map((item: IList, index: number) => (
+                                                    <Stack
+                                                        direction={'row'}
+                                                        key={index}
+                                                        spacing={1}
+                                                        padding={'6px'}
+                                                        alignItems={'center'}
+                                                        sx={{ cursor: 'pointer' }}
+                                                        onClick={() => clickAction(item)}>
+                                                        {item.icon}
+                                                        <Typography variant="subtitle2" marginLeft={1}>
+                                                            {item.text}
+                                                        </Typography>
+                                                    </Stack>
+                                                ))}
+                                            </Stack>
+                                        </Box>
                                     </Box>
-                                </Box>
-                            </Stack>
+                                </Stack>
+                            </div>
                         </Box>
                     </Grid>
 

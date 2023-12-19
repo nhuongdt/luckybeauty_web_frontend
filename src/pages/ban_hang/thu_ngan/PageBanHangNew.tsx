@@ -84,6 +84,7 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
+import { handleClickOutside } from '../../../utils/customReactHook';
 
 const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const appContext = useContext(AppContext);
@@ -117,6 +118,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(new PropModal({ isShow: false }));
     const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(new PropModal({ isShow: false }));
+    const ref = handleClickOutside(() => setIsExpandShoppingCart(false));
 
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
         new PageHoaDonDto({
@@ -1745,142 +1747,127 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                             sx={{ color: '#1976d2' }}
                                             titleAccess="Thêm khách check in"
                                         />
+                                        <div ref={ref}>
+                                            <Badge
+                                                badgeContent={allInvoiceWaiting?.length ?? 0}
+                                                color="secondary"
+                                                sx={{ position: 'relative' }}>
+                                                <ShoppingCartIcon
+                                                    sx={{ color: '#1976d2' }}
+                                                    titleAccess="Hóa đơn chờ"
+                                                    onClick={showAllInvoiceWaiting}
+                                                />
 
-                                        <Badge
-                                            badgeContent={allInvoiceWaiting?.length ?? 0}
-                                            color="secondary"
-                                            sx={{ position: 'relative' }}>
-                                            <ShoppingCartIcon
-                                                sx={{ color: '#1976d2' }}
-                                                titleAccess="Hóa đơn chờ"
-                                                onClick={showAllInvoiceWaiting}
-                                            />
-                                            <Stack
-                                                width={190}
-                                                spacing={1}
-                                                overflow={'auto'}
-                                                maxHeight={500}
-                                                sx={{
-                                                    display: isExpandShoppingCart ? '' : 'none',
-                                                    position: 'absolute',
-                                                    marginLeft: '-160px',
-                                                    backgroundColor: 'white',
-                                                    border: '1px solid #cccc',
-                                                    borderRadius: '4px',
-                                                    top: '20px',
-                                                    zIndex: 2
-                                                }}>
-                                                <Stack sx={{ backgroundColor: 'antiquewhite' }}>
-                                                    <Typography
-                                                        variant="body2"
-                                                        sx={{
-                                                            textAlign: 'center',
-                                                            borderBottom: '1px solid #cccc',
-                                                            padding: '8px'
-                                                        }}>
-                                                        Hóa đơn chờ
-                                                    </Typography>
-                                                    <CloseOutlinedIcon
-                                                        titleAccess="Xóa tất cả"
-                                                        onClick={() => {
-                                                            setIdHoaDonChosing(null);
-                                                            setinforDelete(
-                                                                new PropConfirmOKCancel({
-                                                                    show: true,
-                                                                    title: 'Xác nhận xóa',
-                                                                    mes: `Bạn có chắc chắn muốn tất cả xóa hóa đơn chờ  không`
-                                                                })
-                                                            );
-                                                        }}
-                                                        sx={{
-                                                            position: 'absolute',
-                                                            right: '8px',
-                                                            top: '8px',
-                                                            width: 16,
-                                                            height: 16,
-                                                            color: 'red',
-                                                            '&:hover': {
-                                                                filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
-                                                            }
+                                                <Stack
+                                                    width={190}
+                                                    spacing={1}
+                                                    overflow={'auto'}
+                                                    maxHeight={500}
+                                                    sx={{
+                                                        display: isExpandShoppingCart ? '' : 'none',
+                                                        position: 'absolute',
+                                                        marginLeft: '-160px',
+                                                        backgroundColor: 'white',
+                                                        border: '1px solid #cccc',
+                                                        borderRadius: '4px',
+                                                        top: '20px',
+                                                        zIndex: 2
+                                                    }}>
+                                                    <Stack sx={{ backgroundColor: 'antiquewhite' }}>
+                                                        <Typography
+                                                            variant="body2"
+                                                            sx={{
+                                                                textAlign: 'center',
+                                                                borderBottom: '1px solid #cccc',
+                                                                padding: '8px'
+                                                            }}>
+                                                            Hóa đơn chờ
+                                                        </Typography>
+                                                        <CloseOutlinedIcon
+                                                            titleAccess="Xóa tất cả"
+                                                            onClick={() => {
+                                                                setIdHoaDonChosing(null);
+                                                                setinforDelete(
+                                                                    new PropConfirmOKCancel({
+                                                                        show: true,
+                                                                        title: 'Xác nhận xóa',
+                                                                        mes: `Bạn có chắc chắn muốn tất cả xóa hóa đơn chờ  không`
+                                                                    })
+                                                                );
+                                                            }}
+                                                            sx={{
+                                                                position: 'absolute',
+                                                                right: '8px',
+                                                                top: '8px',
+                                                                width: 16,
+                                                                height: 16,
+                                                                color: 'red',
+                                                                '&:hover': {
+                                                                    filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                                                                }
+                                                            }}
+                                                        />
+                                                    </Stack>
+
+                                                    <TextField
+                                                        fullWidth
+                                                        size="small"
+                                                        variant="standard"
+                                                        placeholder="Tìm hóa đơn"
+                                                        value={txtSearchInvoiceWaiting}
+                                                        onChange={(e) => setTxtSearchInvoiceWaiting(e.target.value)}
+                                                        InputProps={{
+                                                            startAdornment: (
+                                                                <InputAdornment position="start">
+                                                                    <SearchOutlinedIcon />
+                                                                </InputAdornment>
+                                                            )
                                                         }}
                                                     />
-                                                </Stack>
-
-                                                <TextField
-                                                    fullWidth
-                                                    size="small"
-                                                    variant="standard"
-                                                    placeholder="Tìm hóa đơn"
-                                                    value={txtSearchInvoiceWaiting}
-                                                    onChange={(e) => setTxtSearchInvoiceWaiting(e.target.value)}
-                                                    InputProps={{
-                                                        startAdornment: (
-                                                            <InputAdornment position="start">
-                                                                <SearchOutlinedIcon />
-                                                            </InputAdornment>
-                                                        )
-                                                    }}
-                                                />
-                                                <Stack>
-                                                    {lstSearchInvoiceWaiting?.map(
-                                                        (item: PageHoaDonDto, index: number) => (
-                                                            <Stack sx={{ position: 'relative' }} key={index}>
-                                                                <CloseOutlinedIcon
-                                                                    onClick={() => {
-                                                                        setIdHoaDonChosing(item?.id);
-                                                                        setinforDelete(
-                                                                            new PropConfirmOKCancel({
-                                                                                show: true,
-                                                                                title: 'Xác nhận xóa',
-                                                                                mes: `Bạn có chắc chắn muốn xóa hóa đơn của  ${
-                                                                                    item?.tenKhachHang
-                                                                                }  có tổng tiền  ${Intl.NumberFormat(
-                                                                                    'vi-VN'
-                                                                                ).format(item?.tongThanhToan)}? không`
-                                                                            })
-                                                                        );
-                                                                    }}
-                                                                    sx={{
-                                                                        position: 'absolute',
-                                                                        right: '8px',
-                                                                        top: '8px',
-                                                                        width: 16,
-                                                                        height: 16,
-                                                                        color: 'red',
-                                                                        '&:hover': {
-                                                                            filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
-                                                                        }
-                                                                    }}
-                                                                />
-                                                                <Stack
-                                                                    sx={{
-                                                                        padding: '10px',
-                                                                        borderBottom: '1px solid #ccc'
-                                                                    }}
-                                                                    onClick={() => onChoseInvoiceWaiting(item?.id)}>
+                                                    <Stack>
+                                                        {lstSearchInvoiceWaiting?.map(
+                                                            (item: PageHoaDonDto, index: number) => (
+                                                                <Stack sx={{ position: 'relative' }} key={index}>
+                                                                    <CloseOutlinedIcon
+                                                                        onClick={() => {
+                                                                            setIdHoaDonChosing(item?.id);
+                                                                            setinforDelete(
+                                                                                new PropConfirmOKCancel({
+                                                                                    show: true,
+                                                                                    title: 'Xác nhận xóa',
+                                                                                    mes: `Bạn có chắc chắn muốn xóa hóa đơn của  ${
+                                                                                        item?.tenKhachHang
+                                                                                    }  có tổng tiền  ${Intl.NumberFormat(
+                                                                                        'vi-VN'
+                                                                                    ).format(
+                                                                                        item?.tongThanhToan
+                                                                                    )}? không`
+                                                                                })
+                                                                            );
+                                                                        }}
+                                                                        sx={{
+                                                                            position: 'absolute',
+                                                                            right: '8px',
+                                                                            top: '8px',
+                                                                            width: 16,
+                                                                            height: 16,
+                                                                            color: 'red',
+                                                                            '&:hover': {
+                                                                                filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                                                                            }
+                                                                        }}
+                                                                    />
                                                                     <Stack
-                                                                        direction={'row'}
-                                                                        spacing={1}
-                                                                        alignItems={'center'}>
-                                                                        <AssignmentIndOutlinedIcon
-                                                                            sx={{
-                                                                                color: '#cccc',
-                                                                                width: '18px',
-                                                                                height: '18px'
-                                                                            }}
-                                                                        />
-                                                                        <Typography
-                                                                            variant="subtitle2"
-                                                                            title={item?.tenKhachHang}>
-                                                                            {item.tenKhachHang}
-                                                                        </Typography>
-                                                                    </Stack>
-                                                                    {item?.soDienThoai && (
+                                                                        sx={{
+                                                                            padding: '10px',
+                                                                            borderBottom: '1px solid #ccc'
+                                                                        }}
+                                                                        onClick={() => onChoseInvoiceWaiting(item?.id)}>
                                                                         <Stack
                                                                             direction={'row'}
                                                                             spacing={1}
                                                                             alignItems={'center'}>
-                                                                            <PhoneOutlinedIcon
+                                                                            <AssignmentIndOutlinedIcon
                                                                                 sx={{
                                                                                     color: '#cccc',
                                                                                     width: '18px',
@@ -1888,28 +1875,47 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                                                 }}
                                                                             />
                                                                             <Typography
-                                                                                color="#999699"
-                                                                                variant="caption">
-                                                                                {item?.soDienThoai}
+                                                                                variant="subtitle2"
+                                                                                title={item?.tenKhachHang}>
+                                                                                {item.tenKhachHang}
                                                                             </Typography>
                                                                         </Stack>
-                                                                    )}
-
-                                                                    <Typography
-                                                                        variant="body2"
-                                                                        fontWeight="700"
-                                                                        color={'#d39987'}>
-                                                                        {Intl.NumberFormat('vi-VN').format(
-                                                                            item?.tongThanhToan
+                                                                        {item?.soDienThoai && (
+                                                                            <Stack
+                                                                                direction={'row'}
+                                                                                spacing={1}
+                                                                                alignItems={'center'}>
+                                                                                <PhoneOutlinedIcon
+                                                                                    sx={{
+                                                                                        color: '#cccc',
+                                                                                        width: '18px',
+                                                                                        height: '18px'
+                                                                                    }}
+                                                                                />
+                                                                                <Typography
+                                                                                    color="#999699"
+                                                                                    variant="caption">
+                                                                                    {item?.soDienThoai}
+                                                                                </Typography>
+                                                                            </Stack>
                                                                         )}
-                                                                    </Typography>
+
+                                                                        <Typography
+                                                                            variant="body2"
+                                                                            fontWeight="700"
+                                                                            color={'#d39987'}>
+                                                                            {Intl.NumberFormat('vi-VN').format(
+                                                                                item?.tongThanhToan
+                                                                            )}
+                                                                        </Typography>
+                                                                    </Stack>
                                                                 </Stack>
-                                                            </Stack>
-                                                        )
-                                                    )}
+                                                            )
+                                                        )}
+                                                    </Stack>
                                                 </Stack>
-                                            </Stack>
-                                        </Badge>
+                                            </Badge>
+                                        </div>
                                     </Stack>
                                 </Box>
                             </Box>
