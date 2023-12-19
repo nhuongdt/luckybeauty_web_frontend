@@ -11,6 +11,7 @@ import { PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import { Guid } from 'guid-typescript';
 import CheckinService from '../../services/check_in/CheckinService';
 import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
+import { PagedRequestDto } from '../../services/dto/pagedRequestDto';
 
 const shortNameCus = createTheme({
     components: {
@@ -41,7 +42,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(new PropModal({ isShow: false }));
 
     const GetListCustomerChecking = async () => {
-        const input = { keyword: '', SkipCount: 0, MaxResultCount: 50 };
+        const input = { keyword: '', skipCount: 0, maxResultCount: 50 } as PagedRequestDto;
         const list = await CheckinService.GetListCustomerChecking(input);
         setListCusChecking(list);
     };
