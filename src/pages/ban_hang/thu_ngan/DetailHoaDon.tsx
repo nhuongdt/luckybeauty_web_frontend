@@ -12,8 +12,7 @@ import {
     Input
 } from '@mui/material';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
-import React, { useContext, useEffect, useState } from 'react';
-import { util } from 'prettier';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import utils from '../../../utils/utils';
 import { NumericFormat } from 'react-number-format';
 import AppConsts, { ISelect } from '../../../lib/appconst';
@@ -23,16 +22,16 @@ import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 import { Guid } from 'guid-typescript';
 import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import { format } from 'date-fns';
-interface Detail {
-    toggleDetail: () => void;
-}
 
 const DetailHoaDon = ({
     toggleDetail,
     tongTienHang,
+    ptGiamGiaHD_Parent = 0,
+    tongGiamGiaHD_Parent = 0,
     hinhThucTT = 1,
     onChangeQuyChiTiet,
     onChangeHoaDon,
+    onChangeGhiChuHD,
     onClickThanhToan,
     formType = 1, // 1. at banhang
     dataHoaDonAfterSave
@@ -48,6 +47,7 @@ const DetailHoaDon = ({
     const [ptGiamGiaHD, setPTGiamGiaHD] = useState(0);
     const [laPTGiamGia, setlaPTGiamGia] = useState(true);
     const [ghichuHD, setGhichuHD] = useState('');
+    const [khachPhaiTra, setKhachPhaiTra] = useState(0);
     const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
     const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
 
@@ -59,38 +59,34 @@ const DetailHoaDon = ({
         })
     ]);
 
-    // change at parent- -> update to child
+    // pass data from parent to child
+    useEffect(() => {
+        const khachPhaiTra = formType === 1 ? tongTienHang - tongGiamGiaHD_Parent : noHDCu;
+        setPTGiamGiaHD(ptGiamGiaHD_Parent);
+        setTongGiamGiaHD(tongGiamGiaHD_Parent);
+        setKhachPhaiTra(khachPhaiTra);
+        if (ptGiamGiaHD_Parent > 0 || (ptGiamGiaHD_Parent === 0 && tongGiamGiaHD_Parent === 0)) {
+            setlaPTGiamGia(true);
+        } else {
+            setlaPTGiamGia(false);
+        }
+
+        const lstQuyCTNew = GetQuyCTNew(hinhThucTT, khachPhaiTra);
+        setLstQuyCT([...lstQuyCTNew]);
+        setTienKhachTraMax(khachPhaiTra);
+        setSumTienKhachTra(khachPhaiTra);
+        setTienThuaTraKhach(0);
+    }, []);
+
+    // change hinhThucTT at parent- -> update to child
     useEffect(() => {
         setIdHinhThucTT(hinhThucTT);
         const itemHT = arrHinhThucThanhToan.filter((x: ISelect) => x.value === hinhThucTT);
         if (itemHT.length > 0) {
-            choseHinhThucThanhToan(itemHT[0]);
+            const lstQuyCTNew = GetQuyCTNew(hinhThucTT, khachPhaiTra);
+            setLstQuyCT(() => [...lstQuyCTNew]);
         }
     }, [hinhThucTT]);
-
-    useEffect(() => {
-        if (hinhThucTT !== 0) {
-            setLstQuyCT(
-                lstQuyCT.map((item: QuyChiTietDto) => {
-                    if (item.hinhThucThanhToan === hinhThucTT) {
-                        return {
-                            ...item,
-                            tienThu: formType === 1 ? tongTienHang : noHDCu
-                        };
-                    } else {
-                        return { ...item };
-                    }
-                })
-            );
-        } else {
-            SetQuyCT_ifKetHop();
-        }
-        setTienKhachTraMax(formType === 1 ? tongTienHang : noHDCu);
-        setSumTienKhachTra(formType === 1 ? tongTienHang : noHDCu);
-        setTienThuaTraKhach(0);
-    }, [tongTienHang]);
-
-    const khachPhaiTra = formType === 1 ? tongTienHang - tongGiamGiaHD : noHDCu;
 
     const onClickPTramVND = (newVal: boolean) => {
         let gtriPT = 0;
@@ -101,10 +97,12 @@ const DetailHoaDon = ({
             }
         }
         setlaPTGiamGia(newVal);
+        changeGiamGia_passToParent(gtriPT, tongGiamGiaHD);
     };
 
     const onChangeGtriGiamGia = (gtri: string) => {
         let gtriNew = utils.formatNumberToFloat(gtri);
+        let ptGiamGiaNew = 0;
         if (gtriNew > tongTienHang) {
             gtriNew = tongTienHang;
         }
@@ -112,37 +110,40 @@ const DetailHoaDon = ({
         if (tongTienHang > 0) {
             if (laPTGiamGia) {
                 gtriVND = (gtriNew * tongTienHang) / 100;
-                setPTGiamGiaHD(gtriNew);
+                ptGiamGiaNew = gtriNew;
             } else {
                 gtriVND = gtriNew;
             }
         }
+        setPTGiamGiaHD(ptGiamGiaNew);
         setTongGiamGiaHD(gtriVND);
+
+        changeGiamGia_passToParent(ptGiamGiaNew, gtriVND);
     };
 
     const gtriXX = laPTGiamGia ? ptGiamGiaHD : tongGiamGiaHD;
 
     const onChangeTienKhachTra = (gtri: string, loai: number) => {
         const gtriNhapNew = utils.formatNumberToFloat(gtri);
+        let lstQuyCTNew: QuyChiTietDto[] = [];
         if (hinhThucTT === 0) {
             // tinh lai  tien
             switch (loai) {
                 case 1: // tinhtien chuyenkhoan
                     {
                         const conLai = tienKhachTraMax - gtriNhapNew;
-                        setLstQuyCT(
-                            lstQuyCT.map((item: QuyChiTietDto) => {
-                                if (item.hinhThucThanhToan === 1) {
-                                    return { ...item, tienThu: gtriNhapNew };
+                        lstQuyCTNew = lstQuyCT.map((item: QuyChiTietDto) => {
+                            if (item.hinhThucThanhToan === 1) {
+                                return { ...item, tienThu: gtriNhapNew };
+                            } else {
+                                if (item.hinhThucThanhToan === 2) {
+                                    return { ...item, tienThu: conLai > 0 ? conLai : 0 };
                                 } else {
-                                    if (item.hinhThucThanhToan === 2) {
-                                        return { ...item, tienThu: conLai > 0 ? conLai : 0 };
-                                    } else {
-                                        return { ...item, tienThu: 0 };
-                                    }
+                                    return { ...item, tienThu: 0 };
                                 }
-                            })
-                        );
+                            }
+                        });
+
                         setTienThuaTraKhach(0);
                     }
 
@@ -155,20 +156,18 @@ const DetailHoaDon = ({
                                 return item.tienThu + currentValue;
                             }, 0);
                         const conLai = tienKhachTraMax - sumTienMat - gtriNhapNew;
-
-                        setLstQuyCT(
-                            lstQuyCT.map((item: QuyChiTietDto) => {
-                                if (item.hinhThucThanhToan === 1) {
-                                    return { ...item };
+                        lstQuyCTNew = lstQuyCT.map((item: QuyChiTietDto) => {
+                            if (item.hinhThucThanhToan === 1) {
+                                return { ...item };
+                            } else {
+                                if (item.hinhThucThanhToan === 2) {
+                                    return { ...item, tienThu: gtriNhapNew };
                                 } else {
-                                    if (item.hinhThucThanhToan === 2) {
-                                        return { ...item, tienThu: gtriNhapNew };
-                                    } else {
-                                        return { ...item, tienThu: conLai > 0 ? conLai : 0 };
-                                    }
+                                    return { ...item, tienThu: conLai > 0 ? conLai : 0 };
                                 }
-                            })
-                        );
+                            }
+                        });
+
                         setTienThuaTraKhach(0);
                     }
                     break;
@@ -184,15 +183,15 @@ const DetailHoaDon = ({
                         if (tongTT !== khachPhaiTra) {
                             tienthua = tongTT - khachPhaiTra;
 
-                            setLstQuyCT(
-                                lstQuyCT.map((item: QuyChiTietDto) => {
-                                    if (item.hinhThucThanhToan !== 3) {
-                                        return { ...item };
-                                    } else {
-                                        return { ...item, tienThu: gtriNhapNew };
-                                    }
-                                })
-                            );
+                            lstQuyCTNew = lstQuyCT.map((item: QuyChiTietDto) => {
+                                if (item.hinhThucThanhToan !== 3) {
+                                    return { ...item };
+                                } else {
+                                    return { ...item, tienThu: gtriNhapNew };
+                                }
+                            });
+                        } else {
+                            lstQuyCTNew = lstQuyCT;
                         }
                         setSumTienKhachTra(tongTT);
                         setTienThuaTraKhach(tienthua);
@@ -200,98 +199,69 @@ const DetailHoaDon = ({
                     break;
             }
         } else {
-            setLstQuyCT(
-                lstQuyCT.map((item: QuyChiTietDto) => {
-                    if (item.hinhThucThanhToan === loai) {
-                        return { ...item, tienThu: gtriNhapNew };
-                    } else {
-                        return { ...item };
-                    }
-                })
-            );
+            lstQuyCTNew = lstQuyCT.map((item: QuyChiTietDto) => {
+                if (item.hinhThucThanhToan === loai) {
+                    return { ...item, tienThu: gtriNhapNew };
+                } else {
+                    return { ...item };
+                }
+            });
             setSumTienKhachTra(gtriNhapNew);
             setTienThuaTraKhach(gtriNhapNew - khachPhaiTra);
         }
+        setLstQuyCT([...lstQuyCTNew]);
+        onChangeQuyChiTiet(lstQuyCTNew);
     };
 
-    const SetQuyCT_ifKetHop = () => {
-        setLstQuyCT(() => [
-            new QuyChiTietDto({
-                tienThu: khachPhaiTra,
-                hinhThucThanhToan: 1
-            }),
-            new QuyChiTietDto({
-                tienThu: 0,
-                hinhThucThanhToan: 2
-            }),
-            new QuyChiTietDto({
-                tienThu: 0,
-                hinhThucThanhToan: 3
-            })
-        ]);
+    const GetQuyCTNew = (hinhThucTT: number, khachPhaiTra = 0) => {
+        let lstQuyCTNew: QuyChiTietDto[] = [];
+        if (hinhThucTT !== 0) {
+            lstQuyCTNew = [
+                new QuyChiTietDto({
+                    tienThu: khachPhaiTra,
+                    hinhThucThanhToan: hinhThucTT
+                })
+            ];
+        } else {
+            lstQuyCTNew = [
+                new QuyChiTietDto({
+                    tienThu: khachPhaiTra,
+                    hinhThucThanhToan: 1
+                }),
+                new QuyChiTietDto({
+                    tienThu: 0,
+                    hinhThucThanhToan: 2
+                }),
+                new QuyChiTietDto({
+                    tienThu: 0,
+                    hinhThucThanhToan: 3
+                })
+            ];
+        }
+        return lstQuyCTNew;
     };
 
     const choseHinhThucThanhToan = (item: ISelect) => {
         setIdHinhThucTT(item.value);
-        if (item.value !== 0) {
-            setLstQuyCT(() => [
-                new QuyChiTietDto({
-                    tienThu: khachPhaiTra,
-                    hinhThucThanhToan: item.value as number
-                })
-            ]);
-        } else {
-            SetQuyCT_ifKetHop();
-        }
+
+        const lstQuyCTNew = GetQuyCTNew(item.value as number, khachPhaiTra);
+        setLstQuyCT(() => [...lstQuyCTNew]);
+        onChangeQuyChiTiet(lstQuyCTNew);
     };
 
-    // change at child --> update to parent
-    useEffect(() => {
-        if (formType === 1) onChangeQuyChiTiet(lstQuyCT);
-    }, [lstQuyCT]);
-
-    useEffect(() => {
+    const changeGiamGia_passToParent = (ptGiamNew: number, tongGiamNew: number) => {
+        const khachPhaiTraNew = formType === 1 ? tongTienHang - tongGiamNew : noHDCu;
+        const lstQuyCTNew = GetQuyCTNew(hinhThucTT, khachPhaiTraNew);
         if (formType === 1) {
-            onChangeHoaDon(ptGiamGiaHD, tongGiamGiaHD, khachPhaiTra, ghichuHD);
-            setTienKhachTraMax(khachPhaiTra);
-            setSumTienKhachTra(khachPhaiTra);
-
-            if (hinhThucTT !== 0) {
-                setLstQuyCT(
-                    lstQuyCT.map((item: QuyChiTietDto) => {
-                        if (item.hinhThucThanhToan === hinhThucTT) {
-                            return { ...item, tienThu: khachPhaiTra };
-                        } else {
-                            return { ...item };
-                        }
-                    })
-                );
-            } else {
-                SetQuyCT_ifKetHop();
-                // !import tant: pass array after reset
-                const arrQuyCTReset = [
-                    new QuyChiTietDto({
-                        tienThu: khachPhaiTra,
-                        hinhThucThanhToan: 1
-                    }),
-                    new QuyChiTietDto({
-                        tienThu: 0,
-                        hinhThucThanhToan: 2
-                    }),
-                    new QuyChiTietDto({
-                        tienThu: 0,
-                        hinhThucThanhToan: 3
-                    })
-                ];
-                onChangeQuyChiTiet(arrQuyCTReset);
-            }
+            onChangeHoaDon(ptGiamNew, tongGiamNew, khachPhaiTraNew);
+            setTienKhachTraMax(khachPhaiTraNew);
+            setSumTienKhachTra(khachPhaiTraNew);
+            setKhachPhaiTra(khachPhaiTraNew);
+        } else {
+            onChangeQuyChiTiet([...lstQuyCTNew]);
         }
-    }, [ptGiamGiaHD, tongGiamGiaHD]);
-    useEffect(() => {
-        if (formType === 1) {
-            onChangeHoaDon(ptGiamGiaHD, tongGiamGiaHD, khachPhaiTra, ghichuHD);
-        }
-    }, [ghichuHD]);
+        setLstQuyCT(lstQuyCTNew);
+    };
 
     const clickThanhToan = async () => {
         let tongThuThucTe = sumTienKhachTra;
@@ -305,7 +275,7 @@ const DetailHoaDon = ({
         const lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(lstQuyCT, sumTienKhachTra, noHDCu);
 
         // save soquy (Mat, POS, ChuyenKhoan)
-        const tongThu = lstQCT_After.reduce((currentValue: number, item: any) => {
+        const tongThu = lstQCT_After.reduce((currentValue: number, item) => {
             return currentValue + item.tienThu;
         }, 0);
         const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
@@ -413,7 +383,7 @@ const DetailHoaDon = ({
                                 }
                             }}
                             customInput={TextField}
-                            onChange={(event: any) => onChangeGtriGiamGia(event.target.value)}
+                            onChange={(event) => onChangeGtriGiamGia(event.target.value)}
                         />
                         <ButtonGroup
                             sx={{
@@ -424,18 +394,18 @@ const DetailHoaDon = ({
                             <Button
                                 onClick={() => onClickPTramVND(true)}
                                 sx={{
-                                    bgcolor: laPTGiamGia ? '#fff' : 'rgba(61, 71, 92, 0.1)',
+                                    bgcolor: laPTGiamGia ? 'var(--color-main)' : 'white',
                                     borderRight: '0!important',
-                                    color: laPTGiamGia ? '#3D475C' : 'rgba(194, 201, 214, 0.7)'
+                                    color: laPTGiamGia ? 'white' : 'black'
                                 }}>
                                 %
                             </Button>
                             <Button
                                 onClick={() => onClickPTramVND(false)}
                                 sx={{
-                                    color: !laPTGiamGia ? '#3D475C' : 'rgba(194, 201, 214, 0.7)',
+                                    color: !laPTGiamGia ? 'white' : 'black',
                                     borderLeft: '0!important',
-                                    bgcolor: !laPTGiamGia ? '#fff' : 'rgba(61, 71, 92, 0.1)'
+                                    bgcolor: !laPTGiamGia ? 'var(--color-main)' : 'white'
                                 }}>
                                 đ
                             </Button>
@@ -608,7 +578,12 @@ const DetailHoaDon = ({
                     <Typography fontSize="14px" color="#525F7A">
                         Ghi chú
                     </Typography>
-                    <textarea value={ghichuHD} onChange={(e) => setGhichuHD(e.target.value)}></textarea>
+                    <textarea
+                        value={ghichuHD}
+                        onChange={(e) => {
+                            setGhichuHD(e.target.value);
+                            onChangeGhiChuHD(e.target.value);
+                        }}></textarea>
                 </Box>
                 <Button
                     variant="contained"
