@@ -53,7 +53,14 @@ export class ModelHangHoaDto {
     }
 }
 
-/* group product */
+export interface IHangHoaGroupTheoNhomDto {
+    idNhomHangHoa: string;
+    tenNhomHang: string;
+    color: string;
+    hangHoas: ModelHangHoaDto[];
+}
+
+/* nhóm hàng hóa - có children */
 export class ModelNhomHangHoa {
     id?: string | null = Utils.GuidEmpty;
 
