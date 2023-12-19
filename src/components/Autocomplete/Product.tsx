@@ -4,10 +4,10 @@ import CenterFocusWeakIcon from '@mui/icons-material/CenterFocusWeak';
 import { useState, useRef } from 'react';
 import { debounce } from '@mui/material/utils';
 import ProductService from '../../services/product/ProductService';
-import { PagedProductSearchDto } from '../../services/product/dto';
+import { ModelHangHoaDto, PagedProductSearchDto } from '../../services/product/dto';
 
 export default function AutocompleteProduct({ handleChoseItem, productChosed }: any) {
-    const [listProduct, setlistProduct] = useState([]);
+    const [listProduct, setlistProduct] = useState<ModelHangHoaDto[]>([]);
     const [paramSearch, setParamSearch] = useState<PagedProductSearchDto>({
         idNhomHangHoas: '',
         textSearch: '',
@@ -72,7 +72,7 @@ export default function AutocompleteProduct({ handleChoseItem, productChosed }: 
                                         }}>
                                         <span>{option.maHangHoa}</span>
                                         <span></span>
-                                        <span>{new Intl.NumberFormat('vi-VN').format(option.giaBan)}</span>
+                                        <span>{new Intl.NumberFormat('vi-VN').format(option.giaBan as number)}</span>
                                     </Stack>
                                 </Grid>
                             </Grid>

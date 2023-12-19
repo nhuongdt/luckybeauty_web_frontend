@@ -4,11 +4,12 @@ import { useRef, useState, useEffect } from 'react';
 import ListProductByGroup from './list_product_by_group';
 import ProductService from '../../services/product/ProductService';
 import DialogButtonClose from '../../components/Dialog/ButtonClose';
+import { IHangHoaGroupTheoNhomDto } from '../../services/product/dto';
 
 export default function ModalSearchProduct({ isShow, handlClose, handleChoseProduct }: any) {
     const [txtSearch, setTxtSearch] = useState('');
     const firstLoad = useRef(true);
-    const [listProduct, setListProduct] = useState([]);
+    const [listProduct, setListProduct] = useState<IHangHoaGroupTheoNhomDto[]>([]);
 
     // todo (if chose NhomHang)
     const getListHangHoa_groupbyNhom = async () => {
