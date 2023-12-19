@@ -65,6 +65,13 @@ export const LoaiHoaHongHoaDon = {
     DOANH_THU: 2,
     VND: 3
 };
+export const TrangThaiCheckin = {
+    DELETED: 0,
+    WAITING: 1,
+    DOING: 2,
+    COMPLETED: 3,
+    CANCEL: 4
+};
 
 const AppConsts = {
     userManagement: {
