@@ -516,10 +516,10 @@ export default function PageProduct() {
             renderCell: (params) => (
                 <Box
                     sx={{
-                        fontSize: '12px',
+                        fontSize: 'var(--font-size-main)',
                         padding: '4px 8px',
                         borderRadius: '1000px',
-                        backgroundColor: '#F1FAFF',
+                        // backgroundColor: '#F1FAFF',
                         color: params.row.trangThai === 0 ? '#b16827' : '#009EF7'
                     }}>
                     {params.value || ''}

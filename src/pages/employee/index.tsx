@@ -350,23 +350,23 @@ class EmployeeScreen extends React.Component {
                     <Typography
                         variant="body2"
                         title={params.value}
-                        fontSize="13px"
+                        fontSize="var(--font-size-main)"
                         sx={{ textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
                         {params.value}
                     </Typography>
                 </Box>
             ),
-            renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         },
         {
             field: 'soDienThoai',
             headerName: 'Số điện thoại',
             minWidth: 120,
             flex: 0.8,
-            renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
 
             renderCell: (params) => (
-                <Box width="100%" textAlign="left" fontSize="13px">
+                <Box width="100%" textAlign="left" fontSize="var(--font-size-main)">
                     {params.value}
                 </Box>
             )
@@ -389,7 +389,7 @@ class EmployeeScreen extends React.Component {
                     {params.value != null ? (
                         <>
                             <DateIcon style={{ marginRight: 4 }} />
-                            <Typography variant="body2" fontSize="13px">
+                            <Typography variant="body2" fontSize="var(--font-size-main)">
                                 {new Date(params.value).toLocaleDateString('en-GB')}
                             </Typography>
                         </>
@@ -412,40 +412,22 @@ class EmployeeScreen extends React.Component {
                         justifyContent: 'center',
                         width: '100%'
                     }}>
-                    <Typography fontSize="13px" fontWeight="400" lineHeight="16px">
+                    <Typography fontSize="var(--font-size-main)" fontWeight="400" lineHeight="16px">
                         {params.value == 0 ? '' : params.value == 1 ? 'Nam' : 'Nữ'}
                     </Typography>
                 </Box>
             ),
-            renderHeader: (params) => (
-                <Box
-                    sx={{
-                        fontWeight: '500',
-                        fontSize: '13px',
-                        fontFamily: 'Roboto'
-                    }}>
-                    {params.colDef.headerName}
-                </Box>
-            )
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         },
         {
             field: 'diaChi',
             headerName: 'Địa chỉ',
             minWidth: 130,
             flex: 1,
-            renderHeader: (params) => (
-                <Box
-                    sx={{
-                        fontWeight: '500',
-                        fontSize: '13px',
-                        fontFamily: 'Roboto'
-                    }}>
-                    {params.colDef.headerName}
-                </Box>
-            ),
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
                 <Box
-                    fontSize="13px"
+                    fontSize="var(--font-size-main)"
                     sx={{
                         width: '100%',
                         textOverflow: 'ellipsis',
@@ -466,25 +448,14 @@ class EmployeeScreen extends React.Component {
             flex: 1,
             renderCell: (params) => (
                 <Typography
-                    fontSize="13px"
+                    fontSize="var(--font-size-main)"
                     fontWeight="400"
-                    fontFamily={'Roboto'}
                     lineHeight="16px"
                     sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                     {params.value}
                 </Typography>
             ),
-            renderHeader: (params) => (
-                <Box
-                    sx={{
-                        fontWeight: '500',
-                        color: '#525F7A',
-                        fontSize: '13px',
-                        fontFamily: 'Roboto'
-                    }}>
-                    {params.colDef.headerName}
-                </Box>
-            )
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         },
 
         {
@@ -502,7 +473,7 @@ class EmployeeScreen extends React.Component {
                     }}>
                     <DateIcon style={{ marginRight: 4 }} />
                     <Typography
-                        fontSize="13px"
+                        fontSize="var(--font-size-main)"
                         fontWeight="400"
                         fontFamily={'Roboto'}
                         color="#3D475C"
@@ -511,17 +482,7 @@ class EmployeeScreen extends React.Component {
                     </Typography>
                 </Box>
             ),
-            renderHeader: (params) => (
-                <Box
-                    sx={{
-                        fontWeight: '500',
-                        color: '#525F7A',
-                        fontSize: '13px',
-                        fontFamily: 'Roboto'
-                    }}>
-                    {params.colDef.headerName}
-                </Box>
-            )
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         },
         {
             field: 'trangThai',
@@ -550,21 +511,14 @@ class EmployeeScreen extends React.Component {
                                 ? '#FF9900'
                                 : '#F1416C'
                     }}
-                    fontSize="13px"
+                    fontSize="var(--font-size-main)"
                     fontWeight="400"
                     textAlign={'left'}
                     color="#009EF7">
                     {params.value}
                 </Typography>
             ),
-            renderHeader: (params) => (
-                <Box
-                    sx={{
-                        fontSize: '12px'
-                    }}>
-                    {params.colDef.headerName}
-                </Box>
-            )
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         },
         {
             field: 'actions',

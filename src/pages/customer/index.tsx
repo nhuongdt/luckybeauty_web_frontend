@@ -501,12 +501,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 headerName: 'Số điện thoại',
                 minWidth: 114,
                 flex: 1,
-                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
-                renderCell: (params) => (
-                    <Box textAlign="left" width="100%" fontSize="13px">
-                        {params.value}
-                    </Box>
-                )
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             },
             {
                 field: 'ngaySinh',
@@ -515,9 +510,9 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 flex: 1,
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
                 renderCell: (params) => (
-                    <Box textAlign="left" width="100%" fontSize="13px">
+                    <Typography variant="body2">
                         {params.value ? format(new Date(params.value), 'dd/MM/yyyy') : ''}
-                    </Box>
+                    </Typography>
                 )
             },
 
@@ -549,7 +544,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 flex: 1,
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
                 renderCell: (params) => (
-                    <Box title={params.value} fontSize="13px" textAlign="right" width="100%">
+                    <Box title={params.value} fontSize={'var(--font-size-main)'} textAlign="right" width="100%">
                         {new Intl.NumberFormat('vi-VN').format(params.value)}
                     </Box>
                 )
@@ -562,7 +557,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            fontSize: '13px',
+                            fontSize: 'var(--font-size-main)',
                             justifyContent: 'center',
                             width: '100%'
                         }}>
