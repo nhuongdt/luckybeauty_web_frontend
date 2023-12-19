@@ -3,6 +3,9 @@ import AppConsts from '../../../lib/appconst';
 import bookingStore from '../../../stores/bookingStore';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
+import QueryBuilderOutlinedIcon from '@mui/icons-material/QueryBuilderOutlined';
+import CoPresentOutlinedIcon from '@mui/icons-material/CoPresentOutlined';
+import SpaOutlinedIcon from '@mui/icons-material/SpaOutlined';
 import {
     Avatar,
     Button,
@@ -13,7 +16,8 @@ import {
     Stack,
     Step,
     Stepper,
-    StepLabel
+    StepLabel,
+    Typography
 } from '@mui/material';
 import { observer } from 'mobx-react';
 import { format as formatDate } from 'date-fns';
@@ -370,11 +374,17 @@ const LichHenDetail: FC = () => {
                 <DialogContent sx={{ fontSize: '15px' }}>
                     <Grid container spacing={2} marginTop={0}>
                         <Grid item xs={12}>
-                            <Grid container padding={'16px 16px 0px 0px'}>
-                                <Grid item xs={3}>
-                                    Thời gian
+                            <Grid container padding={'16px 16px 0px 0px'} spacing={2} alignItems={'center'}>
+                                <Grid item xs={2} sm={3} md={3}>
+                                    <Typography
+                                        sx={{ fontSize: '15px', display: { xs: 'none', md: 'block', sm: '', lg: '' } }}>
+                                        Thời gian
+                                    </Typography>
+                                    <QueryBuilderOutlinedIcon
+                                        sx={{ display: { xs: '', md: 'none', sm: 'none', lg: 'none' } }}
+                                    />
                                 </Grid>
-                                <Grid item xs={9}>
+                                <Grid item xs={10} sm={9} md={9} lg={9}>
                                     <Stack spacing={1} direction={'row'}>
                                         <Stack>
                                             {formatDate(
@@ -394,11 +404,18 @@ const LichHenDetail: FC = () => {
                             </Grid>
                         </Grid>
                         <Grid item xs={12}>
-                            <Grid container padding={'16px 16px 0px 0px'} alignItems={'center'}>
-                                <Grid item xs={3}>
-                                    Khách hàng
+                            <Grid container padding={'16px 16px 0px 0px'} alignItems={'center'} spacing={2}>
+                                <Grid item xs={2} sm={3} md={3} lg={3}>
+                                    <Typography
+                                        sx={{ fontSize: '15px', display: { xs: 'none', md: 'block', sm: '', lg: '' } }}>
+                                        Khách hàng
+                                    </Typography>
+                                    <CoPresentOutlinedIcon
+                                        sx={{ display: { xs: '', md: 'none', sm: 'none', lg: 'none' } }}
+                                    />
                                 </Grid>
-                                <Grid item xs={9}>
+
+                                <Grid item xs={10} sm={9} md={9} lg={9}>
                                     <Stack direction={'row'} spacing={2} alignItems={'center'}>
                                         <Stack>
                                             {bookingStore.bookingInfoDto?.avatarKhachHang ? (
@@ -432,11 +449,15 @@ const LichHenDetail: FC = () => {
                             </Grid>
                         </Grid>
                         <Grid item xs={12}>
-                            <Grid container padding={'16px 16px 0px 0px'}>
-                                <Grid item xs={3}>
-                                    Dịch vụ
+                            <Grid container padding={'16px 16px 0px 0px'} spacing={2} alignItems={'center'}>
+                                <Grid item xs={2} sm={3} md={3} lg={3}>
+                                    <Typography
+                                        sx={{ fontSize: '15px', display: { xs: 'none', md: 'block', sm: '', lg: '' } }}>
+                                        Dịch vụ
+                                    </Typography>
+                                    <SpaOutlinedIcon sx={{ display: { xs: '', md: 'none', sm: 'none', lg: 'none' } }} />
                                 </Grid>
-                                <Grid item xs={9}>
+                                <Grid item xs={10} sm={9} md={9} lg={9}>
                                     {bookingStore.bookingInfoDto.tenDichVu}
                                 </Grid>
                             </Grid>
