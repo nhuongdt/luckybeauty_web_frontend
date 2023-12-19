@@ -15,9 +15,11 @@ import {
     RadioGroup,
     Radio,
     FormControlLabel,
-    Autocomplete
+    Badge,
+    IconButton
 } from '@mui/material';
 import closeIcon from '../../../images/closeSmall.svg';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { Close, Add, ElectricalServicesSharp, SosTwoTone } from '@mui/icons-material';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { debounce } from '@mui/material/utils';
@@ -43,14 +45,13 @@ import { Guid } from 'guid-typescript';
 import utils from '../../../utils/utils';
 import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
 import CheckinService from '../../../services/check_in/CheckinService';
-import { ModelNhomHangHoa } from '../../../services/product/dto';
-import { PropModal } from '../../../utils/PropParentToChild';
+import { IHangHoaGroupTheoNhomDto, ModelNhomHangHoa } from '../../../services/product/dto';
+import { PropConfirmOKCancel, PropModal } from '../../../utils/PropParentToChild';
 import ModelNhanVienThucHien from '../../nhan_vien_thuc_hien/modelNhanVienThucHien';
 import ModalEditChiTietGioHang from './modal_edit_chitiet';
 import Cookies from 'js-cookie';
 import { ReactComponent as IconDv } from '../../../images/icon-DV.svg';
 
-import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
 import { ReactComponent as DeleteIcon } from '../../../images/trash.svg';
 import { ReactComponent as VoucherIcon } from '../../../images/voucherIcon.svg';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -62,7 +63,7 @@ import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/Creat
 import CreateOrEditCustomerDialog from '../../customer/components/create-or-edit-customer-modal';
 import { KHCheckInDto, PageKhachHangCheckInDto } from '../../../services/check_in/CheckinDto';
 import ModalAddCustomerCheckIn from '../../check_in/modal_add_cus_checkin';
-import AppConsts, { ISelect } from '../../../lib/appconst';
+import AppConsts, { ISelect, TrangThaiCheckin } from '../../../lib/appconst';
 import { NumericFormat } from 'react-number-format';
 import khachHangService from '../../../services/khach-hang/khachHangService';
 import { ListNhanVienDataContext } from '../../../services/nhan-vien/dto/NhanVienDataContext';
@@ -74,12 +75,17 @@ import cuaHangService from '../../../services/cua_hang/cuaHangService';
 import { PagedRequestDto } from '../../../services/dto/pagedRequestDto';
 import { CuaHangDto } from '../../../services/cua_hang/Dto/CuaHangDto';
 import { SuggestTaiKhoanNganHangQrDto } from '../../../services/suggests/dto/SuggestTaiKhoanNganHangQrDTo';
-import SuggestService from '../../../services/suggests/SuggestService';
 import { observer } from 'mobx-react';
 import TaiKhoanNganHangServices from '../../../services/so_quy/TaiKhoanNganHangServices';
 import AutocompleteAccountBank from '../../../components/Autocomplete/AccountBank';
 import { TaiKhoanNganHangDto } from '../../../services/so_quy/Dto/TaiKhoanNganHangDto';
-const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataToParent }: any) => {
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined';
+import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
+
+const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const appContext = useContext(AppContext);
     const chiNhanhCurrent = appContext.chinhanhCurrent;
     const [txtSearch, setTxtSearch] = useState('');
@@ -90,12 +96,27 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     const [idNhomHang, setIdNhomHang] = useState('');
     const [idLoaiHangHoa, setIdLoaiHangHoa] = useState(0);
     const [allNhomHangHoa, setAllNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
-    const [listProduct, setListProduct] = useState([]);
+    const [listProduct, setListProduct] = useState<IHangHoaGroupTheoNhomDto[]>([]);
+    const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
+
     const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
     const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
     const [allMauIn, setAllMauIn] = useState<MauInDto[]>([]);
     const [cusChosing, setCusChosing] = useState<CreateOrEditKhachHangDto>();
     const idChiNhanh = utils.checkNull(chiNhanhCurrent?.id) ? Cookies.get('IdChiNhanh') : chiNhanhCurrent?.id;
+
+    const [txtSearchInvoiceWaiting, setTxtSearchInvoiceWaiting] = useState('');
+    const [isExpandShoppingCart, setIsExpandShoppingCart] = useState(false);
+    const [allInvoiceWaiting, setAllInvoiceWaiting] = useState<PageHoaDonDto[]>([]);
+    const [lstSearchInvoiceWaiting, setLstSearchInvoiceWaiting] = useState<PageHoaDonDto[]>([]);
+    const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
+    const [idCTHDChosing, setIdCTHDChosing] = useState(''); // used to edit giohang
+    const [idHoaDonChosing, setIdHoaDonChosing] = useState<string | null>(''); // used to hd waiting
+
+    const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
+    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+    const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(new PropModal({ isShow: false }));
+    const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(new PropModal({ isShow: false }));
 
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
         new PageHoaDonDto({
@@ -104,7 +125,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             idChiNhanh: idChiNhanh
         })
     );
-    const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
     const [lstQuyCT, setLstQuyCT] = useState<QuyChiTietDto[]>([
         new QuyChiTietDto({ hinhThucThanhToan: 1 }) // !! important: luôn set ít nhất 1 giá trị cho mảng quỹ chi tiết
     ]);
@@ -114,13 +134,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         new PageHoaDonChiTietDto({ id: '', expanded: false })
     );
 
-    const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
-    const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(new PropModal({ isShow: false }));
-    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
-    const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(new PropModal({ isShow: false }));
-
-    const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
-    const [idCTHDChosing, setIdCTHDChosing] = useState('');
+    const [inforDelete, setinforDelete] = useState<PropConfirmOKCancel>({
+        show: false,
+        title: '',
+        type: 1,
+        mes: ''
+    });
 
     const GetTreeNhomHangHoa = async () => {
         const list = await GroupProductService.GetTreeNhomHangHoa();
@@ -147,10 +166,18 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         return data;
     };
 
+    const GetAllInvoiceWaiting = async () => {
+        // get list hoadon from cache
+        const allHD = await dbDexie.hoaDon.orderBy('ngayLapHoaDon').toArray();
+        setAllInvoiceWaiting(allHD);
+        setLstSearchInvoiceWaiting([...allHD]);
+    };
+
     const PageLoad = async () => {
         await GetTreeNhomHangHoa();
         await GetListNhanVien();
         await GetAllMauIn_byChiNhanh();
+        await GetAllInvoiceWaiting();
         afterRender.current = true;
     };
 
@@ -206,8 +233,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     }, [txtSearch]);
 
     // filter list product
-    const choseNhomDichVu = async (item: any) => {
-        setIdNhomHang(item.id);
+    const choseNhomDichVu = async (item: ModelNhomHangHoa) => {
+        setIdNhomHang(item.id as string);
         setIdLoaiHangHoa(0);
     };
 
@@ -264,6 +291,104 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         await GetSetCusChosing(customerChosed.idKhachHang);
     };
 
+    // invoice waiting
+
+    const showAllInvoiceWaiting = async () => {
+        setIsExpandShoppingCart(true);
+        setTxtSearchInvoiceWaiting('');
+        // get again: because cthd/hoadon has update
+        await GetAllInvoiceWaiting();
+    };
+
+    useEffect(() => {
+        if (!utils.checkNull(txtSearchInvoiceWaiting)) {
+            const txt = txtSearchInvoiceWaiting.trim().toLowerCase();
+            const txtUnsign = utils.strToEnglish(txt);
+            const data = allInvoiceWaiting.filter(
+                (x) =>
+                    (x.maKhachHang !== null && x.maKhachHang.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.tenKhachHang !== null && x.tenKhachHang.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.soDienThoai !== null && x.soDienThoai.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.maKhachHang !== null && utils.strToEnglish(x.maKhachHang).indexOf(txtUnsign) > -1) ||
+                    (x.tenKhachHang !== null && utils.strToEnglish(x.tenKhachHang).indexOf(txtUnsign) > -1) ||
+                    (x.soDienThoai !== null && utils.strToEnglish(x.soDienThoai).indexOf(txtUnsign) > -1) ||
+                    (x.tongThanhToan !== null &&
+                        utils.strToEnglish(x.tongThanhToan?.toString()).indexOf(txtUnsign) > -1)
+            );
+            setLstSearchInvoiceWaiting(data);
+        } else {
+            setLstSearchInvoiceWaiting([...allInvoiceWaiting]);
+        }
+    }, [txtSearchInvoiceWaiting]);
+
+    const removeItemInvoiceWaiting = async () => {
+        const itemHD = await dbDexie.hoaDon.get(idHoaDonChosing ?? '');
+        await dbDexie.hoaDon.delete(idHoaDonChosing ?? '');
+
+        const allInvoiceWaitingAfter = allInvoiceWaiting.filter((x) => x.id !== idHoaDonChosing);
+        setLstSearchInvoiceWaiting(lstSearchInvoiceWaiting.filter((x) => x.id !== idHoaDonChosing));
+        setAllInvoiceWaiting([...allInvoiceWaitingAfter]);
+
+        // update status customer checking DB
+        if (!utils.checkNull(itemHD?.idCheckIn) && (itemHD?.idCheckIn ?? '') !== Guid.EMPTY) {
+            await CheckinService.UpdateTrangThaiCheckin(itemHD?.idCheckIn ?? '', TrangThaiCheckin.DELETED);
+        }
+
+        // check if hdOpening --> again again infor to hoaDon other (first in list)
+        if (hoadon?.id === idHoaDonChosing) {
+            const idHdFirst = allInvoiceWaitingAfter.length > 0 ? allInvoiceWaitingAfter[0].id : '';
+            if (!utils.checkNull(idHdFirst)) {
+                await getInforHDCacheById(idHdFirst);
+            } else {
+                // reset & create new hoadon
+                ResetState_AfterSave();
+            }
+        } else {
+            // reset & create new hoadon
+            ResetState_AfterSave();
+        }
+    };
+
+    const getInforHDCacheById = async (idHoaDon: string) => {
+        const itemHD = await dbDexie.hoaDon.get(idHoaDon ?? '');
+        if (itemHD !== undefined) {
+            setHoaDon(itemHD);
+            setHoaDonChiTiet(itemHD?.hoaDonChiTiet ?? []);
+            setTriggerAddCheckIn({ ...triggerAddCheckIn, id: itemHD?.idCheckIn, isShow: false });
+            await GetSetCusChosing(itemHD?.idKhachHang as unknown as string);
+        }
+    };
+
+    const onChoseInvoiceWaiting = async (idHoaDon: string) => {
+        setIsExpandShoppingCart(false);
+        setIdHoaDonChosing(idHoaDon);
+
+        await getInforHDCacheById(idHoaDon);
+    };
+
+    const onClickConfirmDelete = async () => {
+        if (idHoaDonChosing !== null) {
+            await removeItemInvoiceWaiting();
+        } else {
+            // remove all
+            await dbDexie.hoaDon.toCollection().delete();
+            setLstSearchInvoiceWaiting([]);
+            setAllInvoiceWaiting([]);
+            setIsExpandShoppingCart(false);
+            ResetState_AfterSave();
+
+            // update status customer checking DB
+            for (let i = 0; i < allInvoiceWaiting.length; i++) {
+                const idCheckin = allInvoiceWaiting[i]?.idCheckIn;
+                if (!utils.checkNull(idCheckin) && (idCheckin ?? '') !== Guid.EMPTY) {
+                    await CheckinService.UpdateTrangThaiCheckin(idCheckin ?? '', TrangThaiCheckin.DELETED);
+                }
+            }
+        }
+        setinforDelete({ ...inforDelete, show: false });
+    };
+    // end invoice waiting
+
     const GetSetCusChosing = async (idCus: string) => {
         const dataCus = await khachHangService.getKhachHang(idCus);
         setCusChosing(dataCus);
@@ -291,17 +416,17 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             tongTienHang: tongTienHang,
             tongTienThue: tongThueChiTiet,
             tongTienHDSauVAT: thanhtiensauVAT,
-            tongThanhToan: thanhtiensauVAT,
+            tongThanhToan: thanhtiensauVAT - (hoadon?.tongGiamGiaHD ?? 0),
             hoaDonChiTiet: hoaDonChiTiet
         };
-        setHoaDon((old: any) => {
+        setHoaDon((old: PageHoaDonDto) => {
             return {
                 ...old,
                 tongTienHangChuaChietKhau: tongTienHangChuaCK,
                 tongTienHang: tongTienHang,
                 tongChietKhauHangHoa: tongChietKhau,
                 tongTienHDSauVAT: thanhtiensauVAT,
-                tongThanhToan: thanhtiensauVAT,
+                tongThanhToan: thanhtiensauVAT - (hoadon?.tongGiamGiaHD ?? 0),
                 hoaDonChiTiet: hoaDonChiTiet
             };
         });
@@ -326,11 +451,18 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         updateCurrentInvoice();
     }, [hoaDonChiTiet]);
 
-    const deleteChiTietHoaDon = (item: any) => {
-        setHoaDonChiTiet(hoaDonChiTiet.filter((x) => x.idDonViQuyDoi !== item.idDonViQuyDoi));
+    const deleteChiTietHoaDon = async (item: any) => {
+        const arrCTnew = hoaDonChiTiet.filter((x) => x.idDonViQuyDoi !== item.idDonViQuyDoi);
+        setHoaDonChiTiet([...arrCTnew]);
+
+        if (arrCTnew.length === 0) {
+            // reset again trangthai check in = dang cho
+            await CheckinService.UpdateTrangThaiCheckin(triggerAddCheckIn.id as string, TrangThaiCheckin.WAITING);
+        }
     };
 
     const choseChiTiet = async (item: any, index: any) => {
+        setIsExpandShoppingCart(false);
         const newCT = new PageHoaDonChiTietDto({
             idDonViQuyDoi: item.idDonViQuyDoi,
             maHangHoa: item.maHangHoa,
@@ -359,6 +491,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             });
         }
         setCTHDDoing(newCT);
+
+        // update trangThaiCheckin = Dang thuc hien
+        // chỉ cập nhật nếu add chi tiết lần đầu tiên
+        await CheckinService.UpdateTrangThaiCheckin(triggerAddCheckIn.id as string, TrangThaiCheckin.DOING);
     };
 
     // auto update cthd
@@ -449,6 +585,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     const showPopChiTietGioHang = (item: HoaDonChiTietDto) => {
         setIsShowEditGioHang(true);
         setIdCTHDChosing(item?.id);
+        setIsExpandShoppingCart(false);
     };
 
     const AgreeGioHang = (ctUpdate: PageHoaDonChiTietDto) => {
@@ -495,7 +632,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
 
     const RemoveCache = async () => {
         await dbDexie.hoaDon.where('id').equals(hoadon.id).delete();
-        // .then((deleteCount: any) => console.log('idhoadondelete ', hoadon.id, 'deletecount', deleteCount));
+        setAllInvoiceWaiting(allInvoiceWaiting.filter((x) => x.id !== hoadon.id));
+        setLstSearchInvoiceWaiting(allInvoiceWaiting.filter((x) => x.id !== hoadon.id));
     };
 
     // customer: add/remove
@@ -588,13 +726,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     const updateCache_IfChangeCus = async (dataCheckIn: any, type = 0) => {
         const idCheckInOld = triggerAddCheckIn.id as string; // always get state Id_Old
         // remove checkin DB
-        await CheckinService.UpdateTrangThaiCheckin(idCheckInOld, 0);
+        await CheckinService.UpdateTrangThaiCheckin(idCheckInOld, TrangThaiCheckin.DELETED);
 
         const cacheOld = await dbDexie.hoaDon.where('id').equals(hoadon?.id).toArray();
 
         //  update cache hoadon with new {idcus, cusName,..}
         // const cacheHD = await dbDexie.hoaDon.where('id').equals(hoadon?.id).toArray();
-        console.log('hoadon?.id ', hoadon?.id, cacheOld);
         if (type === 0) {
             //only change cus (not from booking)
             // find data of cache old --> set again
@@ -608,11 +745,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 });
             }
         } else {
-            await dbDexie.hoaDon
-                .where('idCheckIn')
-                .equals(idCheckInOld)
-                .delete()
-                .then((deleteCount: any) => console.log('idCheckInOld ', idCheckInOld, 'deletecount', deleteCount));
+            await dbDexie.hoaDon.where('idCheckIn').equals(idCheckInOld).delete();
         }
     };
 
@@ -717,31 +850,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         return true;
     };
 
-    const [hasTip, setHasTip] = useState(false); // mac dinh cua hang khong co Tip
-    const [formShow, setFormShow] = useState(0);
-    const [showPayment, setShowPayment] = useState(false);
-
-    const onPrevPayment = () => {
-        let formPrev = formShow - 1;
-        if (!hasTip) {
-            formPrev = formPrev - 1;
-        }
-        setFormShow(formPrev);
-        setShowPayment(formPrev > 0);
-        onPaymentChild(formPrev > 0);
-    };
-
-    const handleCheckNext = () => {
-        let formNext = formShow + 1;
-        if (!hasTip) {
-            formNext += 1;
-        }
-        setFormShow(formNext);
-        setShowPayment(true);
-        onPaymentChild(true);
-        if (formNext < 3) return false;
-        return true;
-    };
+    // form payment
 
     const assignThongTinThanhToan = (arrQCT: QuyChiTietDto[]) => {
         setLstQuyCT([...arrQCT]);
@@ -756,20 +865,35 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         setTienThuaTraKhach(tienKhachTra - hoadon?.tongThanhToan);
     };
 
-    const editInforHoaDon_atPayment = (
-        ptGiamGiaHD: number,
-        tongGiamGiaHD: number,
-        khachPhaiTra: number,
-        ghichuHD: string
-    ) => {
+    const onChangeGhiChuHD_atPayment = async (ghiChuHD: string) => {
+        setHoaDon({
+            ...hoadon,
+            ghiChuHD: ghiChuHD
+        });
+        await dbDexie.hoaDon.update(hoadon?.id, {
+            ghiChuHD: ghiChuHD
+        });
+    };
+
+    const editInforHoaDon_atPayment = async (ptGiamGiaHD: number, tongGiamGiaHD: number, khachPhaiTra: number) => {
         setHoaDon({
             ...hoadon,
             pTGiamGiaHD: ptGiamGiaHD,
             tongGiamGiaHD: tongGiamGiaHD,
-            tongThanhToan: khachPhaiTra,
-            ghiChuHD: ghichuHD
+            tongThanhToan: khachPhaiTra
         });
+        // todo update in cache
+        try {
+            await dbDexie.hoaDon.update(hoadon?.id, {
+                pTGiamGiaHD: ptGiamGiaHD,
+                tongGiamGiaHD: tongGiamGiaHD,
+                tongThanhToan: khachPhaiTra
+            });
+        } catch {
+            //
+        }
     };
+    // end form payment
 
     // click thanh toan---> chon hinh thucthanhtoan--->   luu hoadon + phieuthu
     const saveHoaDon = async () => {
@@ -791,14 +915,14 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         const hodaDonDB = await HoaDonService.CreateHoaDon(dataSave);
 
         //checkout + update idHoadon (to checkin_hoadon)
-        await CheckinService.UpdateTrangThaiCheckin(triggerAddCheckIn.id as string, 2);
+        await CheckinService.UpdateTrangThaiCheckin(triggerAddCheckIn.id as string, TrangThaiCheckin.COMPLETED);
         await CheckinService.Update_IdHoaDon_toCheckInHoaDon(triggerAddCheckIn.id as string, hodaDonDB.id);
 
         // again again if tra thua tien
         let lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(lstQuyCT, sumTienKhachTra, hoadon?.tongThanhToan ?? 0);
 
         // save soquy (Mat, POS, ChuyenKhoan)
-        const tongThu = lstQCT_After.reduce((currentValue: number, item: any) => {
+        const tongThu = lstQCT_After.reduce((currentValue: number, item) => {
             return currentValue + item.tienThu;
         }, 0);
         let quyHD = new QuyHoaDonDto({});
@@ -838,9 +962,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
 
     const ResetState_AfterSave = () => {
         setClickSave(false);
-        setFormShow(0);
-        setShowPayment(false);
-        sendDataToParent(false); // nếu đang mở form DetailHoaDon, thfi phải đóng nó lại (show = false)
 
         setHoaDonChiTiet([]);
         setLstQuyCT([new QuyChiTietDto({ hinhThucThanhToan: 1 })]);
@@ -932,13 +1053,13 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 resizeObserver.disconnect();
             };
         }
-    }, [CoditionLayout]);
+    }, [horizontalLayout]);
 
     // start: page thanhtoan new
     const [showDetail, setShowDetail] = useState(false);
     const handleShowDetail = () => {
         setShowDetail(!showDetail);
-        sendDataToParent(!showDetail);
+        setIsExpandShoppingCart(false);
     };
 
     const changeHinhThucThanhToan = (item: ISelect) => {
@@ -991,6 +1112,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         }
     };
 
+    // const updateTongThanhToan_for
+
     useEffect(() => {
         // if (!afterRender.current) return;
         const hinhThucTT = lstQuyCT.length === 1 ? lstQuyCT[0].hinhThucThanhToan : 0;
@@ -1008,14 +1131,16 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         );
         setSumTienKhachTra(hoadon?.tongThanhToan ?? 0);
         setTienThuaTraKhach(0);
-        console.log('changeTongTT ');
+
+        if (isExpandShoppingCart) {
+            // update cacheHD
+        }
     }, [hoadon.tongThanhToan]);
 
     // end thanhtoan new
 
     //QR
     const [qrCode, setQRCode] = useState('');
-    const [suggestTaiKhoanNganHang, setSuggestTaiKhoanNganHang] = useState<SuggestTaiKhoanNganHangQrDto[]>([]);
     const [allAccountBank, setAllAccountBank] = useState<TaiKhoanNganHangDto[]>([]);
     const [taiKhoanNganHang, setTaiKhoanNganHang] = useState<SuggestTaiKhoanNganHangQrDto>({
         id: null,
@@ -1030,7 +1155,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     };
 
     const changeTaiKhoanNganHang = async (item: TaiKhoanNganHangDto) => {
-        console.log('changeTK ', item);
         setTaiKhoanNganHang({
             id: item?.id,
             soTaiKhoan: item?.soTaiKhoan,
@@ -1090,10 +1214,16 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             <ModalEditChiTietGioHang
                 formType={1}
                 isShow={isShowEditGioHang}
-                hoadonChiTiet={hoaDonChiTiet.filter((x: any) => x.id === idCTHDChosing)}
+                hoadonChiTiet={hoaDonChiTiet.filter((x) => x.id === idCTHDChosing)}
                 handleSave={AgreeGioHang}
                 handleClose={() => setIsShowEditGioHang(false)}
             />
+            <ConfirmDelete
+                isShow={inforDelete.show}
+                title={inforDelete.title}
+                mes={inforDelete.mes}
+                onOk={onClickConfirmDelete}
+                onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
@@ -1107,7 +1237,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 container
                 spacing={2}
                 width={'100%'} // width={'100%'}: khong duoc xoa dong nay: fix loi MUI tự động set width calc(100% + 16px)
-                marginTop={3}
+                marginTop={showDetail ? '-24px' : '24px'}
                 ml="0"
                 sx={{
                     height: '100%',
@@ -1122,24 +1252,24 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                         md={7}
                         spacing={2}
                         height="fit-content"
-                        marginTop={CoditionLayout ? '-83px' : '-24px'}
+                        marginTop={horizontalLayout ? '-83px' : '-24px'}
                         paddingBottom="0"
                         bgcolor="#F8F8F8">
                         <Grid
                             item
-                            md={CoditionLayout ? 12 : 4}
+                            md={horizontalLayout ? 12 : 4}
                             sx={{
                                 // paddingLeft: '0!important',
                                 display: 'flex',
                                 flexDirection: 'column'
                             }}>
-                            {CoditionLayout && (
+                            {horizontalLayout && (
                                 <TextField
                                     fullWidth
                                     sx={{
                                         borderColor: '#CFD3D4!important',
                                         borderWidth: '1px!important',
-                                        maxWidth: { lg: '55%', md: '45%' },
+                                        maxWidth: { lg: '55%', md: '40%' },
                                         mr: '24px',
                                         boxShadow: ' 0px 20px 100px 0px #0000000D',
                                         maxHeight: '37px',
@@ -1155,7 +1285,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     className="search-field no-minWidth"
                                     variant="outlined"
                                     type="search"
-                                    placeholder="Tìm kiếm"
+                                    placeholder="Tìm dịch vụ"
                                     value={txtSearch}
                                     onChange={(event) => {
                                         setTxtSearch(event.target.value);
@@ -1163,23 +1293,23 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                                <SearchIcon />
+                                                <SearchOutlinedIcon />
                                             </InputAdornment>
                                         )
                                     }}
                                 />
                             )}
                             <Box
-                                mt={CoditionLayout ? '8px' : '0px'}
+                                mt={horizontalLayout ? '8px' : '0px'}
                                 sx={{
                                     scrollBehavior: 'smooth',
-                                    backgroundColor: CoditionLayout ? 'transparent' : '#fff',
+                                    backgroundColor: horizontalLayout ? 'transparent' : '#fff',
                                     borderRadius: '8px',
-                                    boxShadow: CoditionLayout ? 'unset' : ' 0px 20px 100px 0px #0000000D',
+                                    boxShadow: horizontalLayout ? 'unset' : ' 0px 20px 100px 0px #0000000D',
                                     padding: '16px',
-                                    height: CoditionLayout ? 'unset' : '100vh',
+                                    height: horizontalLayout ? 'unset' : '100vh',
                                     overflowX: 'hidden',
-                                    maxHeight: CoditionLayout ? 'unset' : '88.5vh',
+                                    maxHeight: horizontalLayout ? 'unset' : '88.5vh',
                                     overflowY: 'auto',
                                     '&::-webkit-scrollbar': {
                                         width: '7px'
@@ -1202,44 +1332,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             onClick={() => choseLoaiHang(2)}>
                                             Nhóm dịch vụ
                                         </Typography>
-                                        {/* {isScrollable && (
-                                            <Box
-                                                sx={{
-                                                    '& button': {
-                                                        minWidth: 'unset',
-                                                        bgcolor: 'unset!important'
-                                                    }
-                                                }}>
-                                                <Button
-                                                    variant="text"
-                                                    onClick={handlePrevClick}
-                                                    sx={{
-                                                        '&:hover svg': {
-                                                            color: 'var(--color-main)'
-                                                        }
-                                                    }}>
-                                                    <ArrowBackIosIcon
-                                                        sx={{
-                                                            color: 'rgba(49, 157, 255, 0.5)'
-                                                        }}
-                                                    />
-                                                </Button>
-                                                <Button
-                                                    variant="text"
-                                                    onClick={handleNextClick}
-                                                    sx={{
-                                                        '&:hover svg': {
-                                                            color: 'var(--color-main)'
-                                                        }
-                                                    }}>
-                                                    <ArrowForwardIosIcon
-                                                        sx={{
-                                                            color: 'rgba(49, 157, 255, 0.5)'
-                                                        }}
-                                                    />
-                                                </Button>
-                                            </Box>
-                                        )} */}
                                     </Box>
                                     <List
                                         onScroll={handleScroll}
@@ -1247,10 +1339,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         onWheel={handleWheel}
                                         sx={{
                                             height: 66,
-                                            display: CoditionLayout ? 'flex' : 'block',
+                                            display: horizontalLayout ? 'flex' : 'block',
                                             columnGap: '12px',
-                                            flexWrap: CoditionLayout ? 'nowrap' : 'wrap',
-                                            overflowX: CoditionLayout ? 'auto' : 'none',
+                                            flexWrap: horizontalLayout ? 'nowrap' : 'wrap',
+                                            overflowX: horizontalLayout ? 'auto' : 'none',
                                             scrollBehavior: 'smooth',
                                             '&::-webkit-scrollbar': {
                                                 width: '7px',
@@ -1273,8 +1365,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                 marginTop: '8px',
                                                 cursor: 'pointer',
                                                 transition: '.4s',
-                                                minWidth: CoditionLayout ? '100px' : 'unset',
-                                                maxWidth: CoditionLayout ? '100px' : 'unset',
+                                                minWidth: horizontalLayout ? '100px' : 'unset',
+                                                maxWidth: horizontalLayout ? '100px' : 'unset',
                                                 position: 'relative',
                                                 '&::after': {
                                                     content: '""',
@@ -1284,7 +1376,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     left: '0',
                                                     bottom: '0',
                                                     backgroundColor: 'rgba(0,0,0,0.3)',
-                                                    zIndex: '0',
                                                     opacity: '0',
                                                     transition: '.4s'
                                                 },
@@ -1303,8 +1394,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                         overflow: 'hidden',
                                                         textOverflow: 'ellipsis',
                                                         fontWeight: '600',
-                                                        position: 'relative',
-                                                        zIndex: '2'
+                                                        position: 'relative'
                                                     }
                                                 }}>
                                                 Tất cả
@@ -1324,8 +1414,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     marginTop: '8px',
                                                     cursor: 'pointer',
                                                     transition: '.4s',
-                                                    minWidth: CoditionLayout ? '200px' : 'unset',
-                                                    maxWidth: CoditionLayout ? '200px' : 'unset',
+                                                    minWidth: horizontalLayout ? '200px' : 'unset',
+                                                    maxWidth: horizontalLayout ? '200px' : 'unset',
                                                     position: 'relative',
                                                     '&::after': {
                                                         content: '""',
@@ -1335,7 +1425,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                         left: '0',
                                                         bottom: '0',
                                                         backgroundColor: 'rgba(0,0,0,0.3)',
-                                                        zIndex: '0',
                                                         opacity: '0',
                                                         transition: '.4s'
                                                     },
@@ -1347,7 +1436,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     sx={{
                                                         minWidth: '0',
                                                         position: 'relative',
-                                                        zIndex: '2',
                                                         '& path': {
                                                             fill: nhomDV.color ?? '#c2c9d6'
                                                         }
@@ -1364,8 +1452,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis',
                                                             fontWeight: '600',
-                                                            position: 'relative',
-                                                            zIndex: '2'
+                                                            position: 'relative'
                                                         }
                                                     }}
                                                     title={nhomDV.tenNhomHang}>
@@ -1382,11 +1469,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     gap: '6px',
                                                     padding: '4px 8px',
                                                     overflow: 'hidden',
-                                                    bgcolor: nhomHH.color,
+                                                    bgcolor: '#ebe9e9cc',
                                                     borderRadius: '8px',
                                                     marginTop: '12px',
-                                                    minWidth: CoditionLayout ? '200px' : 'unset',
-                                                    maxWidth: CoditionLayout ? '200px' : 'unset',
+                                                    minWidth: horizontalLayout ? '200px' : 'unset',
+                                                    maxWidth: horizontalLayout ? '200px' : 'unset',
                                                     cursor: 'pointer',
                                                     transition: '.4s',
 
@@ -1399,7 +1486,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                         left: '0',
                                                         bottom: '0',
                                                         backgroundColor: 'rgba(0,0,0,0.3)',
-                                                        zIndex: '0',
                                                         opacity: '0',
                                                         transition: '.4s'
                                                     },
@@ -1412,7 +1498,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     sx={{
                                                         minWidth: '0',
                                                         position: 'relative',
-                                                        zIndex: '2',
                                                         '& path': {
                                                             fill: nhomHH.color ?? '#c2c9d6'
                                                         }
@@ -1429,8 +1514,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                             fontSize: '14px',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis',
-                                                            position: 'relative',
-                                                            zIndex: '2'
+                                                            position: 'relative'
                                                         }
                                                     }}
                                                     title={nhomHH.tenNhomHang}>
@@ -1442,9 +1526,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 </Box>
                             </Box>
                         </Grid>
-                        <Grid item md={CoditionLayout ? 12 : 8} sx={{ marginTop: '-58px' }}>
+                        <Grid item md={horizontalLayout ? 12 : 8} sx={{ marginTop: '-58px' }}>
                             <Box display="flex" flexDirection="column">
-                                {!CoditionLayout && (
+                                {!horizontalLayout && (
                                     <TextField
                                         fullWidth
                                         sx={{
@@ -1463,7 +1547,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         className="search-field"
                                         variant="outlined"
                                         type="search"
-                                        placeholder="Tìm kiếm"
+                                        placeholder="Tìm dịch vụ"
                                         value={txtSearch}
                                         onChange={(event) => {
                                             setTxtSearch(event.target.value);
@@ -1471,7 +1555,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position="start">
-                                                    <SearchIcon />
+                                                    <SearchOutlinedIcon />
                                                 </InputAdornment>
                                             )
                                         }}
@@ -1485,12 +1569,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     marginTop="22px"
                                     sx={{
                                         width: '100%',
-                                        backgroundColor: CoditionLayout ? 'transparent' : '#fff',
+                                        backgroundColor: horizontalLayout ? 'transparent' : '#fff',
                                         borderRadius: '8px',
                                         height:
-                                            CoditionLayout && innerHeight > 600
+                                            horizontalLayout && innerHeight > 600
                                                 ? '75vh'
-                                                : CoditionLayout && innerHeight < 605
+                                                : horizontalLayout && innerHeight < 605
                                                 ? '32vh'
                                                 : '88.5vh',
                                         overflowX: 'hidden',
@@ -1507,7 +1591,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             bgcolor: 'var(--color-bg)'
                                         }
                                     }}>
-                                    {listProduct.map((nhom: any, index: any) => (
+                                    {listProduct.map((nhom: IHangHoaGroupTheoNhomDto, index: number) => (
                                         <Box key={index} id={nhom.idNhomHangHoa}>
                                             <Typography
                                                 variant="h4"
@@ -1520,13 +1604,13 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             </Typography>
 
                                             <Grid container spacing={1.5}>
-                                                {nhom.hangHoas.map((item: any) => (
+                                                {nhom.hangHoas.map((item) => (
                                                     <Grid
                                                         item
                                                         xs={6}
                                                         sm={6}
-                                                        md={CoditionLayout ? 4 : 6}
-                                                        lg={CoditionLayout ? 3 : 4}
+                                                        md={horizontalLayout ? 4 : 6}
+                                                        lg={horizontalLayout ? 3 : 4}
                                                         key={item.id}>
                                                         <Stack
                                                             spacing={2}
@@ -1569,7 +1653,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                                     fontSize: '13px',
                                                                     color: '#333233'
                                                                 }}>
-                                                                {Intl.NumberFormat('vi-VN').format(item.giaBan)}
+                                                                {Intl.NumberFormat('vi-VN').format(
+                                                                    item.giaBan as number
+                                                                )}
                                                             </span>
                                                         </Stack>
                                                     </Grid>
@@ -1586,23 +1672,19 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                         item
                         md={7}
                         className="normal"
-                        sx={
-                            {
-                                // pt: '0!important',
-                                // marginTop: '-24px'
-                            }
-                        }>
-                        {/* <Payments
-                            tongPhaiTra={hoadon?.tongThanhToan}
-                            handleClickPrev={onPrevPayment}
-                            passToParent={assignThongTinThanhToan}
-                        /> */}
+                        sx={{
+                            pt: '0!important',
+                            marginTop: '-24px!important'
+                        }}>
                         <DetailHoaDon
                             toggleDetail={handleShowDetail}
                             hinhThucTT={lstQuyCT.length === 1 ? lstQuyCT[0].hinhThucThanhToan : 0}
                             tongTienHang={hoadon?.tongTienHang}
+                            ptGiamGiaHD_Parent={hoadon?.pTGiamGiaHD}
+                            tongGiamGiaHD_Parent={hoadon?.tongGiamGiaHD}
                             onChangeQuyChiTiet={assignThongTinThanhToan}
                             onChangeHoaDon={editInforHoaDon_atPayment}
+                            onChangeGhiChuHD={onChangeGhiChuHD_atPayment}
                             onClickThanhToan={saveHoaDon}
                         />
                     </Grid>
@@ -1647,7 +1729,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     <Avatar sx={{ width: 40, height: 40 }} src={cusChosing?.avatar} />
                                 )}
 
-                                <Box onClick={showModalCheckIn}>
+                                <Box>
                                     <Typography variant="subtitle2" color="#3D475C">
                                         {hoadon?.tenKhachHang}
                                     </Typography>
@@ -1657,41 +1739,178 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 </Box>
 
                                 <Box sx={{ marginLeft: 'auto' }}>
-                                    {utils.checkNull(hoadon?.idKhachHang) || hoadon?.idKhachHang === Guid.EMPTY ? (
-                                        <Button
-                                            variant="outlined"
-                                            sx={{
-                                                border: '1px solid var(--color-main)',
-                                                bgcolor: '#fff',
-                                                minWidth: 'unset',
-                                                width: '40px',
-                                                height: '40px',
-                                                borderRadius: '8px'
-                                            }}>
-                                            <Add onClick={showModalAddCustomer} />
-                                        </Button>
-                                    ) : (
-                                        <>
-                                            <Stack spacing={2} direction="row">
-                                                <VisibilityIcon
-                                                    onClick={showModalEditCus}
-                                                    sx={{
-                                                        color: '#8492AE',
-                                                        width: '16px',
-                                                        height: '16px'
+                                    <Stack direction="row" spacing={'10px'}>
+                                        <Add
+                                            onClick={showModalCheckIn}
+                                            sx={{ color: '#1976d2' }}
+                                            titleAccess="Thêm khách check in"
+                                        />
+
+                                        <Badge
+                                            badgeContent={allInvoiceWaiting?.length ?? 0}
+                                            color="secondary"
+                                            sx={{ position: 'relative' }}>
+                                            <ShoppingCartIcon
+                                                sx={{ color: '#1976d2' }}
+                                                titleAccess="Hóa đơn chờ"
+                                                onClick={showAllInvoiceWaiting}
+                                            />
+                                            <Stack
+                                                width={190}
+                                                spacing={1}
+                                                overflow={'auto'}
+                                                maxHeight={500}
+                                                sx={{
+                                                    display: isExpandShoppingCart ? '' : 'none',
+                                                    position: 'absolute',
+                                                    marginLeft: '-160px',
+                                                    backgroundColor: 'white',
+                                                    border: '1px solid #cccc',
+                                                    borderRadius: '4px',
+                                                    top: '20px',
+                                                    zIndex: 2
+                                                }}>
+                                                <Stack sx={{ backgroundColor: 'antiquewhite' }}>
+                                                    <Typography
+                                                        variant="body2"
+                                                        sx={{
+                                                            textAlign: 'center',
+                                                            borderBottom: '1px solid #cccc',
+                                                            padding: '8px'
+                                                        }}>
+                                                        Hóa đơn chờ
+                                                    </Typography>
+                                                    <CloseOutlinedIcon
+                                                        titleAccess="Xóa tất cả"
+                                                        onClick={() => {
+                                                            setIdHoaDonChosing(null);
+                                                            setinforDelete(
+                                                                new PropConfirmOKCancel({
+                                                                    show: true,
+                                                                    title: 'Xác nhận xóa',
+                                                                    mes: `Bạn có chắc chắn muốn tất cả xóa hóa đơn chờ  không`
+                                                                })
+                                                            );
+                                                        }}
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            right: '8px',
+                                                            top: '8px',
+                                                            width: 16,
+                                                            height: 16,
+                                                            color: 'red',
+                                                            '&:hover': {
+                                                                filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                                                            }
+                                                        }}
+                                                    />
+                                                </Stack>
+
+                                                <TextField
+                                                    fullWidth
+                                                    size="small"
+                                                    variant="standard"
+                                                    placeholder="Tìm hóa đơn"
+                                                    value={txtSearchInvoiceWaiting}
+                                                    onChange={(e) => setTxtSearchInvoiceWaiting(e.target.value)}
+                                                    InputProps={{
+                                                        startAdornment: (
+                                                            <InputAdornment position="start">
+                                                                <SearchOutlinedIcon />
+                                                            </InputAdornment>
+                                                        )
                                                     }}
                                                 />
-                                                <Close
-                                                    sx={{
-                                                        color: '#8492AE',
-                                                        width: '16px',
-                                                        height: '16px'
-                                                    }}
-                                                    onClick={() => changeCustomer(null)}
-                                                />
+                                                <Stack>
+                                                    {lstSearchInvoiceWaiting?.map(
+                                                        (item: PageHoaDonDto, index: number) => (
+                                                            <Stack sx={{ position: 'relative' }} key={index}>
+                                                                <CloseOutlinedIcon
+                                                                    onClick={() => {
+                                                                        setIdHoaDonChosing(item?.id);
+                                                                        setinforDelete(
+                                                                            new PropConfirmOKCancel({
+                                                                                show: true,
+                                                                                title: 'Xác nhận xóa',
+                                                                                mes: `Bạn có chắc chắn muốn xóa hóa đơn của  ${
+                                                                                    item?.tenKhachHang
+                                                                                }  có tổng tiền  ${Intl.NumberFormat(
+                                                                                    'vi-VN'
+                                                                                ).format(item?.tongThanhToan)}? không`
+                                                                            })
+                                                                        );
+                                                                    }}
+                                                                    sx={{
+                                                                        position: 'absolute',
+                                                                        right: '8px',
+                                                                        top: '8px',
+                                                                        width: 16,
+                                                                        height: 16,
+                                                                        color: 'red',
+                                                                        '&:hover': {
+                                                                            filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                                                                        }
+                                                                    }}
+                                                                />
+                                                                <Stack
+                                                                    sx={{
+                                                                        padding: '10px',
+                                                                        borderBottom: '1px solid #ccc'
+                                                                    }}
+                                                                    onClick={() => onChoseInvoiceWaiting(item?.id)}>
+                                                                    <Stack
+                                                                        direction={'row'}
+                                                                        spacing={1}
+                                                                        alignItems={'center'}>
+                                                                        <AssignmentIndOutlinedIcon
+                                                                            sx={{
+                                                                                color: '#cccc',
+                                                                                width: '18px',
+                                                                                height: '18px'
+                                                                            }}
+                                                                        />
+                                                                        <Typography
+                                                                            variant="subtitle2"
+                                                                            title={item?.tenKhachHang}>
+                                                                            {item.tenKhachHang}
+                                                                        </Typography>
+                                                                    </Stack>
+                                                                    {item?.soDienThoai && (
+                                                                        <Stack
+                                                                            direction={'row'}
+                                                                            spacing={1}
+                                                                            alignItems={'center'}>
+                                                                            <PhoneOutlinedIcon
+                                                                                sx={{
+                                                                                    color: '#cccc',
+                                                                                    width: '18px',
+                                                                                    height: '18px'
+                                                                                }}
+                                                                            />
+                                                                            <Typography
+                                                                                color="#999699"
+                                                                                variant="caption">
+                                                                                {item?.soDienThoai}
+                                                                            </Typography>
+                                                                        </Stack>
+                                                                    )}
+
+                                                                    <Typography
+                                                                        variant="body2"
+                                                                        fontWeight="700"
+                                                                        color={'#d39987'}>
+                                                                        {Intl.NumberFormat('vi-VN').format(
+                                                                            item?.tongThanhToan
+                                                                        )}
+                                                                    </Typography>
+                                                                </Stack>
+                                                            </Stack>
+                                                        )
+                                                    )}
+                                                </Stack>
                                             </Stack>
-                                        </>
-                                    )}
+                                        </Badge>
+                                    </Stack>
                                 </Box>
                             </Box>
                         </Box>
@@ -1745,7 +1964,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             {ct?.nhanVienThucHien !== undefined && ct?.nhanVienThucHien.length > 0 && (
                                                 <>
                                                     <Box display="flex" alignItems="center" flexWrap="wrap" gap="8px">
-                                                        {ct.nhanVienThucHien.map((nv: any, index3: number) => (
+                                                        {ct.nhanVienThucHien.map((nv, index3: number) => (
                                                             <Box
                                                                 key={index3}
                                                                 sx={{
@@ -2104,54 +2323,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                 }
                                                 listOption={allAccountBank}
                                             />
-                                            {/* <Autocomplete
-                                                options={suggestTaiKhoanNganHang ?? []}
-                                                getOptionLabel={(option) =>
-                                                    option.tenRutGon +
-                                                    ' - ' +
-                                                    option.soTaiKhoan +
-                                                    ' - ' +
-                                                    option.tenTaiKhoan
-                                                }
-                                                value={taiKhoanNganHang}
-                                                fullWidth
-                                                onChange={(event, value) => {
-                                                    setTaiKhoanNganHang(
-                                                        value ?? {
-                                                            id: null,
-                                                            bin: '',
-                                                            soTaiKhoan: '',
-                                                            tenRutGon: '',
-                                                            tenTaiKhoan: ''
-                                                        }
-                                                    );
-                                                    console.log('change ', value);
-                                                    setLstQuyCT(
-                                                        lstQuyCT.map((itemCT: QuyChiTietDto) => {
-                                                            if (itemCT.hinhThucThanhToan === 2) {
-                                                                return {
-                                                                    ...itemCT,
-                                                                    idTaiKhoanNganHang: value?.id
-                                                                };
-                                                            } else {
-                                                                return { ...itemCT };
-                                                            }
-                                                        })
-                                                    );
-                                                }}
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        size="small"
-                                                        label={
-                                                            <Typography>
-                                                                Ngân hàng <span className="text-danger"> *</span>
-                                                            </Typography>
-                                                        }
-                                                        placeholder="Nhập tên ngân hàng"
-                                                    />
-                                                )}
-                                            /> */}
                                             {qrCode && (
                                                 <img
                                                     src={qrCode}
