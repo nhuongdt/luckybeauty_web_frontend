@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Box, 
 import { useEffect, useState, useContext } from 'react';
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import CheckinService from '../../services/check_in/CheckinService';
-import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
+import { ICheckInHoaDonto, KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 
 import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
@@ -16,6 +16,7 @@ import { BookingDetail_ofCustomerDto } from '../../services/dat-lich/dto/Booking
 import { dbDexie } from '../../lib/dexie/dexieDB';
 import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
 import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
+import { TrangThaiCheckin } from '../../lib/appconst';
 export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
     const appContext = useContext(AppContext);
     const chiNhanhCurrent = appContext.chinhanhCurrent;
@@ -88,9 +89,13 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                 soDienThoai: cusChosed.soDienThoai
             };
         });
+        // vì trangthaiCheckin: đang tính theo tổng số dịch vụ đang có (hoaDonChiTiet.length)
+        // nên: nếu khách hàng có lịch hẹn và checkin: auto set trạng thái = Đang thực hiện
+        // ngược lại: nếu chọn check in từ tab khách hàng: trạng thái = Đang chờ
         const objCheckIn: KHCheckInDto = new KHCheckInDto({
             idKhachHang: cusChosed.id,
-            idChiNhanh: idChiNhanh
+            idChiNhanh: idChiNhanh,
+            trangThai: type === 1 ? TrangThaiCheckin.DOING : TrangThaiCheckin.WAITING
         });
         const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
         const objCheckInNew: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
@@ -101,14 +106,14 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
             soDienThoai: cusChosed.soDienThoai,
             tongTichDiem: cusChosed.tongTichDiem,
             dateTimeCheckIn: dataCheckIn.dateTimeCheckIn,
-            txtTrangThaiCheckIn: dataCheckIn.txtTrangThaiCheckIn
+            txtTrangThaiCheckIn: type === 1 ? 'Đang thực hiện' : 'Đang chờ'
         });
 
         // save to Booking_Checkin_HD
         await CheckinService.InsertCheckInHoaDon({
             idCheckIn: dataCheckIn.id,
             idBooking: cusChosed?.idBooking
-        });
+        } as ICheckInHoaDonto);
         if (type === 1) {
             // save to cache hdDB
             await addDataBooking_toCacheHD(cusChosed, dataCheckIn.id);
