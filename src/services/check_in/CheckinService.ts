@@ -1,8 +1,8 @@
 import http from '../httpService';
-import { KHCheckInDto, PageKhachHangCheckInDto } from './CheckinDto';
-import { PagedKhachHangResultRequestDto } from '../khach-hang/dto/PagedKhachHangResultRequestDto';
+import { ICheckInHoaDonto, KHCheckInDto, PageKhachHangCheckInDto } from './CheckinDto';
 import { Guid } from 'guid-typescript';
 import utils from '../../utils/utils';
+import { PagedRequestDto } from '../dto/pagedRequestDto';
 
 class CheckinService {
     CheckExistCusCheckin = async (idCus: string, idCheckIn?: string) => {
@@ -11,7 +11,7 @@ class CheckinService {
         }
         const xx = await http
             .post(`api/services/app/CheckIn/CheckExistCusCheckin?idCus=${idCus}&idCheckIn=${idCheckIn}`)
-            .then((res: { data: { result: any } }) => {
+            .then((res: { data: { result: boolean } }) => {
                 return res.data.result;
             });
         return xx;
@@ -19,7 +19,7 @@ class CheckinService {
     InsertCustomerCheckIn = async (input: KHCheckInDto) => {
         const xx = await http
             .post(`api/services/app/CheckIn/InsertCustomerCheckIn`, input)
-            .then((res: { data: { result: any } }) => {
+            .then((res: { data: { result: KHCheckInDto } }) => {
                 return res.data.result;
             });
         return xx;
@@ -27,15 +27,15 @@ class CheckinService {
     UpdateCustomerCheckIn = async (input: KHCheckInDto) => {
         const xx = await http
             .post(`api/services/app/CheckIn/UpdateCustomerCheckIn`, input)
-            .then((res: { data: { result: any } }) => {
+            .then((res: { data: { result: string } }) => {
                 return res.data.result;
             });
         return xx;
     };
-    GetListCustomerChecking = async (input: any): Promise<PageKhachHangCheckInDto[]> => {
+    GetListCustomerChecking = async (input: PagedRequestDto): Promise<PageKhachHangCheckInDto[]> => {
         const xx = await http
             .post(`api/services/app/CheckIn/GetListCustomerChecking`, input)
-            .then((res: { data: { result: any } }) => {
+            .then((res: { data: { result: PageKhachHangCheckInDto[] } }) => {
                 return res.data.result;
             });
         return xx;
@@ -46,13 +46,13 @@ class CheckinService {
         }
         const xx = await http
             .post(`api/services/app/CheckIn/UpdateTrangThaiCheckin?idCheckIn=${idCheckIn}&trangThai=${trangThai}`)
-            .then((res: { data: { result: any } }) => {
+            .then((res: { data: { result: string } }) => {
                 return res.data.result;
             });
         return xx;
     };
 
-    InsertCheckInHoaDon = async (input: any) => {
+    InsertCheckInHoaDon = async (input: ICheckInHoaDonto) => {
         if (utils.checkNull(input?.idCheckIn) || input?.idCheckIn === Guid.EMPTY) {
             return;
         }
@@ -61,7 +61,7 @@ class CheckinService {
         }
         const xx = await http
             .post(`api/services/app/CheckIn/InsertCheckInHoaDon`, input)
-            .then((res: { data: { result: any } }) => {
+            .then((res: { data: { result: ICheckInHoaDonto } }) => {
                 return res.data.result;
             });
         return xx;
