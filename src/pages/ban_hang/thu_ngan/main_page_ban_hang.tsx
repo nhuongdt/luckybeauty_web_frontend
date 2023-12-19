@@ -1,11 +1,9 @@
 import { useState, useEffect, createContext } from 'react';
-import { Grid, ButtonGroup, Button, Box } from '@mui/material';
+import { Grid, ButtonGroup, Button, Box, Stack, Typography } from '@mui/material';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Guid } from 'guid-typescript';
 import '../style.css';
-import { ReactComponent as Layout2Icon } from '../../../images/layout2.svg';
-import { ReactComponent as Layout1Icon } from '../../../images/layout1.svg';
 import TableChartIcon from '@mui/icons-material/TableChart';
 
 import CheckInNew from '../../check_in/CheckInNew';
@@ -16,9 +14,22 @@ import { SuggestNguonKhachDto } from '../../../services/suggests/dto/SuggestNguo
 import { SuggestNhomKhachDto } from '../../../services/suggests/dto/SuggestNhomKhachDto';
 import SuggestService from '../../../services/suggests/SuggestService';
 import { DataCustomerContext } from '../../../services/khach-hang/dto/DataContext';
+import SettingsBackupRestoreOutlinedIcon from '@mui/icons-material/SettingsBackupRestoreOutlined';
+import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import { IList } from '../../../services/dto/IList';
 
 export default function MainPageBanHang() {
     const [activeTab, setActiveTab] = useState(1);
+    const [expandAction, setExpandAction] = useState(false);
+
+    const lstOption: IList[] = [
+        { id: '1', text: 'Trang chủ', icon: <HomeOutlinedIcon /> },
+        { id: '2', text: 'Danh sách hóa đơn', icon: <FormatListBulletedOutlinedIcon /> },
+        { id: '3', text: 'Lịch hẹn', icon: <CalendarMonthOutlinedIcon /> }
+    ];
 
     const [cusChosing, setCusChosing] = useState<PageKhachHangCheckInDto>(
         new PageKhachHangCheckInDto({ idKhachHang: Guid.EMPTY, tenKhachHang: 'Khách lẻ' })
@@ -26,6 +37,22 @@ export default function MainPageBanHang() {
 
     const [nguonKhachs, setNguonKhachs] = useState<SuggestNguonKhachDto[]>([]);
     const [nhomKhachs, setNhomKhachs] = useState<SuggestNhomKhachDto[]>([]);
+
+    const clickAction = (item: IList) => {
+        setExpandAction(false);
+
+        switch (item.id) {
+            case '1':
+                window.open('/home');
+                break;
+            case '2':
+                window.open('/giao-dich-thanh-toan');
+                break;
+            case '3':
+                window.open('/lich-hens');
+                break;
+        }
+    };
 
     const GetDM_NguonKhach = async () => {
         const data = await SuggestService.SuggestNguonKhach();
@@ -38,6 +65,8 @@ export default function MainPageBanHang() {
 
     const handleTab = (tabIndex: number) => {
         setActiveTab(tabIndex);
+        setExpandAction(false);
+
         if (tabIndex === 1) {
             Cookies.set('tab', '1', { expires: 7 });
         } else {
@@ -59,18 +88,6 @@ export default function MainPageBanHang() {
         });
         setActiveTab(2);
     };
-    //ẩn thanh cuộn dọc của trình duyệt khi vào trang bán hàng
-    useEffect(() => {
-        activeTab === 2
-            ? ((document.documentElement.style.overflowY = 'hidden'),
-              (document.documentElement.style.maxHeight = '100vh'))
-            : (document.documentElement.style.overflowY = 'auto');
-
-        return () => {
-            document.documentElement.style.maxHeight = 'unset';
-            document.documentElement.style.overflowY = 'auto';
-        };
-    }, [activeTab]);
 
     useEffect(() => {
         if (Cookies.get('tab') === '1') {
@@ -82,37 +99,32 @@ export default function MainPageBanHang() {
         GetDM_NhomKhach();
     }, []);
 
-    // Xử lý thay đổi giao diện của tab thanh toán
-    const [layout, setLayout] = useState(false);
-    const handleLayoutTrue = () => {
-        setLayout(true);
-
-        Cookies.set('changed', 'true', { expires: 7 });
-    };
-    const handleLayoutFalse = () => {
-        setLayout(false);
-        Cookies.set('changed', 'false');
-    };
+    // Xử lý thay đổi giao diện của tab thanh toán (giao diện ngang/dọc)
+    const [horizontalLayout, setHorizontalLayout] = useState(true);
     useEffect(() => {
-        if (Cookies.get('changed') === 'true') {
-            setLayout(false);
+        if (Cookies.get('horizontalLayout') === 'false') {
+            setHorizontalLayout(false);
         } else {
-            setLayout(true);
+            setHorizontalLayout(true);
         }
     }, []);
-    const [PaymentChild, setPaymentChild] = useState(false);
-    const handleShow = (value: boolean) => {
-        setPaymentChild(value);
-    };
-    const [htmlValue, setHtmlValue] = useState<any>();
 
-    const handleHtmlValue = (value: any) => {
-        setHtmlValue(value);
+    const onChangeLayoutPageBanHang = (horizontalLayout: boolean) => {
+        setHorizontalLayout(true);
+        Cookies.set('horizontalLayout', horizontalLayout.toString(), { expires: 7 });
     };
-    const [getStateChild, setGetStateChild] = useState(false);
-    const handleCallBack = (data: boolean) => {
-        setGetStateChild(data);
-    };
+
+    // useEffect(() => {
+    //     activeTab === 2
+    //         ? ((document.documentElement.style.overflowY = 'hidden'),
+    //           (document.documentElement.style.maxHeight = '100vh'))
+    //         : (document.documentElement.style.overflowY = 'auto');
+
+    //     return () => {
+    //         document.documentElement.style.maxHeight = 'unset';
+    //         document.documentElement.style.overflowY = 'auto';
+    //     };
+    // }, [activeTab]);
 
     return (
         <>
@@ -125,125 +137,108 @@ export default function MainPageBanHang() {
                     bgcolor="#f8f8f8"
                     // pr={activeTab === 1 ? '16px' : '0'}
                 >
-                    {!getStateChild ? (
-                        <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
-                            <Box display="flex" gap="12px">
-                                <ButtonGroup
+                    <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
+                        <Box display="flex" gap="12px">
+                            <ButtonGroup
+                                sx={{
+                                    '& button': {
+                                        // fontSize: '16px',
+                                        // paddingX: '7px'
+                                    }
+                                }}>
+                                <Button
                                     sx={{
-                                        '& button': {
-                                            // fontSize: '16px',
-                                            // paddingX: '7px'
+                                        textTransform: 'unset',
+
+                                        color: activeTab == 1 ? '#fff' : '#999699',
+                                        backgroundColor:
+                                            activeTab == 1 ? 'var(--color-main)!important' : 'var(--color-bg)',
+                                        borderColor: 'transparent!important',
+                                        '&:hover': {
+                                            borderColor:
+                                                activeTab == 2 ? 'var(--color-main)!important' : 'transparent!important'
                                         }
-                                    }}>
-                                    <Button
-                                        sx={{
-                                            textTransform: 'unset',
+                                    }}
+                                    onClick={() => handleTab(1)}
+                                    className={activeTab === 1 ? 'active' : ''}
+                                    variant={activeTab === 1 ? 'contained' : 'outlined'}>
+                                    Checkin
+                                </Button>
+                                <Button
+                                    sx={{
+                                        textTransform: 'unset',
 
-                                            color: activeTab == 1 ? '#fff' : '#999699',
-                                            backgroundColor:
-                                                activeTab == 1 ? 'var(--color-main)!important' : 'var(--color-bg)',
-                                            borderColor: 'transparent!important',
-                                            '&:hover': {
-                                                borderColor:
-                                                    activeTab == 2
-                                                        ? 'var(--color-main)!important'
-                                                        : 'transparent!important'
-                                            }
-                                        }}
-                                        onClick={() => handleTab(1)}
-                                        className={activeTab === 1 ? 'active' : ''}
-                                        variant={activeTab === 1 ? 'contained' : 'outlined'}>
-                                        Checkin
-                                    </Button>
-                                    <Button
-                                        sx={{
-                                            textTransform: 'unset',
+                                        color: activeTab == 2 ? '#fff' : '#999699',
+                                        borderColor: 'transparent!important',
+                                        backgroundColor:
+                                            activeTab == 2 ? 'var(--color-main)!important' : 'var(--color-bg)',
+                                        '&:hover': {
+                                            borderColor:
+                                                activeTab == 1 ? 'var(--color-main)!important' : 'transparent!important'
+                                        }
+                                    }}
+                                    onClick={() => {
+                                        handleTab(2);
+                                        setCusChosing(
+                                            new PageKhachHangCheckInDto({
+                                                idKhachHang: Guid.EMPTY,
+                                                tenKhachHang: 'Khách lẻ'
+                                            })
+                                        );
+                                    }}
+                                    className={activeTab === 2 ? 'active' : ''}
+                                    variant={activeTab === 2 ? 'contained' : 'outlined'}>
+                                    Thanh toán
+                                </Button>
+                            </ButtonGroup>
 
-                                            color: activeTab == 2 ? '#fff' : '#999699',
-                                            borderColor: 'transparent!important',
-                                            backgroundColor:
-                                                activeTab == 2 ? 'var(--color-main)!important' : 'var(--color-bg)',
-                                            '&:hover': {
-                                                borderColor:
-                                                    activeTab == 1
-                                                        ? 'var(--color-main)!important'
-                                                        : 'transparent!important'
-                                            }
-                                        }}
-                                        onClick={() => {
-                                            handleTab(2);
-                                            setCusChosing(
-                                                new PageKhachHangCheckInDto({
-                                                    idKhachHang: Guid.EMPTY,
-                                                    tenKhachHang: 'Khách lẻ'
-                                                })
-                                            );
-                                        }}
-                                        className={activeTab === 2 ? 'active' : ''}
-                                        variant={activeTab === 2 ? 'contained' : 'outlined'}>
-                                        Thanh toán
+                            <Stack spacing={1} direction={'row'} alignItems={'center'}>
+                                <Box sx={{ position: 'relative' }}>
+                                    <Button
+                                        variant="contained"
+                                        endIcon={<SettingsBackupRestoreOutlinedIcon />}
+                                        onClick={() => setExpandAction(!expandAction)}>
+                                        Quay lại
                                     </Button>
-                                </ButtonGroup>
-                                {activeTab === 2 && (
-                                    <ButtonGroup
+
+                                    <Box
                                         sx={{
-                                            '& button': {
-                                                borderColor: '#C2C9D6!important'
+                                            display: expandAction ? '' : 'none',
+                                            zIndex: 1,
+                                            position: 'absolute',
+                                            borderRadius: '4px',
+                                            border: '1px solid #cccc',
+                                            minWidth: 200,
+                                            backgroundColor: 'rgba(248,248,248,1)',
+                                            '& .MuiStack-root .MuiStack-root:hover': {
+                                                backgroundColor: '#cccc'
                                             }
                                         }}>
-                                        <Button
-                                            variant="outlined"
-                                            sx={{
-                                                minWidth: 'unset',
-                                                padding: '0',
-                                                borderRight: '0!important',
-                                                width: '40px',
-                                                height: '40px',
-                                                bgcolor: layout ? '#fff' : '#c2c9d61a',
-                                                '& svg': {
-                                                    filter: layout
-                                                        ? 'brightness(0) saturate(100%) invert(36%) sepia(11%) saturate(1139%) hue-rotate(182deg) brightness(96%) contrast(87%)'
-                                                        : 'brightness(0) saturate(100%) invert(77%) sepia(2%) saturate(1404%) hue-rotate(181deg) brightness(104%) contrast(93%)'
-                                                }
-                                            }}
-                                            onClick={handleLayoutTrue}
-                                            className="btn-outline-hover">
-                                            <Layout2Icon />
-                                        </Button>
-                                        <Button
-                                            variant="outlined"
-                                            sx={{
-                                                minWidth: 'unset',
-                                                padding: '0',
-                                                borderLeft: '0!important',
-                                                width: '40px',
-                                                height: '40px',
-                                                bgcolor: !layout ? '#fff' : '#c2c9d61a',
-                                                '& svg': {
-                                                    filter: !layout
-                                                        ? 'brightness(0) saturate(100%) invert(36%) sepia(11%) saturate(1139%) hue-rotate(182deg) brightness(96%) contrast(87%)'
-                                                        : 'brightness(0) saturate(100%) invert(77%) sepia(2%) saturate(1404%) hue-rotate(181deg) brightness(104%) contrast(93%)'
-                                                }
-                                            }}
-                                            onClick={handleLayoutFalse}
-                                            className="btn-outline-hover">
-                                            <Layout1Icon />
-                                        </Button>
-                                    </ButtonGroup>
-                                )}
-                            </Box>
-                            {activeTab === 2 ? htmlValue : undefined}
-                        </Grid>
-                    ) : undefined}
+                                        <Stack>
+                                            {lstOption?.map((item: IList, index: number) => (
+                                                <Stack
+                                                    direction={'row'}
+                                                    key={index}
+                                                    spacing={1}
+                                                    padding={'6px'}
+                                                    alignItems={'center'}
+                                                    sx={{ cursor: 'pointer' }}
+                                                    onClick={() => clickAction(item)}>
+                                                    {item.icon}
+                                                    <Typography variant="subtitle2" marginLeft={1}>
+                                                        {item.text}
+                                                    </Typography>
+                                                </Stack>
+                                            ))}
+                                        </Stack>
+                                    </Box>
+                                </Box>
+                            </Stack>
+                        </Box>
+                    </Grid>
+
                     {activeTab === 1 && <CheckInNew hanleChoseCustomer={choseCustomer} />}
-                    {activeTab === 2 && (
-                        <PageBanHang
-                            customerChosed={cusChosing}
-                            CoditionLayout={layout}
-                            onPaymentChild={handleShow}
-                            sendDataToParent={handleCallBack}
-                        />
-                    )}
+                    {activeTab === 2 && <PageBanHang customerChosed={cusChosing} horizontalLayout={horizontalLayout} />}
                 </Grid>
             </DataCustomerContext.Provider>
         </>
