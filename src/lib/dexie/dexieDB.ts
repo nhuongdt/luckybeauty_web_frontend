@@ -5,6 +5,7 @@ import { useContext } from 'react';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import Cookies from 'js-cookie';
 import utils from '../../utils/utils';
+import { format } from 'date-fns';
 
 export class SubClassDexie extends Dexie {
     hoaDon!: Table<PageHoaDonDto>;
@@ -56,6 +57,25 @@ export class SubClassDexie extends Dexie {
         this.version(4).stores({
             khachCheckIn: null // remove table
         });
+        this.version(5)
+            .stores({
+                hoaDon: '&id, idKhachHang, idChiNhanh, idCheckIn, ngayLapHoaDon' // add column ngayLapHoaDon: used to sortby
+            })
+            .upgrade((x) => {
+                // find ngayLapHoaDon in cache && update
+                // else assign new Date()
+                return x
+                    .table('hoaDon')
+                    .filter((o) => utils.checkNull(o.ngayLapHoaDon))
+                    .modify(async (o) => {
+                        const hdCache = await x.table('hoaDon').get(o.id);
+                        if (hdCache.length > 0) {
+                            o.ngayLapHoaDon = hdCache.ngayLapHoaDon;
+                        } else {
+                            o.ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS');
+                        }
+                    });
+            });
     }
 }
 export const dbDexie = new SubClassDexie();
