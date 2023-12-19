@@ -1638,13 +1638,13 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                             <span
                                                                 title={item.tenHangHoa}
                                                                 style={{
-                                                                    fontSize: '12px',
-                                                                    fontWeight: '700',
+                                                                    fontSize: 'var(--font-size-main)',
+                                                                    fontWeight: '600',
                                                                     color: '#333233',
                                                                     // display: '-webkit-box',
                                                                     // WebkitBoxOrient: 'vertical',
                                                                     // WebkitLineClamp: 2,
-                                                                    maxHeight: '32px',
+                                                                    // maxHeight: '32px',
                                                                     overflow: 'hidden',
                                                                     textOverflow: 'ellipsis'
                                                                 }}>
