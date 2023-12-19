@@ -19,6 +19,7 @@ import { ListNhanVienDataContext } from '../../services/nhan-vien/dto/NhanVienDa
 import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 import Cookies from 'js-cookie';
+import { TrangThaiCheckin } from '../../lib/appconst';
 
 export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const [txtSearch, setTextSeach] = useState('');
@@ -36,9 +37,20 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
 
     const GetListCustomerChecking = async () => {
-        const input = { keyword: '', SkipCount: 0, MaxResultCount: 50, idChiNhanh: Cookies.get('IdChiNhanh') };
+        const input = { keyword: '', skipCount: 0, maxResultCount: 50, idChiNhanh: Cookies.get('IdChiNhanh') };
         const list = await CheckinService.GetListCustomerChecking(input);
-        setAllCusChecking([...list]);
+
+        // // get data from cache && update to list customer checking
+        const arrUpdate = list.map(async (x) => {
+            const hdCache = await dbDexie.hoaDon.where('idCheckIn').equals(x.idCheckIn).toArray();
+            if (hdCache.length > 0) {
+                return { ...x, tongThanhToan: hdCache[0].tongThanhToan } as PageKhachHangCheckInDto;
+            } else {
+                return { ...x, tongThanhToan: 0 } as PageKhachHangCheckInDto;
+            }
+        });
+        const lstNew = await Promise.all(arrUpdate);
+        setAllCusChecking([...lstNew]);
     };
 
     const GetAllNhanVien = async () => {
@@ -79,7 +91,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
 
     const deleteCusChecking = async () => {
         setAllCusChecking(allCusChecking.filter((x: PageKhachHangCheckInDto) => x.idCheckIn !== idCheckinDelete));
-        await CheckinService.UpdateTrangThaiCheckin(idCheckinDelete, 0);
+        await CheckinService.UpdateTrangThaiCheckin(idCheckinDelete, TrangThaiCheckin.DELETED);
         setinforDelete(
             new PropConfirmOKCancel({
                 show: false,
@@ -109,7 +121,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         setAllCusChecking([...allCusChecking, cusChecking]);
     };
 
-    const handleClickCustomer = async (item: any) => {
+    const handleClickCustomer = async (item: PageKhachHangCheckInDto) => {
         hanleChoseCustomer(item);
     };
 
@@ -206,7 +218,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             </Grid>
 
             <Grid container paddingLeft={2} paddingTop={2} columnSpacing={2} rowSpacing={2}>
-                {listCusChecking.map((item: any, index: any) => (
+                {listCusChecking.map((item: PageKhachHangCheckInDto, index: number) => (
                     <Grid item xs={12} sm={4} md={4} lg={3} key={index} sx={{ position: 'relative' }}>
                         <Button
                             sx={{
@@ -266,15 +278,25 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                     </Typography>
                                 </div>
                             </Stack>
-                            <Stack spacing={1}>
-                                <Box display="flex" gap="8px" marginTop="8px">
-                                    <Typography variant="body2" color={'#3D475C'}>
-                                        Điểm tích lũy:
-                                    </Typography>
-                                    <Typography variant="body2" fontWeight="700">
-                                        {item.tongTichDiem}
-                                    </Typography>
-                                </Box>
+                            <Stack spacing={2}>
+                                <Stack direction={'row'} marginTop="16px" justifyContent={'space-between'}>
+                                    <Stack direction={'row'} spacing={1}>
+                                        <Typography variant="body2" color={'#3D475C'}>
+                                            Điểm tích lũy:
+                                        </Typography>
+                                        <Typography variant="body2" fontWeight="700">
+                                            {item.tongTichDiem}
+                                        </Typography>
+                                    </Stack>
+                                    <Stack direction={'row'} spacing={1}>
+                                        <Typography variant="body2" color={'#3D475C'}>
+                                            Tổng mua:
+                                        </Typography>
+                                        <Typography variant="body2" fontWeight="700">
+                                            {Intl.NumberFormat('vi-VN').format(item.tongThanhToan)}
+                                        </Typography>
+                                    </Stack>
+                                </Stack>
                                 <Grid container>
                                     <Grid item xs={7} sm={7} md={7}>
                                         <Stack spacing={1} direction={'row'} color={'#3D475C'}>
@@ -294,10 +316,11 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                         <Box
                                             component="span"
                                             sx={{
-                                                padding: '4px 12px ',
+                                                // padding: '4px 12px ',
                                                 borderRadius: '20px',
-                                                backgroundColor: '#FFF8DD',
-                                                color: '#FFC700',
+                                                // backgroundColor:
+                                                //     item.trangThaiCheckIn === 1 ? '#FFF8DD' : 'var(--color-bg)',
+                                                color: item.trangThaiCheckIn === 1 ? '#FFC700' : 'var(--color-main)',
                                                 fontSize: '12px',
                                                 float: 'right'
                                             }}>
