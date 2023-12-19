@@ -7,8 +7,9 @@
     --primary-100: #E5D6E1;
     --border-color: #c2c9d6;
     --font-color-main: black;
-    --font-size-main: 0.8125rem;
-    --font-family-main: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-size-main: 0.875rem;
+    /* --font-family-main: "Helvetica Neue", Helvetica, Arial, sans-serif; */
+    --font-family-main: "Roboto", "Helvetica", "Arial", sans-serif;
     --color-hoverIcon: brightness(0) saturate(100%) invert(45%) sepia(84%) saturate(2392%) hue-rotate(174deg) brightness(98%) contrast(103%);
     --color-header-table: #EEF0F4;
 }
@@ -305,10 +306,14 @@
 .MuiDataGrid-columnHeaderTitleContainerContent {
     color: #3d475c;
 }
+
 .MuiDataGrid-columnHeader {
     background: '#EEF0F4'
 }
+
+
 /* Scrollbar Styles */
+
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -321,6 +326,8 @@
 ::-webkit-scrollbar-track {
     background-color: var(--color-bg);
 }
+
+
 /* .MuiInputLabel-root{
     transform-origin: top center !important
 } */
