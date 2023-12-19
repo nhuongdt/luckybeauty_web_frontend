@@ -9,7 +9,8 @@
     --font-color-main: black;
     --font-size-main: 0.875rem;
     /* --font-family-main: "Helvetica Neue", Helvetica, Arial, sans-serif; */
-    --font-family-main: "Roboto", "Helvetica", "Arial", sans-serif;
+    /* --font-family-main: "Roboto", "Helvetica", "Arial", sans-serif; */
+    --font-family-main: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     --color-hoverIcon: brightness(0) saturate(100%) invert(45%) sepia(84%) saturate(2392%) hue-rotate(174deg) brightness(98%) contrast(103%);
     --color-header-table: #EEF0F4;
 }
