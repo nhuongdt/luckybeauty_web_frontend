@@ -15,8 +15,8 @@ import SuggestService from '../../../services/suggests/SuggestService';
 import { GetRoles } from '../../../services/user/dto/getRolesOuput';
 import { SuggestNhanSuDto } from '../../../services/suggests/dto/SuggestNhanSuDto';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
-import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
 import { TextTranslate } from '../../../components/TableLanguage';
 import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
@@ -26,6 +26,7 @@ import ModalAddUser from './components/modal_add_user';
 import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
 import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 import { PagedRequestDto } from '../../../services/dto/pagedRequestDto';
+import ModalChuyenTienSMS from './components/modal_chuyen_tien_sms';
 
 class UserScreen extends AppComponentBase {
     state = {
@@ -57,7 +58,10 @@ class UserScreen extends AppComponentBase {
         anchorEl: null,
         selectedRowId: 0,
         rowSelectedModel: [] as GridRowSelectionModel,
-        allChiNhanh: [] as ChiNhanhDto[]
+        allChiNhanh: [] as ChiNhanhDto[],
+
+        isShowModalChuyenTienSMS: false,
+        idNhatKyNapTien: ''
     };
 
     async componentDidMount() {
@@ -193,6 +197,10 @@ class UserScreen extends AppComponentBase {
         this.createOrUpdateModalOpen(this.state.selectedRowId ?? 0);
         this.handleCloseMenu();
     };
+
+    // chuyen tien SMS
+
+    // end chuyen tien
     render(): React.ReactNode {
         const columns = [
             {
@@ -200,15 +208,10 @@ class UserScreen extends AppComponentBase {
                 headerName: 'Tên đăng nhập',
                 minWidth: 125,
                 flex: 1,
-                renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }} title={params.value}>
-                        {params.colDef.headerName}
-                    </Box>
-                ),
+                renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
                 renderCell: (params: any) => (
                     <Box
                         sx={{
-                            fontSize: '13px',
                             width: '100%',
                             textAlign: 'left',
                             overflow: 'hidden',
@@ -224,18 +227,10 @@ class UserScreen extends AppComponentBase {
                 headerName: 'Họ và tên',
                 minWidth: 125,
                 flex: 1,
-                renderHeader: (params: any) => (
-                    <Box
-                        sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
-                        title={params.colDef.headerName}
-                        width="100%">
-                        {params.colDef.headerName}
-                    </Box>
-                ),
+                renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
                 renderCell: (params: any) => (
                     <Box
                         sx={{
-                            fontSize: '13px',
                             width: '100%',
                             textAlign: 'left',
                             overflow: 'hidden',
@@ -251,15 +246,10 @@ class UserScreen extends AppComponentBase {
                 headerName: 'Vai trò',
                 minWidth: 100,
                 flex: 1,
-                renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
-                        {params.colDef.headerName}
-                    </Box>
-                ),
+                renderHeader: (params: any) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
                 renderCell: (params: any) => (
                     <Box
                         sx={{
-                            fontSize: '13px',
                             width: '100%',
                             textAlign: 'left',
                             overflow: 'hidden',
@@ -275,22 +265,10 @@ class UserScreen extends AppComponentBase {
                 headerName: 'Địa chỉ email',
                 minWidth: 125,
                 flex: 1,
-                renderHeader: (params: any) => (
-                    <Box
-                        sx={{
-                            fontWeight: '700',
-                            textOverflow: 'ellipsis',
-                            overflow: 'hidden',
-                            width: '100%'
-                        }}
-                        title={params.colDef.headerName}>
-                        {params.colDef.headerName}
-                    </Box>
-                ),
+                renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
                 renderCell: (params: any) => (
                     <Box
                         sx={{
-                            fontSize: '13px',
                             width: '100%',
                             textAlign: 'left',
                             overflow: 'hidden',
@@ -323,14 +301,7 @@ class UserScreen extends AppComponentBase {
                         {params.value === true ? 'Hoạt động' : 'Ngừng hoạt động'}
                     </Typography>
                 ),
-                renderHeader: (params) => (
-                    <Box
-                        sx={{
-                            fontSize: '13px'
-                        }}>
-                        {params.colDef.headerName}
-                    </Box>
-                )
+                renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
             },
             {
                 field: 'creationTime',
@@ -338,11 +309,7 @@ class UserScreen extends AppComponentBase {
                 minWidth: 150,
                 headerAlign: 'center',
                 flex: 1,
-                renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
-                        {params.colDef.headerName}
-                    </Box>
-                ),
+                renderHeader: (params: any) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
                 renderCell: (params: any) => (
                     <Box
                         sx={{
@@ -352,9 +319,7 @@ class UserScreen extends AppComponentBase {
                             justifyContent: 'center'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
-                        <Typography fontSize="13px" fontWeight="400" variant="h6" color="#333233" lineHeight="16px">
-                            {new Date(params.value).toLocaleDateString('en-GB')}
-                        </Typography>
+                        <Typography variant="body2">{new Date(params.value).toLocaleDateString('en-GB')}</Typography>
                     </Box>
                 )
             },
@@ -386,6 +351,12 @@ class UserScreen extends AppComponentBase {
                 sx={{
                     paddingTop: '16px'
                 }}>
+                <ModalChuyenTienSMS
+                    visiable={this.state.isShowModalChuyenTienSMS}
+                    idNhatKyNapTien={this.state.idNhatKyNapTien}
+                    onClose={() => this.setState({ isShowModalChuyenTienSMS: false })}
+                    onOk={() => this.setState({ isShowModalChuyenTienSMS: false })}
+                />
                 <Box>
                     <Grid container justifyContent="space-between" alignItems="center" rowGap="16px">
                         <Grid item xs="auto">
@@ -444,6 +415,14 @@ class UserScreen extends AppComponentBase {
                                                 backgroundColor: 'var(--color-main)!important'
                                             }}>
                                             Thêm người dùng
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            onClick={() => {
+                                                this.setState({ isShowModalChuyenTienSMS: true, idNhatKyNapTien: '' });
+                                            }}
+                                            startIcon={<PaidOutlinedIcon />}>
+                                            Chuyển tiền SMS
                                         </Button>
                                     </Box>
                                 </Box>
