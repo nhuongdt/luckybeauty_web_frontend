@@ -1,13 +1,10 @@
-import { Grid, Box, Typography, Button, SelectChangeEvent } from '@mui/material';
+import { Grid, Box, Stack, Typography, Button, SelectChangeEvent, Avatar } from '@mui/material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { useEffect, useRef, useState } from 'react';
 import { Edit, DeleteForever } from '@mui/icons-material';
-import ToggleOffOutlinedIcon from '@mui/icons-material/ToggleOffOutlined';
-import { GetAllUserOutput } from '../../../services/user/dto/getAllUserOutput';
 import { TextTranslate } from '../../../components/TableLanguage';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { ParamSearchDto } from '../../../services/dto/ParamSearchDto';
-import { PagedResultDto } from '../../../services/dto/pagedResultDto';
 import ModalAddUser from './components/modal_add_user';
 import { SuggestNhanSuDto } from '../../../services/suggests/dto/SuggestNhanSuDto';
 import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
@@ -22,36 +19,40 @@ import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete'
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import { IUserProfileDto } from '../../../services/user/dto/ProfileDto';
 import utils from '../../../utils/utils';
+import { IOSSwitch } from '../../../components/Switch/IOSSwitch';
 
-export default function PageUser({ isShowModalAdd, onCloseModal }: any) {
+export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: any) {
     const firstLoad = useRef(true);
     const [userId, setUserId] = useState(0);
+    const [avatar, setAvatar] = useState('');
     const [isShowModalAddUser, setIsShowModalAddUser] = useState(false);
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
     const [allUser, setAllUser] = useState<IUserProfileDto[]>([]);
+    const [listSearchUser, setListSearchUser] = useState<IUserProfileDto[]>([]);
     const [allNhanVien, setAllNhanVien] = useState<SuggestNhanSuDto[]>([]);
     const [allChiNhanh, setAllChiNhanh] = useState<ChiNhanhDto[]>([]);
     const [allRole, setAllRole] = useState<GetRoles[]>([]);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const openMenuAction = Boolean(anchorEl);
-
-    useEffect(() => {
-        setIsShowModalAddUser(isShowModalAdd);
-    }, [isShowModalAdd]);
-
-    const [paramSearch, setParamSearch] = useState<ParamSearchDto>(
-        new ParamSearchDto({ currentPage: 1, pageSize: 10 })
-    );
-    const [pageDataUser, setPageDataUser] = useState<PagedResultDto<IUserProfileDto>>({
-        items: [],
-        totalCount: 0,
-        totalPage: 0
-    } as PagedResultDto<IUserProfileDto>);
+    const [totalCount, setTotalCount] = useState(0);
+    const [totalPage, setTotalPage] = useState(0);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
-
     const [objConfirmDelete, setObjConfirmDelete] = useState<PropConfirmOKCancel>(
         new PropConfirmOKCancel({ show: false })
     );
+    const [paramSearch, setParamSearch] = useState<ParamSearchDto>(
+        new ParamSearchDto({ textSearch: '', currentPage: 1, pageSize: 10 })
+    );
+
+    useEffect(() => {
+        setParamSearch({
+            ...paramSearch,
+            textSearch: txtSearch
+        });
+    }, [txtSearch]);
+
+    useEffect(() => {
+        setUserId(0);
+        setIsShowModalAddUser(isShowModalAdd);
+    }, [isShowModalAdd]);
 
     const getAllChiNhanh = async () => {
         const data = await chiNhanhService.GetAll({
@@ -81,51 +82,53 @@ export default function PageUser({ isShowModalAdd, onCloseModal }: any) {
             skipCount: paramSearch?.currentPage ?? 1,
             keyword: paramSearch?.textSearch ?? ''
         });
-        setAllUser(data.items);
-
-        console.log('ok', data);
-
-        setPageDataUser({
-            ...pageDataUser,
-            totalCount: data.totalCount,
-            totalPage: data.totalPage
-        });
-        PagingData(data.items, data.totalCount);
+        setAllUser([...data.items]);
+        setListSearchUser([...data.items]);
+        setTotalCount(data.totalCount);
+        setTotalPage(data.totalPage);
     };
 
     const PageLoad = async () => {
         await getAllChiNhanh();
         await getAllRole();
         await getAllNhanVien();
+        await getAllUser();
     };
 
     useEffect(() => {
         PageLoad();
     }, []);
 
-    useEffect(() => {
-        getAllUser();
-    }, [paramSearch.textSearch]);
+    const SearchUser_atClient = (txtSearch: string) => {
+        let arr = [];
+        if (!utils.checkNull(txtSearch)) {
+            const txt = txtSearch?.trim()?.toLocaleLowerCase() ?? '';
+            const txtUnsign = utils.strToEnglish(txt);
+            arr = allUser.filter(
+                (x) =>
+                    (x.userName !== null && x.userName.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.name !== null && x.name.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.surname !== null && x.surname.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.roleNames !== null && x.roleNames.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.emailAddress !== null && x.emailAddress.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.tenNhanVien !== null && x.tenNhanVien.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.tenChiNhanh !== null && x.tenChiNhanh.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.userName !== null && utils.strToEnglish(x.userName).indexOf(txtUnsign) > -1) ||
+                    (x.name !== null && utils.strToEnglish(x.name).indexOf(txtUnsign) > -1) ||
+                    (x.surname !== null && utils.strToEnglish(x.surname).indexOf(txtUnsign) > -1) ||
+                    (x.tenNhanVien !== null && utils.strToEnglish(x.tenNhanVien).indexOf(txtUnsign) > -1) ||
+                    (x.tenChiNhanh !== null && utils.strToEnglish(x.tenChiNhanh).indexOf(txtUnsign) > -1) ||
+                    (x.roleNames !== null && utils.strToEnglish(x.roleNames).indexOf(txtUnsign) > -1) ||
+                    (x.emailAddress !== null && utils.strToEnglish(x.emailAddress).indexOf(txtUnsign) > -1)
+            );
+        } else {
+            arr = [...allUser];
+        }
+        setListSearchUser([...arr]);
 
-    const PagingData = (allUser: IUserProfileDto[] = [], totalCount: null | number = null) => {
-        let currentPage = paramSearch?.currentPage ?? 0;
-        if (currentPage > 0) {
-            currentPage = currentPage - 1;
-        }
-        const from = currentPage * (paramSearch?.pageSize ?? 0);
-        let to = from + (paramSearch?.pageSize ?? 0);
-
-        if (totalCount == null) {
-            totalCount = pageDataUser?.totalCount ?? 0;
-        }
-        if (to > totalCount) {
-            to = totalCount;
-        }
-        const arrPaging = allUser.slice(from, to) ?? [];
-        setPageDataUser({
-            ...pageDataUser,
-            items: arrPaging
-        });
+        // search: alway reset currentPage to 0
+        setTotalCount(arr.length);
+        setTotalPage(Math.ceil(arr.length / (paramSearch?.pageSize ?? 10)));
     };
 
     useEffect(() => {
@@ -133,8 +136,12 @@ export default function PageUser({ isShowModalAdd, onCloseModal }: any) {
             firstLoad.current = false;
             return;
         }
-        PagingData();
-    }, [paramSearch.currentPage, paramSearch.pageSize]);
+        SearchUser_atClient(paramSearch?.textSearch ?? '');
+    }, [paramSearch.textSearch]);
+
+    const currentPageClient = (paramSearch?.currentPage ?? 0) > 0 ? (paramSearch?.currentPage ?? 0) - 1 : 0;
+    const fromItem = totalCount == 0 ? 0 : currentPageClient * (paramSearch?.pageSize ?? 0);
+    const toItem = totalCount == 0 ? 0 : fromItem + (paramSearch?.pageSize ?? 0);
 
     const handlePageChange = async (event: any, value: number) => {
         setParamSearch({
@@ -142,19 +149,60 @@ export default function PageUser({ isShowModalAdd, onCloseModal }: any) {
             currentPage: value
         });
     };
-    const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+    const changePageSize = async (event: SelectChangeEvent<number>) => {
+        const pageSizeNew = parseInt(event.target.value.toString());
         setParamSearch({
             ...paramSearch,
-            pageSize: parseInt(event.target.value.toString(), 10)
+            currentPage: 1,
+            pageSize: pageSizeNew
         });
+        setTotalPage(Math.ceil(listSearchUser.length / pageSizeNew));
     };
 
-    const doActionRow = (action: number, item: GetAllUserOutput) => {
+    const changeTrangThai = async (userId: number, e: React.ChangeEvent<HTMLInputElement>) => {
+        const check = e.target.checked;
+        let data = false;
+        let mes = '';
+        if (check) {
+            data = await userService.ActiveUser(userId);
+            mes = 'Kích hoạt';
+        } else {
+            data = await userService.DeActivateUser(userId);
+            mes = 'Ngừng kích hoạt';
+        }
+
+        if (data) {
+            setObjAlert({ ...objAlert, show: true, mes: mes, type: 1 });
+        } else {
+            setObjAlert({ ...objAlert, show: true, mes: 'Xóa thành công', type: 1 });
+        }
+        setAllUser(
+            allUser.map((x) => {
+                if (x.id === userId) {
+                    return { ...x, isActive: check };
+                } else {
+                    return x;
+                }
+            })
+        );
+        setListSearchUser(
+            listSearchUser.map((x) => {
+                if (x.id === userId) {
+                    return { ...x, isActive: check };
+                } else {
+                    return x;
+                }
+            })
+        );
+    };
+
+    const doActionRow = (action: number, item: IUserProfileDto) => {
+        setUserId(item.id);
         switch (action) {
             case 1:
                 {
                     setIsShowModalAddUser(true);
-                    setUserId(item.id);
+                    setAvatar(item?.avatar);
                 }
                 break;
             case 2:
@@ -169,12 +217,18 @@ export default function PageUser({ isShowModalAdd, onCloseModal }: any) {
 
     const deleteUser = async () => {
         const deleteResult = await userService.delete(userId);
-        if (deleteResult != null) {
-            setObjAlert({ ...objAlert, show: false, mes: 'Xóa thành công', type: 1 });
+        if (deleteResult.success) {
+            setObjAlert({ ...objAlert, show: true, mes: 'Xóa thành công', type: 1 });
         } else {
-            setObjAlert({ ...objAlert, show: false, mes: 'Xóa thất bại', type: 2 });
+            setObjAlert({ ...objAlert, show: true, mes: 'Xóa thất bại', type: 2 });
         }
         setObjConfirmDelete({ ...objConfirmDelete, show: false });
+
+        const lstSearchNew = listSearchUser.filter((x) => x.id !== userId);
+        setAllUser(allUser.filter((x) => x.id !== userId));
+        setListSearchUser([...lstSearchNew]);
+        setTotalCount(totalCount - 1);
+        setTotalPage(Math.ceil(lstSearchNew.length / (paramSearch?.pageSize ?? 10)));
     };
 
     const saveUserOK = () => {
@@ -189,7 +243,20 @@ export default function PageUser({ isShowModalAdd, onCloseModal }: any) {
             headerName: 'Tên đăng nhập',
             flex: 0.8,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box>{params.value}</Box>
+            renderCell: (params: any) => (
+                <Stack direction={'row'} spacing={1}>
+                    <Avatar src={params.row.avatar} alt="Avatar" style={{ width: 24, height: 24, marginRight: 8 }} />
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            width: '100%'
+                        }}>
+                        {params.value}
+                    </Typography>
+                </Stack>
+            )
         },
         {
             field: 'tenNhanVien',
@@ -221,24 +288,30 @@ export default function PageUser({ isShowModalAdd, onCloseModal }: any) {
         },
         {
             field: 'isActive',
-            headerName: 'Trạng thái',
+            headerName: 'Kích hoạt',
             headerAlign: 'center',
+            align: 'center',
             flex: 0.8,
             renderCell: (params) => (
-                <Typography
-                    variant="body2"
-                    alignItems={'center'}
-                    borderRadius="12px"
-                    padding={'4px 8px'}
-                    sx={{
-                        margin: 'auto',
-                        backgroundColor: params.row.isActive === true ? '#E8FFF3' : '#FFF8DD',
-                        color: params.row.isActive === true ? '#50CD89' : '#FF9900'
-                    }}
-                    fontSize="13px"
-                    fontWeight="400">
-                    {params.value === true ? 'Hoạt động' : 'Ngừng hoạt động'}
-                </Typography>
+                // <Typography
+                //     variant="body2"
+                //     alignItems={'center'}
+                //     borderRadius="12px"
+                //     padding={'4px 8px'}
+                //     sx={{
+                //         margin: 'auto',
+                //         backgroundColor: params.row.isActive === true ? '#E8FFF3' : '#FFF8DD',
+                //         color: params.row.isActive === true ? '#50CD89' : '#FF9900'
+                //     }}
+                //     fontSize="13px"
+                //     fontWeight="400">
+                //     {params.value === true ? 'Hoạt động' : 'Ngừng hoạt động'}
+                // </Typography>
+                <IOSSwitch
+                    value={params.row?.isActive}
+                    checked={params.row?.isActive}
+                    onChange={(e) => changeTrangThai(params.row.id, e)}
+                />
             ),
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         },
@@ -282,17 +355,12 @@ export default function PageUser({ isShowModalAdd, onCloseModal }: any) {
                             text: 'Xóa',
                             color: '#F1416C',
                             icon: <DeleteForever sx={{ color: '#F1416C' }} />
-                        },
-                        {
-                            id: '3',
-                            text: 'Ngừng hoạt động',
-                            color: '#650404'
                         }
                     ]}
-                    handleAction={(action: any) => doActionRow(action, params.row)}
+                    handleAction={(action: number) => doActionRow(action, params.row)}
                 />
             ),
-            renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         }
     ] as GridColDef[];
 
@@ -306,6 +374,7 @@ export default function PageUser({ isShowModalAdd, onCloseModal }: any) {
             <ConfirmDelete
                 isShow={objConfirmDelete.show}
                 onOk={deleteUser}
+                mes={objConfirmDelete.mes}
                 onCancel={() => setObjConfirmDelete({ ...objConfirmDelete, show: false })}></ConfirmDelete>
             <ModalAddUser
                 isShowModal={isShowModalAddUser}
@@ -313,18 +382,20 @@ export default function PageUser({ isShowModalAdd, onCloseModal }: any) {
                     setIsShowModalAddUser(false);
                     onCloseModal();
                 }}
+                dataNhanVien={allNhanVien}
                 // chỉ lấy nhân viên chưa có tk đăng nhập
-                dataNhanVien={allNhanVien.filter(
-                    (xOut: SuggestNhanSuDto) =>
-                        !allUser
-                            ?.map((x: IUserProfileDto) => {
-                                // get list nhansuId from allUser
-                                return x.nhanSuId;
-                            })
-                            .includes(xOut.id)
-                )}
+                // dataNhanVien={allNhanVien.filter(
+                //     (xOut: SuggestNhanSuDto) =>
+                //         !allUser
+                //             ?.map((x: IUserProfileDto) => {
+                //                 // get list nhansuId from allUser
+                //                 return x.nhanSuId;
+                //             })
+                //             .includes(xOut.id)
+                // )}
                 dataChiNhanh={allChiNhanh}
                 userId={userId}
+                avatarNV={avatar}
                 allRoles={allRole}
                 onOk={saveUserOK}
             />
@@ -341,10 +412,10 @@ export default function PageUser({ isShowModalAdd, onCloseModal }: any) {
                             ) : null}
                             <DataGrid
                                 rowHeight={46}
-                                autoHeight={pageDataUser?.totalCount === 0}
+                                autoHeight={totalCount === 0}
                                 className="data-grid-row"
                                 columns={columns}
-                                rows={pageDataUser?.items ?? []}
+                                rows={listSearchUser.slice(fromItem, toItem)}
                                 rowSelectionModel={rowSelectionModel || undefined}
                                 onRowSelectionModelChange={(row) => {
                                     setRowSelectionModel(row);
@@ -359,9 +430,9 @@ export default function PageUser({ isShowModalAdd, onCloseModal }: any) {
                         <CustomTablePagination
                             currentPage={paramSearch?.currentPage ?? 1}
                             rowPerPage={paramSearch?.pageSize ?? 10}
-                            totalPage={pageDataUser?.totalPage ?? 0}
-                            totalRecord={pageDataUser?.totalCount ?? 0}
-                            handlePerPageChange={handlePerPageChange}
+                            totalPage={totalPage}
+                            totalRecord={totalCount}
+                            handlePerPageChange={changePageSize}
                             handlePageChange={handlePageChange}
                         />
                     </Box>

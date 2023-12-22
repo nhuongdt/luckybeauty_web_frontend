@@ -1,4 +1,4 @@
-import { Grid, Box, Stack, Button, Tab, Typography, TextField } from '@mui/material';
+import { Grid, Box, Stack, Button, Tab, TextField } from '@mui/material';
 import { Add, Search } from '@mui/icons-material';
 
 import TabContext from '@mui/lab/TabContext';
@@ -12,8 +12,10 @@ import PageNhatKyChuyenTien from './page_nhat_ky_chuyen_tien';
 export default function MainPageUser({ xx }: any) {
     const [tabActive, setTabActive] = useState('1');
     const [isShowModalAdd, setIsShowModalAdd] = useState('0');
+    const [txtSearch, setTxtSearch] = useState('');
     const handleChangeTab = (event: React.SyntheticEvent, newValue: string) => {
         setTabActive(newValue);
+        setTxtSearch('');
     };
     useEffect(() => {
         setIsShowModalAdd('0');
@@ -25,7 +27,7 @@ export default function MainPageUser({ xx }: any) {
                 <Grid item xs={12} sm={12} md={6} lg={6}>
                     <TabContext value={tabActive}>
                         <Box>
-                            <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                            <TabList onChange={handleChangeTab}>
                                 <Tab label="Danh sách người dùng" value="1" />
                                 <Tab label="Nhật ký chuyển tiền SMS" value="2" />
                             </TabList>
@@ -44,6 +46,10 @@ export default function MainPageUser({ xx }: any) {
                                 placeholder={'Tìm kiếm'}
                                 InputProps={{
                                     startAdornment: <Search />
+                                }}
+                                value={txtSearch}
+                                onChange={(event) => {
+                                    setTxtSearch(event.target.value);
                                 }}
                             />
                         </Stack>
@@ -66,12 +72,14 @@ export default function MainPageUser({ xx }: any) {
                         <TabPanel value="1" sx={{ padding: 0 }}>
                             <PageUser
                                 isShowModalAdd={isShowModalAdd === '1'}
+                                txtSearch={tabActive === '1' ? txtSearch : ''}
                                 onCloseModal={() => setIsShowModalAdd('0')}
                             />
                         </TabPanel>
                         <TabPanel value="2" sx={{ padding: 0 }}>
                             <PageNhatKyChuyenTien
                                 isShowModalAdd={isShowModalAdd === '2'}
+                                txtSearch={tabActive === '2' ? txtSearch : ''}
                                 onCloseModal={() => setIsShowModalAdd('0')}
                             />
                         </TabPanel>
