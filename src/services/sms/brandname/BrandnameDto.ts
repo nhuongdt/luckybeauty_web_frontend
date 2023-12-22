@@ -12,6 +12,8 @@ export class BrandnameDto {
     conLai = 0;
 
     txtTrangThai = '';
+    tenantName = '';
+    displayTenantName = '';
 }
 
 export class PagedResultBrandnameDto implements PagedResultDto<BrandnameDto> {
