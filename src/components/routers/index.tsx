@@ -491,7 +491,7 @@ export const appRouters: AppRouteProps = {
                             children: [],
                             showInMenu: true,
                             isLayout: false,
-                            component: LoadableComponent(() => import('../../pages/admin/user'))
+                            component: LoadableComponent(() => import('../../pages/admin/user/main_page_user'))
                         },
                         {
                             path: '/roles',
