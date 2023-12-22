@@ -6,7 +6,7 @@ import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import { PagedUserResultRequestDto } from './dto/PagedUserResultRequestDto';
 import { UpdateUserInput } from './dto/updateUserInput';
 import http from '../httpService';
-import { ProfileDto } from './dto/ProfileDto';
+import { IUserProfileDto, ProfileDto } from './dto/ProfileDto';
 import { ChangePasswordDto } from './dto/ChangePasswordDto';
 import utils from '../../utils/utils';
 
@@ -56,6 +56,14 @@ class UserService {
         const result = await http.post('api/services/app/User/UpdateUser_notRole', param);
         return result.data.result;
     };
+    ActiveUser = async (userId: number): Promise<boolean> => {
+        const result = await http.post(`api/services/app/User/Activate`, { id: userId });
+        return result.data.success;
+    };
+    DeActivateUser = async (userId: number): Promise<boolean> => {
+        const result = await http.post(`api/services/app/User/DeActivate`, { id: userId });
+        return result.data.success;
+    };
 
     public async update(updateUserInput: UpdateUserInput) {
         // update user + userRole
@@ -68,9 +76,9 @@ class UserService {
         }
     }
 
-    public async delete(entityDto: number) {
+    public async delete(userId: number) {
         try {
-            const result = await http.delete(`api/services/app/User/Delete?id=${entityDto}`);
+            const result = await http.delete(`api/services/app/User/Delete?id=${userId}`);
             return result.data;
         } catch (error) {
             console.error('Error occurred while deleting user:', error);
@@ -133,6 +141,18 @@ class UserService {
             throw error;
         }
     }
+    GetAllUser = async (
+        pagedFilterAndSortedRequest: PagedUserResultRequestDto
+    ): Promise<PagedResultDto<IUserProfileDto>> => {
+        try {
+            const result = await http.get('api/services/app/User/GetAllUser', {
+                params: pagedFilterAndSortedRequest
+            });
+            return result.data.result;
+        } catch (error) {
+            return { items: [], totalCount: 0, totalPage: 0 } as PagedResultDto<IUserProfileDto>;
+        }
+    };
 }
 
 export default new UserService();
