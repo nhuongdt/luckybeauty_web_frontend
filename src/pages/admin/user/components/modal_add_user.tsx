@@ -45,6 +45,7 @@ export default function ModalAddUser({
     isShowModal,
     dataNhanVien,
     userId,
+    avatarNV = '',
     dataChiNhanh,
     allRoles,
     onCancel,
@@ -54,7 +55,7 @@ export default function ModalAddUser({
     const chinhanhCurrent = appContext.chinhanhCurrent;
     const idChiNhanh = chinhanhCurrent?.id;
     const [tabIndex, setTabIndex] = useState('1');
-    const [avatar, setAvatar] = useState('');
+    const [avatar, setAvatar] = useState(''); // from nay khong cap nhat avatar (vi avatar lay tu DS nhanvien)
     const [googleDrive_fileId, setGoogleDrive_fileId] = useState('');
     const [fileImage, setFileImage] = useState<File>({} as File); // file image
     const [showPassword, setShowPassword] = useState<boolean>(false); // file image
@@ -169,6 +170,7 @@ export default function ModalAddUser({
         initialValues.isAdmin = userEdit.isAdmin as boolean;
         initialValues.idChiNhanhMacDinh = userEdit?.idChiNhanhMacDinh as string;
         setIsActive(userEdit?.isActive ?? false);
+        setAvatar(avatarNV ?? '');
     };
 
     const GetRolebyChiNhanh_ofUser = async () => {
@@ -378,7 +380,7 @@ export default function ModalAddUser({
                                                             errors.nhanSuId && <span>{errors.nhanSuId}</span>
                                                         }
                                                         dataNhanVien={dataNhanVien}
-                                                        idChosed={values?.nhanSuId}
+                                                        idChosed={values.nhanSuId}
                                                         handleChoseItem={(item: any) => {
                                                             const arrTenNV = item?.tenNhanVien.split(' ');
                                                             let surName = ''; // họ
