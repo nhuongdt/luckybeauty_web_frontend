@@ -14,3 +14,12 @@ export interface ProfileDto {
     noiCap: string;
     password: string;
 }
+
+export interface IUserProfileDto extends ProfileDto {
+    tenNhanVien: string;
+    tenChiNhanh: string;
+    isActive: boolean;
+    isAdmin: boolean;
+    roleNames: string;
+    txtTrangThai: string;
+}
