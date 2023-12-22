@@ -1902,7 +1902,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
 
                                                                         <Typography
                                                                             variant="body2"
-                                                                            fontWeight="700"
+                                                                            fontWeight="600"
                                                                             color={'#d39987'}>
                                                                             {Intl.NumberFormat('vi-VN').format(
                                                                                 item?.tongThanhToan
