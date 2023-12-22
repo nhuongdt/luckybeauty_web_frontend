@@ -269,6 +269,12 @@ export default function PageBrandname() {
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>
         },
         {
+            field: 'displayTenantName',
+            headerName: 'Tên cửa hàng',
+            flex: 1.5,
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>
+        },
+        {
             field: 'sdtCuaHang',
             headerName: 'SDT cửa hàng',
             flex: 1,
@@ -288,7 +294,7 @@ export default function PageBrandname() {
             headerName: 'Tổng tiền nạp',
             headerAlign: 'right',
             align: 'right',
-            flex: 1,
+            flex: 0.8,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
@@ -299,7 +305,7 @@ export default function PageBrandname() {
             headerName: 'Đã sử dụng',
             headerAlign: 'right',
             align: 'right',
-            flex: 1,
+            flex: 0.8,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
@@ -310,7 +316,7 @@ export default function PageBrandname() {
             headerName: 'Còn lại',
             headerAlign: 'right',
             align: 'right',
-            flex: 1,
+            flex: 0.8,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
@@ -320,7 +326,7 @@ export default function PageBrandname() {
             field: 'txtTrangThai',
             headerAlign: 'center',
             headerName: 'Trạng thái',
-            flex: 1,
+            flex: 0.8,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box
@@ -342,7 +348,6 @@ export default function PageBrandname() {
         {
             field: '#',
             headerAlign: 'center',
-            width: 48,
             flex: 0.4,
             disableColumnMenu: true,
             renderCell: (params) => (
