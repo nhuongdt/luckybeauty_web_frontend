@@ -6,15 +6,12 @@ import { PagedResultDto } from '../../dto/pagedResultDto';
 import { ParamSearchDto } from '../../dto/ParamSearchDto';
 
 class LichSuNap_ChuyenTienService {
-    ThemMoi_CapNhatPhieuChuyenTien = async (tenantId: number, input: ILichSuNap_ChuyenTienDto) => {
-        const result = await http.post(
-            `api/services/app/LichSuNap_ChuyenTien/ThemMoi_CapNhatPhieuChuyenTien?tenantId=${tenantId}`,
-            input
-        );
-        return result.data.result;
-    };
     ThemMoiPhieuChuyenTien = async (input: ILichSuNap_ChuyenTienDto): Promise<ILichSuNap_ChuyenTienDto> => {
         const result = await http.post(`api/services/app/LichSuNap_ChuyenTien/ThemMoiPhieuChuyenTien`, input);
+        return result.data.result;
+    };
+    CapNhatPhieuChuyenTien = async (input: ILichSuNap_ChuyenTienDto): Promise<ILichSuNap_ChuyenTienDto> => {
+        const result = await http.post(`api/services/app/LichSuNap_ChuyenTien/CapNhatPhieuChuyenTien`, input);
         return result.data.result;
     };
     ThemMoi_CapNhatPhieuNapTien = async (tenantId: number, input: ILichSuNap_ChuyenTienDto) => {
@@ -42,6 +39,15 @@ class LichSuNap_ChuyenTienService {
             return result.data.result;
         }
         return false;
+    };
+    GetNhatKyChuyenTien_byId = async (idPhieuNapTien: string): Promise<INhatKyChuyenTienDto | null> => {
+        if (!utils.checkNull(idPhieuNapTien)) {
+            const result = await http.get(
+                `api/services/app/LichSuNap_ChuyenTien/GetNhatKyChuyenTien_byId?id=${idPhieuNapTien}`
+            );
+            return result.data.result;
+        }
+        return null;
     };
     GetAllNhatKyChuyenTien = async (input: ParamSearchDto): Promise<PagedResultDto<INhatKyChuyenTienDto>> => {
         const result = await http.get(`api/services/app/LichSuNap_ChuyenTien/GetAllNhatKyChuyenTien`, {
