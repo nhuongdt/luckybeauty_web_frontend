@@ -210,7 +210,9 @@ const DetailHoaDon = ({
             setTienThuaTraKhach(gtriNhapNew - khachPhaiTra);
         }
         setLstQuyCT([...lstQuyCTNew]);
-        onChangeQuyChiTiet(lstQuyCTNew);
+        if (formType === 1) {
+            onChangeQuyChiTiet(lstQuyCTNew);
+        }
     };
 
     const GetQuyCTNew = (hinhThucTT: number, khachPhaiTra = 0) => {
@@ -246,7 +248,9 @@ const DetailHoaDon = ({
         // keep value old of tienKhachDua
         const lstQuyCTNew = GetQuyCTNew(item.value as number, sumTienKhachTra);
         setLstQuyCT(() => [...lstQuyCTNew]);
-        onChangeQuyChiTiet(lstQuyCTNew);
+        if (formType === 1) {
+            onChangeQuyChiTiet(lstQuyCTNew);
+        }
     };
 
     const changeGiamGia_passToParent = (ptGiamNew: number, tongGiamNew: number) => {
@@ -258,8 +262,6 @@ const DetailHoaDon = ({
             setSumTienKhachTra(khachPhaiTraNew);
             setKhachPhaiTra(khachPhaiTraNew);
             setTienThuaTraKhach(0);
-        } else {
-            onChangeQuyChiTiet([...lstQuyCTNew]);
         }
         setLstQuyCT(lstQuyCTNew);
     };
@@ -583,7 +585,9 @@ const DetailHoaDon = ({
                         value={ghichuHD}
                         onChange={(e) => {
                             setGhichuHD(e.target.value);
-                            onChangeGhiChuHD(e.target.value);
+                            if (formType === 1) {
+                                onChangeGhiChuHD(e.target.value);
+                            }
                         }}></textarea>
                 </Box>
                 <Button
