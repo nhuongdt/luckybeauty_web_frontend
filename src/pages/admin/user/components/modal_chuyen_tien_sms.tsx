@@ -5,16 +5,10 @@ import { useEffect, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import * as yup from 'yup';
 import { format } from 'date-fns';
-import { Guid } from 'guid-typescript';
-import { AppContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
 import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
-import SoQuyServices from '../../../../services/so_quy/SoQuyServices';
 import utils from '../../../../utils/utils';
-import QuyChiTietDto from '../../../../services/so_quy/QuyChiTietDto';
-import BrandnameService from '../../../../services/sms/brandname/BrandnameService';
 import LichSuNap_ChuyenTienService from '../../../../services/sms/lich_su_nap_tien/LichSuNap_ChuyenTienService';
 import ILichSuNap_ChuyenTienDto from '../../../../services/sms/lich_su_nap_tien/ILichSuNap_ChuyenTienDto';
-import AppConsts, { ISelect } from '../../../../lib/appconst';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import DialogButtonClose from '../../../../components/Dialog/ButtonClose';
@@ -47,7 +41,6 @@ const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose,
             keyword: ''
         } as PagedUserResultRequestDto);
         if (data) {
-            console.log('dât ', data);
             setAllUser(data.items);
         }
     };
@@ -69,7 +62,17 @@ const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose,
     }, []);
 
     const getInforPhieuNapTien = async () => {
-        if (utils.checkNull(idNhatKyNapTien)) return;
+        const data = await LichSuNap_ChuyenTienService.GetNhatKyChuyenTien_byId(idNhatKyNapTien);
+        if (data !== null) {
+            setObjChuyenTien({
+                ...objChuyenTien,
+                id: data.id,
+                idNguoiChuyenTien: data.idNguoiChuyenTien,
+                idNguoiNhanTien: data.idNguoiNhanTien,
+                soTienChuyen_Nhan: data.soTienChuyen_Nhan,
+                noiDungChuyen_Nhan: data.noiDungChuyen_Nhan
+            });
+        }
     };
 
     useEffect(() => {
@@ -102,10 +105,10 @@ const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose,
             setObjAlert({ ...objAlert, show: true, mes: 'Thêm phiếu chuyển tiền thành công' });
             onOk(values, 1);
         } else {
-            // update
-            // assign again ctquy
-            setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật phiếu chuyển tiền thành công' });
-
+            const data = await LichSuNap_ChuyenTienService.CapNhatPhieuChuyenTien(myData);
+            if (data) {
+                setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật phiếu chuyển tiền thành công' });
+            }
             onOk(values, 2);
         }
     };
@@ -155,11 +158,9 @@ const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose,
                                         <AutocompleteWithData
                                             label="Người gửi"
                                             idChosed={values?.idNguoiChuyenTien}
-                                            lstData={allUser
-                                                // ?.filter((x: GetAllUserOutput) => x.id === values?.idNguoiChuyenTien)
-                                                .map((x: GetAllUserOutput) => {
-                                                    return { id: x.id, text1: x.userName, text2: x.surname };
-                                                })}
+                                            lstData={allUser.map((x: GetAllUserOutput) => {
+                                                return { id: x.id, text1: x.userName, text2: x.surname };
+                                            })}
                                             handleChoseItem={(item: IDataAutocomplete) => {
                                                 setFieldValue('idNguoiChuyenTien', item?.id);
                                             }}
@@ -169,11 +170,9 @@ const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose,
                                         <AutocompleteWithData
                                             label="Người nhận"
                                             idChosed={values?.idNguoiNhanTien}
-                                            lstData={allUser
-                                                // ?.filter((x: GetAllUserOutput) => x.id === values?.idNguoiNhanTien)
-                                                .map((x: GetAllUserOutput) => {
-                                                    return { id: x.id, text1: x.userName, text2: x.surname };
-                                                })}
+                                            lstData={allUser.map((x: GetAllUserOutput) => {
+                                                return { id: x.id, text1: x.userName, text2: x.surname };
+                                            })}
                                             handleChoseItem={(item: IDataAutocomplete) => {
                                                 setFieldValue('idNguoiNhanTien', item?.id);
                                             }}
@@ -187,13 +186,13 @@ const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose,
                                             label={`Số tiền`}
                                             thousandSeparator={'.'}
                                             decimalSeparator={','}
-                                            value={values?.tongTienThu}
+                                            value={values?.soTienChuyen_Nhan}
                                             customInput={TextField}
                                             onChange={(e) => {
                                                 setFieldValue('soTienChuyen_Nhan', e.target.value);
                                             }}
-                                            error={touched?.tongTienThu && Boolean(errors?.tongTienThu)}
-                                            helperText={touched.tongTienThu && errors.tongTienThu}
+                                            error={touched?.soTienChuyen_Nhan && Boolean(errors?.soTienChuyen_Nhan)}
+                                            helperText={touched.soTienChuyen_Nhan && errors.soTienChuyen_Nhan}
                                         />
                                     </Grid>
 
@@ -208,8 +207,9 @@ const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose,
                                                 value={values?.noiDungThu}
                                                 onChange={(e) => setFieldValue('noiDungChuyen_Nhan', e.target.value)}
                                             />
-                                            <Stack justifyContent={'flex-end'} direction={'row'}>
-                                                <Typography fontSize={'14px'}>
+                                            <Stack justifyContent={'flex-end'} direction={'row'} spacing={1}>
+                                                <Typography variant="body2">Số dư:</Typography>
+                                                <Typography variant="body2" fontWeight={600}>
                                                     {new Intl.NumberFormat('vi-VN').format(soduTaiKhoan)}
                                                 </Typography>
                                             </Stack>
@@ -247,9 +247,8 @@ const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose,
                                             {!utils.checkNull(idNhatKyNapTien) && (
                                                 <>
                                                     <Button
-                                                        variant="contained"
-                                                        sx={{ bgcolor: 'red' }}
-                                                        className="btn-container-hover"
+                                                        variant="outlined"
+                                                        color="error"
                                                         onClick={() => {
                                                             setinforDelete(
                                                                 new PropConfirmOKCancel({

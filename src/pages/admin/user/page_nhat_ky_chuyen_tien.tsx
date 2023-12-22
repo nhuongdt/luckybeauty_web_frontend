@@ -1,6 +1,8 @@
 import { Grid, Box, Typography, Button, SelectChangeEvent } from '@mui/material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { Edit, DeleteForever } from '@mui/icons-material';
+
 import { GetAllUserOutput } from '../../../services/user/dto/getAllUserOutput';
 import { TextTranslate } from '../../../components/TableLanguage';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
@@ -21,17 +23,22 @@ import LichSuNap_ChuyenTienService from '../../../services/sms/lich_su_nap_tien/
 import { INhatKyChuyenTienDto } from '../../../services/sms/lich_su_nap_tien/ILichSuNap_ChuyenTienDto';
 import { format } from 'date-fns';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
+import utils from '../../../utils/utils';
+import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
 
-export default function PageNhatKyChuyenTien({ isShowModalAdd, onCloseModal }: any) {
-    const [idNhatKyNapTien, setidNhatKyNapTien] = useState('');
+export default function PageNhatKyChuyenTien({ isShowModalAdd, txtSearch, onCloseModal }: any) {
+    const firstLoad = useRef(true);
+
+    const [idNhatKyNapTien, setIdNhatKyNapTien] = useState('');
     const [isShowModalChuyenTien, setIsShowModalChuyenTien] = useState(false);
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
-    const [allUser, setAllUser] = useState<GetAllUserOutput[]>([]);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const openMenuAction = Boolean(anchorEl);
+    const [totalCount, setTotalCount] = useState(0);
+    const [totalPage, setTotalPage] = useState(0);
 
-    const [paramSearch, setparamSearch] = useState<ParamSearchDto>(new ParamSearchDto({ currentPage: 1 }));
-    const [pageDataNhatKyChuyenCHuyen, setPageDataUser] = useState<PagedResultDto<INhatKyChuyenTienDto>>();
+    const [allNhatKy, setAllNhatKy] = useState<INhatKyChuyenTienDto[]>([]);
+    const [lstSearch, setLstSearch] = useState<INhatKyChuyenTienDto[]>([]);
+
+    const [paramSearch, setParamSearch] = useState<ParamSearchDto>(new ParamSearchDto({ currentPage: 1 }));
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
     const [objConfirmDelete, setObjConfirmDelete] = useState<PropConfirmOKCancel>(
@@ -39,32 +46,58 @@ export default function PageNhatKyChuyenTien({ isShowModalAdd, onCloseModal }: a
     );
 
     useEffect(() => {
+        setParamSearch({
+            ...paramSearch,
+            textSearch: txtSearch
+        });
+    }, [txtSearch]);
+
+    useEffect(() => {
+        setIdNhatKyNapTien('');
         setIsShowModalChuyenTien(isShowModalAdd);
     }, [isShowModalAdd]);
 
     const GetAllNhatKyChuyenTien = async () => {
-        const data = await LichSuNap_ChuyenTienService.GetAllNhatKyChuyenTien(paramSearch);
-        setPageDataUser({
-            ...pageDataNhatKyChuyenCHuyen,
-            items: data.items,
-            totalCount: data.totalCount,
-            totalPage: data.totalPage
-        });
+        const data = await LichSuNap_ChuyenTienService.GetAllNhatKyChuyenTien({
+            currentPage: 0,
+            pageSize: 500,
+            textSearch: ''
+        } as ParamSearchDto);
+        setAllNhatKy(data.items);
+        setLstSearch(data.items);
+        setTotalCount(data.totalCount);
+        setTotalPage(data.totalPage);
     };
 
-    const getAllUser = async () => {
-        const data = await userService.getAll({
-            maxResultCount: paramSearch?.pageSize ?? 10,
-            skipCount: paramSearch?.currentPage ?? 1,
-            keyword: paramSearch?.textSearch ?? ''
-        });
-        if (data) {
-            setAllUser(data.items);
+    const SearchPage_atClient = (txtSearch: string) => {
+        let arr = [];
+        if (!utils.checkNull(txtSearch)) {
+            const txt = txtSearch?.trim()?.toLocaleLowerCase() ?? '';
+            const txtUnsign = utils.strToEnglish(txt);
+            arr = allNhatKy.filter(
+                (x) =>
+                    (x.userNhanTien !== null && x.userNhanTien.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.userChuyenTien !== null && x.userChuyenTien.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.loaiPhieu !== null && x.loaiPhieu.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.noiDungChuyen_Nhan !== null && x.noiDungChuyen_Nhan.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.soTienChuyen_Nhan !== null && x.soTienChuyen_Nhan.toString().indexOf(txt) > -1) ||
+                    (x.userNhanTien !== null && utils.strToEnglish(x.userNhanTien).indexOf(txtUnsign) > -1) ||
+                    (x.userChuyenTien !== null && utils.strToEnglish(x.userChuyenTien).indexOf(txtUnsign) > -1) ||
+                    (x.loaiPhieu !== null && utils.strToEnglish(x.loaiPhieu).indexOf(txtUnsign) > -1) ||
+                    (x.noiDungChuyen_Nhan !== null && utils.strToEnglish(x.noiDungChuyen_Nhan).indexOf(txtUnsign) > -1)
+            );
+        } else {
+            arr = [...allNhatKy];
         }
+        setLstSearch([...arr]);
+
+        setTotalCount(arr.length);
+        setTotalPage(Math.ceil(arr.length / (paramSearch?.pageSize ?? 10)));
     };
 
     const PageLoad = async () => {
-        await getAllUser();
+        await GetAllNhatKyChuyenTien();
+        console.log('pagethutien');
     };
 
     useEffect(() => {
@@ -72,42 +105,82 @@ export default function PageNhatKyChuyenTien({ isShowModalAdd, onCloseModal }: a
     }, []);
 
     useEffect(() => {
-        GetAllNhatKyChuyenTien();
-    }, [paramSearch.currentPage, paramSearch.pageSize, paramSearch.textSearch]);
+        if (firstLoad.current) {
+            firstLoad.current = false;
+            return;
+        }
+        SearchPage_atClient(paramSearch?.textSearch ?? '');
+    }, [paramSearch.textSearch]);
+
+    const currentPageClient = (paramSearch?.currentPage ?? 0) > 0 ? (paramSearch?.currentPage ?? 0) - 1 : 0;
+    const fromItem = totalCount == 0 ? 0 : currentPageClient * (paramSearch?.pageSize ?? 0);
+    const toItem = totalCount == 0 ? 0 : fromItem + (paramSearch?.pageSize ?? 0);
 
     const handlePageChange = async (event: any, value: number) => {
-        setparamSearch({
+        setParamSearch({
             ...paramSearch,
             currentPage: value
         });
     };
     const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
-        setparamSearch({
+        const pageSizeNew = parseInt(event.target.value.toString());
+
+        setParamSearch({
             ...paramSearch,
-            pageSize: parseInt(event.target.value.toString(), 10)
+            currentPage: 1,
+            pageSize: pageSizeNew
         });
+        setTotalPage(Math.ceil(lstSearch.length / pageSizeNew));
+    };
+
+    const doActionRow = (action: number, item: INhatKyChuyenTienDto) => {
+        setIdNhatKyNapTien(item.id);
+        switch (action) {
+            case 1:
+                {
+                    setIsShowModalChuyenTien(true);
+                }
+                break;
+            case 2:
+                setObjConfirmDelete({
+                    ...objConfirmDelete,
+                    show: true,
+                    mes: `Bạn có chắc chắn muốn xóa phiếu ${item.loaiPhieu} này không?`
+                });
+                break;
+        }
     };
 
     const deleteUser = async () => {
-        //
+        const data = await LichSuNap_ChuyenTienService.XoaLichSuNapTien_byId(idNhatKyNapTien);
+        if (data) {
+            setObjAlert({ ...objAlert, show: true, mes: 'Xóa thành công', type: 1 });
+        }
+        const lstSearchNew = lstSearch.filter((x) => x.id !== idNhatKyNapTien);
+        setAllNhatKy(allNhatKy.filter((x) => x.id !== idNhatKyNapTien));
+        setLstSearch([...lstSearchNew]);
+
+        setTotalCount(totalCount - 1);
+        setTotalPage(Math.ceil(lstSearchNew.length / (paramSearch?.pageSize ?? 10)));
     };
 
-    const saveChuyenTienOK = () => {
+    const saveChuyenTienOK = async () => {
         setIsShowModalChuyenTien(false);
+        await GetAllNhatKyChuyenTien();
         onCloseModal();
     };
 
     const columns = [
         {
             field: 'userChuyenTien',
-            headerName: 'Người chuyển',
+            headerName: 'User chuyển tiền',
             flex: 1,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => <Box>{params.value}</Box>
         },
         {
             field: 'userNhanTien',
-            headerName: 'Người nhận',
+            headerName: 'User nhận tiền',
             flex: 1,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => <Box>{params.value}</Box>
@@ -167,10 +240,31 @@ export default function PageNhatKyChuyenTien({ isShowModalAdd, onCloseModal }: a
         {
             field: '#',
             headerName: '#',
-            maxWidth: 60,
-            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            flex: 0.4,
+            sortable: false,
             disableColumnMenu: true,
-            renderCell: (params: any) => <Box></Box>,
+            renderCell: (params: any) =>
+                params.row.idPhieuNapTien == null && (
+                    <ActionViewEditDelete
+                        lstOption={[
+                            {
+                                id: '1',
+                                text: 'Sửa',
+                                color: '#009EF7',
+                                icon: <Edit sx={{ color: '#009EF7' }} />
+                            },
+                            {
+                                id: '2',
+                                text: 'Xóa',
+                                color: '#F1416C',
+                                icon: <DeleteForever sx={{ color: '#F1416C' }} />
+                            }
+                        ]}
+                        handleAction={(action: number) => doActionRow(action, params.row)}
+                    />
+                ),
             renderHeader: (params: any) => <Box>{params.colDef.headerName}</Box>
         }
     ] as GridColDef[];
@@ -185,6 +279,7 @@ export default function PageNhatKyChuyenTien({ isShowModalAdd, onCloseModal }: a
             <ConfirmDelete
                 isShow={objConfirmDelete.show}
                 onOk={deleteUser}
+                mes={objConfirmDelete.mes}
                 onCancel={() => setObjConfirmDelete({ ...objConfirmDelete, show: false })}></ConfirmDelete>
             <ModalChuyenTienSMS
                 visiable={isShowModalChuyenTien}
@@ -208,10 +303,10 @@ export default function PageNhatKyChuyenTien({ isShowModalAdd, onCloseModal }: a
                             ) : null}
                             <DataGrid
                                 rowHeight={46}
-                                autoHeight={pageDataNhatKyChuyenCHuyen?.totalCount === 0}
+                                autoHeight={totalCount === 0}
                                 className="data-grid-row"
                                 columns={columns}
-                                rows={pageDataNhatKyChuyenCHuyen?.items ?? []}
+                                rows={lstSearch.slice(fromItem, toItem)}
                                 rowSelectionModel={rowSelectionModel || undefined}
                                 onRowSelectionModelChange={(row) => {
                                     setRowSelectionModel(row);
@@ -226,8 +321,8 @@ export default function PageNhatKyChuyenTien({ isShowModalAdd, onCloseModal }: a
                         <CustomTablePagination
                             currentPage={paramSearch?.currentPage ?? 1}
                             rowPerPage={paramSearch?.pageSize ?? 10}
-                            totalPage={pageDataNhatKyChuyenCHuyen?.totalPage ?? 0}
-                            totalRecord={pageDataNhatKyChuyenCHuyen?.totalCount ?? 0}
+                            totalPage={totalPage}
+                            totalRecord={totalCount}
                             handlePerPageChange={handlePerPageChange}
                             handlePageChange={handlePageChange}
                         />
