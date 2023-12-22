@@ -306,7 +306,9 @@ export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTie
                                                 </Avatar>
                                             </Stack>
                                             <Stack justifyContent={'center'} spacing={1}>
-                                                <Stack sx={{ fontSize: '14px' }}>{nvien?.tenNhanVien}</Stack>
+                                                <Stack sx={{ fontSize: '14px', fontWeight: 500 }}>
+                                                    {nvien?.tenNhanVien}
+                                                </Stack>
                                                 <Stack sx={{ fontSize: '12px', color: '#839bb1' }}>
                                                     {nvien?.tenChucVu}
                                                 </Stack>
