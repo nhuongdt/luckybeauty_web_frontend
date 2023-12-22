@@ -119,11 +119,19 @@ class Utils {
 
         return str;
     };
-    getFirstLetter = (str = '') => {
-        return str
+    getFirstLetter = (str = '', maxLen = 2) => {
+        const allLetter = str
             ?.match(/(?<=(\s|^))[a-z0-9]/gi)
             ?.join('')
             ?.toUpperCase();
+        if (allLetter !== undefined) {
+            if (allLetter.length >= maxLen) {
+                return allLetter.substring(0, maxLen);
+            } else {
+                return allLetter;
+            }
+        }
+        return '';
     };
     FirstChar_UpperCase = function (str = '') {
         if (str) {
