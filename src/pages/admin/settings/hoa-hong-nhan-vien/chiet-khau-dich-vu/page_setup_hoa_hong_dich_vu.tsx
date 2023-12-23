@@ -377,13 +377,13 @@ export default function PageSetupHoaHongDichVu() {
         {
             field: 'tenNhanVien',
             headerName: 'Nhân viên',
-            flex: 0.7,
+            flex: 0.8,
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         },
         {
             field: 'tenDichVu',
             headerName: 'Tên dịch vụ',
-            flex: 1.5,
+            flex: 1.2,
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         },
         {
@@ -392,7 +392,7 @@ export default function PageSetupHoaHongDichVu() {
             flex: 0.6,
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
-                <Link component="button" underline="none">
+                <Link component="button" underline="none" title={params.value}>
                     {params.value}
                 </Link>
             )
@@ -415,7 +415,7 @@ export default function PageSetupHoaHongDichVu() {
             headerName: 'Thực hiện',
             headerAlign: 'right',
             align: 'right',
-            flex: 0.6,
+            flex: 0.5,
             renderCell: (params) => (
                 <Stack direction={'row'} spacing={1}>
                     <NumericFormat
@@ -486,7 +486,7 @@ export default function PageSetupHoaHongDichVu() {
             headerAlign: 'right',
             headerName: 'Tư vấn',
             align: 'right',
-            flex: 0.6,
+            flex: 0.5,
             renderCell: (params) => (
                 <Stack direction={'row'} spacing={1}>
                     <NumericFormat
