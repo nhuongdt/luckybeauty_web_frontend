@@ -29,7 +29,6 @@ export default function AutocompleteBank({ handleChoseItem, idChosed, listOption
                 multiple={false}
                 value={itemChosed}
                 onChange={(event: any, newValue: any) => choseItem(newValue)}
-                filterOptions={(x) => x}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 options={listOption}
                 getOptionLabel={(option: any) => (option.tenNganHang ? option.tenNganHang : '')}

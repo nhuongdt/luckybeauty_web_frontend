@@ -29,7 +29,6 @@ export default function AutocompleteChiNhanh({ handleChoseItem, idChosed, dataCh
                 multiple={false}
                 value={itemChosed}
                 onChange={(event: any, newValue: any) => choseItem(newValue)}
-                filterOptions={(x) => x}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 options={dataChiNhanh}
                 getOptionLabel={(option: any) => (option.tenChiNhanh ? option.tenChiNhanh : '')}

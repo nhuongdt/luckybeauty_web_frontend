@@ -30,7 +30,6 @@ export default function AutocompleteNhanVien({ handleChoseItem, idChosed, dataNh
                 multiple={false}
                 value={itemChosed}
                 onChange={(event: any, newValue: any) => choseItem(newValue)}
-                filterOptions={(x) => x}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 options={dataNhanVien}
                 getOptionLabel={(option: any) => (option.tenNhanVien ? option.tenNhanVien : '')}

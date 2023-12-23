@@ -28,16 +28,20 @@ export default function AutocompleteWithData({ handleChoseItem, idChosed, lstDat
                 multiple={false}
                 value={itemChosed}
                 onChange={(event: any, newValue: any) => choseItem(newValue)}
-                filterOptions={(x) => x}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 options={lstData}
                 getOptionLabel={(option: IDataAutocomplete) => (option.text1 ? option.text1 : '')}
                 renderInput={(params) => <TextField {...params} label={label ?? 'Tìm kiếm'} helperText={helperText} />}
                 renderOption={(props, option) => {
                     return (
-                        <li {...props}>
+                        <li {...props} style={{ borderBottom: '1px dashed var(--border-color)' }}>
                             <Grid container alignItems="center" spacing={1}>
-                                <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                                <Grid
+                                    item
+                                    sx={{
+                                        width: 'calc(100% - 44px)',
+                                        wordWrap: 'break-word'
+                                    }}>
                                     <Typography style={{ fontSize: '14px' }}>{option.text1}</Typography>
                                     <Box
                                         component="span"
