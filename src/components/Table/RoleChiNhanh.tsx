@@ -79,7 +79,7 @@ export default function TableRoleChiNhanh({ allRoles, chiNhanhRoles, userId, pas
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Chi nhánh</TableCell>
+                            <TableCell sx={{ borderRight: '1px solid #ccc' }}>Chi nhánh</TableCell>
                             {allRoles.map((item: RoleDto) => (
                                 <TableCell
                                     align="center"
@@ -100,7 +100,7 @@ export default function TableRoleChiNhanh({ allRoles, chiNhanhRoles, userId, pas
                                         <Stack
                                             sx={{
                                                 fontWeight: 500,
-                                                fontFamily: '"Roboto","Helvetica","Arial",sans-serif'
+                                                fontFamily: 'var(--font-family-main)'
                                             }}>
                                             {item.displayName}
                                         </Stack>
@@ -125,7 +125,7 @@ export default function TableRoleChiNhanh({ allRoles, chiNhanhRoles, userId, pas
                                         paddingTop: 1
                                     }
                                 }}>
-                                <TableCell>{row.tenChiNhanh}</TableCell>
+                                <TableCell sx={{ borderRight: '1px solid #ccc' }}>{row.tenChiNhanh}</TableCell>
                                 {row.roles?.map((itemRole: RoleDtoCheck) => (
                                     <TableCell align="center" key={itemRole.id}>
                                         <Checkbox
