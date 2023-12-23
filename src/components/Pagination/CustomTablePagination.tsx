@@ -1,5 +1,6 @@
 import { Box, Grid, MenuItem, Pagination, Select, SelectChangeEvent, Typography, FormControl } from '@mui/material';
 import { Component, ReactNode } from 'react';
+import AppConsts from '../../lib/appconst';
 
 interface TablePaginationProps {
     totalRecord: number;
@@ -24,22 +25,12 @@ class CustomTablePagination extends Component<TablePaginationProps> {
                             height: 48
                         }}>
                         <FormControl variant="standard">
-                            <Select sx={{ height: '32px' }} onChange={handlePerPageChange} defaultValue={rowPerPage}>
-                                <MenuItem value={5}>
-                                    <Typography variant="body2">5/ Trang</Typography>
-                                </MenuItem>
-                                <MenuItem value={10}>
-                                    <Typography variant="body2">10/ Trang</Typography>
-                                </MenuItem>
-                                <MenuItem value={20}>
-                                    <Typography variant="body2">20/ Trang</Typography>
-                                </MenuItem>
-                                <MenuItem value={50}>
-                                    <Typography variant="body2">50/ Trang</Typography>
-                                </MenuItem>
-                                <MenuItem value={100}>
-                                    <Typography variant="body2">100/ Trang</Typography>
-                                </MenuItem>
+                            <Select sx={{ height: '32px' }} onChange={handlePerPageChange} value={rowPerPage}>
+                                {AppConsts.pageOption.map((item: any) => (
+                                    <MenuItem key={item.value} value={item.value}>
+                                        <Typography variant="body2"> {item.text}</Typography>
+                                    </MenuItem>
+                                ))}
                             </Select>
                         </FormControl>
                     </Box>
