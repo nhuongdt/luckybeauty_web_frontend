@@ -1,7 +1,21 @@
 import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Grid, Box, Stack, Typography, TextField, Button, Pagination, IconButton, Avatar, Link } from '@mui/material';
+import { DataGrid, GridColDef, GridRenderCellParams, GridRowId, GridRowModel } from '@mui/x-data-grid';
+import {
+    Grid,
+    Box,
+    Stack,
+    Typography,
+    TextField,
+    Button,
+    Pagination,
+    IconButton,
+    Avatar,
+    Link,
+    Popover,
+    ButtonGroup,
+    Checkbox
+} from '@mui/material';
 import { Add, Search } from '@mui/icons-material';
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
@@ -27,10 +41,89 @@ import ModalSetupHoaHongDichVu from './modal_setup_hoa_hong_dich_vu';
 import { debounce } from '@mui/material/utils';
 import { CreateOrEditChietKhauDichVuDto } from '../../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/CreateOrEditChietKhauDichVuDto';
 import { LoaiHoaHongDichVu } from '../../../../../lib/appconst';
+import { handleClickOutside } from '../../../../../utils/customReactHook';
 
-export const PopperApplyNhom = () => {
-    return <></>;
+const TypeGroupPopover = {
+    NHAN_VIEN: 1,
+    DICH_VU: 2,
+    NHOM_DICH_VU: 3
 };
+
+export function PopperSetupHoaHongDV_byGroup({
+    id,
+    open,
+    anchorEl,
+    onClose,
+    lblGroupPopover,
+    loaiChietKhau = LoaiHoaHongDichVu.THUC_HIEN
+}: any) {
+    const [lblLoaiHoaHong, setLblLoaiHoaHong] = useState('');
+
+    useEffect(() => {
+        switch (loaiChietKhau) {
+            case LoaiHoaHongDichVu.THUC_HIEN:
+                setLblLoaiHoaHong('Hoa hồng thực hiện');
+                break;
+            case LoaiHoaHongDichVu.TU_VAN:
+                setLblLoaiHoaHong('Hoa hồng tư vấn');
+                break;
+        }
+    }, [loaiChietKhau]);
+
+    return (
+        <>
+            <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={onClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left'
+                }}>
+                <Stack padding={2}>
+                    <Stack direction={'row'} spacing={1} alignItems={'center'}>
+                        <Typography variant="body2">{`${lblLoaiHoaHong} = `}</Typography>
+                        <Stack direction={'row'} spacing={1}>
+                            <TextField
+                                size="small"
+                                InputProps={{
+                                    inputProps: {
+                                        style: { textAlign: 'right' }
+                                    }
+                                }}
+                            />
+                            <ButtonGroup>
+                                <Button variant="contained" size="small">
+                                    %
+                                </Button>
+                                <Button size="small">đ</Button>
+                            </ButtonGroup>
+                        </Stack>
+                    </Stack>
+                    <Stack direction={'row'} paddingTop={2} spacing={1} alignItems={'center'}>
+                        <Checkbox />
+                        <Stack direction={'row'} spacing={0.5}>
+                            <Typography variant="body2"> Áp dụng cho tất cả dịch vụ </Typography>
+                            <Typography variant="body2" fontWeight={500}>
+                                {' '}
+                                {lblGroupPopover}
+                            </Typography>
+                        </Stack>
+                    </Stack>
+                    <Stack direction={'row'}>
+                        <Stack flex={3}></Stack>
+                        <Stack flex={1} justifyContent={'end'}>
+                            <Button variant="contained" fullWidth>
+                                Áp dụng
+                            </Button>
+                        </Stack>
+                    </Stack>
+                </Stack>
+            </Popover>
+        </>
+    );
+}
 
 export default function PageSetupHoaHongDichVu() {
     const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
@@ -42,8 +135,13 @@ export default function PageSetupHoaHongDichVu() {
     const [idNhanVienChosed, setIdNhanVienChosed] = useState<string>(Guid.EMPTY);
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
+    const [nhanVienChosed, setNhanVienChosed] = useState<NhanSuItemDto | null>();
     const [rowChosed, setRowChosed] = useState<ChietKhauDichVuItemDto_TachRiengCot | null>(null);
     const idChiNhanh = Cookies.get('IdChiNhanh') ?? Guid.EMPTY;
+    const [anchorPopover, setAnchorPopover] = React.useState<HTMLDivElement | null>(null);
+    const [lblGroupPopover, setLblGroupPopover] = useState('');
+    const [idPopover, setIdPopover] = useState<GridRowId | null>('');
+    const openPopover = Boolean(anchorPopover);
 
     const [pageResultChietKhauDV, setPageResultChietKhauDV] = useState<
         PagedResultDto<ChietKhauDichVuItemDto_TachRiengCot>
@@ -72,7 +170,6 @@ export default function PageSetupHoaHongDichVu() {
 
     const getListSetupHoaHongDV = async () => {
         const data = await chietKhauDichVuService.GetAllSetup_HoaHongDichVu(paramSearch, idNhanVienChosed, idChiNhanh);
-        console.log(' pageResultChietKhauDV', data.items, 'allNhanVien ', allNhanVien);
 
         setPageResultChietKhauDV({
             items: data.items,
@@ -90,9 +187,45 @@ export default function PageSetupHoaHongDichVu() {
         PageLoad();
     }, []);
 
-    function showModalAddNhanVien(id = '') {
-        //
-    }
+    // popover
+    useEffect(() => {
+        if (idPopover == null) {
+            document.addEventListener('mousemove', closePopOver);
+        }
+    }, [idPopover]);
+
+    useEffect(() => {
+        window.addEventListener('mouseup', function () {
+            document.removeEventListener('mousemove', closePopOver);
+        });
+    }, []);
+
+    const showPopOver = (
+        event: React.MouseEvent<HTMLDivElement>,
+        type = TypeGroupPopover.NHAN_VIEN,
+        itemRow: GridRenderCellParams
+    ) => {
+        setAnchorPopover(event.currentTarget);
+        console.log(444);
+        switch (type) {
+            case TypeGroupPopover.NHAN_VIEN:
+                {
+                    setLblGroupPopover('của nhân viên ' + itemRow.row?.tenNhanVien);
+                    setIdPopover('nhanvien_' + itemRow.id);
+                }
+                break;
+            case TypeGroupPopover.DICH_VU:
+                {
+                    setLblGroupPopover(`${itemRow.row?.tenDichVu}`);
+                    setIdPopover('dichvu_' + itemRow.id);
+                }
+                break;
+        }
+    };
+
+    const closePopOver = () => {
+        setAnchorPopover(null);
+    };
 
     function showModalSetup(action?: number, id = '') {
         setIsShowModalSetup(true);
@@ -378,13 +511,24 @@ export default function PageSetupHoaHongDichVu() {
             field: 'tenNhanVien',
             headerName: 'Nhân viên',
             flex: 0.8,
-            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
+            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>,
+            renderCell: (params) => (
+                <Stack
+                    onClick={(e) => {
+                        showPopOver(e, TypeGroupPopover.NHAN_VIEN, params);
+                    }}>
+                    {params.value}
+                </Stack>
+            )
         },
         {
             field: 'tenDichVu',
             headerName: 'Tên dịch vụ',
             flex: 1.2,
-            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
+            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>,
+            renderCell: (params) => (
+                <Stack onClick={(e) => showPopOver(e, TypeGroupPopover.DICH_VU, params)}>{params.value}</Stack>
+            )
         },
         {
             field: 'tenNhomDichVu',
@@ -481,77 +625,77 @@ export default function PageSetupHoaHongDichVu() {
             ),
             renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
         },
-        {
-            field: 'hoaHongTuVan',
-            headerAlign: 'right',
-            headerName: 'Tư vấn',
-            align: 'right',
-            flex: 0.5,
-            renderCell: (params) => (
-                <Stack direction={'row'} spacing={1}>
-                    <NumericFormat
-                        fullWidth
-                        size="small"
-                        variant="standard"
-                        thousandSeparator={'.'}
-                        decimalSeparator={','}
-                        value={params.value}
-                        customInput={TextField}
-                        InputProps={{
-                            inputProps: {
-                                style: { textAlign: 'right' }
-                            }
-                        }}
-                        onChange={(e) => changeGtriChietKhau(e.target.value, params.row, LoaiHoaHongDichVu.TU_VAN)}
-                        inputRef={(el: any) =>
-                            (refInputTuVan.current[params.row.idNhanVien + '_' + params.row.idDonViQuiDoi] = el)
-                        }
-                        onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) => {
-                            // find id of row next
-                            const indexCurrent = pageResultChietKhauDV.items.findIndex(
-                                (x) =>
-                                    x.idNhanVien + '_' + x.idDonViQuiDoi ===
-                                    params.row.idNhanVien + '_' + params.row.idDonViQuiDoi
-                            );
-                            let indexNext = indexCurrent + 1;
-                            if (indexNext > pageResultChietKhauDV.items.length - 1) {
-                                indexNext = 0;
-                            }
-                            const rowNext = pageResultChietKhauDV.items.filter(
-                                (x: ChietKhauDichVuItemDto_TachRiengCot, index: number) => {
-                                    return index === indexNext;
-                                }
-                            );
-                            gotoNextInputTuVan(
-                                e,
-                                refInputTuVan.current[rowNext[0].idNhanVien + '_' + rowNext[0].idDonViQuiDoi]
-                            );
-                        }}
-                    />
-                    <Stack>
-                        {params?.row?.laPhanTram_HoaHongTuVan ? (
-                            <Avatar
-                                style={{
-                                    width: 25,
-                                    height: 25,
-                                    fontSize: '12px',
-                                    backgroundColor: 'var(--color-main)'
-                                }}
-                                onClick={() => onClickPtramVND(params.row, false, LoaiHoaHongDichVu.TU_VAN)}>
-                                %
-                            </Avatar>
-                        ) : (
-                            <Avatar
-                                style={{ width: 25, height: 25, fontSize: '12px' }}
-                                onClick={() => onClickPtramVND(params.row, true, LoaiHoaHongDichVu.TU_VAN)}>
-                                đ
-                            </Avatar>
-                        )}
-                    </Stack>
-                </Stack>
-            ),
-            renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-        },
+        // {
+        //     field: 'hoaHongTuVan',
+        //     headerAlign: 'right',
+        //     headerName: 'Tư vấn',
+        //     align: 'right',
+        //     flex: 0.5,
+        //     renderCell: (params) => (
+        //         <Stack direction={'row'} spacing={1}>
+        //             <NumericFormat
+        //                 fullWidth
+        //                 size="small"
+        //                 variant="standard"
+        //                 thousandSeparator={'.'}
+        //                 decimalSeparator={','}
+        //                 value={params.value}
+        //                 customInput={TextField}
+        //                 InputProps={{
+        //                     inputProps: {
+        //                         style: { textAlign: 'right' }
+        //                     }
+        //                 }}
+        //                 onChange={(e) => changeGtriChietKhau(e.target.value, params.row, LoaiHoaHongDichVu.TU_VAN)}
+        //                 inputRef={(el: any) =>
+        //                     (refInputTuVan.current[params.row.idNhanVien + '_' + params.row.idDonViQuiDoi] = el)
+        //                 }
+        //                 onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) => {
+        //                     // find id of row next
+        //                     const indexCurrent = pageResultChietKhauDV.items.findIndex(
+        //                         (x) =>
+        //                             x.idNhanVien + '_' + x.idDonViQuiDoi ===
+        //                             params.row.idNhanVien + '_' + params.row.idDonViQuiDoi
+        //                     );
+        //                     let indexNext = indexCurrent + 1;
+        //                     if (indexNext > pageResultChietKhauDV.items.length - 1) {
+        //                         indexNext = 0;
+        //                     }
+        //                     const rowNext = pageResultChietKhauDV.items.filter(
+        //                         (x: ChietKhauDichVuItemDto_TachRiengCot, index: number) => {
+        //                             return index === indexNext;
+        //                         }
+        //                     );
+        //                     gotoNextInputTuVan(
+        //                         e,
+        //                         refInputTuVan.current[rowNext[0].idNhanVien + '_' + rowNext[0].idDonViQuiDoi]
+        //                     );
+        //                 }}
+        //             />
+        //             <Stack>
+        //                 {params?.row?.laPhanTram_HoaHongTuVan ? (
+        //                     <Avatar
+        //                         style={{
+        //                             width: 25,
+        //                             height: 25,
+        //                             fontSize: '12px',
+        //                             backgroundColor: 'var(--color-main)'
+        //                         }}
+        //                         onClick={() => onClickPtramVND(params.row, false, LoaiHoaHongDichVu.TU_VAN)}>
+        //                         %
+        //                     </Avatar>
+        //                 ) : (
+        //                     <Avatar
+        //                         style={{ width: 25, height: 25, fontSize: '12px' }}
+        //                         onClick={() => onClickPtramVND(params.row, true, LoaiHoaHongDichVu.TU_VAN)}>
+        //                         đ
+        //                     </Avatar>
+        //                 )}
+        //             </Stack>
+        //         </Stack>
+        //     ),
+        //     renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
+        // },
         {
             field: '#',
             headerName: '#',
@@ -589,9 +733,18 @@ export default function PageSetupHoaHongDichVu() {
             <ModalSetupHoaHongDichVu
                 isShow={isShowModalSetup}
                 allNhanVien={allNhanVien}
+                nhanVienChosed={nhanVienChosed}
                 onClose={() => setIsShowModalSetup(false)}
                 onSaveOK={saveOKHoaHongDV}
             />
+            <PopperSetupHoaHongDV_byGroup
+                id={idPopover}
+                open={openPopover}
+                anchorEl={anchorPopover}
+                lblGroupPopover={lblGroupPopover}
+                onClose={closePopOver}
+            />
+
             <Grid container className="dich-vu-page" gap={4} paddingTop={2}>
                 <Grid item container alignItems="center" justifyContent="space-between">
                     <Grid container item xs={12} md={6} lg={6} alignItems="center">
@@ -636,21 +789,23 @@ export default function PageSetupHoaHongDichVu() {
                             startIcon={<FileUploadOutlinedIcon />}
                             className="btnNhapXuat btn-outline-hover"
                             sx={{ bgcolor: '#fff!important', color: '#666466' }}>
-                            Xuất
+                            Xuất file
                         </Button>
-                        <Button
-                            size="small"
-                            variant="contained"
-                            className=" btn-container-hover"
-                            sx={{
-                                minWidth: '143px',
+                        {!utils.checkNull(idNhanVienChosed) && idNhanVienChosed !== Guid.EMPTY && (
+                            <Button
+                                size="small"
+                                variant="contained"
+                                className=" btn-container-hover"
+                                sx={{
+                                    minWidth: '143px',
 
-                                fontSize: '14px'
-                            }}
-                            startIcon={<Add />}
-                            onClick={() => showModalSetup()}>
-                            Thêm mới
-                        </Button>
+                                    fontSize: '14px'
+                                }}
+                                startIcon={<Add />}
+                                onClick={() => showModalSetup()}>
+                                Cài đặt
+                            </Button>
+                        )}
                     </Grid>
                 </Grid>
                 <Grid container item spacing={2} paddingTop={1} columns={13}>
@@ -664,21 +819,8 @@ export default function PageSetupHoaHongDichVu() {
                                 borderRadius={'4px'}
                                 sx={{ backgroundColor: 'var(--color-header-table)' }}>
                                 <Typography fontSize="14px" fontWeight="700">
-                                    Nhân viên
+                                    Chọn nhân viên để cài đặt
                                 </Typography>
-
-                                {/* <Add
-                                    sx={{
-                                        transition: '.4s',
-                                        height: '32px',
-                                        cursor: 'pointer',
-                                        width: '32px',
-                                        borderRadius: '4px',
-                                        padding: '4px 0px',
-                                        border: '1px solid #cccc'
-                                    }}
-                                    onClick={() => showModalAddNhanVien()}
-                                /> */}
                             </Box>
                             <Box
                                 sx={{
@@ -706,7 +848,10 @@ export default function PageSetupHoaHongDichVu() {
                                     <Stack
                                         padding={1}
                                         sx={{ backgroundColor: 'var(--color-bg)', cursor: 'pointer' }}
-                                        onClick={() => setIdNhanVienChosed(Guid.EMPTY)}>
+                                        onClick={() => {
+                                            setIdNhanVienChosed(Guid.EMPTY);
+                                            setNhanVienChosed(null);
+                                        }}>
                                         <Typography variant="body2" fontWeight={600}>
                                             Tất cả
                                         </Typography>
@@ -725,7 +870,10 @@ export default function PageSetupHoaHongDichVu() {
                                                         bgcolor: 'var(--color-bg)'
                                                     }
                                                 }}
-                                                onClick={() => setIdNhanVienChosed(nvien.id)}>
+                                                onClick={() => {
+                                                    setIdNhanVienChosed(nvien.id);
+                                                    setNhanVienChosed(nvien);
+                                                }}>
                                                 <Stack>
                                                     <Avatar
                                                         sx={{
