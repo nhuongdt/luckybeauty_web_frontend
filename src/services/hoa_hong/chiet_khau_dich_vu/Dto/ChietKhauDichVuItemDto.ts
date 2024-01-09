@@ -13,6 +13,7 @@ export interface ChietKhauDichVuItemDto {
 export interface ChietKhauDichVuItemDto_TachRiengCot {
     idNhanVien: string;
     idDonViQuiDoi: string;
+    idNhomHangHoa?: string | null;
     tenNhanVien: string;
     tenDichVu: string;
     tenNhomDichVu: string;
