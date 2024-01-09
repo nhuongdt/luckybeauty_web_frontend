@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import AppConsts from '../../../lib/appconst';
+import AppConsts, { TrangThaiCheckin } from '../../../lib/appconst';
 import bookingStore from '../../../stores/bookingStore';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
@@ -27,6 +27,17 @@ import { enqueueSnackbar } from 'notistack';
 import utils from '../../../utils/utils';
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import { ICheckInHoaDonto, KHCheckInDto } from '../../../services/check_in/CheckinDto';
+import CheckinService from '../../../services/check_in/CheckinService';
+import Cookies from 'js-cookie';
+import TrangThaiBooking from '../../../enum/TrangThaiBooking';
+import { BookingDetail_ofCustomerDto } from '../../../services/dat-lich/dto/BookingGetAllItemDto';
+import PageHoaDonChiTietDto from '../../../services/ban_hang/PageHoaDonChiTietDto';
+import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
+import { dbDexie } from '../../../lib/dexie/dexieDB';
+import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 // const LichHenDetail: FC = () => {
 //     return (
 //         <Dialog
@@ -312,10 +323,19 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 const LichHenDetail: FC = () => {
     const [firstCharCustomer, setfirstCharCustomer] = useState('');
+    const [trangThaiBook, setTrangThaiBook] = useState(0);
+    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+
+    const [inforDelete, setinforDelete] = useState<PropConfirmOKCancel>({
+        show: false,
+        title: '',
+        type: 1,
+        mes: ''
+    });
+
     useEffect(() => {
         if (bookingStore.bookingInfoDto?.tenKhachHang !== undefined) {
             const allChar = utils.getFirstLetter(bookingStore.bookingInfoDto?.tenKhachHang);
-            console.log('allChar ', bookingStore.bookingInfoDto?.trangThai);
             if (allChar != undefined) {
                 if (allChar.length > 2) {
                     setfirstCharCustomer(allChar.substring(0, 2));
@@ -338,7 +358,108 @@ const LichHenDetail: FC = () => {
         bookingStore.idBooking = AppConsts.guidEmpty;
     };
 
+    const deleteCusChecking = async () => {
+        const arrIdCheckin = await CheckinService.GetArrIdChecking_fromIdBooking(bookingStore?.bookingInfoDto.id);
+        if (arrIdCheckin != null && arrIdCheckin.length > 0) {
+            const idCheckIn = arrIdCheckin[0];
+            await CheckinService.UpdateTrangThaiCheckin(idCheckIn, TrangThaiCheckin.DELETED);
+
+            const dataCheckIn_Dexie = await dbDexie.hoaDon.where('idCheckIn').equals(idCheckIn).toArray();
+            if (dataCheckIn_Dexie.length > 0) {
+                await dbDexie.hoaDon.delete(dataCheckIn_Dexie[0].id);
+            }
+        }
+        setinforDelete(
+            new PropConfirmOKCancel({
+                show: false,
+                title: '',
+                mes: ''
+            })
+        );
+        setObjAlert({
+            ...objAlert,
+            mes: 'Hủy khách hàng checkin thành công',
+            show: true,
+            type: 1
+        });
+
+        // update trangThaiBooking
+        const result = await datLichService.UpdateTrangThaiBooking(bookingStore.bookingInfoDto?.id, trangThaiBook);
+        enqueueSnackbar(result.message, {
+            variant: result.status,
+            autoHideDuration: 3000
+        });
+        await bookingStore.onShowBookingInfo();
+        await bookingStore.getData();
+    };
+
     const updateTrangThai = async (trangThai: number) => {
+        const trangThaiOld = bookingStore?.bookingInfoDto.trangThai;
+        if (trangThai === trangThaiOld) return;
+        setTrangThaiBook(trangThai);
+
+        if (trangThaiOld === TrangThaiBooking.Success) {
+            setObjAlert({
+                ...objAlert,
+                mes: 'Lịch hẹn đã hoàn thành. Không cập nhật lại trạng thái',
+                show: true,
+                type: 2
+            });
+            return;
+        }
+        // insert to kh_checkin (thungan)
+        switch (trangThai) {
+            case TrangThaiBooking.CheckIn:
+                {
+                    const idBooking = bookingStore?.bookingInfoDto?.id;
+                    const itemBooking = await datLichService.GetInforBooking_byID(idBooking);
+                    if (itemBooking.length > 0) {
+                        const idChiNhanh = Cookies.get('IdChiNhanh')?.toString() as string;
+                        const objCheckIn: KHCheckInDto = new KHCheckInDto({
+                            idKhachHang: itemBooking[0].idKhachHang,
+                            idChiNhanh: idChiNhanh,
+                            trangThai: TrangThaiCheckin.WAITING
+                        });
+                        const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
+                        // save to Booking_Checkin_HD
+                        await CheckinService.InsertCheckInHoaDon({
+                            idCheckIn: dataCheckIn.id,
+                            idBooking: itemBooking[0].idBooking
+                        } as ICheckInHoaDonto);
+
+                        // save to cache HoaDon (indexDB)
+                        await bookingStore.addDataBooking_toCacheHD(itemBooking[0], dataCheckIn.id);
+                    }
+                }
+                break;
+            case TrangThaiBooking.Success:
+                {
+                    setObjAlert({
+                        ...objAlert,
+                        mes: 'Trạng thái này được cập nhật tự động Hoàn thành hóa đơn',
+                        show: true,
+                        type: 2
+                    });
+                    return;
+                }
+                break;
+            case TrangThaiBooking.Wait:
+            case TrangThaiBooking.Confirm:
+                {
+                    // if trangThaiOld = checkin --> remove checkin at thungan
+                    if (trangThaiOld === TrangThaiBooking.CheckIn) {
+                        setinforDelete(
+                            new PropConfirmOKCancel({
+                                show: true,
+                                title: 'Hủy khách hàng check in',
+                                mes: `Khách hàng đang checkin. Bạn có muốn hủy checkin không?`
+                            })
+                        );
+                        return;
+                    }
+                }
+                break;
+        }
         const result = await datLichService.UpdateTrangThaiBooking(bookingStore.bookingInfoDto?.id, trangThai);
         enqueueSnackbar(result.message, {
             variant: result.status,
@@ -350,6 +471,17 @@ const LichHenDetail: FC = () => {
 
     return (
         <>
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
+            <ConfirmDelete
+                isShow={inforDelete.show}
+                title={inforDelete.title}
+                mes={inforDelete.mes}
+                onOk={deleteCusChecking}
+                onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
             <Dialog open={bookingStore.isShowBookingInfo} maxWidth="sm" fullWidth>
                 <DialogTitle sx={{ backgroundColor: bookingStore?.bookingInfoDto?.color, color: 'white' }}>
                     <Stack direction={'row'} spacing={1}>
@@ -467,7 +599,7 @@ const LichHenDetail: FC = () => {
                                 activeStep={bookingStore.bookingInfoDto?.trangThai - 1}
                                 alternativeLabel
                                 sx={{ paddingTop: '16px', paddingBottom: '16px' }}>
-                                {AppConsts.trangThaiCheckIn
+                                {AppConsts.trangThaiBooking
                                     .filter((x) => x.value !== 0)
                                     .map((item) => (
                                         <Step

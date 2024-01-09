@@ -21,7 +21,7 @@ import { Component, ReactNode } from 'react';
 import { ReactComponent as AddIcon } from '../../../images/add.svg';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import { Formik, Form } from 'formik';
-import AppConsts from '../../../lib/appconst';
+import AppConsts, { TrangThaiCheckin } from '../../../lib/appconst';
 import Cookies from 'js-cookie';
 import { enqueueSnackbar } from 'notistack';
 import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
@@ -40,6 +40,10 @@ import DatePickerRequiredCustom from '../../../components/DatetimePicker/DatePic
 import { format as formatDate } from 'date-fns';
 import AutocompleteCustomer from '../../../components/Autocomplete/Customer';
 import DialogButtonClose from '../../../components/Dialog/ButtonClose';
+import TrangThaiBooking from '../../../enum/TrangThaiBooking';
+import { ICheckInHoaDonto, KHCheckInDto } from '../../../services/check_in/CheckinDto';
+import datLichService from '../../../services/dat-lich/datLichService';
+import CheckinService from '../../../services/check_in/CheckinService';
 interface ICreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
@@ -84,6 +88,29 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                   variant: 'error',
                   autoHideDuration: 3000
               });
+
+        // insert to kh_checkin (thungan)
+        if (values.trangThai === TrangThaiBooking.CheckIn) {
+            const idBooking = createResult.id;
+            const itemBooking = await datLichService.GetInforBooking_byID(idBooking);
+            if (itemBooking.length > 0) {
+                const idChiNhanh = Cookies.get('IdChiNhanh')?.toString() as string;
+                const objCheckIn: KHCheckInDto = new KHCheckInDto({
+                    idKhachHang: itemBooking[0].idKhachHang,
+                    idChiNhanh: idChiNhanh,
+                    trangThai: TrangThaiCheckin.DOING
+                });
+                const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
+                // save to Booking_Checkin_HD
+                await CheckinService.InsertCheckInHoaDon({
+                    idCheckIn: dataCheckIn.id,
+                    idBooking: itemBooking[0].idBooking
+                } as ICheckInHoaDonto);
+
+                // save to cache HoaDon (indexDB)
+                await bookingStore.addDataBooking_toCacheHD(itemBooking[0], dataCheckIn.id);
+            }
+        }
         this.props.onOk(createResult.id);
     };
 
@@ -332,26 +359,39 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                 </Grid>
                                             </Grid>
                                         </Grid>
-                                        <Grid item sx={{ marginTop: '16px' }}>
-                                            <FormControl fullWidth>
-                                                <InputLabel>
-                                                    <Typography fontSize="14px">Trạng thái</Typography>
-                                                </InputLabel>
-                                                <Select
-                                                    label={<Typography fontSize="14px">Trạng thái</Typography>}
-                                                    fullWidth
-                                                    size="small"
-                                                    name="trangThai"
-                                                    value={values.trangThai}
-                                                    onChange={handleChange}>
-                                                    {AppConsts.trangThaiCheckIn.map((item) => (
-                                                        <MenuItem key={item.value} value={item.value}>
-                                                            {item.name}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-                                            </FormControl>
-                                        </Grid>
+                                        {[
+                                            TrangThaiBooking.Wait,
+                                            TrangThaiBooking.Confirm,
+                                            TrangThaiBooking.CheckIn
+                                        ].includes(values.trangThai) && (
+                                            <Grid item sx={{ marginTop: '16px' }}>
+                                                <FormControl fullWidth>
+                                                    <InputLabel>
+                                                        <Typography fontSize="14px">Trạng thái</Typography>
+                                                    </InputLabel>
+                                                    <Select
+                                                        label={<Typography fontSize="14px">Trạng thái</Typography>}
+                                                        fullWidth
+                                                        size="small"
+                                                        name="trangThai"
+                                                        value={values.trangThai}
+                                                        onChange={handleChange}>
+                                                        {AppConsts.trangThaiBooking
+                                                            .filter(
+                                                                (x) =>
+                                                                    x.value !== TrangThaiBooking.Cancel &&
+                                                                    x.value !== TrangThaiBooking.Success
+                                                            )
+                                                            .map((item) => (
+                                                                <MenuItem key={item.value} value={item.value}>
+                                                                    {item.name}
+                                                                </MenuItem>
+                                                            ))}
+                                                    </Select>
+                                                </FormControl>
+                                            </Grid>
+                                        )}
+
                                         <Grid item sx={{ marginTop: '16px' }}>
                                             <FormGroup className="mt-2 mb-4">
                                                 <TextField
