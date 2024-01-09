@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import { BookingGetAllItemDto } from '../services/dat-lich/dto/BookingGetAllItemDto';
+import { BookingDetail_ofCustomerDto, BookingGetAllItemDto } from '../services/dat-lich/dto/BookingGetAllItemDto';
 import datLichService from '../services/dat-lich/datLichService';
 import Cookies from 'js-cookie';
 import { BookingInfoDto } from '../services/dat-lich/dto/BookingInfoDto';
@@ -10,6 +10,9 @@ import { format as formatDate, parse } from 'date-fns';
 import suggestStore from './suggestStore';
 import utils from '../utils/utils';
 import { Guid } from 'guid-typescript';
+import PageHoaDonChiTietDto from '../services/ban_hang/PageHoaDonChiTietDto';
+import { dbDexie } from '../lib/dexie/dexieDB';
+import PageHoaDonDto from '../services/ban_hang/PageHoaDonDto';
 
 class BookingStore {
     selectedDate: string = new Date().toString();
@@ -46,6 +49,42 @@ class BookingStore {
             avatarKhachHang: '',
             trangThai: 1
         };
+    }
+    async addDataBooking_toCacheHD(itemBook: BookingDetail_ofCustomerDto, idCheckIn: string) {
+        // always add new cache hoadon
+        const hoadonCT = [];
+        let tongTienHang = 0;
+
+        for (let i = 0; i < itemBook.details.length; i++) {
+            const itFor = itemBook.details[i];
+            const newCT = new PageHoaDonChiTietDto({
+                idDonViQuyDoi: itFor.idDonViQuyDoi as unknown as null,
+                maHangHoa: itFor.maHangHoa,
+                tenHangHoa: itFor.tenHangHoa,
+                giaBan: itFor.giaBan,
+                idNhomHangHoa: itFor.idNhomHangHoa as unknown as null,
+                idHangHoa: itFor.idHangHoa as unknown as null,
+                soLuong: 1
+            });
+            hoadonCT.push(newCT);
+            tongTienHang += itFor.giaBan;
+        }
+        // create cache hd with new id
+        const idChiNhanh = Cookies.get('IdChiNhanh')?.toString() as string;
+        const hoadon = new PageHoaDonDto({
+            idChiNhanh: idChiNhanh,
+            idKhachHang: itemBook.idKhachHang as unknown as null,
+            maKhachHang: itemBook.maKhachHang,
+            tenKhachHang: itemBook.tenKhachHang,
+            soDienThoai: itemBook.soDienThoai,
+            tongTienHang: tongTienHang
+        });
+        hoadon.idCheckIn = idCheckIn;
+        hoadon.tongTienHangChuaChietKhau = tongTienHang;
+        hoadon.tongTienHDSauVAT = tongTienHang;
+        hoadon.tongThanhToan = tongTienHang;
+        hoadon.hoaDonChiTiet = hoadonCT;
+        await dbDexie.hoaDon.add(hoadon);
     }
     async createNewBookingDto() {
         this.createOrEditBookingDto = {
