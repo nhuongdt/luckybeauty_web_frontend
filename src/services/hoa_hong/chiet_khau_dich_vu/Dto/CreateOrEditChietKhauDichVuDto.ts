@@ -11,6 +11,7 @@ export interface ChietKhauDichVuDto_AddMultiple {
     idChiNhanh: string | null;
     idNhanViens: string[];
     idDonViQuyDois: string[];
+    idNhomHang?: string | null;
     loaiChietKhau: number;
     giaTri: number;
     laPhanTram: boolean;
