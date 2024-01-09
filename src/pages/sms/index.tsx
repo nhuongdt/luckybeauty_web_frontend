@@ -27,11 +27,10 @@ import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { TextTranslate } from '../../components/TableLanguage';
 import { useState, useEffect, ReactComponentElement } from 'react';
 import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
-import { BrandnameDto } from '../../services/sms/brandname/BrandnameDto';
+import { BrandnameDto, IParamSearchBrandname } from '../../services/sms/brandname/BrandnameDto';
 import { CustomerSMSDto, PagedResultSMSDto } from '../../services/sms/gui_tin_nhan/gui_tin_nhan_dto';
 import { RequestFromToDto } from '../../services/dto/ParamSearchDto';
 import Cookies from 'js-cookie';
-import { PagedRequestDto } from '../../services/dto/pagedRequestDto';
 import BrandnameService from '../../services/sms/brandname/BrandnameService';
 import HeThongSMServices from '../../services/sms/gui_tin_nhan/he_thong_sms_services';
 import ModalGuiTinNhan from './components/modal_gui_tin_nhan';
@@ -52,7 +51,6 @@ import ZaloService from '../../services/sms/gui_tin_nhan/ZaloService';
 import { InforZOA, ZaloAuthorizationDto } from '../../services/sms/gui_tin_nhan/zalo_dto';
 import { Guid } from 'guid-typescript';
 import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
-import NearMeIcon from '@mui/icons-material/NearMe';
 
 const styleListItem = createTheme({
     components: {
@@ -262,7 +260,7 @@ const TinNhanPage = () => {
         tenantId = isNaN(tenantId) ? 1 : tenantId;
         const param = {
             keyword: ''
-        } as PagedRequestDto;
+        } as IParamSearchBrandname;
         const data = await BrandnameService.GetListBandname(param, tenantId);
         if (data !== null) {
             setLstBrandname(data.items);

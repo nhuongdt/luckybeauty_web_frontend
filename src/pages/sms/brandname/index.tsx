@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
@@ -6,23 +6,29 @@ import { Button, Grid, IconButton, Stack, TextField, Typography, Box, SelectChan
 import { Add, DeleteSweepOutlined, PrintOutlined, Search } from '@mui/icons-material';
 import { FileUploadOutlined, Edit, DeleteForever, PaidOutlined } from '@mui/icons-material';
 
-import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
-import { format, lastDayOfMonth } from 'date-fns';
+import { DataGrid, GridColDef, GridColumnHeaderParams, GridRowSelectionModel } from '@mui/x-data-grid';
+import { format } from 'date-fns';
 
 import { PagedRequestDto } from '../../../services/dto/pagedRequestDto';
 import ActionRowSelect from '../../../components/DataGrid/ActionRowSelect';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { TextTranslate } from '../../../components/TableLanguage';
-import { BrandnameDto, PagedResultBrandnameDto } from '../../../services/sms/brandname/BrandnameDto';
+import {
+    BrandnameDto,
+    IParamSearchBrandname,
+    PagedResultBrandnameDto
+} from '../../../services/sms/brandname/BrandnameDto';
 import BrandnameService from '../../../services/sms/brandname/BrandnameService';
 import ModalCreateOrEditBrandname from './modal_create_or_edit_brandname';
 import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
 import utils from '../../../utils/utils';
 import fileDowloadService from '../../../services/file-dowload.service';
 import NapTienBrandname from './nap_tien_brandname';
+import AppConsts from '../../../lib/appconst';
+import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 
 export default function PageBrandname() {
+    const firstLoad = useRef(true);
     const [isShowModalAdd, setIsShowModalAdd] = useState(false);
     const [isShowModalNapTien, setIsShowModalNapTien] = useState(false);
     const [brandChosed, setBrandChosed] = useState<BrandnameDto>({ id: '' } as BrandnameDto);
@@ -30,13 +36,13 @@ export default function PageBrandname() {
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
     const [dataGrid_typeAction, setDataGrid_typeAction] = useState(0);
     const [inforDelete, setInforDelete] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
-    const [paramSearch, setParamSearch] = useState<PagedRequestDto>({
+    const [paramSearch, setParamSearch] = useState<IParamSearchBrandname>({
         keyword: '',
         skipCount: 1,
-        maxResultCount: 5,
-        sortBy: 'createTime',
+        maxResultCount: AppConsts.pageOption[0].value,
+        sortBy: 'creationTime',
         sortType: 'DESC'
-    } as PagedRequestDto);
+    } as IParamSearchBrandname);
 
     const [pageDataBrandname, setPageDataBrandname] = useState<PagedResultBrandnameDto>({
         items: [] as BrandnameDto[]
@@ -70,7 +76,7 @@ export default function PageBrandname() {
             setPageDataBrandname({
                 items: data.items,
                 totalCount: data.totalCount,
-                totalPage: data.totalPage
+                totalPage: Math.ceil(data.totalCount / paramSearch.maxResultCount)
             });
         }
     };
@@ -96,9 +102,18 @@ export default function PageBrandname() {
     const handlePerPageChange = (event: SelectChangeEvent<number>) => {
         setParamSearch({
             ...paramSearch,
+            skipCount: 1, //reset currentpage
             maxResultCount: parseInt(event.target.value.toString(), 10)
         });
     };
+
+    useEffect(() => {
+        if (firstLoad.current) {
+            firstLoad.current = false;
+            return;
+        }
+        GetListBrandname();
+    }, [paramSearch.skipCount, paramSearch.maxResultCount]);
 
     const DataGrid_handleAction = async (item: any) => {
         switch (parseInt(item.id)) {
@@ -227,6 +242,8 @@ export default function PageBrandname() {
                             tenantId: dataSave.tenantId,
                             brandname: dataSave.brandname,
                             sdtCuaHang: dataSave.sdtCuaHang,
+                            tenantName: '',
+                            displayTenantName: dataSave.displayTenantName,
                             ngayKichHoat: dataSave.ngayKichHoat,
                             trangThai: dataSave.trangThai,
                             txtTrangThai: dataSave.txtTrangThai
@@ -239,9 +256,9 @@ export default function PageBrandname() {
         }
     };
 
-    const saveNapTienBrandname = async (dataSave: any) => {
+    const saveNapTienBrandname = async (dataSave: QuyHoaDonDto) => {
         setIsShowModalNapTien(false);
-        console.log('saveNapTienBrandname ', dataSave);
+
         const tongThu = utils.formatNumberToFloat(dataSave.tongTienThu);
         // update
         setPageDataBrandname({
@@ -250,7 +267,6 @@ export default function PageBrandname() {
                 if (x.id === dataSave.idBrandname) {
                     return {
                         ...x,
-                        tenantId: dataSave.tenantId,
                         tongTienNap: x.tongTienNap + tongThu,
                         conLai: x.conLai + tongThu
                     };
@@ -265,20 +281,20 @@ export default function PageBrandname() {
         {
             field: 'brandname',
             headerName: 'Tên brandname',
-            flex: 1,
+            flex: 0.8,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>
         },
         {
             field: 'displayTenantName',
             headerName: 'Tên cửa hàng',
             flex: 1.5,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         },
         {
             field: 'sdtCuaHang',
             headerName: 'SDT cửa hàng',
-            flex: 1,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>
+            flex: 0.8,
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         },
         {
             field: 'ngayKichHoat',
@@ -286,7 +302,7 @@ export default function PageBrandname() {
             headerAlign: 'center',
             align: 'center',
             flex: 0.8,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => <Box title={params.value}>{format(new Date(params.value), 'dd/MM/yyyy')}</Box>
         },
         {
@@ -295,7 +311,7 @@ export default function PageBrandname() {
             headerAlign: 'right',
             align: 'right',
             flex: 0.8,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
             )
@@ -306,7 +322,7 @@ export default function PageBrandname() {
             headerAlign: 'right',
             align: 'right',
             flex: 0.8,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
             )
@@ -317,7 +333,7 @@ export default function PageBrandname() {
             headerAlign: 'right',
             align: 'right',
             flex: 0.8,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
             )
@@ -327,7 +343,7 @@ export default function PageBrandname() {
             headerAlign: 'center',
             headerName: 'Trạng thái',
             flex: 0.8,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box
                     title={params.value}
@@ -346,10 +362,16 @@ export default function PageBrandname() {
             )
         },
         {
-            field: '#',
+            field: 'Thao tác',
+            headerName: '#',
             headerAlign: 'center',
-            flex: 0.4,
+            align: 'center',
+            flex: 0.2,
             disableColumnMenu: true,
+            sortable: false,
+            renderHeader: (params: GridColumnHeaderParams) => (
+                <Box title={params.field}>{params.colDef.headerName}</Box>
+            ),
             renderCell: (params) => (
                 <ActionViewEditDelete
                     lstOption={[
@@ -368,8 +390,7 @@ export default function PageBrandname() {
                     ]}
                     handleAction={(action: any) => doActionRow(action, params.row)}
                 />
-            ),
-            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
+            )
         }
     ];
 
@@ -421,17 +442,15 @@ export default function PageBrandname() {
                                 placeholder="Tìm kiếm"
                                 InputProps={{
                                     startAdornment: (
-                                        <IconButton type="button">
+                                        <IconButton type="button" onClick={hanClickIconSearch}>
                                             <Search />
                                         </IconButton>
                                     )
                                 }}
                                 onChange={(event) =>
-                                    setParamSearch((itemOlds: any) => {
-                                        return {
-                                            ...itemOlds,
-                                            keyword: event.target.value
-                                        };
+                                    setParamSearch({
+                                        ...paramSearch,
+                                        keyword: event.target.value
                                     })
                                 }
                                 onKeyDown={(event) => {
