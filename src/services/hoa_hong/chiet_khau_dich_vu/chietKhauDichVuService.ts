@@ -21,6 +21,20 @@ class ChietKhauDichVuService {
         );
         return result.data.result;
     };
+    ApplyAll_SetupHoaHongDV = async (
+        input: ChietKhauDichVuDto_AddMultiple,
+        idNhanVienChosed: string,
+        loaiApDung: number
+    ): Promise<number> => {
+        const result = await http.get(`api/services/app/ChietKhauDichVu/ApplyAll_SetupHoaHongDV`, {
+            params: {
+                ...input,
+                idNhanVienChosed: idNhanVienChosed,
+                loaiApDung: loaiApDung
+            }
+        });
+        return result.data.result;
+    };
     public async Delete(id: string) {
         const result = await http.post(`api/services/app/ChietKhauDichVu/Delete?id=${id}`);
         return result.data.result;
