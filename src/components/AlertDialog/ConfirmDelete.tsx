@@ -48,7 +48,7 @@ const ConfirmDelete = ({ isShow, onOk, onCancel, title = '', mes = '' }: any) =>
                                 }
                             }}
                             onClick={onOk}>
-                            Xóa
+                            Đồng ý
                         </Button>
                     </Stack>
                 </Stack>
