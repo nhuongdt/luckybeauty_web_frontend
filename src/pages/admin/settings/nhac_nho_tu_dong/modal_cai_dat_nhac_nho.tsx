@@ -1,24 +1,19 @@
 import {
-    Autocomplete,
-    AutocompleteRenderInputParams,
     Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    FormControlLabel,
     Grid,
     Box,
     TextField,
     Typography,
-    Stack,
-    FormGroup,
-    Checkbox
+    Stack
 } from '@mui/material';
 import { Form, Formik } from 'formik';
 import AppConsts, { ISelect, LoaiTin, TypeAction, TimeType } from '../../../../lib/appconst';
 import { IOSSwitch } from '../../../../components/Switch/IOSSwitch';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import utils from '../../../../utils/utils';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
@@ -31,6 +26,7 @@ import AutocompleteWithData from '../../../../components/Autocomplete/Autocomple
 import { MauTinSMSDto } from '../../../../services/sms/mau_tin_sms/mau_tin_dto';
 import { IDataAutocomplete } from '../../../../services/dto/IDataAutocomplete';
 import { ExpandMoreOutlined } from '@mui/icons-material';
+import { handleClickOutside } from '../../../../utils/customReactHook';
 
 const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSetup, onOK }: any) => {
     const [objSetup, setObjSetup] = useState<CaiDatNhacNhoDto>(
@@ -39,6 +35,7 @@ const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSet
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [expandAction, setExpandAction] = useState(false);
     const [titleDialog, setTitleDialog] = useState('');
+    const ref = handleClickOutside(() => setExpandAction(false));
 
     useEffect(() => {
         if (visiable) {
@@ -228,54 +225,58 @@ const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSet
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Box sx={{ position: 'relative' }}>
-                                            <Button
-                                                variant="contained"
-                                                endIcon={<ExpandMoreOutlined />}
-                                                onClick={() => setExpandAction(!expandAction)}>
-                                                Chèn
-                                            </Button>
+                                        <Box ref={ref} sx={{ width: '15%' }}>
+                                            <Box sx={{ position: 'relative' }}>
+                                                <Button
+                                                    variant="contained"
+                                                    endIcon={<ExpandMoreOutlined />}
+                                                    onClick={() => setExpandAction(!expandAction)}>
+                                                    Chèn
+                                                </Button>
 
-                                            <Box
-                                                sx={{
-                                                    display: expandAction ? '' : 'none',
-                                                    overflow: 'auto',
-                                                    maxHeight: '180px',
-                                                    position: 'absolute',
-                                                    borderRadius: '4px',
-                                                    border: '1px solid #cccc',
-                                                    minWidth: 160,
-                                                    backgroundColor: 'rgba(248,248,248,1)',
-                                                    '& .MuiStack-root .MuiStack-root:hover': {
-                                                        backgroundColor: '#cccc'
-                                                    }
-                                                }}>
-                                                <Stack alignContent={'center'}>
-                                                    {AppConsts.DanhSachBienSMS?.map((item: ISelect, index: number) => (
-                                                        <Stack
-                                                            direction={'row'}
-                                                            key={index}
-                                                            spacing={1}
-                                                            padding={'6px'}
-                                                            onClick={() => {
-                                                                const content = values.noiDungTin?.concat(
-                                                                    item.value.toString()
-                                                                );
-                                                                setFieldValue('noiDungTin', content);
-                                                                setFieldValue(
-                                                                    'noiDungXemTruoc',
-                                                                    CaiDatNhacNhoService.ReplaceBienSMS(
-                                                                        content as string
-                                                                    )
-                                                                );
-                                                                setExpandAction(false);
-                                                            }}>
-                                                            <Typography variant="subtitle2" marginLeft={1}>
-                                                                {item.text}
-                                                            </Typography>
-                                                        </Stack>
-                                                    ))}
-                                                </Stack>
+                                                <Box
+                                                    sx={{
+                                                        display: expandAction ? '' : 'none',
+                                                        overflow: 'auto',
+                                                        maxHeight: '180px',
+                                                        position: 'absolute',
+                                                        borderRadius: '4px',
+                                                        border: '1px solid #cccc',
+                                                        minWidth: 160,
+                                                        backgroundColor: 'rgba(248,248,248,1)',
+                                                        '& .MuiStack-root .MuiStack-root:hover': {
+                                                            backgroundColor: '#cccc'
+                                                        }
+                                                    }}>
+                                                    <Stack alignContent={'center'}>
+                                                        {AppConsts.DanhSachBienSMS?.map(
+                                                            (item: ISelect, index: number) => (
+                                                                <Stack
+                                                                    direction={'row'}
+                                                                    key={index}
+                                                                    spacing={1}
+                                                                    padding={'6px'}
+                                                                    onClick={() => {
+                                                                        const content = values.noiDungTin?.concat(
+                                                                            item.value.toString()
+                                                                        );
+                                                                        setFieldValue('noiDungTin', content);
+                                                                        setFieldValue(
+                                                                            'noiDungXemTruoc',
+                                                                            CaiDatNhacNhoService.ReplaceBienSMS(
+                                                                                content as string
+                                                                            )
+                                                                        );
+                                                                        setExpandAction(false);
+                                                                    }}>
+                                                                    <Typography variant="subtitle2" marginLeft={1}>
+                                                                        {item.text}
+                                                                    </Typography>
+                                                                </Stack>
+                                                            )
+                                                        )}
+                                                    </Stack>
+                                                </Box>
                                             </Box>
                                         </Box>
                                     </Grid>
