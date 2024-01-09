@@ -8,9 +8,12 @@ import {
     Checkbox,
     DialogTitle,
     Button,
-    DialogActions
+    DialogActions,
+    Typography
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
+import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
+
 import utils from '../../../../../utils/utils';
 import NhanSuItemDto from '../../../../../services/nhan-vien/dto/nhanSuItemDto';
 import { useState, useEffect, useRef } from 'react';
@@ -24,8 +27,9 @@ import chietKhauDichVuService from '../../../../../services/hoa_hong/chiet_khau_
 import { ChietKhauDichVuDto_AddMultiple } from '../../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/CreateOrEditChietKhauDichVuDto';
 import Cookies from 'js-cookie';
 import { Guid } from 'guid-typescript';
+import { LoaiHoaHongDichVu } from '../../../../../lib/appconst';
 
-export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose, onSaveOK }: any) {
+export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNhanVien, onClose, onSaveOK }: any) {
     const [txtSearchNV, setTxtSearchNV] = useState('');
     const [txtSearchProduct, setTxtSearchProduct] = useState('');
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
@@ -36,14 +40,21 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose, 
     const [checkAllNVien, setCheckAllNVien] = useState(false);
     const [checkAllProdcuct, setCheckAllProdcuct] = useState(false);
 
-    const [objHoaHongThucHien, setObjHoaHongThucHien] = useState({ loaiChietKhau: 1, laPhanTram: true, giaTri: 0 });
-    const [objHoaHongTuVan, setObjHoaHongTuVan] = useState({ loaiChietKhau: 3, laPhanTram: true, giaTri: 0 });
+    const [objHoaHongThucHien, setObjHoaHongThucHien] = useState({
+        loaiChietKhau: LoaiHoaHongDichVu.THUC_HIEN,
+        laPhanTram: true,
+        giaTri: 0
+    });
+    const [objHoaHongTuVan, setObjHoaHongTuVan] = useState({
+        loaiChietKhau: LoaiHoaHongDichVu.TU_VAN,
+        laPhanTram: true,
+        giaTri: 0
+    });
 
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [isSaving, setIsSaving] = useState(false);
 
     const SearchNhanVienClient = () => {
-        console.log('midal _allnv ', allNhanVien);
         if (!utils.checkNull(txtSearchNV)) {
             const txt = txtSearchNV.trim().toLowerCase();
             const txtUnsign = utils.strToEnglish(txt);
@@ -69,10 +80,15 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose, 
             setIsSaving(false);
             setObjHoaHongThucHien({ loaiChietKhau: 1, laPhanTram: true, giaTri: 0 });
             setObjHoaHongTuVan({ loaiChietKhau: 3, laPhanTram: true, giaTri: 0 });
-            setArrIdNhanVienChosed([]);
+
             setArrIdQuyDoiChosed([]);
             setTxtSearchNV('');
             setTxtSearchProduct('');
+            if (nhanVienChosed != null) {
+                setArrIdNhanVienChosed([nhanVienChosed?.id]);
+            } else {
+                setArrIdNhanVienChosed([]);
+            }
         }
     }, [isShow]);
 
@@ -174,18 +190,19 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose, 
     };
 
     const saveSetup = async () => {
-        if (arrIdNhanVienChosed.length === 0) {
-            setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng chọn nhân viên áp dụng' });
-            return;
-        }
+        // if (arrIdNhanVienChosed.length === 0) {
+        //     setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng chọn nhân viên áp dụng' });
+        //     return;
+        // }
+        // form này chỉ chọn dịch vụ
         if (arrIdQuyDoiChosed.length === 0) {
             setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng chọn dịch vụ áp dụng', type: 2 });
             return;
         }
-        if (objHoaHongThucHien.giaTri === 0) {
-            setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng nhập giá trị hoa hồng', type: 2 });
-            return;
-        }
+        // if (objHoaHongThucHien.giaTri === 0) {
+        //     setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng nhập giá trị hoa hồng', type: 2 });
+        //     return;
+        // }
         // todo check NVien has setup dichvu (check DB)
         if (isSaving) return;
         setIsSaving(true);
@@ -201,15 +218,16 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose, 
         } as ChietKhauDichVuDto_AddMultiple;
         const dataTH = await chietKhauDichVuService.AddMultiple_ChietKhauDichVu_toMultipleNhanVien(paramThucHien);
 
-        const paramTuVan = {
-            idChiNhanh: idChiNhanh,
-            idNhanViens: arrIdNhanVienChosed,
-            idDonViQuyDois: arrIdQuyDoiChosed,
-            loaiChietKhau: objHoaHongTuVan.loaiChietKhau,
-            giaTri: objHoaHongTuVan.giaTri,
-            laPhanTram: objHoaHongTuVan.laPhanTram
-        } as ChietKhauDichVuDto_AddMultiple;
-        await chietKhauDichVuService.AddMultiple_ChietKhauDichVu_toMultipleNhanVien(paramTuVan);
+        // chỉ cài NV thực hiện
+        // const paramTuVan = {
+        //     idChiNhanh: idChiNhanh,
+        //     idNhanViens: arrIdNhanVienChosed,
+        //     idDonViQuyDois: arrIdQuyDoiChosed,
+        //     loaiChietKhau: objHoaHongTuVan.loaiChietKhau,
+        //     giaTri: objHoaHongTuVan.giaTri,
+        //     laPhanTram: objHoaHongTuVan.laPhanTram
+        // } as ChietKhauDichVuDto_AddMultiple;
+        // await chietKhauDichVuService.AddMultiple_ChietKhauDichVu_toMultipleNhanVien(paramTuVan);
 
         setIsSaving(false);
         if (dataTH === 0) {
@@ -227,14 +245,15 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose, 
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
-            <Dialog open={isShow} maxWidth="lg" fullWidth onClose={onClose}>
+            <Dialog open={isShow} maxWidth="md" fullWidth onClose={onClose}>
                 <DialogTitle className="modal-title">
-                    Cài đặt hoa hồng dịch vụ
+                    Cài đặt hoa hồng dịch vụ {`(${nhanVienChosed?.tenNhanVien})`}
                     <DialogButtonClose onClose={onClose} />
                 </DialogTitle>
                 <DialogContent sx={{ paddingTop: '16px!important' }}>
                     <Grid container spacing={2}>
-                        <Grid item xs={12} md={3} lg={3}>
+                        {/* bỏ: phần chọn NV: chọn theo từng NV ở bên ngoài */}
+                        <Grid item xs={12} md={3} lg={3} style={{ display: 'none' }}>
                             <Stack>
                                 <TextField
                                     size="small"
@@ -292,7 +311,7 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose, 
                                 </Stack>
                             </Stack>
                         </Grid>
-                        <Grid item xs={12} md={6} lg={6}>
+                        <Grid item xs={12} md={12} lg={12}>
                             <Stack>
                                 <TextField
                                     size="small"
@@ -319,7 +338,7 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose, 
                                         <span style={{ cursor: 'pointer' }}> Chọn tất cả</span>
                                     </Stack>
                                     <Stack style={{ cursor: 'pointer' }} onClick={Product_clickBoChon}>
-                                        Bỏ chọn
+                                        <span>Bỏ chọn</span>
                                     </Stack>
                                 </Stack>
                             </Stack>
@@ -364,7 +383,15 @@ export default function ModalSetupHoaHongDichVu({ isShow, allNhanVien, onClose, 
                                 ))}
                             </Stack>
                         </Grid>
-                        <Grid item xs={12} md={3} lg={3} marginTop={'10%'} fontSize={'14px'}>
+                        {/* bỏ cài đạt giá trị: nhập bên ngoài (sau khi thêm) */}
+                        <Grid
+                            item
+                            xs={12}
+                            md={3}
+                            lg={3}
+                            marginTop={'10%'}
+                            fontSize={'14px'}
+                            style={{ display: 'none' }}>
                             <Grid container spacing={2} alignItems={'end'}>
                                 <Grid item xs={4}>
                                     Thực hiện
