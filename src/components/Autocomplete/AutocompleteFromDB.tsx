@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Autocomplete, Grid, TextField, Typography, Box } from '@mui/material';
-import CenterFocusWeakIcon from '@mui/icons-material/CenterFocusWeak';
+import { Autocomplete, Grid, TextField, Typography, Box, Stack } from '@mui/material';
 import { useState, useRef } from 'react';
 import { debounce } from '@mui/material/utils';
 import utils from '../../utils/utils';
@@ -14,9 +13,10 @@ export default function AutocompleteFromDB({
     type,
     idChosed,
     handleChoseItem,
-    label,
+    label, // label at textsearch
     helperText = '',
-    err = false
+    err = false,
+    optionLabel = { label1: '', label2: '' }
 }: any) {
     const [lstOption, setLstOption] = useState<IDataAutocomplete[]>([]);
     const [itemChosed, setItemChosed] = useState<IDataAutocomplete | null>(null);
@@ -33,15 +33,16 @@ export default function AutocompleteFromDB({
             switch (type) {
                 case 'tenant':
                     {
+                        console.log('idChosed');
                         if (idChosed !== 0) {
                             const data = await tenantService.get(idChosed);
                             if (data !== null) {
-                                const itemMap = {
-                                    id: data.id,
+                                setItemChosed({
+                                    ...itemChosed,
+                                    id: data.id.toString(),
                                     text1: data.name,
                                     text2: data.tenancyName
-                                } as unknown as IDataAutocomplete;
-                                setItemChosed(itemMap);
+                                });
                             }
                         } else {
                             setItemChosed(null);
@@ -52,12 +53,12 @@ export default function AutocompleteFromDB({
                     {
                         const data = await BrandnameService.GetInforBrandnamebyID(idChosed);
                         if (data !== null) {
-                            const itemMap = {
+                            setItemChosed({
+                                ...itemChosed,
                                 id: data.id,
                                 text1: data.brandname,
                                 text2: data.sdtCuaHang
-                            };
-                            setItemChosed(itemMap);
+                            });
                         }
                     }
                     break;
@@ -89,6 +90,7 @@ export default function AutocompleteFromDB({
                     break;
                 case 'brandname':
                     {
+                        paramSearch.trangThais = [1];
                         const data = await BrandnameService.GetListBandname(paramSearch);
                         if (data !== null) {
                             const dataMap = data.items.map((xx: any) => {
@@ -135,7 +137,6 @@ export default function AutocompleteFromDB({
                     handleInputChange(newInputValue);
                 }}
                 filterOptions={(x) => x}
-                //isOptionEqualToValue={(option, value) => option.id === value.id}// bi douple 2 dong neu them dong nay
                 options={lstOption}
                 getOptionLabel={(option: any) => (option.text1 ? option.text1 : '')}
                 renderInput={(params) => (
@@ -151,16 +152,23 @@ export default function AutocompleteFromDB({
                             }}>
                             <Grid container alignItems="center">
                                 <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                                    <Typography style={{ fontSize: '13px' }}>{option.text1}</Typography>
-                                    <Box
-                                        component="span"
+                                    <Stack direction={'row'} spacing={0.5}>
+                                        <Typography style={{ fontSize: '12px' }} color={'#acaca5'}>
+                                            {optionLabel?.label1}
+                                        </Typography>
+                                        <Typography style={{ fontSize: '13px' }}>{option.text1}</Typography>
+                                    </Stack>
+                                    <Stack
+                                        direction={'row'}
+                                        spacing={0.5}
                                         style={{
                                             fontWeight: 500,
                                             color: '#acaca5',
                                             fontSize: '12px'
                                         }}>
-                                        {option.text2}
-                                    </Box>
+                                        <span>{optionLabel?.label2}</span>
+                                        <span> {option.text2}</span>
+                                    </Stack>
                                 </Grid>
                             </Grid>
                         </li>
