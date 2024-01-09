@@ -280,7 +280,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                             </Stack>
                             <Stack spacing={2}>
                                 <Stack direction={'row'} marginTop="16px" justifyContent={'space-between'}>
-                                    <Stack direction={'row'} spacing={1}>
+                                    <Stack direction={'row'} spacing={1} style={{ display: 'none' }}>
                                         <Typography variant="body2" color={'#3D475C'}>
                                             Điểm tích lũy:
                                         </Typography>
