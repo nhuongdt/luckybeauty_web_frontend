@@ -31,7 +31,6 @@ import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 import NapTienBrandname from '../../sms/brandname/nap_tien_brandname';
 import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
-import DetailHoaDon from '../../ban_hang/thu_ngan/DetailHoaDon';
 import ModalPhieuThuHoaDon from './components/modal_phieu_thu_hoa_don';
 
 const PageSoQuy = ({ xx }: any) => {
