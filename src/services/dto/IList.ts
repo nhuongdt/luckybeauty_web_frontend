@@ -4,6 +4,7 @@ import { ReactComponentElement } from 'react';
 export interface IList {
     id: string;
     text: string;
+    text2?: string;
     isShow?: boolean;
     color?: string;
     icon?: ReactComponentElement<SvgIconComponent>;

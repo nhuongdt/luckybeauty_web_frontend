@@ -397,7 +397,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                             <Typography
                                                                 //color="#4C4B4C"
                                                                 variant="subtitle2">
-                                                                Vị trí <span className="text-danger">*</span>
+                                                                Chức vụ <span className="text-danger">*</span>
                                                             </Typography>
                                                         }
                                                         error={errors.idChucVu && touched.idChucVu ? true : false}
@@ -407,7 +407,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                                 <small className="text-danger">{errors.idChucVu}</small>
                                                             )
                                                         }
-                                                        placeholder="Nhập tên vị trí"
+                                                        placeholder="Nhập tên chức vụ"
                                                     />
                                                 )}
                                             />

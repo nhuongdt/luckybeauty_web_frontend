@@ -2,14 +2,14 @@ import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
-import SearchIcon from '../../images/search-normal.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import SearchIcon from '@mui/icons-material/Search';
 import React from 'react';
 import { SuggestChucVuDto } from '../../services/suggests/dto/SuggestChucVuDto';
 import { CreateOrUpdateNhanSuDto } from '../../services/nhan-vien/dto/createOrUpdateNhanVienDto';
 import Cookies from 'js-cookie';
 import ClearIcon from '@mui/icons-material/Clear';
-import { ExpandMoreOutlined } from '@mui/icons-material';
+import { Add, ExpandMoreOutlined } from '@mui/icons-material';
 import {
     DataGrid,
     GridColDef,
@@ -54,6 +54,8 @@ import suggestStore from '../../stores/suggestStore';
 import AppConsts from '../../lib/appconst';
 import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
 import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
+import AccordionWithData from '../../components/Accordion/AccordionWithData';
+import { IList } from '../../services/dto/IList';
 class EmployeeScreen extends React.Component {
     static contextType = AppContext;
     state = {
@@ -78,7 +80,9 @@ class EmployeeScreen extends React.Component {
         totalPage: 1,
         totalCount: 0,
         isShowConfirmDelete: false,
-        idChiNhanh: Cookies.get('IdChiNhanh')
+        idChiNhanh: Cookies.get('IdChiNhanh'),
+        idChucVu: null,
+        isShowModalAddChucVu: false
     };
     async componentDidMount() {
         await this.getData();
@@ -106,7 +110,8 @@ class EmployeeScreen extends React.Component {
             totalNhanVien: 0,
             currentPage: 1,
             totalPage: 1,
-            isShowConfirmDelete: false
+            isShowConfirmDelete: false,
+            idChucVu: null
         });
     }
     async getData() {
@@ -121,7 +126,7 @@ class EmployeeScreen extends React.Component {
         await this.getListNhanVien();
     }
     async getListNhanVien() {
-        const { filter, maxResultCount, currentPage, sortBy, sortType } = this.state;
+        const { filter, maxResultCount, currentPage, sortBy, sortType, idChucVu } = this.state;
         const appContext = this.context as IAppContext;
         const chiNhanhContext = appContext.chinhanhCurrent;
         await NhanVienStore.getAll({
@@ -130,7 +135,8 @@ class EmployeeScreen extends React.Component {
             filter: filter,
             sortBy: sortBy,
             sortType: sortType,
-            idChiNhanh: chiNhanhContext.id
+            idChiNhanh: chiNhanhContext.id,
+            idChucVu: idChucVu
         });
         this.setState({
             totalPage: Math.ceil(NhanVienStore.listNhanVien.totalCount / maxResultCount),
@@ -321,6 +327,27 @@ class EmployeeScreen extends React.Component {
         }
         this.setState({ checkAllRow: !this.state.checkAllRow });
     };
+    showModalAddChucVu = () => {
+        this.setState({ isShowModalAddChucVu: true });
+    };
+
+    onEditChucVu = async (isEdit?: boolean, itemChosed?: IList | null) => {
+        await this.setState({ idChucVu: itemChosed?.id });
+        await this.getListNhanVien();
+    };
+
+    DataGrid_handleAction = async (item: any) => {
+        switch (parseInt(item.id)) {
+            case 1: // xoanhanvien
+                this.handleDelete();
+                break;
+            case 2: // xuat file DS
+                {
+                    await this.exportSelectedRow();
+                }
+                break;
+        }
+    };
 
     columns: GridColDef[] = [
         {
@@ -443,7 +470,7 @@ class EmployeeScreen extends React.Component {
         },
         {
             field: 'tenChucVu',
-            headerName: 'Vị trí',
+            headerName: 'Chức vụ',
             minWidth: 113,
             flex: 1,
             renderCell: (params) => (
@@ -458,32 +485,32 @@ class EmployeeScreen extends React.Component {
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         },
 
-        {
-            field: 'ngayVaoLam',
-            headerName: 'Ngày tham gia',
-            minWidth: 120,
-            flex: 1,
-            renderCell: (params) => (
-                <Box
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'start',
-                        width: '100%'
-                    }}>
-                    <DateIcon style={{ marginRight: 4 }} />
-                    <Typography
-                        fontSize="var(--font-size-main)"
-                        fontWeight="400"
-                        fontFamily={'Roboto'}
-                        color="#3D475C"
-                        lineHeight="16px">
-                        {new Date(params.value).toLocaleDateString('en-GB')}
-                    </Typography>
-                </Box>
-            ),
-            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
-        },
+        // {
+        //     field: 'ngayVaoLam',
+        //     headerName: 'Ngày tham gia',
+        //     minWidth: 120,
+        //     flex: 1,
+        //     renderCell: (params) => (
+        //         <Box
+        //             style={{
+        //                 display: 'flex',
+        //                 alignItems: 'center',
+        //                 justifyContent: 'start',
+        //                 width: '100%'
+        //             }}>
+        //             {/* <DateIcon style={{ marginRight: 4 }} /> */}
+        //             <Typography
+        //                 fontSize="var(--font-size-main)"
+        //                 fontWeight="400"
+        //                 fontFamily={'Roboto'}
+        //                 color="#3D475C"
+        //                 lineHeight="16px">
+        //                 {new Date(params.value).toLocaleDateString('en-GB')}
+        //             </Typography>
+        //         </Box>
+        //     ),
+        //     renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+        // },
         {
             field: 'trangThai',
             headerName: 'Trạng thái',
@@ -545,263 +572,272 @@ class EmployeeScreen extends React.Component {
     public render() {
         const { listNhanVien } = NhanVienStore;
         return (
-            <Box className="list-nhan-vien" paddingTop={2}>
-                <Grid container alignItems="center" justifyContent="space-between">
-                    <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
-                        <Typography variant="h1" fontSize="16px" fontWeight="700" color="#333233">
-                            Quản lý nhân viên
-                        </Typography>
-                        <Box className="form-search">
-                            <TextField
-                                sx={{
-                                    backgroundColor: '#fff',
-                                    borderColor: '#CDC9CD',
-                                    height: '40px',
-                                    '& .MuiInputBase-root': {
-                                        pl: '0'
-                                    }
-                                }}
-                                onChange={(e: any) => {
-                                    this.setState({ filter: e.target.value });
-                                }}
-                                onKeyDown={(e) => {
-                                    if (e.key == 'Enter') {
-                                        this.getListNhanVien();
-                                    }
-                                }}
-                                size="small"
-                                className="search-field"
-                                variant="outlined"
-                                placeholder="Tìm kiếm"
-                                InputProps={{
-                                    startAdornment: (
-                                        <IconButton
-                                            type="button"
-                                            onClick={() => {
+            <>
+                <Box className="list-nhan-vien" paddingTop={2}>
+                    <Grid
+                        container
+                        alignItems="center"
+                        justifyContent="space-between"
+                        spacing={{ xs: 1, md: 0, lg: 0 }}>
+                        <Grid item md={6} xs={12} alignItems="center" gap="10px">
+                            <Grid container alignItems="center">
+                                <Grid item xs={6} md={4}>
+                                    <span className="page-title">Quản lý nhân viên</span>
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        sx={{
+                                            backgroundColor: '#fff',
+                                            borderColor: '#CDC9CD',
+                                            height: '40px'
+                                            // '& .MuiInputBase-root': {
+                                            //     pl: '0'
+                                            // }
+                                        }}
+                                        onChange={(e: any) => {
+                                            this.setState({ filter: e.target.value });
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key == 'Enter') {
                                                 this.getListNhanVien();
-                                            }}>
-                                            <img src={SearchIcon} />
-                                        </IconButton>
-                                    )
-                                }}
-                            />
-                        </Box>
-                    </Grid>
+                                            }
+                                        }}
+                                        size="small"
+                                        className="search-field"
+                                        variant="outlined"
+                                        placeholder="Tìm kiếm"
+                                        InputProps={{
+                                            startAdornment: (
+                                                <IconButton
+                                                    type="button"
+                                                    onClick={() => {
+                                                        this.getListNhanVien();
+                                                    }}>
+                                                    <SearchIcon />
+                                                </IconButton>
+                                            )
+                                        }}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Grid>
 
-                    <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
-                        <Button
-                            variant="outlined"
-                            size="small"
-                            hidden={!abpCustom.isGrandPermission('Pages.NhanSu.Import')}
-                            startIcon={<img src={DownloadIcon} />}
-                            sx={{
-                                backgroundColor: '#fff!important',
-                                textTransform: 'capitalize',
-                                fontWeight: '400',
-                                color: '#666466',
-                                height: '40px',
-                                padding: '10px 16px',
-                                borderRadius: '4px!important'
-                            }}
-                            onClick={this.onImportShow}
-                            className="btn-outline-hover">
-                            Nhập
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            size="small"
-                            hidden={!abpCustom.isGrandPermission('Pages.NhanSu.Export')}
-                            startIcon={<img src={UploadIcon} />}
-                            sx={{
-                                backgroundColor: '#fff!important',
-                                textTransform: 'capitalize',
-                                fontWeight: '400',
-                                color: '#666466',
-                                padding: '10px 16px',
-                                height: '40px',
-                                borderRadius: '4px!important'
-                            }}
-                            onClick={this.exportToExcel}
-                            className="btn-outline-hover">
-                            Xuất
-                        </Button>
-                        <ButtonGroup
-                            variant="contained"
-                            sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
-                            <Button
-                                size="small"
-                                hidden={!abpCustom.isGrandPermission('Pages.NhanSu.Create')}
-                                onClick={() => {
-                                    this.createOrUpdateModalOpen('');
-                                }}
-                                variant="contained"
-                                startIcon={<img src={AddIcon} />}
-                                sx={{
-                                    textTransform: 'capitalize',
-                                    fontWeight: '400',
-                                    minWidth: '173px',
-                                    fontSize: '14px',
-                                    borderRadius: '4px!important',
-                                    backgroundColor: 'var(--color-main)!important'
-                                }}
-                                className="btn-container-hover">
-                                Thêm nhân viên
-                            </Button>
-                        </ButtonGroup>
-                    </Grid>
-                </Grid>
-
-                <Box paddingTop="16px">
-                    {this.state.listItemSelectedModel.length > 0 ? (
-                        <Stack spacing={1} marginBottom={2} direction={'row'} alignItems={'center'}>
-                            <Box
-                                sx={{ position: 'relative' }}
-                                onMouseLeave={() => {
-                                    this.setState({
-                                        expendActionSelectedRow: false
-                                    });
-                                }}>
+                        <Grid item md={6} xs={12}>
+                            <Stack spacing={1} direction={'row'} justifyContent="end">
                                 <Button
-                                    variant="contained"
-                                    endIcon={<ExpandMoreOutlined />}
-                                    onClick={() =>
-                                        this.setState({
-                                            expendActionSelectedRow: !this.state.expendActionSelectedRow
-                                        })
-                                    }>
-                                    Thao tác
-                                </Button>
-
-                                <Box
+                                    variant="outlined"
+                                    size="small"
+                                    hidden={!abpCustom.isGrandPermission('Pages.NhanSu.Import')}
+                                    startIcon={<img src={DownloadIcon} />}
                                     sx={{
-                                        display: this.state.expendActionSelectedRow ? '' : 'none',
-                                        zIndex: 1,
-                                        position: 'absolute',
-                                        borderRadius: '4px',
-                                        border: '1px solid #cccc',
-                                        minWidth: 150,
-                                        backgroundColor: 'rgba(248,248,248,1)',
-                                        '& .MuiStack-root .MuiStack-root:hover': {
-                                            backgroundColor: '#cccc'
-                                        }
-                                    }}>
-                                    <Stack
-                                        alignContent={'center'}
-                                        justifyContent={'start'}
-                                        textAlign={'left'}
-                                        spacing={0.5}>
-                                        <Button
-                                            startIcon={'Xóa nhân viên'}
-                                            sx={{
-                                                color: 'black',
-                                                '&:hover': {
-                                                    backgroundColor: '#E6E6E6',
-                                                    boxShadow: 'none'
-                                                }
-                                            }}
-                                            onClick={this.handleDelete}></Button>
-                                        <Button
-                                            startIcon={'Xuất danh sách'}
-                                            sx={{
-                                                color: 'black',
-                                                '&:hover': {
-                                                    backgroundColor: '#E6E6E6',
-                                                    boxShadow: 'none'
-                                                }
-                                            }}
-                                            onClick={this.exportSelectedRow}></Button>
-                                    </Stack>
-                                </Box>
-                            </Box>
-                            <Divider orientation="vertical" flexItem sx={{ color: 'black' }}></Divider>
-                            <Stack direction={'row'}>
-                                <Typography variant="body2" color={'red'}>
-                                    {this.state.listItemSelectedModel.length}&nbsp;
-                                </Typography>
-                                <Typography variant="body2">bản ghi được chọn</Typography>
+                                        backgroundColor: '#fff!important',
+                                        textTransform: 'capitalize',
+                                        fontWeight: '400',
+                                        color: '#666466',
+                                        height: '40px',
+                                        padding: '10px 16px',
+                                        borderRadius: '4px!important'
+                                    }}
+                                    onClick={this.onImportShow}
+                                    className="btn-outline-hover">
+                                    Nhập
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    size="small"
+                                    hidden={!abpCustom.isGrandPermission('Pages.NhanSu.Export')}
+                                    startIcon={<img src={UploadIcon} />}
+                                    sx={{
+                                        backgroundColor: '#fff!important',
+                                        textTransform: 'capitalize',
+                                        fontWeight: '400',
+                                        color: '#666466',
+                                        padding: '10px 16px',
+                                        height: '40px',
+                                        borderRadius: '4px!important'
+                                    }}
+                                    onClick={this.exportToExcel}
+                                    className="btn-outline-hover">
+                                    Xuất
+                                </Button>
+                                <ButtonGroup
+                                    variant="contained"
+                                    sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
+                                    <Button
+                                        size="small"
+                                        hidden={!abpCustom.isGrandPermission('Pages.NhanSu.Create')}
+                                        onClick={() => {
+                                            this.createOrUpdateModalOpen('');
+                                        }}
+                                        variant="contained"
+                                        startIcon={<img src={AddIcon} />}
+                                        sx={{
+                                            textTransform: 'capitalize',
+                                            fontWeight: '400',
+                                            minWidth: '173px',
+                                            fontSize: '14px',
+                                            borderRadius: '4px!important',
+                                            backgroundColor: 'var(--color-main)!important'
+                                        }}
+                                        className="btn-container-hover">
+                                        Thêm nhân viên
+                                    </Button>
+                                </ButtonGroup>
                             </Stack>
-                            <ClearIcon
-                                color="error"
-                                onClick={() => {
-                                    this.setState({
-                                        listItemSelectedModel: [],
-                                        checkAllRow: false
-                                    });
-                                }}
-                            />
-                        </Stack>
-                    ) : null}
-                    <DataGrid
-                        disableRowSelectionOnClick
-                        rowHeight={46}
-                        rows={listNhanVien === undefined ? [] : listNhanVien.items}
-                        columns={this.columns}
-                        checkboxSelection={false}
-                        hideFooter
-                        localeText={TextTranslate}
-                        sortingOrder={['desc', 'asc']}
-                        sortModel={[
-                            {
-                                field: this.state.sortBy,
-                                sort: this.state.sortType == 'desc' ? 'desc' : 'asc'
-                            }
-                        ]}
-                        onSortModelChange={(newSortModel) => {
-                            if (newSortModel.length > 0) {
-                                this.onSort(
-                                    newSortModel[0].sort?.toString() ?? 'creationTime',
-                                    newSortModel[0].field ?? 'desc'
-                                );
-                            }
+                        </Grid>
+                    </Grid>
+
+                    <Grid container spacing={2} marginTop={3}>
+                        <Grid item xs={12} md={3}>
+                            <Box className="page-box-left">
+                                <Box
+                                    display="flex"
+                                    justifyContent="space-between"
+                                    borderBottom="1px solid #E6E1E6"
+                                    borderRadius={'4px'}
+                                    sx={{ backgroundColor: 'var(--color-header-table)' }}
+                                    padding="12px">
+                                    <Typography fontSize="14px" fontWeight="700">
+                                        Chức vụ
+                                    </Typography>
+
+                                    <Add
+                                        sx={{
+                                            // color: '#fff',
+                                            transition: '.4s',
+                                            height: '32px',
+                                            cursor: 'pointer',
+                                            width: '32px',
+                                            borderRadius: '4px',
+                                            padding: '4px 0px',
+                                            border: '1px solid #cccc'
+                                        }}
+                                        onClick={this.showModalAddChucVu}
+                                    />
+                                </Box>
+                                <AccordionWithData
+                                    roleEdit={true}
+                                    lstData={this.state.suggestChucVu?.map((x) => {
+                                        return { id: x.idChucVu, text: x.tenChucVu } as IList;
+                                    })}
+                                    clickTreeItem={this.onEditChucVu}
+                                />
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} md={9}>
+                            <Box>
+                                {this.state.listItemSelectedModel.length > 0 && (
+                                    <ActionRowSelect
+                                        lstOption={[
+                                            {
+                                                id: '1',
+                                                text: 'Xóa nhân viên'
+                                            },
+                                            {
+                                                id: '2',
+                                                text: 'Xuất danh sách'
+                                            }
+                                        ]}
+                                        countRowSelected={this.state.listItemSelectedModel.length}
+                                        title="nhân viên"
+                                        choseAction={this.DataGrid_handleAction}
+                                        removeItemChosed={() => {
+                                            this.setState({
+                                                listItemSelectedModel: [],
+                                                checkAllRow: false
+                                            });
+                                        }}
+                                    />
+                                )}
+                                <div
+                                    className="page-box-right"
+                                    style={{
+                                        marginTop: this.state.listItemSelectedModel.length > 0 ? '8px' : 0
+                                    }}>
+                                    <DataGrid
+                                        disableRowSelectionOnClick
+                                        rowHeight={46}
+                                        autoHeight={this.state.totalCount === 0}
+                                        className={
+                                            this.state.listItemSelectedModel.length > 0
+                                                ? 'data-grid-row-chosed'
+                                                : 'data-grid-row'
+                                        }
+                                        rows={listNhanVien === undefined ? [] : listNhanVien.items}
+                                        columns={this.columns}
+                                        checkboxSelection={false}
+                                        hideFooter
+                                        localeText={TextTranslate}
+                                        sortingOrder={['desc', 'asc']}
+                                        sortModel={[
+                                            {
+                                                field: this.state.sortBy,
+                                                sort: this.state.sortType == 'desc' ? 'desc' : 'asc'
+                                            }
+                                        ]}
+                                        onSortModelChange={(newSortModel) => {
+                                            if (newSortModel.length > 0) {
+                                                this.onSort(
+                                                    newSortModel[0].sort?.toString() ?? 'creationTime',
+                                                    newSortModel[0].field ?? 'desc'
+                                                );
+                                            }
+                                        }}
+                                    />
+                                </div>
+
+                                <ActionMenuTable
+                                    selectedRowId={this.state.selectedRowId}
+                                    anchorEl={this.state.anchorEl}
+                                    closeMenu={this.handleCloseMenu}
+                                    handleView={this.handleEdit}
+                                    permissionView="Pages.NhanSu.Edit"
+                                    handleEdit={this.handleEdit}
+                                    permissionEdit="Pages.NhanSu.Edit"
+                                    handleDelete={this.handleDelete}
+                                    permissionDelete="Pages.NhanSu.Delete"
+                                />
+                                <CustomTablePagination
+                                    currentPage={this.state.currentPage}
+                                    rowPerPage={this.state.maxResultCount}
+                                    totalRecord={this.state.totalCount}
+                                    totalPage={this.state.totalPage}
+                                    handlePerPageChange={this.handlePerPageChange}
+                                    handlePageChange={this.handlePageChange}
+                                />
+                            </Box>
+                        </Grid>
+                    </Grid>
+
+                    <ConfirmDelete
+                        isShow={this.state.isShowConfirmDelete}
+                        onOk={this.onOkDelete}
+                        onCancel={this.handleDelete}></ConfirmDelete>
+                    <ImportExcel
+                        tieude={'Nhập file nhân viên'}
+                        isOpen={this.state.importShow}
+                        onClose={this.onImportShow}
+                        downloadImportTemplate={this.downloadImportTemplate}
+                        importFile={this.handleImportData}
+                    />
+                    <CreateOrEditNhanVienDialog
+                        visible={this.state.modalVisible}
+                        onCancel={async () => {
+                            this.setState({ modalVisible: false });
+                            await this.getListNhanVien();
                         }}
-                    />
-                    <ActionMenuTable
-                        selectedRowId={this.state.selectedRowId}
-                        anchorEl={this.state.anchorEl}
-                        closeMenu={this.handleCloseMenu}
-                        handleView={this.handleEdit}
-                        permissionView="Pages.NhanSu.Edit"
-                        handleEdit={this.handleEdit}
-                        permissionEdit="Pages.NhanSu.Edit"
-                        handleDelete={this.handleDelete}
-                        permissionDelete="Pages.NhanSu.Delete"
-                    />
-                    <CustomTablePagination
-                        currentPage={this.state.currentPage}
-                        rowPerPage={this.state.maxResultCount}
-                        totalRecord={this.state.totalCount}
-                        totalPage={this.state.totalPage}
-                        handlePerPageChange={this.handlePerPageChange}
-                        handlePageChange={this.handlePageChange}
-                    />
+                        onOk={this.handleSubmit}
+                        title={
+                            this.state.idNhanSu === '' ||
+                            this.state.idNhanSu == undefined ||
+                            this.state.idNhanSu === AppConsts.guidEmpty
+                                ? 'Thêm mới nhân viên'
+                                : 'Cập nhật thông tin nhân viên'
+                        }
+                        formRef={nhanVienStore.createEditNhanVien}></CreateOrEditNhanVienDialog>
                 </Box>
-                <ConfirmDelete
-                    isShow={this.state.isShowConfirmDelete}
-                    onOk={this.onOkDelete}
-                    onCancel={this.handleDelete}></ConfirmDelete>
-                <ImportExcel
-                    tieude={'Nhập file nhân viên'}
-                    isOpen={this.state.importShow}
-                    onClose={this.onImportShow}
-                    downloadImportTemplate={this.downloadImportTemplate}
-                    importFile={this.handleImportData}
-                />
-                <CreateOrEditNhanVienDialog
-                    visible={this.state.modalVisible}
-                    onCancel={async () => {
-                        this.setState({ modalVisible: false });
-                        await this.getListNhanVien();
-                    }}
-                    onOk={this.handleSubmit}
-                    title={
-                        this.state.idNhanSu === '' ||
-                        this.state.idNhanSu == undefined ||
-                        this.state.idNhanSu === AppConsts.guidEmpty
-                            ? 'Thêm mới nhân viên'
-                            : 'Cập nhật thông tin nhân viên'
-                    }
-                    formRef={nhanVienStore.createEditNhanVien}></CreateOrEditNhanVienDialog>
-            </Box>
+            </>
         );
     }
 }
