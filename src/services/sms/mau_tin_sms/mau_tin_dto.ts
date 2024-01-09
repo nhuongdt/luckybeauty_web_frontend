@@ -3,6 +3,7 @@ export class MauTinSMSDto {
     idLoaiTin: number;
     tenMauTin: string;
     noiDungTinMau?: string;
+    noiDungXemTruoc?: string;
     laMacDinh: boolean;
     trangThai: number;
 

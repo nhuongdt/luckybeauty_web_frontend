@@ -1,6 +1,4 @@
 import {
-    Autocomplete,
-    AutocompleteRenderInputParams,
     Button,
     Dialog,
     DialogActions,
@@ -8,7 +6,6 @@ import {
     DialogTitle,
     FormControlLabel,
     Grid,
-    Switch,
     Box,
     TextField,
     Typography,
@@ -17,7 +14,7 @@ import {
     Checkbox
 } from '@mui/material';
 import { Form, Formik } from 'formik';
-import AppConsts, { ISelect, TypeAction } from '../../../../lib/appconst';
+import AppConsts, { ISelect, LoaiTin, TypeAction } from '../../../../lib/appconst';
 import { IOSSwitch } from '../../../../components/Switch/IOSSwitch';
 import { useEffect, useState } from 'react';
 import { MauTinSMSDto } from '../../../../services/sms/mau_tin_sms/mau_tin_dto';
@@ -29,8 +26,12 @@ import DialogButtonClose from '../../../../components/Dialog/ButtonClose';
 import { Guid } from 'guid-typescript';
 import SelectWithData from '../../../../components/Select/SelectWithData';
 import { ExpandMoreOutlined } from '@mui/icons-material';
+import CaiDatNhacNhoService from '../../../../services/sms/cai_dat_nhac_nho/CaiDatNhacNhoService';
+import { handleClickOutside } from '../../../../utils/customReactHook';
+import { CaiDatNhacNhoDto } from '../../../../services/sms/cai_dat_nhac_nho/cai_dat_nhac_nho_dto';
 
 const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: any) => {
+    const ref = handleClickOutside(() => setExpandAction(false));
     const [objMauTin, setObjMauTin] = useState<MauTinSMSDto>(new MauTinSMSDto({ id: '', trangThai: 1 }));
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [expandAction, setExpandAction] = useState(false);
@@ -47,7 +48,8 @@ const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: 
                     tenMauTin: objMauTinOld.tenMauTin,
                     noiDungTinMau: objMauTinOld.noiDungTinMau,
                     laMacDinh: objMauTinOld.laMacDinh,
-                    trangThai: objMauTinOld.trangThai
+                    trangThai: objMauTinOld.trangThai,
+                    noiDungXemTruoc: CaiDatNhacNhoService.ReplaceBienSMS(objMauTinOld.noiDungTinMau as string)
                 });
             }
         }
@@ -65,6 +67,23 @@ const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: 
             params.id = data.id;
             onOK(params, TypeAction.INSEART);
             setObjAlert({ ...objAlert, show: true, mes: 'Thêm mới mẫu tin thành công' });
+
+            if (params.laMacDinh && params.idLoaiTin !== LoaiTin.TIN_THUONG) {
+                // check exist caidatnhacnho && insert
+                const listSetup = await CaiDatNhacNhoService.GetAllCaiDatNhacNho();
+                if (listSetup != null && listSetup.length > 0) {
+                    const exists = listSetup.filter((x) => x.idLoaiTin === params.idLoaiTin);
+                    if (exists.length === 0) {
+                        const objNhacNho = new CaiDatNhacNhoDto({
+                            id: Guid.EMPTY,
+                            idLoaiTin: params.idLoaiTin,
+                            idMauTin: data.id as unknown as null,
+                            noiDungTin: params.noiDungTinMau
+                        });
+                        await CaiDatNhacNhoService.CreateCaiDatNhacNho(objNhacNho);
+                    }
+                }
+            }
         } else {
             await MauTinSMService.UpdateMauTinSMS(params);
             onOK(params, TypeAction.UPDATE);
@@ -139,7 +158,6 @@ const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: 
                                             size="small"
                                             fullWidth
                                             value={values?.noiDungTinMau}
-                                            onChange={handleChange}
                                             multiline
                                             minRows={3}
                                             maxRows={4}
@@ -147,53 +165,95 @@ const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: 
                                                 touched.noiDungTinMau &&
                                                 errors.noiDungTinMau && <span>{errors.noiDungTinMau}</span>
                                             }
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                setFieldValue('noiDungTinMau', value);
+                                                setFieldValue(
+                                                    'noiDungXemTruoc',
+                                                    CaiDatNhacNhoService.ReplaceBienSMS(value)
+                                                );
+                                            }}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Box sx={{ position: 'relative' }}>
-                                            <Button
-                                                variant="contained"
-                                                endIcon={<ExpandMoreOutlined />}
-                                                onClick={() => setExpandAction(!expandAction)}>
-                                                Chèn
-                                            </Button>
+                                        {/* add width 15% để click outside element */}
+                                        <div ref={ref} style={{ width: '15%' }}>
+                                            <Box sx={{ position: 'relative' }}>
+                                                <Button
+                                                    variant="contained"
+                                                    endIcon={<ExpandMoreOutlined />}
+                                                    onClick={() => setExpandAction(!expandAction)}>
+                                                    Chèn
+                                                </Button>
 
-                                            <Box
-                                                sx={{
-                                                    display: expandAction ? '' : 'none',
-                                                    overflow: 'auto',
-                                                    maxHeight: '180px',
-                                                    position: 'absolute',
-                                                    borderRadius: '4px',
-                                                    border: '1px solid #cccc',
-                                                    minWidth: 160,
-                                                    backgroundColor: 'rgba(248,248,248,1)',
-                                                    '& .MuiStack-root .MuiStack-root:hover': {
-                                                        backgroundColor: '#cccc'
-                                                    }
-                                                }}>
-                                                <Stack alignContent={'center'}>
-                                                    {AppConsts.DanhSachBienSMS?.map((item: ISelect, index: number) => (
-                                                        <Stack
-                                                            direction={'row'}
-                                                            key={index}
-                                                            spacing={1}
-                                                            padding={'6px'}
-                                                            onClick={() => {
-                                                                const content = values.noiDungTinMau?.concat(
-                                                                    item.value.toString()
-                                                                );
-                                                                setFieldValue('noiDungTinMau', content);
-                                                                setExpandAction(false);
-                                                            }}>
-                                                            <Typography variant="subtitle2" marginLeft={1}>
-                                                                {item.text}
-                                                            </Typography>
-                                                        </Stack>
-                                                    ))}
-                                                </Stack>
+                                                <Box
+                                                    sx={{
+                                                        zIndex: 1,
+                                                        display: expandAction ? '' : 'none',
+                                                        overflow: 'auto',
+                                                        maxHeight: '180px',
+                                                        position: 'absolute',
+                                                        borderRadius: '4px',
+                                                        border: '1px solid #cccc',
+                                                        minWidth: 160,
+                                                        backgroundColor: 'rgba(248,248,248,1)',
+                                                        '& .MuiStack-root .MuiStack-root:hover': {
+                                                            backgroundColor: '#cccc'
+                                                        }
+                                                    }}>
+                                                    <Stack alignContent={'center'}>
+                                                        {AppConsts.DanhSachBienSMS?.map(
+                                                            (item: ISelect, index: number) => (
+                                                                <Stack
+                                                                    direction={'row'}
+                                                                    key={index}
+                                                                    spacing={1}
+                                                                    padding={'6px'}
+                                                                    onClick={() => {
+                                                                        const content = values.noiDungTinMau?.concat(
+                                                                            item.value.toString()
+                                                                        );
+                                                                        setFieldValue('noiDungTinMau', content);
+                                                                        setFieldValue(
+                                                                            'noiDungXemTruoc',
+                                                                            CaiDatNhacNhoService.ReplaceBienSMS(
+                                                                                content as string
+                                                                            )
+                                                                        );
+                                                                        setExpandAction(false);
+                                                                    }}>
+                                                                    <Typography variant="subtitle2" marginLeft={1}>
+                                                                        {item.text}
+                                                                    </Typography>
+                                                                </Stack>
+                                                            )
+                                                        )}
+                                                    </Stack>
+                                                </Box>
                                             </Box>
-                                        </Box>
+                                        </div>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Stack
+                                            padding={2}
+                                            spacing={2}
+                                            sx={{ border: '1px dashed #ccc' }}
+                                            alignItems={'center'}>
+                                            <Typography fontSize={16} fontWeight={600} color={'#525F7A'}>
+                                                Xem trước tin nhắn
+                                            </Typography>
+                                            <Stack
+                                                sx={{
+                                                    width: '100%',
+                                                    backgroundColor: '#EEF0F4',
+                                                    borderRadius: '4px',
+                                                    alignItems: 'center'
+                                                }}>
+                                                <Typography fontSize={14} padding={1}>
+                                                    {values?.noiDungXemTruoc}
+                                                </Typography>
+                                            </Stack>
+                                        </Stack>
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12}>
                                         <FormGroup>
@@ -209,6 +269,9 @@ const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: 
                                                             color: '#7C3367',
                                                             '&.Mui-checked': {
                                                                 color: '#7C3367'
+                                                            },
+                                                            '& input': {
+                                                                zIndex: 2
                                                             }
                                                         }}
                                                     />
