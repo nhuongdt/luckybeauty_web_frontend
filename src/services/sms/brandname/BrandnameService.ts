@@ -2,7 +2,7 @@ import utils from '../../../utils/utils';
 import { PagedRequestDto } from '../../dto/pagedRequestDto';
 import { PagedResultDto } from '../../dto/pagedResultDto';
 import http from '../../httpService';
-import { BrandnameDto } from './BrandnameDto';
+import { BrandnameDto, IParamSearchBrandname } from './BrandnameDto';
 
 class BrandnameService {
     Brandname_CheckExistSDT = async (phoneNumber: string, id: string) => {
@@ -17,11 +17,11 @@ class BrandnameService {
             return false;
         }
     };
-    GetInforBrandnamebyID = async (id: string) => {
+    GetInforBrandnamebyID = async (id: string): Promise<BrandnameDto> => {
         const result = await http.get(`api/services/app/Brandname/GetInforBrandnamebyID?id=${id}`);
         return result.data.result;
     };
-    GetListBandname = async (params: PagedRequestDto, tenantId = 1): Promise<PagedResultDto<BrandnameDto>> => {
+    GetListBandname = async (params: IParamSearchBrandname, tenantId = 1): Promise<PagedResultDto<BrandnameDto>> => {
         const result = await http.post(`api/services/app/Brandname/GetListBandname?tenantId=${tenantId}`, params);
         return result.data.result;
     };
