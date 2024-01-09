@@ -1,8 +1,9 @@
+import { PagedRequestDto } from '../../dto/pagedRequestDto';
 import { PagedResultDto } from '../../dto/pagedResultDto';
 
 export class BrandnameDto {
     id = '';
-    tenantId = '';
+    tenantId = 0;
     brandname = '';
     sdtCuaHang = '';
     ngayKichHoat = new Date();
@@ -26,4 +27,8 @@ export class PagedResultBrandnameDto implements PagedResultDto<BrandnameDto> {
         this.totalPage = totalPage;
         this.items = items;
     }
+}
+
+export interface IParamSearchBrandname extends PagedRequestDto {
+    trangThais: number[];
 }
