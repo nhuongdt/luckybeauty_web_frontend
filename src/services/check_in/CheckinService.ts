@@ -51,6 +51,17 @@ class CheckinService {
             });
         return xx;
     };
+    GetArrIdChecking_fromIdBooking = async (idBooking: string): Promise<string[]> => {
+        if (utils.checkNull(idBooking) || idBooking === Guid.EMPTY) {
+            return [];
+        }
+        const xx = await http
+            .get(`api/services/app/CheckIn/GetArrIdChecking_fromIdBooking?idBooking=${idBooking}`)
+            .then((res) => {
+                return res.data.result;
+            });
+        return xx;
+    };
 
     InsertCheckInHoaDon = async (input: ICheckInHoaDonto) => {
         if (utils.checkNull(input?.idCheckIn) || input?.idCheckIn === Guid.EMPTY) {
