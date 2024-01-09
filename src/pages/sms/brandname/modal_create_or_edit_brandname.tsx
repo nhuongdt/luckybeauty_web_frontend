@@ -7,9 +7,7 @@ import {
     TextField,
     Button,
     Stack,
-    Typography,
-    Checkbox,
-    Radio
+    Typography
 } from '@mui/material';
 import DialogButtonClose from '../../../components/Dialog/ButtonClose';
 import utils from '../../../utils/utils';
@@ -23,11 +21,12 @@ import { IOSSwitch } from '../../../components/Switch/IOSSwitch';
 import { Guid } from 'guid-typescript';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import AutocompleteFromDB from '../../../components/Autocomplete/AutocompleteFromDB';
+import { IDataAutocomplete } from '../../../services/dto/IDataAutocomplete';
 
 export default function ModalCreateOrEditBrandname({ isShow, idBrandname, onClose, objUpdate, onSave }: any) {
     const [objBrandname, setObjBrandname] = useState<BrandnameDto>({
         id: '',
-        tenantId: '',
+        tenantId: 0,
         brandname: '',
         sdtCuaHang: '',
         ngayKichHoat: new Date(),
@@ -41,7 +40,7 @@ export default function ModalCreateOrEditBrandname({ isShow, idBrandname, onClos
                 setObjBrandname({
                     ...objBrandname,
                     id: '',
-                    tenantId: '',
+                    tenantId: 0,
                     brandname: '',
                     sdtCuaHang: '',
                     ngayKichHoat: new Date(),
@@ -66,7 +65,7 @@ export default function ModalCreateOrEditBrandname({ isShow, idBrandname, onClos
         }
     }, [isShow]);
 
-    const checkSaveDB = async (values: any) => {
+    const checkSaveDB = async (values: BrandnameDto) => {
         // brandname exist
         const sdtExists = await BrandnameService.Brandname_CheckExistSDT(values.sdtCuaHang, idBrandname);
         if (sdtExists) {
@@ -85,12 +84,13 @@ export default function ModalCreateOrEditBrandname({ isShow, idBrandname, onClos
 
         const data = values as BrandnameDto;
         if (utils.checkNull(idBrandname)) {
-            const data = await BrandnameService.CreateBrandname(values);
-            data.txtTrangThai = values.trangThai === 1 ? 'Kích hoạt' : 'Chưa kích hoạt';
-            data.tongTienNap = 0;
-            data.daSuDung = 0;
-            data.conLai = 0;
-            onSave(data);
+            const dataNew = await BrandnameService.CreateBrandname(values);
+            dataNew.txtTrangThai = values.trangThai === 1 ? 'Kích hoạt' : 'Chưa kích hoạt';
+            dataNew.tongTienNap = 0;
+            dataNew.daSuDung = 0;
+            dataNew.conLai = 0;
+            dataNew.displayTenantName = values.displayTenantName;
+            onSave(dataNew);
         } else {
             await BrandnameService.UpdateBrandname(values);
             data.txtTrangThai = values.trangThai === 1 ? 'Kích hoạt' : 'Chưa kích hoạt';
@@ -146,12 +146,14 @@ export default function ModalCreateOrEditBrandname({ isShow, idBrandname, onClos
                                         <AutocompleteFromDB
                                             type="tenant"
                                             label="Chọn tenant"
+                                            optionLabel={{ label1: '', label2: 'Tenant:' }}
                                             idChosed={values.tenantId}
-                                            handleChoseItem={(item: any) => {
-                                                setFieldValue('tenantId', item.id);
+                                            handleChoseItem={(item: IDataAutocomplete) => {
+                                                setFieldValue('tenantId', item?.id);
+                                                setFieldValue('displayTenantName', item?.text1);
                                             }}
                                             helperText={touched.tenantId && errors.tenantId}
-                                            err={errors.tenantId}
+                                            err={touched.tenantId && Boolean(errors?.tenantId)}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -204,13 +206,22 @@ export default function ModalCreateOrEditBrandname({ isShow, idBrandname, onClos
                                     className="btn-outline-hover">
                                     Hủy
                                 </Button>
-                                <Button
-                                    variant="contained"
-                                    sx={{ bgcolor: 'var(--color-main)!important' }}
-                                    type="submit"
-                                    className="btn-container-hover">
-                                    Lưu
-                                </Button>
+                                {isSubmitting ? (
+                                    <Button
+                                        variant="contained"
+                                        sx={{ bgcolor: 'var(--color-main)!important' }}
+                                        className="btn-container-hover">
+                                        Đang lưu
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        variant="contained"
+                                        sx={{ bgcolor: 'var(--color-main)!important' }}
+                                        type="submit"
+                                        className="btn-container-hover">
+                                        Lưu
+                                    </Button>
+                                )}
                             </DialogActions>
                         </Form>
                     )}

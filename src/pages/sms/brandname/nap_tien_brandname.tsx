@@ -37,6 +37,7 @@ import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import LichSuNap_ChuyenTienService from '../../../services/sms/lich_su_nap_tien/LichSuNap_ChuyenTienService';
 import BrandnameService from '../../../services/sms/brandname/BrandnameService';
 import ILichSuNap_ChuyenTienDto from '../../../services/sms/lich_su_nap_tien/ILichSuNap_ChuyenTienDto';
+import { IDataAutocomplete } from '../../../services/dto/IDataAutocomplete';
 
 const NapTienBrandname = ({ visiable = false, idQuyHD = null, onClose, onOk }: any) => {
     const doiTuongNopTien = [
@@ -272,19 +273,20 @@ const NapTienBrandname = ({ visiable = false, idQuyHD = null, onClose, onOk }: a
                         validationSchema={validate}
                         onSubmit={saveSoQuy}
                         enableReinitialize>
-                        {({ isSubmitting, handleChange, values, errors, touched, setFieldValue }: any) => (
+                        {({ isSubmitting, values, errors, touched, setFieldValue }: any) => (
                             <Form>
                                 <Grid container spacing={2} marginTop={0.5}>
                                     <Grid item xs={12}>
                                         <AutocompleteFromDB
                                             type="brandname"
                                             label="Chọn brandname"
+                                            optionLabel={{ label1: 'Brandname:', label2: 'SĐT:' }}
                                             idChosed={values.idBrandname}
-                                            handleChoseItem={(item: any) => {
-                                                setFieldValue('idBrandname', item.id);
+                                            handleChoseItem={(item: IDataAutocomplete) => {
+                                                setFieldValue('idBrandname', item?.id);
                                             }}
                                             helperText={touched.idBrandname && errors.idBrandname}
-                                            err={errors.idBrandname}
+                                            err={touched.idBrandname && Boolean(errors.idBrandname)}
                                         />
                                     </Grid>
                                     <Grid item xs={6} sm={6}>
@@ -321,41 +323,6 @@ const NapTienBrandname = ({ visiable = false, idQuyHD = null, onClose, onOk }: a
                                             }
                                         />
                                     </Grid>
-                                    {/* <Grid item xs={12} sm={6}>
-                                            <SelectWithData
-                                                label="Đối tượng nộp"
-                                                data={doiTuongNopTien}
-                                                idChosed={quyHoaDon?.loaiDoiTuong}
-                                                handleChange={(item: any) =>
-                                                    setQuyHoaDon({
-                                                        ...quyHoaDon,
-                                                        loaiDoiTuong: item.value
-                                                    })
-                                                }
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={6}>
-                                            {values.loaiDoiTuong !== 3 && (
-                                                <>
-                                                    <AutocompleteCustomer
-                                                        idChosed={quyHoaDon?.idDoiTuongNopTien}
-                                                        handleChoseItem={(item: any) => {
-                                                            {
-                                                                setFieldValue('idDoiTuongNopTien', item?.id ?? null);
-                                                                setQuyHoaDon({
-                                                                    ...quyHoaDon,
-                                                                    idDoiTuongNopTien: item?.id,
-                                                                    maNguoiNop: item?.maKhachHang,
-                                                                    tenNguoiNop: item?.tenKhachHang
-                                                                });
-                                                            }
-                                                        }}
-                                                        error={touched.idDoiTuongNopTien && Boolean(errors?.idDoiTuongNopTien)}
-                                                        helperText={touched.idDoiTuongNopTien && errors.idDoiTuongNopTien}
-                                                    />
-                                                </>
-                                            )}
-                                        </Grid> */}
                                     <Grid item xs={6} sm={6}>
                                         <NumericFormat
                                             fullWidth
