@@ -39,9 +39,11 @@ import { Guid } from 'guid-typescript';
 import { NumericFormat } from 'react-number-format';
 import ModalSetupHoaHongDichVu from './modal_setup_hoa_hong_dich_vu';
 import { debounce } from '@mui/material/utils';
-import { CreateOrEditChietKhauDichVuDto } from '../../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/CreateOrEditChietKhauDichVuDto';
+import {
+    ChietKhauDichVuDto_AddMultiple,
+    CreateOrEditChietKhauDichVuDto
+} from '../../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/CreateOrEditChietKhauDichVuDto';
 import { LoaiHoaHongDichVu } from '../../../../../lib/appconst';
-import { handleClickOutside } from '../../../../../utils/customReactHook';
 
 const TypeGroupPopover = {
     NHAN_VIEN: 1,
@@ -53,11 +55,17 @@ export function PopperSetupHoaHongDV_byGroup({
     id,
     open,
     anchorEl,
-    onClose,
     lblGroupPopover,
-    loaiChietKhau = LoaiHoaHongDichVu.THUC_HIEN
+    loaiChietKhau = LoaiHoaHongDichVu.THUC_HIEN,
+    rowChosed = {} as ChietKhauDichVuItemDto_TachRiengCot,
+    onClose,
+    onApply
 }: any) {
+    const inputEl = useRef<HTMLInputElement>(null);
     const [lblLoaiHoaHong, setLblLoaiHoaHong] = useState('');
+    const [isCheck, setIsCheck] = useState(false);
+    const [gtriCK, setGiaTriCK] = useState(0);
+    const [laPhanTram, setLaPhanTram] = useState(true);
 
     useEffect(() => {
         switch (loaiChietKhau) {
@@ -69,6 +77,58 @@ export function PopperSetupHoaHongDV_byGroup({
                 break;
         }
     }, [loaiChietKhau]);
+
+    useEffect(() => {
+        switch (loaiChietKhau) {
+            case LoaiHoaHongDichVu.THUC_HIEN:
+                {
+                    setGiaTriCK(rowChosed?.hoaHongThucHien);
+                    setLaPhanTram(rowChosed?.laPhanTram_HoaHongThucHien);
+                }
+                break;
+            case LoaiHoaHongDichVu.TU_VAN:
+                {
+                    setGiaTriCK(rowChosed?.hoaHongTuVan);
+                    setLaPhanTram(rowChosed?.laPhanTram_HoaHongTuVan);
+                }
+                break;
+        }
+        // todo focus when open popover
+    }, [open]);
+
+    const handleFocus = () => {
+        if (inputEl && inputEl.current) {
+            inputEl.current.select();
+        }
+    };
+
+    const clickPtramVND = (gtriNew: boolean) => {
+        setLaPhanTram(gtriNew);
+        if (laPhanTram) {
+            if (!gtriNew) {
+                // % to vnd
+                setGiaTriCK((gtriCK * rowChosed?.giaDichVu) / 100);
+            }
+        } else {
+            if (gtriNew) {
+                // vnd to %
+                if (rowChosed?.giaDichVu > 0) {
+                    setGiaTriCK((gtriCK / rowChosed?.giaDichVu) * 100);
+                } else {
+                    setGiaTriCK(0);
+                }
+            }
+        }
+    };
+
+    const changeGtriChietKhau = (gtri: string) => {
+        setGiaTriCK(utils.formatNumberToFloat(gtri));
+    };
+
+    const onClickApply = () => {
+        onApply(gtriCK, laPhanTram, isCheck);
+        onClose();
+    };
 
     return (
         <>
@@ -85,24 +145,46 @@ export function PopperSetupHoaHongDV_byGroup({
                     <Stack direction={'row'} spacing={1} alignItems={'center'}>
                         <Typography variant="body2">{`${lblLoaiHoaHong} = `}</Typography>
                         <Stack direction={'row'} spacing={1}>
-                            <TextField
+                            <NumericFormat
+                                fullWidth
                                 size="small"
+                                inputRef={inputEl}
+                                autoFocus
+                                thousandSeparator={'.'}
+                                decimalSeparator={','}
+                                value={gtriCK}
+                                customInput={TextField}
                                 InputProps={{
                                     inputProps: {
                                         style: { textAlign: 'right' }
                                     }
                                 }}
+                                onChange={(e) => changeGtriChietKhau(e.target.value)}
+                                onFocus={handleFocus}
+                                isAllowed={(values) => {
+                                    const floatValue = values.floatValue;
+                                    if (laPhanTram) return (floatValue ?? 0) <= 100; // neu %: khong cho phep nhap qua 100%
+                                    return true;
+                                }}
                             />
                             <ButtonGroup>
-                                <Button variant="contained" size="small">
+                                <Button
+                                    size="small"
+                                    variant={laPhanTram ? 'contained' : 'outlined'}
+                                    onClick={() => clickPtramVND(true)}>
                                     %
                                 </Button>
-                                <Button size="small">đ</Button>
+                                <Button
+                                    size="small"
+                                    variant={!laPhanTram ? 'contained' : 'outlined'}
+                                    onClick={() => clickPtramVND(false)}>
+                                    đ
+                                </Button>
                             </ButtonGroup>
                         </Stack>
                     </Stack>
                     <Stack direction={'row'} paddingTop={2} spacing={1} alignItems={'center'}>
-                        <Checkbox />
+                        <Checkbox value={isCheck} onChange={(e) => setIsCheck(e.currentTarget.checked)} />
                         <Stack direction={'row'} spacing={0.5}>
                             <Typography variant="body2"> Áp dụng cho tất cả dịch vụ </Typography>
                             <Typography variant="body2" fontWeight={500}>
@@ -114,7 +196,7 @@ export function PopperSetupHoaHongDV_byGroup({
                     <Stack direction={'row'}>
                         <Stack flex={3}></Stack>
                         <Stack flex={1} justifyContent={'end'}>
-                            <Button variant="contained" fullWidth>
+                            <Button variant="contained" fullWidth onClick={onClickApply}>
                                 Áp dụng
                             </Button>
                         </Stack>
@@ -141,6 +223,8 @@ export default function PageSetupHoaHongDichVu() {
     const [anchorPopover, setAnchorPopover] = React.useState<HTMLDivElement | null>(null);
     const [lblGroupPopover, setLblGroupPopover] = useState('');
     const [idPopover, setIdPopover] = useState<GridRowId | null>('');
+    const [rowChosedPopover, setRowChosedPopover] = useState<ChietKhauDichVuItemDto_TachRiengCot | null>(null);
+    const [typePopover, setTypePopover] = useState(0);
     const openPopover = Boolean(anchorPopover);
 
     const [pageResultChietKhauDV, setPageResultChietKhauDV] = useState<
@@ -206,18 +290,26 @@ export default function PageSetupHoaHongDichVu() {
         itemRow: GridRenderCellParams
     ) => {
         setAnchorPopover(event.currentTarget);
-        console.log(444);
+        setTypePopover(type);
+        setRowChosedPopover(itemRow.row);
+
         switch (type) {
             case TypeGroupPopover.NHAN_VIEN:
                 {
                     setLblGroupPopover('của nhân viên ' + itemRow.row?.tenNhanVien);
-                    setIdPopover('nhanvien_' + itemRow.id);
+                    setIdPopover('nhanvien_' + itemRow?.id);
                 }
                 break;
             case TypeGroupPopover.DICH_VU:
                 {
                     setLblGroupPopover(`${itemRow.row?.tenDichVu}`);
-                    setIdPopover('dichvu_' + itemRow.id);
+                    setIdPopover('dichvu_' + itemRow?.id);
+                }
+                break;
+            case TypeGroupPopover.NHOM_DICH_VU:
+                {
+                    setLblGroupPopover(`thuộc nhóm ${itemRow.row?.tenNhomDichVu}`);
+                    setIdPopover('nhomdichvu_' + itemRow?.id);
                 }
                 break;
         }
@@ -225,7 +317,58 @@ export default function PageSetupHoaHongDichVu() {
 
     const closePopOver = () => {
         setAnchorPopover(null);
+        setRowChosedPopover(null);
     };
+
+    const applyPopover = async (gtriCK: number, laPhanTram: boolean, isCheckAll: boolean) => {
+        if (isCheckAll) {
+            const param = {
+                idChiNhanh: idChiNhanh,
+                idNhanViens: [],
+                idDonViQuyDois: [],
+                loaiChietKhau: LoaiHoaHongDichVu.THUC_HIEN,
+                giaTri: gtriCK,
+                laPhanTram: laPhanTram
+            } as ChietKhauDichVuDto_AddMultiple;
+            switch (typePopover) {
+                case TypeGroupPopover.NHAN_VIEN:
+                    {
+                        param.idNhanViens = [rowChosedPopover?.idNhanVien as string];
+                    }
+                    break;
+                case TypeGroupPopover.DICH_VU:
+                    {
+                        param.idDonViQuyDois = [rowChosedPopover?.idDonViQuiDoi as unknown as string];
+                    }
+                    break;
+                case TypeGroupPopover.NHOM_DICH_VU:
+                    {
+                        param.idNhomHang = rowChosedPopover?.idNhomHangHoa;
+                    }
+                    break;
+            }
+
+            const xx = await chietKhauDichVuService.ApplyAll_SetupHoaHongDV(param, idNhanVienChosed, typePopover);
+            if (xx > 0) {
+                setObjAlert({ ...objAlert, show: true, mes: 'Áp dụng cài đặt thành công' });
+            }
+        } else {
+            const param = {
+                idChiNhanh: idChiNhanh,
+                idNhanViens: [rowChosedPopover?.idNhanVien],
+                idDonViQuiDoi: rowChosedPopover?.idDonViQuiDoi,
+                loaiChietKhau: LoaiHoaHongDichVu.THUC_HIEN,
+                giaTri: gtriCK,
+                laPhanTram: laPhanTram
+            } as CreateOrEditChietKhauDichVuDto;
+            const xx = await chietKhauDichVuService.UpdateSetup_HoaHongDichVu_ofNhanVien(param);
+            if (xx) {
+                setObjAlert({ ...objAlert, show: true, mes: 'Áp dụng cài đặt thành công' });
+            }
+        }
+        await getListSetupHoaHongDV();
+    };
+    // end popover
 
     function showModalSetup(action?: number, id = '') {
         setIsShowModalSetup(true);
@@ -527,7 +670,12 @@ export default function PageSetupHoaHongDichVu() {
             flex: 1.2,
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
-                <Stack onClick={(e) => showPopOver(e, TypeGroupPopover.DICH_VU, params)}>{params.value}</Stack>
+                <Stack
+                    onClick={(e) => {
+                        if (idNhanVienChosed == null) showPopOver(e, TypeGroupPopover.DICH_VU, params);
+                    }}>
+                    {params.value}
+                </Stack>
             )
         },
         {
@@ -536,9 +684,7 @@ export default function PageSetupHoaHongDichVu() {
             flex: 0.6,
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
-                <Link component="button" underline="none" title={params.value}>
-                    {params.value}
-                </Link>
+                <Stack onClick={(e) => showPopOver(e, TypeGroupPopover.NHOM_DICH_VU, params)}>{params.value}</Stack>
             )
         },
         {
@@ -742,7 +888,10 @@ export default function PageSetupHoaHongDichVu() {
                 open={openPopover}
                 anchorEl={anchorPopover}
                 lblGroupPopover={lblGroupPopover}
+                loaiChietKhau={LoaiHoaHongDichVu.THUC_HIEN}
+                rowChosed={rowChosedPopover}
                 onClose={closePopOver}
+                onApply={applyPopover}
             />
 
             <Grid container className="dich-vu-page" gap={4} paddingTop={2}>
