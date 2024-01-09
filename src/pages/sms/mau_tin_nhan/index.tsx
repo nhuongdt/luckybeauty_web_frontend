@@ -4,6 +4,8 @@ import ModalSmsTemplate from './components/modal_sms_template';
 import { useEffect, useState } from 'react';
 import { GroupMauTinSMSDto, MauTinSMSDto } from '../../../services/sms/mau_tin_sms/mau_tin_dto';
 import MauTinSMService from '../../../services/sms/mau_tin_sms/MauTinSMService';
+import PageEmpty from '../../../components/DataGrid/PageEmpty';
+
 const MauTinNhan = () => {
     const [visiable, setVisiable] = useState(false);
     const [dataGroupMauTin, setDataGroupMauTin] = useState<GroupMauTinSMSDto[]>([]);
@@ -43,7 +45,7 @@ const MauTinNhan = () => {
             />
 
             <Box paddingTop={2}>
-                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} paddingRight={2} pb={2}>
+                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} pb={2}>
                     <Typography color={'#3D475C'} fontSize={'18px'} fontWeight={700}>
                         Bản mẫu tin nhắn
                     </Typography>
@@ -55,41 +57,48 @@ const MauTinNhan = () => {
                         onClick={() => {
                             setVisiable(true);
                         }}>
-                        Thêm mới
+                        Thêm mẫu tin
                     </Button>
                 </Box>
-                <Box bgcolor={'#FFF'}>
-                    <Box padding={'16px 16px 16px 32px'}>
-                        {dataGroupMauTin?.map((item, key) => (
-                            <Stack paddingBottom={2}>
-                                <Stack spacing={1.5}>
-                                    <Typography fontSize={'16px'} color={'#525F7A'} fontWeight={600}>
-                                        {item?.loaiTin}
-                                    </Typography>
-                                    {item?.lstDetail?.map((detail, index2) => (
-                                        <Stack spacing={1} direction={'row'} alignItems={'center'}>
-                                            <Chip
-                                                label={
-                                                    <Typography fontSize={'12px'} color={'#525F7A'} fontWeight={400}>
-                                                        {detail?.tenMauTin}
-                                                    </Typography>
-                                                }
-                                                sx={{ marginRight: '10px' }}
-                                                onClick={() => editMauTin(detail)}
-                                            />
-                                            <Typography
-                                                key={index2}
-                                                variant={'body2'}
-                                                fontWeight={400}
-                                                color={'#525F7A'}>
-                                                {detail?.noiDungTinMau}
-                                            </Typography>
-                                        </Stack>
-                                    ))}
+                <Box bgcolor={'#FFF'} className="page-box-left">
+                    {dataGroupMauTin.length == 0 ? (
+                        <PageEmpty />
+                    ) : (
+                        <Box padding={'16px 16px 16px 32px'}>
+                            {dataGroupMauTin?.map((item, key) => (
+                                <Stack paddingBottom={2}>
+                                    <Stack spacing={1.5}>
+                                        <Typography fontSize={'16px'} color={'#525F7A'} fontWeight={600}>
+                                            {item?.loaiTin}
+                                        </Typography>
+                                        {item?.lstDetail?.map((detail, index2) => (
+                                            <Stack spacing={1} direction={'row'} alignItems={'center'}>
+                                                <Chip
+                                                    label={
+                                                        <Typography
+                                                            fontSize={'12px'}
+                                                            color={'#525F7A'}
+                                                            fontWeight={400}>
+                                                            {detail?.tenMauTin}
+                                                        </Typography>
+                                                    }
+                                                    sx={{ marginRight: '10px' }}
+                                                    onClick={() => editMauTin(detail)}
+                                                />
+                                                <Typography
+                                                    key={index2}
+                                                    variant={'body2'}
+                                                    fontWeight={400}
+                                                    color={'#525F7A'}>
+                                                    {detail?.noiDungTinMau}
+                                                </Typography>
+                                            </Stack>
+                                        ))}
+                                    </Stack>
                                 </Stack>
-                            </Stack>
-                        ))}
-                    </Box>
+                            ))}
+                        </Box>
+                    )}
                 </Box>
             </Box>
         </>
