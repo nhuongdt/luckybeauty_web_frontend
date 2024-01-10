@@ -56,6 +56,9 @@ import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
 import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import AccordionWithData from '../../components/Accordion/AccordionWithData';
 import { IList } from '../../services/dto/IList';
+import CreateOrEditChucVuModal from './chuc-vu/components/create-or-edit-chuc-vu-modal';
+import { CreateOrEditChucVuDto } from '../../services/nhan-vien/chuc_vu/dto/CreateOrEditChucVuDto';
+import { Guid } from 'guid-typescript';
 class EmployeeScreen extends React.Component {
     static contextType = AppContext;
     state = {
@@ -82,7 +85,7 @@ class EmployeeScreen extends React.Component {
         isShowConfirmDelete: false,
         idChiNhanh: Cookies.get('IdChiNhanh'),
         idChucVu: null,
-        isShowModalAddChucVu: false
+        chucVuVisiable: false
     };
     async componentDidMount() {
         await this.getData();
@@ -327,13 +330,23 @@ class EmployeeScreen extends React.Component {
         }
         this.setState({ checkAllRow: !this.state.checkAllRow });
     };
-    showModalAddChucVu = () => {
-        this.setState({ isShowModalAddChucVu: true });
+    onModalChucVu = () => {
+        this.setState({ chucVuVisiable: !this.state.chucVuVisiable, idChucVu: Guid.EMPTY });
+    };
+    handleSubmitChucVu = () => {
+        this.onModalChucVu();
+        this.setState({ suggestChucVu: suggestStore.suggestChucVu });
     };
 
     onEditChucVu = async (isEdit?: boolean, itemChosed?: IList | null) => {
         await this.setState({ idChucVu: itemChosed?.id });
-        await this.getListNhanVien();
+        if (isEdit ?? false) {
+            this.setState({
+                chucVuVisiable: !this.state.chucVuVisiable
+            });
+        } else {
+            await this.getListNhanVien();
+        }
     };
 
     DataGrid_handleAction = async (item: any) => {
@@ -573,6 +586,12 @@ class EmployeeScreen extends React.Component {
         const { listNhanVien } = NhanVienStore;
         return (
             <>
+                <CreateOrEditChucVuModal
+                    idChucVu={this.state.idChucVu ?? Guid.EMPTY}
+                    visiable={this.state.chucVuVisiable}
+                    handleClose={this.onModalChucVu}
+                    handleSubmit={this.handleSubmitChucVu}
+                />
                 <Box className="list-nhan-vien" paddingTop={2}>
                     <Grid
                         container
@@ -713,11 +732,11 @@ class EmployeeScreen extends React.Component {
                                             padding: '4px 0px',
                                             border: '1px solid #cccc'
                                         }}
-                                        onClick={this.showModalAddChucVu}
+                                        onClick={this.onModalChucVu}
                                     />
                                 </Box>
                                 <AccordionWithData
-                                    roleEdit={true}
+                                    roleEdit={abpCustom.isGrandPermission('Pages.ChucVu.Edit')}
                                     lstData={this.state.suggestChucVu?.map((x) => {
                                         return { id: x.idChucVu, text: x.tenChucVu } as IList;
                                     })}
@@ -732,11 +751,13 @@ class EmployeeScreen extends React.Component {
                                         lstOption={[
                                             {
                                                 id: '1',
-                                                text: 'Xóa nhân viên'
+                                                text: 'Xóa nhân viên',
+                                                isShow: abpCustom.isGrandPermission('Pages.NhanSu.Delete')
                                             },
                                             {
                                                 id: '2',
-                                                text: 'Xuất danh sách'
+                                                text: 'Xuất danh sách',
+                                                isShow: abpCustom.isGrandPermission('Pages.NhanSu.Export')
                                             }
                                         ]}
                                         countRowSelected={this.state.listItemSelectedModel.length}

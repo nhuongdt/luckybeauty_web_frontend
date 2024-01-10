@@ -36,6 +36,8 @@ import { NumericFormat } from 'react-number-format';
 import nhanVienStore from '../../../stores/nhanVienStore';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import DatePickerRequiredCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
+import { CreateOrEditChucVuDto } from '../../../services/nhan-vien/chuc_vu/dto/CreateOrEditChucVuDto';
+import { Guid } from 'guid-typescript';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;
@@ -60,6 +62,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
         });
     };
     handleSubmitChucVu = async () => {
+        // assign idChucVu to nhanvien (todo)
         this.setState({
             chucVuVisiable: !this.state.chucVuVisiable
         });
@@ -515,6 +518,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                     )}
                 </Formik>
                 <CreateOrEditChucVuModal
+                    idChucVu={Guid.EMPTY}
                     visiable={this.state.chucVuVisiable}
                     handleClose={this.onModalChucVu}
                     handleSubmit={this.handleSubmitChucVu}
