@@ -301,8 +301,8 @@ body .font-normal {
 }
 
 .modal-title {
-    /* ~ 21px*/
-    font-size: 1.25rem!important;
+    /* ~ 22px*/
+    font-size: 1.375rem!important;
     font-weight: 700!important;
 }
 
@@ -344,4 +344,18 @@ body .font-normal {
     font-size: 14px;
     font-family: var(--font-family-main) !important;
     font-weight: 600;
+}
+
+.data-grid-cell-trangthai-active {
+    color: #50CD89!important;
+}
+
+.data-grid-cell-trangthai-notActive {
+    color: rgb(255, 153, 0)!important;
+}
+
+.bank-account {
+    font-size: 18px!important;
+    font-weight: 600;
+    font-family: 'Courier New', monospace !important;
 }
