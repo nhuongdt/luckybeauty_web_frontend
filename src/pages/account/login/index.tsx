@@ -205,7 +205,7 @@ const LoginScreen: React.FC = () => {
                                         {/* <Link className="a quenMk" to="/register">
                                             Đăng ký
                                         </Link> */}
-                                        <a className="a quenMk" href="http://192.168.1.63:1121/">
+                                        <a className="a quenMk" href={'https://luckybeauty.vn/dangkydungthu'}>
                                             Đăng ký
                                         </a>
                                     </p>
