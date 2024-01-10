@@ -2,6 +2,8 @@ import React, { ChangeEvent, Component, ReactNode } from 'react';
 import { Box, Typography, Grid, TextField, Button, Stack, InputAdornment } from '@mui/material';
 import AddLogoIcon from '../../../../images/add-logo.svg';
 import cuaHangService from '../../../../services/cua_hang/cuaHangService';
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
+import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import Cookies from 'js-cookie';
 import { EditCuaHangDto } from '../../../../services/cua_hang/Dto/EditCuaHangDto';
 import { enqueueSnackbar } from 'notistack';
@@ -13,6 +15,8 @@ import { ReactComponent as FacebookIcon } from '../../../../images/icons/faceboo
 import { ReactComponent as WebsiteIcon } from '../../../../images/icons/website.svg';
 import { ReactComponent as InstagramIcon } from '../../../../images/icons/instagram.svg';
 import { ReactComponent as TwitterIcon } from '../../../../images/icons/twitter.svg';
+import TaiKhoanNganHangServices from '../../../../services/so_quy/TaiKhoanNganHangServices';
+import { TaiKhoanNganHangDto } from '../../../../services/so_quy/Dto/TaiKhoanNganHangDto';
 class StoreDetail extends Component {
     state = {
         fileSelect: {} as File,
@@ -37,7 +41,9 @@ class StoreDetail extends Component {
             tenCongTy: '',
             diaChi: '',
             maSoThue: ''
-        }
+        },
+        qrCode: '', // do cái này load hơi lâu, nên tách ra, để cho bankAcc load và hiển thị trước
+        bankAcc: { id: '', tenChuThe: '', soTaiKhoan: '', logoNganHang: '' } as TaiKhoanNganHangDto
     };
     async getData() {
         const idChiNhanh = Cookies.get('IdChiNhanh')?.toString() ?? '';
@@ -55,7 +61,29 @@ class StoreDetail extends Component {
                 }
             };
         });
+        await this.GettaiKhoanNganHang_MacDinh(idChiNhanh);
     }
+    GettaiKhoanNganHang_MacDinh = async (idChiNhanh: string) => {
+        const data = await TaiKhoanNganHangServices.GetDefault_TaiKhoanNganHang(idChiNhanh);
+        this.setState({
+            bankAcc: {
+                id: data.id,
+                tenChuThe: data.tenChuThe,
+                soTaiKhoan: data.soTaiKhoan,
+                tenNganHang: data.tenNganHang,
+                logoNganHang: data.logoNganHang
+            } as TaiKhoanNganHangDto
+        });
+        const qrCode = await TaiKhoanNganHangServices.GetQRCode({
+            tenChuThe: data.tenChuThe,
+            soTaiKhoan: data.soTaiKhoan,
+            tenNganHang: data.tenNganHang,
+            maPinNganHang: data.maPinNganHang
+        } as TaiKhoanNganHangDto);
+        this.setState({
+            qrCode: qrCode
+        });
+    };
     async componentDidMount() {
         await this.getData();
     }
@@ -193,10 +221,10 @@ class StoreDetail extends Component {
                     <Grid container>
                         <Grid item xs={12} md={12} sm={12}>
                             <Stack marginBottom={'16px'} direction={'row'} justifyContent={'space-between'}>
-                                <Typography variant="h2" fontSize="24px" fontWeight="700" mb="32px">
+                                <Typography variant="h2" fontSize="24px" fontWeight="700" mb="32px" pl={2}>
                                     Chi tiết cửa hàng
                                 </Typography>
-                                <Stack>
+                                <Stack pr={2}>
                                     {abpCustom.isGrandPermission('Pages.ChietKhauHoaDon.Create') ? (
                                         this.state.isSaving ? (
                                             <Button
@@ -214,21 +242,31 @@ class StoreDetail extends Component {
                                                 Đang lưu
                                             </Button>
                                         ) : (
-                                            <Button
-                                                variant="contained"
-                                                onClick={this.handSubmit}
-                                                sx={{
-                                                    width: 'fit-content',
-                                                    minWidth: 'unset',
-                                                    textTransform: 'unset',
-                                                    fontSize: '14px',
-                                                    height: '40px',
-                                                    fontWeight: '400',
-                                                    ml: 'auto'
-                                                }}
-                                                className="btn-container-hover">
-                                                Cập nhật
-                                            </Button>
+                                            <Stack direction={'row'} spacing={1}>
+                                                <Button
+                                                    variant="outlined"
+                                                    sx={{ color: '#525f7a' }}
+                                                    startIcon={<ArrowBackOutlinedIcon />}
+                                                    onClick={() => (window.location.href = '/settings')}>
+                                                    Trở về trang cài đặt
+                                                </Button>
+                                                <Button
+                                                    variant="contained"
+                                                    onClick={this.handSubmit}
+                                                    startIcon={<CheckOutlinedIcon />}
+                                                    sx={{
+                                                        width: 'fit-content',
+                                                        minWidth: 'unset',
+                                                        textTransform: 'unset',
+                                                        fontSize: '14px',
+                                                        height: '40px',
+                                                        fontWeight: '400',
+                                                        ml: 'auto'
+                                                    }}
+                                                    className="btn-container-hover">
+                                                    Cập nhật
+                                                </Button>
+                                            </Stack>
                                         )
                                     ) : null}
                                 </Stack>
@@ -366,19 +404,6 @@ class StoreDetail extends Component {
                                         />
                                     </Stack>
                                 </Grid>
-                                <Grid
-                                    item
-                                    xs={12}
-                                    sx={{
-                                        borderTop: '1px solid #E3E6EB',
-                                        paddingTop: '24px',
-                                        mt: '24px'
-                                    }}>
-                                    <Typography variant="h3" fontWeight="700" fontSize="16px">
-                                        Liên kết trực tuyến
-                                    </Typography>
-                                </Grid>
-
                                 <Grid item xs={12} md={6}>
                                     <Stack spacing={1}>
                                         <Typography variant="subtitle2">Website</Typography>
@@ -417,7 +442,81 @@ class StoreDetail extends Component {
                                         />
                                     </Stack>
                                 </Grid>
-                                <Grid item xs={12} md={6}>
+                                {this.state.bankAcc.id !== '' && (
+                                    <>
+                                        <Grid
+                                            item
+                                            xs={12}
+                                            sx={{
+                                                borderTop: '1px solid #E3E6EB',
+                                                paddingTop: '24px',
+                                                mt: '24px'
+                                            }}>
+                                            <Typography variant="h3" fontWeight="700" fontSize="16px">
+                                                Tài khoản ngân hàng
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            <Stack spacing={1}>
+                                                <Typography className="bank-account ">
+                                                    {this.state.bankAcc?.tenChuThe}
+                                                </Typography>
+                                            </Stack>
+                                        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            <Stack spacing={1}>
+                                                <Typography className="bank-account ">
+                                                    {this.state.bankAcc?.soTaiKhoan}
+                                                </Typography>
+                                            </Stack>
+                                        </Grid>
+
+                                        <Grid item xs={12} md={12}>
+                                            <Stack direction={'row'} flex={8}>
+                                                <Stack flex={1}></Stack>
+                                                <Stack flex={4}>
+                                                    <Stack direction={'row'} spacing={1} flex={8}>
+                                                        <Stack flex={1}>
+                                                            <img src={this.state.qrCode} style={{ width: '100px' }} />
+                                                        </Stack>
+
+                                                        <Stack flex={5}>
+                                                            <img
+                                                                src={this.state.bankAcc?.logoNganHang}
+                                                                style={{ width: '180px' }}
+                                                            />
+                                                            <Typography variant="body2" color={'darkcyan'}>
+                                                                {this.state.bankAcc?.tenNganHang}
+                                                            </Typography>
+                                                        </Stack>
+                                                    </Stack>
+                                                </Stack>
+                                            </Stack>
+                                        </Grid>
+                                    </>
+                                )}
+
+                                <Grid
+                                    item
+                                    xs={12}
+                                    sx={{
+                                        borderTop: '1px solid #E3E6EB',
+                                        paddingTop: '24px',
+                                        mt: '24px',
+                                        display: 'none' // chưa dùng đến - ẩn
+                                    }}>
+                                    <Typography variant="h3" fontWeight="700" fontSize="16px">
+                                        Liên kết trực tuyến
+                                    </Typography>
+                                </Grid>
+
+                                <Grid
+                                    item
+                                    xs={12}
+                                    md={6}
+                                    sx={{
+                                        display: 'none'
+                                    }}>
                                     <Stack spacing={1}>
                                         <Typography variant="subtitle2">Instagram</Typography>
                                         <TextField
@@ -436,7 +535,13 @@ class StoreDetail extends Component {
                                         />
                                     </Stack>
                                 </Grid>
-                                <Grid item xs={12} md={6}>
+                                <Grid
+                                    item
+                                    xs={12}
+                                    md={6}
+                                    sx={{
+                                        display: 'none'
+                                    }}>
                                     <Stack spacing={1}>
                                         <Typography variant="subtitle2">Twitter</Typography>
                                         <TextField
