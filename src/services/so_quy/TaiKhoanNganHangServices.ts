@@ -17,12 +17,12 @@ class TaiKhoanNganHangServices {
         const xx = await http.get(`api/services/app/TaiKhoanNganHang/GetAllBankAccount?idChiNhanh=${idChiNhanh}`);
         return xx.data.result;
     }
-    async GetDefault_TaiKhoanNganHang(idChiNhanh = Guid.EMPTY) {
+    GetDefault_TaiKhoanNganHang = async (idChiNhanh = Guid.EMPTY): Promise<TaiKhoanNganHangDto> => {
         const xx = await http.get(
             `api/services/app/TaiKhoanNganHang/GetDefault_TaiKhoanNganHang?idChiNhanh=${idChiNhanh}`
         );
         return xx.data.result;
-    }
+    };
     CreateOrEditBankAccount = async (params: any) => {
         const xx = await http.post(`api/services/app/TaiKhoanNganHang/CreateOrEdit`, params);
         return xx.data.result;

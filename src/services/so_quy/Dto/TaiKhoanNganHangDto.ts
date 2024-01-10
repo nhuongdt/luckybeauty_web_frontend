@@ -16,7 +16,7 @@ export interface TaiKhoanNganHangDto {
 
     maNganHang: string;
     tenNganHang: string;
-    loGoNganHang: string;
+    logoNganHang: string;
     maPinNganHang: string;
     tenRutGon: string;
 }
