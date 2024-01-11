@@ -50,7 +50,7 @@ export default function AutocompleteWithData({
                                         wordWrap: 'break-word'
                                     }}>
                                     <Stack direction={'row'} spacing={0.5}>
-                                        <Typography style={{ fontSize: '12px' }} color={'#acaca5'}>
+                                        <Typography style={{ fontSize: '13px' }} color={'#acaca5'}>
                                             {optionLabel?.label1}
                                         </Typography>
                                         <Typography style={{ fontSize: '13px' }}>{option.text1}</Typography>
@@ -59,12 +59,10 @@ export default function AutocompleteWithData({
                                         direction={'row'}
                                         spacing={0.5}
                                         style={{
-                                            fontWeight: 500,
-                                            color: '#acaca5',
-                                            fontSize: '12px'
+                                            fontSize: '13px'
                                         }}>
-                                        <span>{optionLabel?.label2}</span>
-                                        <span> {option.text2}</span>
+                                        <span style={{ color: '#acaca5' }}>{optionLabel?.label2}</span>
+                                        <span style={{ fontWeight: 500 }}> {option.text2}</span>
                                     </Stack>
                                 </Grid>
                             </Grid>
