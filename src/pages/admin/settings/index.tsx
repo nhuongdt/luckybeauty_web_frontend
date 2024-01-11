@@ -1,15 +1,4 @@
-import {
-    Box,
-    Divider,
-    Grid,
-    IconButton,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Typography
-} from '@mui/material';
+import { Box, Divider, Grid, IconButton, List, ListItem, ListItemText, Typography } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { ReactComponent as StoreIcon } from '../../../images/icons/setting_page/shop_active_blue.svg';
 import { ReactComponent as PeopleIcon } from '../../../images/icons/setting_page/people_active_blue.svg';
@@ -79,6 +68,24 @@ class SettingPages extends Component {
                                                 fontFamily: 'Roboto'
                                             }}>
                                             Quản lý chi nhánh
+                                        </ListItemText>
+                                    </ListItem>
+                                    <ListItem
+                                        component={Link as React.ElementType}
+                                        to={'/settings/tai-khoan-ngan-hang'}
+                                        secondaryAction={
+                                            <IconButton>
+                                                <ArrowRightIcon />
+                                            </IconButton>
+                                        }>
+                                        <ListItemText
+                                            sx={{
+                                                color: 'black',
+                                                fontSize: '14px',
+                                                fontWeight: '400',
+                                                fontFamily: 'Roboto'
+                                            }}>
+                                            Tài khoản ngân hàng
                                         </ListItemText>
                                     </ListItem>
                                     <Divider />
