@@ -18,11 +18,12 @@ import { IDataAutocomplete } from '../../../../services/dto/IDataAutocomplete';
 import Cookies from 'js-cookie';
 import userService from '../../../../services/user/userService';
 import { PagedUserResultRequestDto } from '../../../../services/user/dto/PagedUserResultRequestDto';
+import { IUserProfileDto } from '../../../../services/user/dto/ProfileDto';
 
 const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose, onOk }: any) => {
     const userLogin = Cookies.get('userId');
     const [soduTaiKhoan, setSoDuTaiKhoan] = useState(0);
-    const [allUser, setAllUser] = useState<GetAllUserOutput[]>([]);
+    const [allUser, setAllUser] = useState<IUserProfileDto[]>([]);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [objChuyenTien, setObjChuyenTien] = useState<ILichSuNap_ChuyenTienDto>({
         id: ''
@@ -35,10 +36,11 @@ const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose,
     });
 
     const GetAllUser = async () => {
-        const data = await userService.getAll({
+        const data = await userService.GetAllUser({
             skipCount: 0,
             maxResultCount: 500,
-            keyword: ''
+            keyword: '',
+            trangThais: ['1']
         } as PagedUserResultRequestDto);
         if (data) {
             setAllUser(data.items);
@@ -54,7 +56,6 @@ const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose,
 
     const PageLoad = async () => {
         await GetAllUser();
-        await GetBrandnameBalance_byUserLogin();
     };
 
     useEffect(() => {
@@ -86,6 +87,10 @@ const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose,
         } else {
             // update
             if (visiable) getInforPhieuNapTien();
+        }
+
+        if (visiable) {
+            GetBrandnameBalance_byUserLogin();
         }
     }, [visiable]);
 
@@ -157,9 +162,10 @@ const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose,
                                     <Grid item xs={12}>
                                         <AutocompleteWithData
                                             label="Người gửi"
+                                            optionLabel={{ label1: 'Tài khoản:', label2: 'Tên nhân viên:' }}
                                             idChosed={values?.idNguoiChuyenTien}
-                                            lstData={allUser.map((x: GetAllUserOutput) => {
-                                                return { id: x.id, text1: x.userName, text2: x.surname };
+                                            lstData={allUser.map((x: IUserProfileDto) => {
+                                                return { id: x.id, text1: x.userName, text2: x.tenNhanVien };
                                             })}
                                             handleChoseItem={(item: IDataAutocomplete) => {
                                                 setFieldValue('idNguoiChuyenTien', item?.id);
@@ -169,9 +175,10 @@ const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose,
                                     <Grid item xs={12} sm={12}>
                                         <AutocompleteWithData
                                             label="Người nhận"
+                                            optionLabel={{ label1: 'Tài khoản:', label2: 'Tên nhân viên:' }}
                                             idChosed={values?.idNguoiNhanTien}
-                                            lstData={allUser.map((x: GetAllUserOutput) => {
-                                                return { id: x.id, text1: x.userName, text2: x.surname };
+                                            lstData={allUser.map((x: IUserProfileDto) => {
+                                                return { id: x.id, text1: x.userName, text2: x.tenNhanVien };
                                             })}
                                             handleChoseItem={(item: IDataAutocomplete) => {
                                                 setFieldValue('idNguoiNhanTien', item?.id);
