@@ -37,6 +37,7 @@ import { FileUpload } from '../../../../services/dto/FileUpload';
 import uploadFileService from '../../../../services/uploadFileService';
 import ImportExcel from '../../../../components/ImportComponent/ImportExcel';
 import ActionRowSelect from '../../../../components/DataGrid/ActionRowSelect';
+import { addYears } from 'date-fns';
 
 class ChiNhanhScreen extends Component {
     dataGridRef: RefObject<any> = React.createRef<GridApi>();
@@ -123,8 +124,8 @@ class ChiNhanhScreen extends Component {
                     maSoThue: '',
                     logo: '',
                     ghiChu: '',
-                    ngayHetHan: new Date(),
                     ngayApDung: new Date(),
+                    ngayHetHan: addYears(new Date(), 1), // default: 1 nam
                     trangThai: 1
                 }
             });
@@ -262,7 +263,7 @@ class ChiNhanhScreen extends Component {
                 sortable: false,
                 filterable: false,
                 disableColumnMenu: true,
-                width: 65,
+                flex: 0.2,
                 renderHeader: (params) => {
                     return <Checkbox onClick={this.handleSelectAllGridRowClick} checked={this.state.checkAllRow} />;
                 },
@@ -276,8 +277,7 @@ class ChiNhanhScreen extends Component {
             {
                 field: 'maChiNhanh',
                 headerName: 'Mã chi nhánh',
-                minWidth: 140,
-                flex: 0.8,
+                flex: 0.5,
                 renderCell: (params) => (
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <Typography variant="body2" title={params.value}>
@@ -290,8 +290,7 @@ class ChiNhanhScreen extends Component {
             {
                 field: 'tenChiNhanh',
                 headerName: 'Tên chi nhánh',
-                minWidth: 140,
-                flex: 0.8,
+                flex: 1,
                 renderCell: (params) => (
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <Typography variant="body2" title={params.value}>
@@ -304,8 +303,7 @@ class ChiNhanhScreen extends Component {
             {
                 field: 'soDienThoai',
                 headerName: 'Số điện thoại',
-                minWidth: 110,
-                flex: 0.8,
+                flex: 0.5,
                 renderCell: (params) => (
                     <Typography variant="body2" title={params.value}>
                         {params.value}
@@ -316,8 +314,7 @@ class ChiNhanhScreen extends Component {
             {
                 field: 'diaChi',
                 headerName: 'Địa chỉ',
-                minWidth: 110,
-                flex: 0.8,
+                flex: 1.2,
                 renderCell: (params) => (
                     <Typography variant="body2" title={params.value}>
                         {params.value}
@@ -325,48 +322,49 @@ class ChiNhanhScreen extends Component {
                 ),
                 renderHeader: (params) => <Box fontWeight="700">{params.colDef.headerName}</Box>
             },
-            // {
-            //     field: 'ngayApDung',
-            //     headerName: 'Ngày áp dụng',
-            //     minWidth: 130,
-            //     flex: 0.8,
-            //     renderCell: (params) => (
-            //         <Box
-            //             sx={{
-            //                 display: 'flex',
-            //                 alignItems: 'center',
-            //                 justifyContent: 'start',
-            //                 width: '100%'
-            //             }}>
-            //             <DateIcon style={{ marginRight: 4 }} />
-            //             <Typography fontSize="13px" fontFamily={'Roboto'} fontWeight="400" lineHeight="16px">
-            //                 {new Date(params.value).toLocaleDateString('en-GB')}
-            //             </Typography>
-            //         </Box>
-            //     ),
-            //     renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
-            // },
-            // {
-            //     field: 'ngayHetHan',
-            //     headerName: 'Ngày hết hạn',
-            //     minWidth: 130,
-            //     flex: 0.8,
-            //     renderCell: (params) => (
-            //         <Box
-            //             sx={{
-            //                 display: 'flex',
-            //                 alignItems: 'center',
-            //                 justifyContent: 'start',
-            //                 width: '100%'
-            //             }}>
-            //             <DateIcon style={{ marginRight: 4 }} />
-            //             <Typography fontSize="13px" fontFamily={'Roboto'} fontWeight="400" lineHeight="16px">
-            //                 {new Date(params.value).toLocaleDateString('en-GB')}
-            //             </Typography>
-            //         </Box>
-            //     ),
-            //     renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
-            // },
+
+            {
+                field: 'ngayApDung',
+                headerName: 'Ngày áp dụng',
+                headerAlign: 'center',
+                align: 'center',
+                flex: 0.6,
+                renderCell: (params) => (
+                    <Typography variant="body2">{new Date(params.value).toLocaleDateString('en-GB')}</Typography>
+                ),
+                renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+            },
+            {
+                field: 'ngayHetHan',
+                headerName: 'Ngày hết hạn',
+                headerAlign: 'center',
+                align: 'center',
+                flex: 0.6,
+                renderCell: (params) => (
+                    <Typography variant="body2">{new Date(params.value).toLocaleDateString('en-GB')}</Typography>
+                ),
+                renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+            },
+            {
+                field: 'trangThai',
+                headerName: 'Trạng thái',
+                headerAlign: 'center',
+                align: 'center',
+                flex: 0.8,
+                renderCell: (params) => (
+                    <Typography
+                        variant="body2"
+                        alignItems={'center'}
+                        className={
+                            params.row.trangThai === 1
+                                ? 'data-grid-cell-trangthai-active'
+                                : 'data-grid-cell-trangthai-notActive'
+                        }>
+                        {params.value == 1 ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+                    </Typography>
+                ),
+                renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+            },
             {
                 field: 'actions',
                 headerName: '#',
@@ -374,6 +372,7 @@ class ChiNhanhScreen extends Component {
                 align: 'center',
                 minwidth: 48,
                 flex: 0.3,
+                sortable: false,
                 disableColumnMenu: true,
                 renderCell: (params) => (
                     <IconButton
@@ -386,7 +385,7 @@ class ChiNhanhScreen extends Component {
                         <MoreHorizIcon />
                     </IconButton>
                 ),
-                renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+                renderHeader: (params) => <Box title={'Thao tác'}>{params.colDef.headerName}</Box>
             }
         ] as GridColDef[];
 
@@ -479,7 +478,7 @@ class ChiNhanhScreen extends Component {
                         </Button>
                     </Grid>
                 </Grid>
-                <Box paddingTop="16px">
+                <Box paddingTop="36px!important">
                     {this.state.listItemSelectedModel.length > 0 && (
                         <ActionRowSelect
                             lstOption={[
@@ -516,6 +515,7 @@ class ChiNhanhScreen extends Component {
                             rows={this.state.listChiNhanh}
                             checkboxSelection={false}
                             sortingOrder={['desc', 'asc']}
+                            autoHeight={this.state.totalCount === 0}
                             className={
                                 this.state.listItemSelectedModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'
                             }
