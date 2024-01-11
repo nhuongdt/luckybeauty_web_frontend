@@ -1,9 +1,16 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Autocomplete, Grid, TextField, Typography, Box } from '@mui/material';
+import { Autocomplete, Grid, TextField, Typography, Box, Stack } from '@mui/material';
 import { IDataAutocomplete } from '../../services/dto/IDataAutocomplete';
 
-export default function AutocompleteWithData({ handleChoseItem, idChosed, lstData, label, helperText }: any) {
+export default function AutocompleteWithData({
+    handleChoseItem,
+    idChosed,
+    lstData,
+    label,
+    helperText,
+    optionLabel = { label1: '', label2: '' }
+}: any) {
     const [itemChosed, setItemChosed] = useState<IDataAutocomplete | null>(null);
     React.useEffect(() => {
         const item = lstData?.filter((x: IDataAutocomplete) => x.id == idChosed);
@@ -42,16 +49,23 @@ export default function AutocompleteWithData({ handleChoseItem, idChosed, lstDat
                                         width: 'calc(100% - 44px)',
                                         wordWrap: 'break-word'
                                     }}>
-                                    <Typography style={{ fontSize: '14px' }}>{option.text1}</Typography>
-                                    <Box
-                                        component="span"
+                                    <Stack direction={'row'} spacing={0.5}>
+                                        <Typography style={{ fontSize: '12px' }} color={'#acaca5'}>
+                                            {optionLabel?.label1}
+                                        </Typography>
+                                        <Typography style={{ fontSize: '13px' }}>{option.text1}</Typography>
+                                    </Stack>
+                                    <Stack
+                                        direction={'row'}
+                                        spacing={0.5}
                                         style={{
                                             fontWeight: 500,
                                             color: '#acaca5',
                                             fontSize: '12px'
                                         }}>
-                                        {option.text2}
-                                    </Box>
+                                        <span>{optionLabel?.label2}</span>
+                                        <span> {option.text2}</span>
+                                    </Stack>
                                 </Grid>
                             </Grid>
                         </li>
