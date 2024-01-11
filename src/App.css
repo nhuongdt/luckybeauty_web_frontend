@@ -359,3 +359,13 @@ body .font-normal {
     font-weight: 600;
     font-family: 'Courier New', monospace !important;
 }
+
+.text-search {
+    background-color: #fff;
+}
+
+.text-search input,
+.text-search .MuiInputBase-root {
+    /* ô tìm kiếm: nếu có Icon search: reset paddingLeft = 0 */
+    padding-left: 0px!important;
+}
