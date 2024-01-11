@@ -15,7 +15,7 @@ import {
     FormControlLabel,
     Checkbox,
     DialogActions,
-    FormControl,
+    Stack,
     FormHelperText
 } from '@mui/material';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
@@ -43,12 +43,8 @@ const CreateOrEditTaiKhoanNganHangModal = ({ visiable, onCancel, onOk, formRef }
     });
     return (
         <Dialog open={visiable} fullWidth maxWidth={'sm'} onClose={onCancel}>
-            <DialogTitle sx={{ borderBottom: '1px solid #F0F0F0' }}>
-                <Typography fontSize="24px" fontWeight="700" mb={3}>
-                    {formRef.id === AppConsts.guidEmpty
-                        ? ' Thêm mới tài khoản ngân hàng'
-                        : ' Cập nhật tài khoản ngân hàng'}
-                </Typography>
+            <DialogTitle className="modal-title">
+                {formRef.id === AppConsts.guidEmpty ? ' Thêm mới tài khoản ngân hàng' : ' Cập nhật tài khoản ngân hàng'}
                 <Button
                     sx={{
                         position: 'absolute',
@@ -136,7 +132,7 @@ const CreateOrEditTaiKhoanNganHangModal = ({ visiable, onCancel, onOk, formRef }
                                                     )
                                                 }
                                                 label={
-                                                    <Typography>
+                                                    <Typography variant="body2">
                                                         Ngân hàng <span className="text-danger"> *</span>
                                                     </Typography>
                                                 }
@@ -149,7 +145,7 @@ const CreateOrEditTaiKhoanNganHangModal = ({ visiable, onCancel, onOk, formRef }
                                     <TextField
                                         size="small"
                                         label={
-                                            <Typography>
+                                            <Typography variant="body2">
                                                 Tên chủ thẻ
                                                 <span className="text-danger">*</span>
                                             </Typography>
@@ -174,7 +170,7 @@ const CreateOrEditTaiKhoanNganHangModal = ({ visiable, onCancel, onOk, formRef }
                                     <TextField
                                         size="small"
                                         label={
-                                            <Typography>
+                                            <Typography variant="body2">
                                                 Số tài khoản
                                                 <span className="text-danger">*</span>
                                             </Typography>
@@ -200,7 +196,7 @@ const CreateOrEditTaiKhoanNganHangModal = ({ visiable, onCancel, onOk, formRef }
                                         size="small"
                                         multiline
                                         maxRows={3}
-                                        label={<Typography>Ghi chú</Typography>}
+                                        label={<Typography variant="body2">Ghi chú</Typography>}
                                         fullWidth
                                         name="ghiChu"
                                         value={values.ghiChu}
@@ -210,27 +206,28 @@ const CreateOrEditTaiKhoanNganHangModal = ({ visiable, onCancel, onOk, formRef }
                                             color: '#4c4b4c'
                                         }}></TextField>
                                 </Grid>
+                                <Grid item xs={12} sx={{ paddingLeft: '4px!important' }}>
+                                    <Stack direction={'row'} alignItems={'center'}>
+                                        <Checkbox
+                                            checked={values.isDefault}
+                                            onChange={(event, value) => {
+                                                setFieldValue('isDefault', value);
+                                            }}
+                                        />
+                                        <Typography variant="body2">Tài khoản mặc định</Typography>
+                                    </Stack>
+                                    <Stack direction={'row'} alignItems={'center'}>
+                                        <Checkbox
+                                            checked={values.trangThai === 1 ? true : false}
+                                            onChange={(event, value) => {
+                                                setFieldValue('trangThai', value);
+                                            }}
+                                        />
+                                        <Typography variant="body2">Kích hoạt</Typography>
+                                    </Stack>
+                                </Grid>
                             </Grid>
-                            <Box>
-                                <FormControlLabel
-                                    label="Tài khoản mặc định"
-                                    checked={values.isDefault}
-                                    onChange={(event, value) => {
-                                        setFieldValue('isDefault', value);
-                                    }}
-                                    control={<Checkbox />}
-                                />
-                            </Box>
-                            <Box>
-                                <FormControlLabel
-                                    label="Kích hoạt"
-                                    checked={values.trangThai === 1 ? true : false}
-                                    onChange={(event, value) => {
-                                        setFieldValue('trangThai', value);
-                                    }}
-                                    control={<Checkbox />}
-                                />
-                            </Box>
+
                             <DialogActions sx={{ paddingRight: '0!important' }}>
                                 <Button
                                     variant="outlined"
