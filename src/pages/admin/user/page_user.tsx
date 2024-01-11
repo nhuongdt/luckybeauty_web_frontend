@@ -20,6 +20,8 @@ import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import { IUserProfileDto } from '../../../services/user/dto/ProfileDto';
 import utils from '../../../utils/utils';
 import { IOSSwitch } from '../../../components/Switch/IOSSwitch';
+import nhanVienService from '../../../services/nhan-vien/nhanVienService';
+import { Guid } from 'guid-typescript';
 
 export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: any) {
     const firstLoad = useRef(true);
@@ -159,11 +161,25 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
         setTotalPage(Math.ceil(listSearchUser.length / pageSizeNew));
     };
 
-    const changeTrangThai = async (userId: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const changeTrangThai = async (userId: number, nhanSuId: string | null, e: React.ChangeEvent<HTMLInputElement>) => {
         const check = e.target.checked;
         let data = false;
         let mes = '';
         if (check) {
+            // check nhanvien was delete
+            if (!utils.checkNull(nhanSuId)) {
+                const nvien = await nhanVienService.getNhanSu(nhanSuId as string);
+                if (!nvien?.id || nvien?.id === Guid.EMPTY) {
+                    setObjAlert({
+                        ...objAlert,
+                        show: true,
+                        mes: 'Nhân viên đã ngừng hoạt động. Vui lòng kích hoạt lại nhân viên',
+                        type: 2
+                    });
+                    return;
+                }
+            }
+
             data = await userService.ActiveUser(userId);
             mes = 'Kích hoạt';
         } else {
@@ -310,7 +326,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
                 <IOSSwitch
                     value={params.row?.isActive}
                     checked={params.row?.isActive}
-                    onChange={(e) => changeTrangThai(params.row.id, e)}
+                    onChange={(e) => changeTrangThai(params.row.id, params.row.nhanSuId, e)}
                 />
             ),
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
