@@ -1,6 +1,7 @@
 import LoadableComponent from '../../../components/Loadable';
 import { ReactComponent as SettingIcon } from '../../../images/settingIcon.svg';
 import { ReactComponent as SetingActive } from '../../../images/settingActive.svg';
+import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 import { RouteProps } from '../../../components/routers';
 const SettingRoutes: RouteProps[] = [
     {
@@ -122,6 +123,18 @@ const SettingRoutes: RouteProps[] = [
         isLayout: false,
         children: [],
         component: LoadableComponent(() => import('../../../pages/admin/settings/Email'))
+    },
+    {
+        path: '/settings/tai-khoan-ngan-hang',
+        permission: 'Pages.Administration',
+        title: 'Tài khoản ngân hàng',
+        name: 'taiKhoanNganHang',
+        icon: <SettingIcon width="20px" />,
+        iconActive: <SetingActive width="20px" />,
+        showInMenu: false,
+        isLayout: false,
+        children: [],
+        component: LoadableComponent(() => import('../../../pages/tai_khoan_ngan_hang/index'))
     }
 ];
 export default SettingRoutes;

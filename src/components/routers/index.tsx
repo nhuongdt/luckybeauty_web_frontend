@@ -534,18 +534,18 @@ export const appRouters: AppRouteProps = {
                     ],
                     component: null
                 },
-                {
-                    path: '/tai-khoan-ngan-hang',
-                    permission: 'Pages.Administration',
-                    title: 'Tài khoản ngân hàng',
-                    name: 'taiKhoanNganHang',
-                    icon: <BankIcon width="20px" />,
-                    iconActive: <BankIconActive width="20px" />,
-                    showInMenu: true,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/tai_khoan_ngan_hang'))
-                },
+                // {
+                //     path: '/tai-khoan-ngan-hang',
+                //     permission: 'Pages.Administration',
+                //     title: 'Tài khoản ngân hàng', // chuyen den trang caidat
+                //     name: 'taiKhoanNganHang',
+                //     icon: <BankIcon width="20px" />,
+                //     iconActive: <BankIconActive width="20px" />,
+                //     showInMenu: true,
+                //     isLayout: false,
+                //     children: [],
+                //     component: LoadableComponent(() => import('../../pages/tai_khoan_ngan_hang'))
+                // },
                 ...SettingRoutes,
                 {
                     path: '/account',
