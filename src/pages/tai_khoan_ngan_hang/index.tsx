@@ -1,4 +1,6 @@
-import { Box, Button, Typography, IconButton, SelectChangeEvent } from '@mui/material';
+import { Box, Stack, Grid, Button, Typography, IconButton, SelectChangeEvent, TextField } from '@mui/material';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import CreateOrEditTaiKhoanNganHangModal from './components/create-or-edit-tai-khoan-ngan-hang';
 import { useContext, useEffect, useState } from 'react';
 import suggestStore from '../../stores/suggestStore';
@@ -13,7 +15,6 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 import { TextTranslate } from '../../components/TableLanguage';
-import axios from 'axios';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import { enqueueSnackbar } from 'notistack';
@@ -127,6 +128,20 @@ const TaiKhoanNganHangPage = () => {
     const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
         await setMaxResultCount(parseInt(event.target.value.toString(), 10));
         setCurrentPage(1);
+    };
+
+    const hanClickIconSearch = () => {
+        if (currentPage !== 1) {
+            setCurrentPage(1);
+        } else {
+            getData();
+        }
+    };
+
+    const handleKeyDownTextSearch = (event: any) => {
+        if (event.keyCode === 13) {
+            hanClickIconSearch();
+        }
     };
     const columns: GridColDef[] = [
         {
@@ -244,6 +259,7 @@ const TaiKhoanNganHangPage = () => {
             field: 'trangThai',
             headerName: 'Trạng thái',
             headerAlign: 'center',
+            align: 'center',
             minWidth: 90,
             maxWidth: 120,
             flex: 1,
@@ -264,27 +280,19 @@ const TaiKhoanNganHangPage = () => {
             renderCell: (params) => (
                 <Typography
                     variant="body2"
-                    alignItems={'center'}
-                    borderRadius="12px"
-                    padding={'4px 8px'}
-                    sx={{
-                        margin: 'auto',
-                        backgroundColor:
-                            params.row.trangThai === 1 ? '#E8FFF3' : params.row.trangThai === 0 ? '#FFF8DD' : '#FFF5F8',
-                        color:
-                            params.row.trangThai === 1 ? '#50CD89' : params.row.trangThai === 0 ? '#FF9900' : '#F1416C'
-                    }}
-                    fontSize="13px"
-                    fontWeight="400"
-                    textAlign={'center'}
-                    color="#009EF7">
+                    className={
+                        params.row.trangThai === 1
+                            ? 'data-grid-cell-trangthai-active'
+                            : 'data-grid-cell-trangthai-notActive'
+                    }>
                     {params.value === 1 ? 'Hoạt động' : 'Ngừng hoạt động'}
                 </Typography>
             )
         },
         {
             field: 'actions',
-            headerAlign: 'right',
+            headerName: '#',
+            headerAlign: 'center',
             sortable: false,
             width: 48,
             maxWidth: 48,
@@ -301,36 +309,59 @@ const TaiKhoanNganHangPage = () => {
                     <MoreHorizIcon />
                 </IconButton>
             ),
-            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+            renderHeader: (params) => <Box title="Thao tác">{params.colDef.headerName}</Box>
         }
     ];
     return (
         <Box paddingTop={2}>
-            <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                <Typography fontSize={'18px'} fontWeight={700} fontFamily={'Roboto'}>
-                    Tài khoản ngân hàng
-                </Typography>
-                <Button
-                    size="small"
-                    variant="contained"
-                    sx={{
-                        textTransform: 'capitalize',
-                        fontWeight: '400',
-                        fontSize: '14px',
-                        height: '40px',
-                        borderRadius: '4px!important',
-                        backgroundColor: 'var(--color-main)!important'
-                    }}
-                    hidden={!abpCustom.isGrandPermission('Pages.Administration')}
-                    className="btn-container-hover"
-                    onClick={() => {
-                        onCreateOrEditModal('');
-                    }}>
-                    Thêm mới
-                </Button>
-            </Box>
-            <Box marginTop={2}>
-                <DataGrid rows={dataRow} columns={columns} hideFooterPagination hideFooter localeText={TextTranslate} />
+            <Grid container>
+                <Grid item xs={12} md={5} sm={6} lg={7}>
+                    <Typography fontSize={'18px'} fontWeight={700} fontFamily={'Roboto'}>
+                        Tài khoản ngân hàng
+                    </Typography>
+                </Grid>
+                <Grid item xs={12} md={7} sm={6} lg={5}>
+                    <Grid container spacing={1}>
+                        <Grid item lg={8} md={7} xs={6} sm={7}>
+                            <TextField
+                                size="small"
+                                fullWidth
+                                placeholder="Tìm kiếm"
+                                sx={{ backgroundColor: '#fff' }}
+                                value={filter}
+                                onChange={(e) => setFilter(e.currentTarget.value)}
+                                InputProps={{
+                                    startAdornment: <SearchOutlinedIcon onClick={hanClickIconSearch} />
+                                }}
+                                onKeyDown={(event) => {
+                                    handleKeyDownTextSearch(event);
+                                }}
+                            />
+                        </Grid>
+                        <Grid item lg={4} md={5} xs={6} sm={5}>
+                            <Button
+                                variant="contained"
+                                fullWidth
+                                startIcon={<AddOutlinedIcon />}
+                                hidden={!abpCustom.isGrandPermission('Pages.Administration')}
+                                onClick={() => {
+                                    onCreateOrEditModal('');
+                                }}>
+                                Thêm tài khoản
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Box marginTop={2} className="page-box-right">
+                <DataGrid
+                    rows={dataRow}
+                    columns={columns}
+                    hideFooterPagination
+                    hideFooter
+                    localeText={TextTranslate}
+                    className="data-grid-row"
+                />
             </Box>
             <ActionMenuTable
                 selectedRowId={selectedRowId}
