@@ -260,7 +260,8 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             fullWidth
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
-                                    <Grid item xs={12}>
+                                    {/* kichhoat+ ngungkichhoat: chỉ dùng cho bên gia hạn (HOST) */}
+                                    <Grid item xs={12} sx={{ display: 'none' }}>
                                         <FormControl fullWidth>
                                             <FormControlLabel
                                                 label="Trạng thái"
