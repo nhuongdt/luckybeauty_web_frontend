@@ -63,16 +63,11 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
                     }></ConfirmDelete>
                 <Dialog fullWidth maxWidth="xs" open={this.props.visiable} onClose={this.props.handleClose}>
                     <Box>
-                        <DialogTitle>
-                            <Typography
-                                fontSize="24px"
-                                //color="#333233"
-                                fontWeight="700">
-                                {khachHangStore.createOrEditNhomKhachDto?.id != AppConsts.guidEmpty
-                                    ? 'Cập nhật '
-                                    : 'Thêm mới '}
-                                nhóm khách
-                            </Typography>
+                        <DialogTitle className="modal-title">
+                            {khachHangStore.createOrEditNhomKhachDto?.id != AppConsts.guidEmpty
+                                ? 'Cập nhật '
+                                : 'Thêm mới '}
+                            nhóm khách
                             <Button
                                 onClick={this.props.handleClose}
                                 sx={{
