@@ -67,18 +67,18 @@ class StoreDetail extends Component {
         const data = await TaiKhoanNganHangServices.GetDefault_TaiKhoanNganHang(idChiNhanh);
         this.setState({
             bankAcc: {
-                id: data.id,
-                tenChuThe: data.tenChuThe,
-                soTaiKhoan: data.soTaiKhoan,
-                tenNganHang: data.tenNganHang,
-                logoNganHang: data.logoNganHang
+                id: data?.id,
+                tenChuThe: data?.tenChuThe,
+                soTaiKhoan: data?.soTaiKhoan,
+                tenNganHang: data?.tenNganHang,
+                logoNganHang: data?.logoNganHang
             } as TaiKhoanNganHangDto
         });
         const qrCode = await TaiKhoanNganHangServices.GetQRCode({
-            tenChuThe: data.tenChuThe,
-            soTaiKhoan: data.soTaiKhoan,
-            tenNganHang: data.tenNganHang,
-            maPinNganHang: data.maPinNganHang
+            tenChuThe: data?.tenChuThe,
+            soTaiKhoan: data?.soTaiKhoan,
+            tenNganHang: data?.tenNganHang,
+            maPinNganHang: data?.maPinNganHang
         } as TaiKhoanNganHangDto);
         this.setState({
             qrCode: qrCode
@@ -442,7 +442,7 @@ class StoreDetail extends Component {
                                         />
                                     </Stack>
                                 </Grid>
-                                {this.state.bankAcc.id !== '' && (
+                                {!utils.checkNull(this.state.bankAcc.id) && (
                                     <>
                                         <Grid
                                             item

@@ -534,27 +534,11 @@ class EmployeeScreen extends React.Component {
                 <Typography
                     variant="body2"
                     alignItems={'center'}
-                    borderRadius="12px"
-                    padding={'4px 8px'}
-                    sx={{
-                        margin: 'auto',
-                        backgroundColor:
-                            params.row.trangThai === 'Hoạt động'
-                                ? '#E8FFF3'
-                                : params.row.trangThai === 'Ngừng hoạt động'
-                                ? '#FFF8DD'
-                                : '#FFF5F8',
-                        color:
-                            params.row.trangThai === 'Hoạt động'
-                                ? '#50CD89'
-                                : params.row.trangThai === 'Ngừng hoạt động'
-                                ? '#FF9900'
-                                : '#F1416C'
-                    }}
-                    fontSize="var(--font-size-main)"
-                    fontWeight="400"
-                    textAlign={'left'}
-                    color="#009EF7">
+                    className={
+                        params.row.trangThai === 'Hoạt động'
+                            ? 'data-grid-cell-trangthai-active'
+                            : 'data-grid-cell-trangthai-notActive'
+                    }>
                     {params.value}
                 </Typography>
             ),
