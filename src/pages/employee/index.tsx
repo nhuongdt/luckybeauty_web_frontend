@@ -528,6 +528,7 @@ class EmployeeScreen extends React.Component {
             field: 'trangThai',
             headerName: 'Trạng thái',
             headerAlign: 'center',
+            align: 'center',
             minWidth: 116,
             flex: 0.8,
             renderCell: (params) => (

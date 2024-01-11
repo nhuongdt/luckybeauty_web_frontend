@@ -25,7 +25,6 @@ import './customerPage.css';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
-// import SearchIcon from '../../images/search-normal.svg';
 import ClearIcon from '@mui/icons-material/Clear';
 import { ExpandMoreOutlined } from '@mui/icons-material';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
@@ -813,94 +812,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         }}
                                     />
                                 )}
-                                {/* {this.state.listItemSelectedModel.length > 0 ? (
-                                    <Stack
-                                        spacing={1}
-                                        marginBottom={2}
-                                        direction={'row'}
-                                        alignItems={'center'}>
-                                        <Box
-                                            sx={{ position: 'relative' }}
-                                            onMouseLeave={() => {
-                                                this.setState({
-                                                    expendActionSelectedRow: false
-                                                });
-                                            }}>
-                                            <Button
-                                                variant="contained"
-                                                endIcon={<ExpandMoreOutlined />}
-                                                onClick={() =>
-                                                    this.setState({
-                                                        expendActionSelectedRow: false
-                                                    })
-                                                }>
-                                                Thao tác
-                                            </Button>
 
-                                            <Box
-                                                sx={{
-                                                    display: this.state.expendActionSelectedRow
-                                                        ? ''
-                                                        : 'none',
-                                                    zIndex: 1,
-                                                    position: 'absolute',
-                                                    borderRadius: '4px',
-                                                    border: '1px solid #cccc',
-                                                    minWidth: 150,
-                                                    backgroundColor: 'rgba(248,248,248,1)',
-                                                    '& .MuiStack-root .MuiStack-root:hover': {
-                                                        backgroundColor: '#cccc'
-                                                    }
-                                                }}>
-                                                <Stack textAlign={'left'} spacing={0.5}>
-                                                    <Button
-                                                        startIcon={'Chuyển nhóm khách'}
-                                                        sx={{ color: 'black' }}
-                                                        onClick={
-                                                            this.onShowChuyenNhomKhach
-                                                        }></Button>
-                                                    <Button
-                                                        startIcon={'Xóa khách hàng'}
-                                                        sx={{
-                                                            color: 'black',
-                                                            '&:hover': {
-                                                                backgroundColor: '#E6E6E6',
-                                                                boxShadow: 'none'
-                                                            }
-                                                        }}
-                                                        onClick={this.showConfirmDelete}></Button>
-                                                    <Button
-                                                        startIcon={'Xuất danh sách'}
-                                                        sx={{
-                                                            color: 'black',
-                                                            '&:hover': {
-                                                                backgroundColor: '#E6E6E6',
-                                                                boxShadow: 'none'
-                                                            }
-                                                        }}
-                                                        onClick={this.exportSelectedRow}></Button>
-                                                </Stack>
-                                            </Box>
-                                        </Box>
-                                        <Stack direction={'row'}>
-                                            <Typography variant="body2" color={'red'}>
-                                                {this.state.listItemSelectedModel.length}&nbsp;
-                                            </Typography>
-                                            <Typography variant="body2">
-                                                bản ghi được chọn
-                                            </Typography>
-                                        </Stack>
-                                        <ClearIcon
-                                            color="error"
-                                            onClick={() => {
-                                                this.setState({
-                                                    listItemSelectedModel: [],
-                                                    checkAllRow: false
-                                                });
-                                            }}
-                                        />
-                                    </Stack>
-                                ) : null} */}
                                 <div
                                     className="page-box-right"
                                     style={{
