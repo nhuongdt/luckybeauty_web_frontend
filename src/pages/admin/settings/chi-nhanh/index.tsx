@@ -13,11 +13,8 @@ import React, { RefObject } from 'react';
 import DownloadIcon from '../../../../images/download.svg';
 import UploadIcon from '../../../../images/upload.svg';
 import AddIcon from '../../../../images/add.svg';
-import SearchIcon from '../../../../images/search-normal.svg';
+import SearchIcon from '@mui/icons-material/Search';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import ClearIcon from '@mui/icons-material/Clear';
-import { ExpandMoreOutlined } from '@mui/icons-material';
-import { ReactComponent as IconSorting } from '../../../../images/column-sorting.svg';
 import { ReactComponent as DateIcon } from '../../../../images/calendar-5.svg';
 import { Component, ReactNode } from 'react';
 import { ChiNhanhDto } from '../../../../services/chi_nhanh/Dto/chiNhanhDto';
@@ -26,20 +23,20 @@ import CreateOrEditChiNhanhModal from './components/create-or-edit-chi-nhanh';
 import { CreateOrEditChiNhanhDto } from '../../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
 import Cookies from 'js-cookie';
 import AppConsts from '../../../../lib/appconst';
-import { DataGrid, GridApi, GridColDef, GridRenderCellParams, GridRowSelectionModel } from '@mui/x-data-grid';
+import { DataGrid, GridApi, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { TextTranslate } from '../../../../components/TableLanguage';
 import '../../../customer/customerPage.css';
 import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
 import ActionMenuTable from '../../../../components/Menu/ActionMenuTable';
 import cuaHangService from '../../../../services/cua_hang/cuaHangService';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
-import ViewChiNhanhModal from './components/view-chi-nhanh-modal';
 import abpCustom from '../../../../components/abp-custom';
 import fileDowloadService from '../../../../services/file-dowload.service';
 import { enqueueSnackbar } from 'notistack';
 import { FileUpload } from '../../../../services/dto/FileUpload';
 import uploadFileService from '../../../../services/uploadFileService';
 import ImportExcel from '../../../../components/ImportComponent/ImportExcel';
+import ActionRowSelect from '../../../../components/DataGrid/ActionRowSelect';
 
 class ChiNhanhScreen extends Component {
     dataGridRef: RefObject<any> = React.createRef<GridApi>();
@@ -246,6 +243,18 @@ class ChiNhanhScreen extends Component {
         }
         this.setState({ checkAllRow: !this.state.checkAllRow });
     };
+    DataGrid_handleAction = async (item: any) => {
+        switch (parseInt(item.id)) {
+            case 1: // xoa
+                this.handleDelete();
+                break;
+            case 2: // xuat file DS
+                {
+                    await this.exportSelectedRow();
+                }
+                break;
+        }
+    };
     render(): ReactNode {
         const columns = [
             {
@@ -265,18 +274,13 @@ class ChiNhanhScreen extends Component {
                 )
             },
             {
-                field: 'tenChiNhanh',
-                headerName: 'Tên chi nhánh',
+                field: 'maChiNhanh',
+                headerName: 'Mã chi nhánh',
                 minWidth: 140,
                 flex: 0.8,
                 renderCell: (params) => (
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Typography
-                            fontSize="13px"
-                            fontWeight="400"
-                            fontFamily={'Roboto'}
-                            lineHeight="16px"
-                            title={params.value}>
+                        <Typography variant="body2" title={params.value}>
                             {params.value}
                         </Typography>
                     </Box>
@@ -284,25 +288,16 @@ class ChiNhanhScreen extends Component {
                 renderHeader: (params) => <Box fontWeight="700">{params.colDef.headerName}</Box>
             },
             {
-                field: 'diaChi',
-                headerName: 'Địa chỉ',
-                minWidth: 180,
-                flex: 1.2,
+                field: 'tenChiNhanh',
+                headerName: 'Tên chi nhánh',
+                minWidth: 140,
+                flex: 0.8,
                 renderCell: (params) => (
-                    <Typography
-                        variant="caption"
-                        fontSize="13px"
-                        fontFamily={'Roboto'}
-                        fontWeight={400}
-                        title={params.value}
-                        sx={{
-                            textOverflow: 'ellipsis',
-                            width: '100%',
-                            overflow: 'hidden',
-                            textAlign: 'left'
-                        }}>
-                        {params.value}
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="body2" title={params.value}>
+                            {params.value}
+                        </Typography>
+                    </Box>
                 ),
                 renderHeader: (params) => <Box fontWeight="700">{params.colDef.headerName}</Box>
             },
@@ -312,64 +307,71 @@ class ChiNhanhScreen extends Component {
                 minWidth: 110,
                 flex: 0.8,
                 renderCell: (params) => (
-                    <Typography
-                        width="100%"
-                        textAlign="left"
-                        variant="caption"
-                        fontSize="13px"
-                        fontFamily={'Roboto'}
-                        fontWeight={400}
-                        title={params.value}>
+                    <Typography variant="body2" title={params.value}>
                         {params.value}
                     </Typography>
                 ),
                 renderHeader: (params) => <Box fontWeight="700">{params.colDef.headerName}</Box>
             },
             {
-                field: 'ngayApDung',
-                headerName: 'Ngày áp dụng',
-                minWidth: 130,
+                field: 'diaChi',
+                headerName: 'Địa chỉ',
+                minWidth: 110,
                 flex: 0.8,
                 renderCell: (params) => (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'start',
-                            width: '100%'
-                        }}>
-                        <DateIcon style={{ marginRight: 4 }} />
-                        <Typography fontSize="13px" fontFamily={'Roboto'} fontWeight="400" lineHeight="16px">
-                            {new Date(params.value).toLocaleDateString('en-GB')}
-                        </Typography>
-                    </Box>
+                    <Typography variant="body2" title={params.value}>
+                        {params.value}
+                    </Typography>
                 ),
-                renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+                renderHeader: (params) => <Box fontWeight="700">{params.colDef.headerName}</Box>
             },
-            {
-                field: 'ngayHetHan',
-                headerName: 'Ngày hết hạn',
-                minWidth: 130,
-                flex: 0.8,
-                renderCell: (params) => (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'start',
-                            width: '100%'
-                        }}>
-                        <DateIcon style={{ marginRight: 4 }} />
-                        <Typography fontSize="13px" fontFamily={'Roboto'} fontWeight="400" lineHeight="16px">
-                            {new Date(params.value).toLocaleDateString('en-GB')}
-                        </Typography>
-                    </Box>
-                ),
-                renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
-            },
+            // {
+            //     field: 'ngayApDung',
+            //     headerName: 'Ngày áp dụng',
+            //     minWidth: 130,
+            //     flex: 0.8,
+            //     renderCell: (params) => (
+            //         <Box
+            //             sx={{
+            //                 display: 'flex',
+            //                 alignItems: 'center',
+            //                 justifyContent: 'start',
+            //                 width: '100%'
+            //             }}>
+            //             <DateIcon style={{ marginRight: 4 }} />
+            //             <Typography fontSize="13px" fontFamily={'Roboto'} fontWeight="400" lineHeight="16px">
+            //                 {new Date(params.value).toLocaleDateString('en-GB')}
+            //             </Typography>
+            //         </Box>
+            //     ),
+            //     renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+            // },
+            // {
+            //     field: 'ngayHetHan',
+            //     headerName: 'Ngày hết hạn',
+            //     minWidth: 130,
+            //     flex: 0.8,
+            //     renderCell: (params) => (
+            //         <Box
+            //             sx={{
+            //                 display: 'flex',
+            //                 alignItems: 'center',
+            //                 justifyContent: 'start',
+            //                 width: '100%'
+            //             }}>
+            //             <DateIcon style={{ marginRight: 4 }} />
+            //             <Typography fontSize="13px" fontFamily={'Roboto'} fontWeight="400" lineHeight="16px">
+            //                 {new Date(params.value).toLocaleDateString('en-GB')}
+            //             </Typography>
+            //         </Box>
+            //     ),
+            //     renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+            // },
             {
                 field: 'actions',
-                headerName: 'Hành động',
+                headerName: '#',
+                headerAlign: 'center',
+                align: 'center',
                 minwidth: 48,
                 flex: 0.3,
                 disableColumnMenu: true,
@@ -384,50 +386,50 @@ class ChiNhanhScreen extends Component {
                         <MoreHorizIcon />
                     </IconButton>
                 ),
-                renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
+                renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
             }
         ] as GridColDef[];
 
         return (
             <Box paddingTop={'16px'} paddingBottom={'16px'}>
-                <Grid container alignItems="center" justifyContent="space-between">
-                    <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="12px">
-                        <Typography variant="h1" fontSize="16px" fontWeight="700">
-                            Quản lý chi nhánh
-                        </Typography>
-                        <Box className="form-search">
-                            <TextField
-                                sx={{
-                                    backgroundColor: '#FFF',
-                                    borderColor: '#CDC9CD'
-                                }}
-                                className="search-field"
-                                variant="outlined"
-                                type="search"
-                                onChange={(e) => {
-                                    this.setState({ keyword: e.target.value });
-                                }}
-                                onKeyDown={(event) => {
-                                    if (event.key === 'Enter') {
-                                        this.InitData();
-                                    }
-                                }}
-                                placeholder="Tìm kiếm"
-                                InputProps={{
-                                    startAdornment: (
-                                        <IconButton
-                                            type="button"
-                                            onClick={() => {
-                                                this.InitData();
-                                            }}>
-                                            <img src={SearchIcon} />
-                                        </IconButton>
-                                    )
-                                }}
-                            />
-                        </Box>
+                <Grid container alignItems="center" spacing={1}>
+                    <Grid item xs={12} md={6} display="flex" alignItems="center" gap="12px">
+                        <Grid container alignItems="center">
+                            <Grid item xs={6} md={4}>
+                                <span className="page-title"> Quản lý chi nhánh</span>
+                            </Grid>
+                            <Grid item xs={6} md={6}>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    className="text-search"
+                                    variant="outlined"
+                                    placeholder="Tìm kiếm"
+                                    value={this.state.filter}
+                                    onChange={(e) => {
+                                        this.setState({ filter: e.target.value });
+                                    }}
+                                    onKeyDown={(event) => {
+                                        if (event.key === 'Enter') {
+                                            this.InitData();
+                                        }
+                                    }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <IconButton
+                                                type="button"
+                                                onClick={() => {
+                                                    this.InitData();
+                                                }}>
+                                                <SearchIcon />
+                                            </IconButton>
+                                        )
+                                    }}
+                                />
+                            </Grid>
+                        </Grid>
                     </Grid>
-                    <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
+                    <Grid xs={12} md={6} item display="flex" gap="8px" justifyContent="end">
                         <Button
                             className="border-color btn-outline-hover"
                             variant="outlined"
@@ -478,115 +480,71 @@ class ChiNhanhScreen extends Component {
                     </Grid>
                 </Grid>
                 <Box paddingTop="16px">
-                    {this.state.listItemSelectedModel.length > 0 ? (
-                        <Stack spacing={1} marginBottom={2} direction={'row'} alignItems={'center'}>
-                            <Box
-                                sx={{ position: 'relative' }}
-                                onMouseLeave={() => {
-                                    this.setState({
-                                        expendActionSelectedRow: false
-                                    });
-                                }}>
-                                <Button
-                                    variant="contained"
-                                    endIcon={<ExpandMoreOutlined />}
-                                    onClick={() =>
-                                        this.setState({
-                                            expendActionSelectedRow: !this.state.expendActionSelectedRow
-                                        })
-                                    }>
-                                    Thao tác
-                                </Button>
-
-                                <Box
-                                    sx={{
-                                        display: this.state.expendActionSelectedRow ? '' : 'none',
-                                        zIndex: 1,
-                                        position: 'absolute',
-                                        borderRadius: '4px',
-                                        border: '1px solid #cccc',
-                                        minWidth: 150,
-                                        backgroundColor: 'rgba(248,248,248,1)',
-                                        '& .MuiStack-root .MuiStack-root:hover': {
-                                            backgroundColor: '#cccc'
-                                        }
-                                    }}>
-                                    <Stack
-                                        alignContent={'center'}
-                                        justifyContent={'start'}
-                                        textAlign={'left'}
-                                        spacing={0.5}>
-                                        <Button
-                                            startIcon={'Xóa chi nhánh'}
-                                            sx={{
-                                                color: 'black',
-                                                '&:hover': {
-                                                    backgroundColor: '#E6E6E6',
-                                                    boxShadow: 'none'
-                                                }
-                                            }}
-                                            onClick={this.handleDelete}></Button>
-                                        <Button
-                                            startIcon={'Xuất danh sách'}
-                                            sx={{
-                                                color: 'black',
-                                                '&:hover': {
-                                                    backgroundColor: '#E6E6E6',
-                                                    boxShadow: 'none'
-                                                }
-                                            }}
-                                            onClick={this.exportSelectedRow}></Button>
-                                    </Stack>
-                                </Box>
-                            </Box>
-                            <Stack direction={'row'}>
-                                <Typography variant="body2" color={'red'}>
-                                    {this.state.listItemSelectedModel.length}&nbsp;
-                                </Typography>
-                                <Typography variant="body2">bản ghi được chọn</Typography>
-                            </Stack>
-                            <ClearIcon
-                                color="error"
-                                onClick={() => {
-                                    this.setState({
-                                        listItemSelectedModel: [],
-                                        checkAllRow: false
-                                    });
-                                }}
-                            />
-                        </Stack>
-                    ) : null}
-                    <DataGrid
-                        rowHeight={46}
-                        columns={columns}
-                        rows={this.state.listChiNhanh}
-                        checkboxSelection={false}
-                        sortingOrder={['desc', 'asc']}
-                        sortModel={[
-                            {
-                                field: this.state.sortBy,
-                                sort: this.state.sortType == 'desc' ? 'desc' : 'asc'
+                    {this.state.listItemSelectedModel.length > 0 && (
+                        <ActionRowSelect
+                            lstOption={[
+                                {
+                                    id: '1',
+                                    text: 'Xóa chi nhánh',
+                                    isShow: abpCustom.isGrandPermission('Pages.ChiNhanh.Delete')
+                                },
+                                {
+                                    id: '2',
+                                    text: 'Xuất danh sách',
+                                    isShow: abpCustom.isGrandPermission('Pages.ChiNhanh.Export')
+                                }
+                            ]}
+                            countRowSelected={this.state.listItemSelectedModel.length}
+                            title="chi nhánh"
+                            choseAction={this.DataGrid_handleAction}
+                            removeItemChosed={() => {
+                                this.setState({
+                                    listItemSelectedModel: [],
+                                    checkAllRow: false
+                                });
+                            }}
+                        />
+                    )}
+                    <div
+                        className="page-box-right"
+                        style={{
+                            marginTop: this.state.listItemSelectedModel.length > 0 ? '8px' : 0
+                        }}>
+                        <DataGrid
+                            rowHeight={46}
+                            columns={columns}
+                            rows={this.state.listChiNhanh}
+                            checkboxSelection={false}
+                            sortingOrder={['desc', 'asc']}
+                            className={
+                                this.state.listItemSelectedModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'
                             }
-                        ]}
-                        onSortModelChange={(newSortModel) => {
-                            if (newSortModel.length > 0) {
-                                this.onSort(
-                                    newSortModel[0].sort?.toString() ?? 'creationTime',
-                                    newSortModel[0].field ?? 'desc'
-                                );
+                            sortModel={[
+                                {
+                                    field: this.state.sortBy,
+                                    sort: this.state.sortType == 'desc' ? 'desc' : 'asc'
+                                }
+                            ]}
+                            onSortModelChange={(newSortModel) => {
+                                if (newSortModel.length > 0) {
+                                    this.onSort(
+                                        newSortModel[0].sort?.toString() ?? 'creationTime',
+                                        newSortModel[0].field ?? 'desc'
+                                    );
+                                }
+                            }}
+                            disableRowSelectionOnClick
+                            columnBuffer={0}
+                            hideFooter
+                            ref={this.dataGridRef}
+                            columnVisibilityModel={
+                                {
+                                    // Hide columns status and traderName, the other columns will remain visible
+                                }
                             }
-                        }}
-                        disableRowSelectionOnClick
-                        columnBuffer={0}
-                        hideFooter
-                        ref={this.dataGridRef}
-                        columnVisibilityModel={
-                            {
-                                // Hide columns status and traderName, the other columns will remain visible
-                            }
-                        }
-                        localeText={TextTranslate}
-                    />
+                            localeText={TextTranslate}
+                        />
+                    </div>
                     <ActionMenuTable
                         selectedRowId={this.state.idChiNhanh}
                         anchorEl={this.state.anchorEl}
