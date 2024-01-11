@@ -48,6 +48,7 @@ export default function ActionRowSelect({ lstOption, countRowSelected, title, ch
                                         key={index}
                                         spacing={1}
                                         padding={'6px'}
+                                        sx={{ display: item?.isShow ? '' : 'none' }}
                                         onClick={() => clickAction(item)}>
                                         {/* {item.icon} */}
                                         <Typography variant="subtitle2" marginLeft={1}>
