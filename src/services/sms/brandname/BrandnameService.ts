@@ -25,6 +25,11 @@ class BrandnameService {
         const result = await http.post(`api/services/app/Brandname/GetListBandname?tenantId=${tenantId}`, params);
         return result.data.result;
     };
+    SMS_GetTongSuDung_AllBrandname = async (params: IParamSearchBrandname): Promise<PagedResultDto<BrandnameDto>> => {
+        // use to HOST: tongnap + sudung + conlai
+        const result = await http.post(`api/services/app/Brandname/SMS_GetTongSuDung_AllBrandname`, params);
+        return result.data.result;
+    };
     CreateBrandname = async (input: BrandnameDto) => {
         const result = await http.post('api/services/app/Brandname/CreateBrandname', input);
         return result.data.result;

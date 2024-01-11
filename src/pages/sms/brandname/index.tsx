@@ -70,7 +70,7 @@ export default function PageBrandname() {
     };
 
     const GetListBrandname = async () => {
-        const data = await BrandnameService.GetListBandname(paramSearch);
+        const data = await BrandnameService.SMS_GetTongSuDung_AllBrandname(paramSearch);
 
         if (data !== null) {
             setPageDataBrandname({
@@ -428,11 +428,7 @@ export default function PageBrandname() {
                             <TextField
                                 size="small"
                                 fullWidth
-                                sx={{
-                                    backgroundColor: '#fff',
-                                    borderColor: '#CDC9CD!important'
-                                }}
-                                className="search-field"
+                                className="text-search"
                                 variant="outlined"
                                 type="search"
                                 placeholder="Tìm kiếm"
