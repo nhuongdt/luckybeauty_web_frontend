@@ -44,6 +44,7 @@ import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
 import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
 import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
+import AppConsts from '../../../lib/appconst';
 
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
@@ -62,7 +63,7 @@ const GiaoDichThanhToan: React.FC = () => {
         textSearch: '',
         idChiNhanhs: [chinhanhCurrent?.id],
         currentPage: 1,
-        pageSize: 5,
+        pageSize: AppConsts.pageOption[0].value,
         columnSort: 'NgayLapHoaDon',
         typeSort: 'DESC',
         fromDate: format(today, 'yyyy-MM-01'),
@@ -405,6 +406,7 @@ const GiaoDichThanhToan: React.FC = () => {
         {
             field: 'txtTrangThaiHD',
             headerAlign: 'center',
+            align: 'center',
             headerName: 'Trạng thái',
             minWidth: 118,
             flex: 1,
@@ -412,16 +414,11 @@ const GiaoDichThanhToan: React.FC = () => {
             renderCell: (params: any) => (
                 <Box
                     title={params.value}
-                    sx={{
-                        padding: '4px 8px',
-                        borderRadius: '100px',
-                        backgroundColor:
-                            params.row.trangThai === 3 ? '#E8FFF3' : params.row.trangThai === 1 ? '#FFF8DD' : '#FFF5F8',
-                        color:
-                            params.row.trangThai === 3 ? '#50CD89' : params.row.trangThai === 1 ? '#FF9900' : '#F1416C',
-                        margin: 'auto'
-                    }}
-                    className="state-thanh-toan">
+                    className={
+                        params.row.trangThai === 3
+                            ? 'data-grid-cell-trangthai-active'
+                            : 'data-grid-cell-trangthai-notActive'
+                    }>
                     {params.value}
                 </Box>
             )

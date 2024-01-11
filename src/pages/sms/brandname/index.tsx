@@ -342,21 +342,17 @@ export default function PageBrandname() {
             field: 'txtTrangThai',
             headerAlign: 'center',
             headerName: 'Trạng thái',
+            align: 'center',
             flex: 0.8,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box
                     title={params.value}
-                    sx={{
-                        padding: '4px 8px',
-                        borderRadius: '100px',
-                        backgroundColor:
-                            params.row.trangThai === 3 ? '#E8FFF3' : params.row.trangThai === 1 ? '#FFF8DD' : '#FFF5F8',
-                        color:
-                            params.row.trangThai === 3 ? '#50CD89' : params.row.trangThai === 1 ? '#FF9900' : '#F1416C',
-                        margin: 'auto'
-                    }}
-                    className="state-thanh-toan">
+                    className={
+                        params.row.trangThai === 1
+                            ? 'data-grid-cell-trangthai-active'
+                            : 'data-grid-cell-trangthai-notActive'
+                    }>
                     {params.value}
                 </Box>
             )

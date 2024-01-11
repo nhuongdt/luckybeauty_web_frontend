@@ -510,18 +510,17 @@ export default function PageProduct() {
         {
             field: 'txtTrangThaiHang',
             headerName: 'Trạng thái',
-
+            headerAlign: 'center',
+            align: 'center',
             minWidth: 130,
             flex: 1,
             renderCell: (params) => (
                 <Box
-                    sx={{
-                        fontSize: 'var(--font-size-main)',
-                        padding: '4px 8px',
-                        borderRadius: '1000px',
-                        // backgroundColor: '#F1FAFF',
-                        color: params.row.trangThai === 0 ? '#b16827' : '#009EF7'
-                    }}>
+                    className={
+                        params.row.trangThai === 1
+                            ? 'data-grid-cell-trangthai-active'
+                            : 'data-grid-cell-trangthai-notActive'
+                    }>
                     {params.value || ''}
                 </Box>
             ),
