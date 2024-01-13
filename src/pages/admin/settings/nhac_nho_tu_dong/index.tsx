@@ -308,7 +308,7 @@ export default function PageCaiDatNhacTuDong({ aa }: any) {
                     </Typography>
                 </Grid>
                 {arrSetup?.map((item: ICaiDatNhacNho, index) => (
-                    <Grid item xs={4} key={index}>
+                    <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
                         <Stack
                             spacing={4}
                             padding={'20px 24px'}
