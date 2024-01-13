@@ -121,6 +121,7 @@ export function CellDate({ date, dateType = 'dd/MM/yyyy' }: any) {
     return <Box title={dateValue}>{dateValue}</Box>;
 }
 const TinNhanPage = () => {
+    // list column default (ds tin nhan da gui)
     const columns: GridColDef[] = [
         {
             field: 'thoiGianGui',
@@ -263,7 +264,9 @@ const TinNhanPage = () => {
         } as IParamSearchBrandname;
         const data = await BrandnameService.GetListBandname(param, tenantId);
         if (data !== null) {
-            setLstBrandname(data.items);
+            // HOST: đang get all brandname, nên nếu gửi SMS từ HOST thì filter
+            const arrByTenantId = data.items?.filter((x) => x.tenantId == tenantId);
+            setLstBrandname(arrByTenantId);
         }
     };
     const GetAllMauTinSMS = async () => {
@@ -435,15 +438,14 @@ const TinNhanPage = () => {
 
     const onClickGuiLai = async () => {
         switch (tabActive) {
-            case 0:
+            case 0: // tin nhan da gui
                 {
                     // xuat excel
                 }
                 break;
-            case 1:
-            case 2:
+            case 1: // tin nhap
+            case 2: // gui that bai
                 {
-                    console.log(rowSelectionModel);
                     if (lstBrandname.length > 0) {
                         const data = await HeThongSMServices.GuiLai_TinNhan_ThatBai(
                             rowSelectionModel,
@@ -1056,8 +1058,12 @@ const TinNhanPage = () => {
                                 <CustomTablePagination
                                     currentPage={paramSearch.currentPage ?? 1}
                                     rowPerPage={paramSearch.pageSize ?? 10}
-                                    totalRecord={pageSMS.totalCount}
-                                    totalPage={pageSMS.totalPage}
+                                    totalRecord={
+                                        [0, 1, 2].includes(tabActive) ? pageSMS.totalCount : pageCutomerSMS.totalCount
+                                    }
+                                    totalPage={
+                                        [0, 1, 2].includes(tabActive) ? pageSMS.totalPage : pageCutomerSMS.totalPage
+                                    }
                                     handlePerPageChange={handlePerPageChange}
                                     handlePageChange={handleChangePage}
                                 />
