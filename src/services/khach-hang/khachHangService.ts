@@ -15,6 +15,7 @@ import { CreateOrEditNhomKhachDto } from './dto/CreateOrEditNhomKhachDto';
 import { PagedRequestDto } from '../dto/pagedRequestDto';
 import { PagedResultDto } from '../dto/pagedResultDto';
 import { ThongTinKhachHangTongHopDto } from './dto/ThongTinKhachHangTongHopDto';
+import { ILichSuDatLich } from './dto/ILichSuDatLich';
 
 class KhachHangService {
     public async getAll(input: PagedKhachHangResultRequestDto): Promise<PagedResultDto<KhachHangItemDto>> {
@@ -99,7 +100,7 @@ class KhachHangService {
         const response = await http.post(`api/services/app/KhachHang/LichSuGiaoDich?idKhachHang=${idKhachHang}`, input);
         return response.data.result;
     }
-    async lichSuDatLich(idKhachHang: string, input: PagedRequestDto) {
+    async lichSuDatLich(idKhachHang: string, input: PagedRequestDto): Promise<PagedResultDto<ILichSuDatLich>> {
         const response = await http.post(`api/services/app/KhachHang/LichSuDatLich?idKhachHang=${idKhachHang}`, input);
         return response.data.result;
     }
