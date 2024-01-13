@@ -118,6 +118,12 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             tongTichDiem: dataCheckIn.tongTichDiem,
             dateTimeCheckIn: dataCheckIn.dateTimeCheckIn
         });
+
+        // asiign TongThanhToan if checkin from booking
+        const hdCache = await dbDexie.hoaDon.where('idCheckIn').equals(dataCheckIn.idCheckIn).toArray();
+        if (hdCache.length > 0) {
+            cusChecking.tongThanhToan = hdCache[0].tongThanhToan;
+        }
         setAllCusChecking([...allCusChecking, cusChecking]);
     };
 
