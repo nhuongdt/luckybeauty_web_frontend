@@ -194,8 +194,7 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
                                                 fontWeight={500}
                                                 color={'#0180c7'}
                                                 sx={{
-                                                    fontFamily:
-                                                        '"Roboto", "Helvetica Neue", "Helvetica", "Arial", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important'
+                                                    fontFamily: 'var(--font-family-main) !important'
                                                 }}>
                                                 Official Account
                                             </Typography>
