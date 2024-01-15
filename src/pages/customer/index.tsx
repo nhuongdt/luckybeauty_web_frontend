@@ -25,7 +25,6 @@ import './customerPage.css';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
-// import SearchIcon from '../../images/search-normal.svg';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import SearchIcon from '@mui/icons-material/Search';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';

@@ -65,14 +65,14 @@ const MauTinNhan = () => {
                         <PageEmpty />
                     ) : (
                         <Box padding={'16px 16px 16px 32px'}>
-                            {dataGroupMauTin?.map((item, key) => (
-                                <Stack paddingBottom={2}>
+                            {dataGroupMauTin?.map((item, index) => (
+                                <Stack paddingBottom={2} key={index}>
                                     <Stack spacing={1.5}>
                                         <Typography fontSize={'16px'} color={'#525F7A'} fontWeight={600}>
                                             {item?.loaiTin}
                                         </Typography>
                                         {item?.lstDetail?.map((detail, index2) => (
-                                            <Stack spacing={1} direction={'row'} alignItems={'center'}>
+                                            <Stack spacing={1} direction={'row'} alignItems={'center'} key={index2}>
                                                 <Chip
                                                     label={
                                                         <Typography
@@ -85,11 +85,7 @@ const MauTinNhan = () => {
                                                     sx={{ marginRight: '10px' }}
                                                     onClick={() => editMauTin(detail)}
                                                 />
-                                                <Typography
-                                                    key={index2}
-                                                    variant={'body2'}
-                                                    fontWeight={400}
-                                                    color={'#525F7A'}>
+                                                <Typography variant={'body2'} fontWeight={400} color={'#525F7A'}>
                                                     {detail?.noiDungTinMau}
                                                 </Typography>
                                             </Stack>

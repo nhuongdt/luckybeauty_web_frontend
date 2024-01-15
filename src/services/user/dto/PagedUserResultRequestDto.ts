@@ -2,4 +2,5 @@ import { PagedFilterAndSortedRequest } from '../../dto/pagedFilterAndSortedReque
 
 export interface PagedUserResultRequestDto extends PagedFilterAndSortedRequest {
     keyword: string;
+    trangThais?: string[];
 }

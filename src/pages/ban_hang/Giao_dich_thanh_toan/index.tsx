@@ -461,11 +461,7 @@ const GiaoDichThanhToan: React.FC = () => {
                                 <TextField
                                     size="small"
                                     fullWidth
-                                    sx={{
-                                        backgroundColor: '#fff',
-                                        borderColor: '#CDC9CD!important'
-                                    }}
-                                    className="search-field"
+                                    className="text-search"
                                     variant="outlined"
                                     type="search"
                                     placeholder="Tìm kiếm"

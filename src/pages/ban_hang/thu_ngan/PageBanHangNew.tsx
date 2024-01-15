@@ -15,12 +15,11 @@ import {
     RadioGroup,
     Radio,
     FormControlLabel,
-    Badge,
-    IconButton
+    Badge
 } from '@mui/material';
 import closeIcon from '../../../images/closeSmall.svg';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { Close, Add, ElectricalServicesSharp, SosTwoTone } from '@mui/icons-material';
+import { Add } from '@mui/icons-material';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { debounce } from '@mui/material/utils';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -54,7 +53,6 @@ import { ReactComponent as IconDv } from '../../../images/icon-DV.svg';
 
 import { ReactComponent as DeleteIcon } from '../../../images/trash.svg';
 import { ReactComponent as VoucherIcon } from '../../../images/voucherIcon.svg';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 import { PagedNhanSuRequestDto } from '../../../services/nhan-vien/dto/PagedNhanSuRequestDto';
@@ -170,7 +168,10 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
 
     const GetAllInvoiceWaiting = async () => {
         // get list hoadon from cache
-        const allHD = await dbDexie.hoaDon.orderBy('ngayLapHoaDon').toArray();
+        const allHD = await dbDexie.hoaDon
+            .where('idChiNhanh')
+            .equals(idChiNhanh as string)
+            .sortBy('ngayLapHoaDon');
         setAllInvoiceWaiting(allHD);
         setLstSearchInvoiceWaiting([...allHD]);
     };
@@ -393,7 +394,9 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
 
     const GetSetCusChosing = async (idCus: string) => {
         const dataCus = await khachHangService.getKhachHang(idCus);
-        setCusChosing(dataCus);
+        if (dataCus != null) {
+            setCusChosing(dataCus);
+        }
     };
 
     const updateCurrentInvoice = async () => {
@@ -884,7 +887,6 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             tongGiamGiaHD: tongGiamGiaHD,
             tongThanhToan: khachPhaiTra
         });
-        // todo update in cache
         try {
             await dbDexie.hoaDon.update(hoadon?.id, {
                 pTGiamGiaHD: ptGiamGiaHD,
@@ -975,7 +977,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                 tenKhachHang: 'Khách lẻ'
             })
         );
-        setTriggerAddCheckIn({ ...triggerAddCheckIn, id: '' });
+        setTriggerAddCheckIn({ ...triggerAddCheckIn, id: '', isShow: false });
         setCusChosing({
             ...cusChosing,
             id: '',
@@ -1284,7 +1286,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                         }
                                     }}
                                     size="small"
-                                    className="search-field no-minWidth"
+                                    className="text-search"
                                     variant="outlined"
                                     type="search"
                                     placeholder="Tìm dịch vụ"
@@ -1362,7 +1364,9 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                 gap: '6px',
                                                 padding: '4px 8px ',
                                                 overflow: 'hidden',
-                                                bgcolor: 'var( --color-main)',
+                                                // bgcolor: 'var( --color-main)',
+                                                bgcolor: idNhomHang == '' ? 'var( --color-main)' : '#ebe9e9cc',
+
                                                 borderRadius: '8px',
                                                 marginTop: '8px',
                                                 cursor: 'pointer',
@@ -1389,7 +1393,8 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                 sx={{
                                                     textAlign: 'center',
                                                     '& .MuiTypography-root': {
-                                                        color: 'white',
+                                                        // color: 'white',
+                                                        color: idNhomHang == '' ? 'white' : 'black',
                                                         whiteSpace: 'nowrap',
                                                         width: '100%',
                                                         fontSize: 'var(--font-size-main)',
@@ -1411,7 +1416,10 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                     gap: '6px',
                                                     padding: '4px 8px ',
                                                     overflow: 'hidden',
-                                                    bgcolor: '#EEF0F4',
+                                                    bgcolor:
+                                                        idNhomHang == (nhomDV?.id as unknown as string)
+                                                            ? 'rgba(0,0,0,0.3)'
+                                                            : '#ebe9e9cc',
                                                     borderRadius: '8px',
                                                     marginTop: '8px',
                                                     cursor: 'pointer',
@@ -1471,7 +1479,11 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                     gap: '6px',
                                                     padding: '4px 8px',
                                                     overflow: 'hidden',
-                                                    bgcolor: '#ebe9e9cc',
+                                                    // bgcolor: '#ebe9e9cc',
+                                                    bgcolor:
+                                                        idNhomHang == (nhomHH?.id as unknown as string)
+                                                            ? 'rgba(0,0,0,0.3)'
+                                                            : '#ebe9e9cc',
                                                     borderRadius: '8px',
                                                     marginTop: '12px',
                                                     minWidth: horizontalLayout ? '200px' : 'unset',
@@ -1546,7 +1558,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                             }
                                         }}
                                         size="small"
-                                        className="search-field"
+                                        className="text-search"
                                         variant="outlined"
                                         type="search"
                                         placeholder="Tìm dịch vụ"

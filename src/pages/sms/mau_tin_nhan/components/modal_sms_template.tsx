@@ -14,7 +14,7 @@ import {
     Checkbox
 } from '@mui/material';
 import { Form, Formik } from 'formik';
-import AppConsts, { ISelect, LoaiTin, TypeAction } from '../../../../lib/appconst';
+import AppConsts, { ISelect, LoaiTin, SMS_HinhThucGuiTin, TrangThaiActive, TypeAction } from '../../../../lib/appconst';
 import { IOSSwitch } from '../../../../components/Switch/IOSSwitch';
 import { useEffect, useState } from 'react';
 import { MauTinSMSDto } from '../../../../services/sms/mau_tin_sms/mau_tin_dto';
@@ -28,7 +28,10 @@ import SelectWithData from '../../../../components/Select/SelectWithData';
 import { ExpandMoreOutlined } from '@mui/icons-material';
 import CaiDatNhacNhoService from '../../../../services/sms/cai_dat_nhac_nho/CaiDatNhacNhoService';
 import { handleClickOutside } from '../../../../utils/customReactHook';
-import { CaiDatNhacNhoDto } from '../../../../services/sms/cai_dat_nhac_nho/cai_dat_nhac_nho_dto';
+import {
+    CaiDatNhacNhoChiTietDto,
+    CaiDatNhacNhoDto
+} from '../../../../services/sms/cai_dat_nhac_nho/cai_dat_nhac_nho_dto';
 
 const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: any) => {
     const ref = handleClickOutside(() => setExpandAction(false));
@@ -61,29 +64,42 @@ const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: 
     });
 
     const saveMauTin = async (params: MauTinSMSDto) => {
-        if (utils.checkNull(params.id)) {
+        if (utils.checkNull(params.id) || params.id === Guid.EMPTY) {
             params.id = Guid.EMPTY;
             const data = await MauTinSMService.CreateMauTinSMS(params);
             params.id = data.id;
-            onOK(params, TypeAction.INSEART);
             setObjAlert({ ...objAlert, show: true, mes: 'Thêm mới mẫu tin thành công' });
 
             if (params.laMacDinh && params.idLoaiTin !== LoaiTin.TIN_THUONG) {
-                // check exist caidatnhacnho && insert
+                // check exist caidatnhacnho
                 const listSetup = await CaiDatNhacNhoService.GetAllCaiDatNhacNho();
+                let existSetup = false;
                 if (listSetup != null && listSetup.length > 0) {
                     const exists = listSetup.filter((x) => x.idLoaiTin === params.idLoaiTin);
-                    if (exists.length === 0) {
-                        const objNhacNho = new CaiDatNhacNhoDto({
-                            id: Guid.EMPTY,
-                            idLoaiTin: params.idLoaiTin,
-                            idMauTin: data.id as unknown as null,
-                            noiDungTin: params.noiDungTinMau
-                        });
-                        await CaiDatNhacNhoService.CreateCaiDatNhacNho(objNhacNho);
+                    if (exists.length > 0) {
+                        existSetup = true;
                     }
                 }
+                // insert if not exists
+                if (!existSetup) {
+                    const objNhacNho = new CaiDatNhacNhoDto({
+                        id: Guid.EMPTY,
+                        idLoaiTin: params.idLoaiTin,
+                        idMauTin: data.id as unknown as null,
+                        noiDungTin: params.noiDungTinMau
+                    });
+                    const dataSetup = await CaiDatNhacNhoService.CreateCaiDatNhacNho(objNhacNho);
+                    const objDetail = {
+                        id: Guid.EMPTY,
+                        idCaiDatNhacTuDong: dataSetup.id,
+                        hinhThucGui: SMS_HinhThucGuiTin.SMS,
+                        trangThai: TrangThaiActive.ACTIVE
+                    } as CaiDatNhacNhoChiTietDto;
+
+                    await CaiDatNhacNhoService.CreateOrUpdateCaiDatNhacNhoChiTiet(dataSetup.id, objDetail);
+                }
             }
+            onOK(params, TypeAction.INSEART);
         } else {
             await MauTinSMService.UpdateMauTinSMS(params);
             onOK(params, TypeAction.UPDATE);

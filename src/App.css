@@ -364,8 +364,12 @@ body .font-normal {
     background-color: #fff;
 }
 
-.text-search input,
-.text-search .MuiInputBase-root {
-    /* ô tìm kiếm: nếu có Icon search: reset paddingLeft = 0 */
+.text-search input {
+    /* ô nhập nội dung tìm kiếm */
     padding-left: 0px!important;
+}
+
+.text-search .MuiButtonBase-root {
+    /* ô tìm kiếm: nếu có Icon search: reset paddingLeft = 0 */
+    margin-left: -12px!important;
 }

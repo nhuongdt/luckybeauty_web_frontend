@@ -10,7 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckinService from '../../services/check_in/CheckinService';
 
 import { dbDexie } from '../../lib/dexie/dexieDB';
-import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import EventIcon from '@mui/icons-material/Event';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
@@ -118,6 +118,12 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             tongTichDiem: dataCheckIn.tongTichDiem,
             dateTimeCheckIn: dataCheckIn.dateTimeCheckIn
         });
+
+        // asiign TongThanhToan if checkin from booking
+        const hdCache = await dbDexie.hoaDon.where('idCheckIn').equals(dataCheckIn.idCheckIn).toArray();
+        if (hdCache.length > 0) {
+            cusChecking.tongThanhToan = hdCache[0].tongThanhToan;
+        }
         setAllCusChecking([...allCusChecking, cusChecking]);
     };
 
@@ -137,7 +143,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                 onOk={deleteCusChecking}
                 onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
             <Grid item xs={12} sm={6} md={8} lg={8} xl={8}>
-                <Box
+                {/* <Box
                     sx={{
                         position: 'absolute',
                         height: '100vh',
@@ -147,7 +153,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                         pointerEvents: 'none',
                         bgcolor: '#f8f8f8',
                         zIndex: '-5'
-                    }}></Box>
+                    }}></Box> */}
                 <Grid container>
                     <Grid item xs={12}>
                         <Stack
@@ -170,6 +176,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                     borderWidth: '1px!important',
                                     maxWidth: '300px'
                                 }}
+                                className="text-search"
                                 size="small"
                                 variant="outlined"
                                 type="search"
@@ -178,7 +185,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <SearchIcon />
+                                            <SearchOutlinedIcon />
                                         </InputAdornment>
                                     )
                                 }}

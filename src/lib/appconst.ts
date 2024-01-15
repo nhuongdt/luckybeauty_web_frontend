@@ -73,6 +73,15 @@ export const TrangThaiCheckin = {
     COMPLETED: 3,
     CANCEL: 4
 };
+export const SMS_HinhThucGuiTin = {
+    SMS: 1,
+    ZALO: 2,
+    EMAIL: 3
+};
+export const TrangThaiActive = {
+    ACTIVE: 1,
+    NOT_ACTIVE: 0
+};
 
 const AppConsts = {
     userManagement: {

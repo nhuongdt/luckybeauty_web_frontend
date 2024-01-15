@@ -409,22 +409,18 @@ const PageSoQuy = ({ xx }: any) => {
             field: 'txtTrangThai',
             headerName: 'Trạng thái',
             headerAlign: 'center',
+            align: 'center',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box
                     title={params.value}
-                    sx={{
-                        padding: '4px 8px',
-                        borderRadius: '100px',
-                        backgroundColor:
-                            params.row.trangThai === 1 ? '#E8FFF3' : params.row.trangThai === 0 ? '#FFF8DD' : '#FFF5F8',
-                        color:
-                            params.row.trangThai === 1 ? '#50CD89' : params.row.trangThai === 0 ? '#FF9900' : '#F1416C',
-                        margin: 'auto'
-                    }}
-                    className="state-thanh-toan">
+                    className={
+                        params.row.trangThai === 1
+                            ? 'data-grid-cell-trangthai-active'
+                            : 'data-grid-cell-trangthai-notActive'
+                    }>
                     {params.value}
                 </Box>
             )
@@ -487,13 +483,6 @@ const PageSoQuy = ({ xx }: any) => {
                                 <TextField
                                     fullWidth
                                     size="small"
-                                    sx={{
-                                        backgroundColor: '#fff',
-                                        borderColor: '#CDC9CD!important',
-                                        '& .MuiInputBase-root': {
-                                            pl: '0'
-                                        }
-                                    }}
                                     onChange={(e: any) => {
                                         setParamSearch({
                                             ...paramSearch,
@@ -501,7 +490,7 @@ const PageSoQuy = ({ xx }: any) => {
                                         });
                                     }}
                                     onKeyDown={handleKeyDownTextSearch}
-                                    className="search-field"
+                                    className="text-search"
                                     variant="outlined"
                                     type="search"
                                     placeholder="Tìm kiếm"
@@ -611,6 +600,7 @@ const PageSoQuy = ({ xx }: any) => {
                     <DataGrid
                         disableRowSelectionOnClick
                         className={rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'}
+                        autoHeight={pageDataSoQuy?.totalCount == 0}
                         rowHeight={46}
                         rows={pageDataSoQuy.items}
                         columns={columns}

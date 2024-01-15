@@ -3,7 +3,7 @@ import { CreateOrEditKhachHangDto } from '../services/khach-hang/dto/CreateOrEdi
 import khachHangService from '../services/khach-hang/khachHangService';
 import AppConsts from '../lib/appconst';
 import { KhachHangDetail } from '../services/khach-hang/dto/KhachHangDetail';
-import { LichSuDatLich } from '../services/khach-hang/dto/LichSuDatLich';
+import { ILichSuDatLich } from '../services/khach-hang/dto/ILichSuDatLich';
 import { PagedResultDto } from '../services/dto/pagedResultDto';
 import { LichSuGiaoDich } from '../services/khach-hang/dto/LichSuGiaoDich';
 import { CreateOrEditNhomKhachDto } from '../services/khach-hang/dto/CreateOrEditNhomKhachDto';
@@ -13,7 +13,7 @@ class KhachHangSrore {
     createEditKhachHangDto!: CreateOrEditKhachHangDto;
     createOrEditNhomKhachDto!: CreateOrEditNhomKhachDto;
     khachHangDetail!: KhachHangDetail;
-    lichSuDatLich!: PagedResultDto<LichSuDatLich>;
+    lichSuDatLich!: PagedResultDto<ILichSuDatLich>;
     lichSuGiaoDich!: PagedResultDto<LichSuGiaoDich>;
     constructor() {
         this.khachHangDetail = {
