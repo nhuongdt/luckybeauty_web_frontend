@@ -11,7 +11,8 @@ import {
     Typography,
     RadioGroup,
     FormControlLabel,
-    Radio
+    Radio,
+    Checkbox
 } from '@mui/material';
 import closeIcon from '../../../images/close-square.svg';
 import '../employee.css';
@@ -38,6 +39,11 @@ import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import DatePickerRequiredCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
 import { CreateOrEditChucVuDto } from '../../../services/nhan-vien/chuc_vu/dto/CreateOrEditChucVuDto';
 import { Guid } from 'guid-typescript';
+import { SuggestDichVuDto } from '../../../services/suggests/dto/SuggestDichVuDto';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import { C } from '@fullcalendar/core/internal-common';
+import { boolean } from 'yup';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;
@@ -53,9 +59,12 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
         isShowConfirmDelete: false,
         staffImage: '',
         googleDrive_fileId: '',
-        fileImage: {} as File
+        fileImage: {} as File,
+        checkAllService: false as boolean
     };
-
+    componentDidMount(): void {
+        suggestStore.getSuggestDichVu();
+    }
     onModalChucVu = () => {
         this.setState({
             chucVuVisiable: !this.state.chucVuVisiable
@@ -115,6 +124,20 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
             };
         });
     };
+    handleSelectAllService = (checked: boolean) => {
+        if (checked === true) {
+            this.setState({
+                selectedServices: suggestStore.suggestDichVu.map((item) => {
+                    return item.id;
+                })
+            });
+        } else {
+            this.setState({
+                selectedServices: []
+            });
+        }
+    };
+
     render(): ReactNode {
         const { visible, onCancel, title, onOk, formRef } = this.props;
         const initValues: CreateOrUpdateNhanSuDto = nhanVienStore.createEditNhanVien;
@@ -123,7 +146,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
             <Dialog
                 open={visible}
                 onClose={onCancel}
-                maxWidth="md"
+                maxWidth="sm"
                 //className="poppup-them-nhan-vien"
                 sx={{
                     borderRadius: '12px',
@@ -348,32 +371,6 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                         />
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <Stack spacing={1} direction={'row'}>
-                                            <Stack
-                                                className="modal-lable "
-                                                justifyContent={'center'}
-                                                alignItems={'center'}>
-                                                <Typography
-                                                    //color="#4C4B4C"
-                                                    variant="subtitle2">
-                                                    Giới tính
-                                                </Typography>
-                                            </Stack>
-                                            <RadioGroup
-                                                onChange={handleChange}
-                                                row
-                                                defaultValue={'true'}
-                                                value={values.gioiTinh}
-                                                aria-labelledby="demo-row-radio-buttons-group-label"
-                                                name="gioiTinh">
-                                                <FormControlLabel value={1} control={<Radio />} label="Nam" />
-                                                <FormControlLabel value={2} control={<Radio />} label="Nữ" />
-                                                <FormControlLabel value={0} control={<Radio />} label="Khác" />
-                                            </RadioGroup>
-                                        </Stack>
-                                    </Grid>
-
-                                    <Grid item xs={12}>
                                         <Box display={'flex'} flexDirection={'row'} gap={1}>
                                             <Autocomplete
                                                 value={
@@ -416,14 +413,119 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             />
                                             <Button
                                                 hidden={!abpCustom.isGrandPermission('Pages.ChucVu.Create')}
-                                                sx={{ maxHeight: '38px' }}
+                                                sx={{ width: '48px', padding: 0, minWidth: 'auto' }}
                                                 onClick={this.onModalChucVu}
                                                 variant="contained">
                                                 <AddIcon />
                                             </Button>
                                         </Box>
                                     </Grid>
-
+                                    <Grid item xs={12} md={12}>
+                                        <Stack spacing={1} direction={'row'}>
+                                            <Stack
+                                                className="modal-lable "
+                                                justifyContent={'center'}
+                                                alignItems={'center'}>
+                                                <Typography
+                                                    //color="#4C4B4C"
+                                                    variant="subtitle2">
+                                                    Giới tính
+                                                </Typography>
+                                            </Stack>
+                                            <RadioGroup
+                                                onChange={handleChange}
+                                                row
+                                                defaultValue={'true'}
+                                                value={values.gioiTinh}
+                                                aria-labelledby="demo-row-radio-buttons-group-label"
+                                                name="gioiTinh">
+                                                <FormControlLabel value={1} control={<Radio />} label="Nam" />
+                                                <FormControlLabel value={2} control={<Radio />} label="Nữ" />
+                                                <FormControlLabel value={0} control={<Radio />} label="Khác" />
+                                            </RadioGroup>
+                                        </Stack>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Autocomplete
+                                            multiple
+                                            options={[
+                                                { id: 'selectAll', tenDichVu: 'Chọn tất cả' },
+                                                ...suggestStore.suggestDichVu
+                                            ]}
+                                            getOptionLabel={(option) => option.tenDichVu}
+                                            value={suggestStore.suggestDichVu?.filter((x) =>
+                                                values.services?.includes(x.id)
+                                            )}
+                                            disableClearable
+                                            renderOption={(props, option) => (
+                                                <li
+                                                    {...props}
+                                                    onClick={option.id === 'selectAll' ? undefined : props.onClick}>
+                                                    {option.id === 'selectAll' ? (
+                                                        <div
+                                                            style={{ width: '100%' }}
+                                                            onClick={() => {
+                                                                const checked = !this.state.checkAllService;
+                                                                this.setState({
+                                                                    checkAllService: checked
+                                                                });
+                                                                if (checked) {
+                                                                    setFieldValue(
+                                                                        'services',
+                                                                        suggestStore.suggestDichVu.map(
+                                                                            (item) => item.id
+                                                                        )
+                                                                    );
+                                                                } else {
+                                                                    setFieldValue('services', []);
+                                                                }
+                                                            }}>
+                                                            <Checkbox
+                                                                icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                                                checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                                                style={{ marginRight: 8 }}
+                                                                checked={
+                                                                    values.services?.length ===
+                                                                    suggestStore.suggestDichVu.length
+                                                                }
+                                                            />
+                                                            {option.tenDichVu}
+                                                        </div>
+                                                    ) : (
+                                                        <div>
+                                                            <Checkbox
+                                                                icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                                                checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                                                style={{ marginRight: 8 }}
+                                                                checked={values.services?.includes(option.id) || false}
+                                                            />
+                                                            {option.tenDichVu}
+                                                        </div>
+                                                    )}
+                                                </li>
+                                            )}
+                                            onChange={(event, value) => {
+                                                if (value.some((x) => x.id === 'selectAll')) {
+                                                    setFieldValue(
+                                                        'services',
+                                                        suggestStore.suggestDichVu.map((x) => x.id)
+                                                    );
+                                                } else {
+                                                    setFieldValue(
+                                                        'services',
+                                                        value.filter((x) => x.id !== 'selectAll').map((x) => x.id)
+                                                    );
+                                                }
+                                            }}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    label="Dịch vụ"
+                                                    placeholder="Chọn dịch vụ cho nhân viên"
+                                                />
+                                            )}
+                                        />
+                                    </Grid>
                                     <Grid item xs={12}>
                                         <TextField
                                             multiline

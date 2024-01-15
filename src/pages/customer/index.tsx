@@ -26,11 +26,10 @@ import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
 // import SearchIcon from '../../images/search-normal.svg';
-import ClearIcon from '@mui/icons-material/Clear';
-import { ExpandMoreOutlined } from '@mui/icons-material';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import SearchIcon from '@mui/icons-material/Search';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
+import { ReactComponent as FilterIcon } from '../../images/icons/i-filter.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import fileDowloadService from '../../services/file-dowload.service';
@@ -61,6 +60,7 @@ import { ModalChuyenNhom } from '../../components/Dialog/modal_chuyen_nhom';
 import { IList } from '../../services/dto/IList';
 import { format } from 'date-fns';
 import { Guid } from 'guid-typescript';
+import CustomerFilterDrawer from './components/CustomerFilterDrawer';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -89,6 +89,7 @@ interface CustomerScreenState {
     listItemSelectedModel: Guid[];
     checkAllRow: boolean;
     lstErrImport: BangBaoLoiFileimportDto[];
+    anchorElFilter: any;
 }
 class CustomerScreen extends React.Component<any, CustomerScreenState> {
     constructor(props: any) {
@@ -121,7 +122,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             checkAllRow: false,
             expendActionSelectedRow: false,
             listItemSelectedModel: [],
-            lstErrImport: []
+            lstErrImport: [],
+            anchorElFilter: false
         };
     }
     componentDidMount(): void {
@@ -130,8 +132,12 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         this.setState({
             visibilityColumn: visibilityColumn
         });
-    }
 
+        this.getSuggest();
+    }
+    async getSuggest() {
+        await suggestStore.getSuggestNhomKhach();
+    }
     async getData() {
         const khachHangs = await khachHangService.getAll({
             keyword: this.state.keyword,
@@ -149,7 +155,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             totalPage: Math.ceil(khachHangs.totalCount / this.state.rowPerPage)
         });
 
-        await suggestStore.getSuggestNhomKhach();
         this.setState((prev) => {
             return {
                 ...prev,
@@ -709,6 +714,23 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         Xuất
                                     </Button>
                                     <Button
+                                        className="border-color btn-outline-hover"
+                                        aria-describedby="popover-filter"
+                                        variant="outlined"
+                                        sx={{
+                                            textTransform: 'capitalize',
+                                            fontWeight: '400',
+                                            color: '#666466',
+                                            padding: '10px 16px',
+                                            borderColor: '#E6E1E6',
+                                            bgcolor: '#fff!important'
+                                        }}
+                                        onClick={(e) => {
+                                            this.setState({ anchorElFilter: e.currentTarget });
+                                        }}>
+                                        <FilterIcon />
+                                    </Button>
+                                    <Button
                                         className=" btn-container-hover"
                                         hidden={!abpCustom.isGrandPermission('Pages.KhachHang.Create')}
                                         onClick={() => {
@@ -727,7 +749,13 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             </Grid>
                         </Grid>
                         <Grid container spacing={2} marginTop={3} columns={13}>
-                            <Grid item lg={3} md={3} sm={3} xs={13}>
+                            <Grid
+                                item
+                                lg={3}
+                                md={3}
+                                sm={3}
+                                xs={13}
+                                display={window.screen.width < 768 ? 'none' : 'block'}>
                                 <Box className="page-box-left">
                                     <Box
                                         display="flex"
@@ -813,94 +841,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         }}
                                     />
                                 )}
-                                {/* {this.state.listItemSelectedModel.length > 0 ? (
-                                    <Stack
-                                        spacing={1}
-                                        marginBottom={2}
-                                        direction={'row'}
-                                        alignItems={'center'}>
-                                        <Box
-                                            sx={{ position: 'relative' }}
-                                            onMouseLeave={() => {
-                                                this.setState({
-                                                    expendActionSelectedRow: false
-                                                });
-                                            }}>
-                                            <Button
-                                                variant="contained"
-                                                endIcon={<ExpandMoreOutlined />}
-                                                onClick={() =>
-                                                    this.setState({
-                                                        expendActionSelectedRow: false
-                                                    })
-                                                }>
-                                                Thao tác
-                                            </Button>
-
-                                            <Box
-                                                sx={{
-                                                    display: this.state.expendActionSelectedRow
-                                                        ? ''
-                                                        : 'none',
-                                                    zIndex: 1,
-                                                    position: 'absolute',
-                                                    borderRadius: '4px',
-                                                    border: '1px solid #cccc',
-                                                    minWidth: 150,
-                                                    backgroundColor: 'rgba(248,248,248,1)',
-                                                    '& .MuiStack-root .MuiStack-root:hover': {
-                                                        backgroundColor: '#cccc'
-                                                    }
-                                                }}>
-                                                <Stack textAlign={'left'} spacing={0.5}>
-                                                    <Button
-                                                        startIcon={'Chuyển nhóm khách'}
-                                                        sx={{ color: 'black' }}
-                                                        onClick={
-                                                            this.onShowChuyenNhomKhach
-                                                        }></Button>
-                                                    <Button
-                                                        startIcon={'Xóa khách hàng'}
-                                                        sx={{
-                                                            color: 'black',
-                                                            '&:hover': {
-                                                                backgroundColor: '#E6E6E6',
-                                                                boxShadow: 'none'
-                                                            }
-                                                        }}
-                                                        onClick={this.showConfirmDelete}></Button>
-                                                    <Button
-                                                        startIcon={'Xuất danh sách'}
-                                                        sx={{
-                                                            color: 'black',
-                                                            '&:hover': {
-                                                                backgroundColor: '#E6E6E6',
-                                                                boxShadow: 'none'
-                                                            }
-                                                        }}
-                                                        onClick={this.exportSelectedRow}></Button>
-                                                </Stack>
-                                            </Box>
-                                        </Box>
-                                        <Stack direction={'row'}>
-                                            <Typography variant="body2" color={'red'}>
-                                                {this.state.listItemSelectedModel.length}&nbsp;
-                                            </Typography>
-                                            <Typography variant="body2">
-                                                bản ghi được chọn
-                                            </Typography>
-                                        </Stack>
-                                        <ClearIcon
-                                            color="error"
-                                            onClick={() => {
-                                                this.setState({
-                                                    listItemSelectedModel: [],
-                                                    checkAllRow: false
-                                                });
-                                            }}
-                                        />
-                                    </Stack>
-                                ) : null} */}
                                 <div
                                     className="page-box-right"
                                     style={{
@@ -997,6 +937,20 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             onClose={this.onImportShow}
                             downloadImportTemplate={this.downloadImportTemplate}
                             importFile={this.handleImportData}
+                        />
+                        <CustomerFilterDrawer
+                            id={'popover-filter'}
+                            anchorEl={this.state.anchorElFilter}
+                            handleClose={() => {
+                                this.setState({ anchorElFilter: null });
+                            }}
+                            handleChangeNhomKhach={(idNhomKhach: string) => {
+                                this.setState({ idNhomKhach: idNhomKhach });
+                            }}
+                            handleOk={() => {
+                                this.setState({ anchorElFilter: null });
+                                this.getData();
+                            }}
                         />
                     </Grid>
                 ) : (
