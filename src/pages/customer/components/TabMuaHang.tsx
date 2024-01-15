@@ -45,7 +45,7 @@ const TabMuaHang: React.FC = () => {
             headerName: 'Mã hóa đơn',
             minWidth: 70,
             flex: 1.2,
-            renderHeader: (params: any) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
+            renderHeader: (params: any) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value} sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                     {params.value}
@@ -56,7 +56,7 @@ const TabMuaHang: React.FC = () => {
             field: 'ngayLapHoaDon',
             headerName: 'Ngày bán',
             flex: 1.2,
-            renderHeader: (params: any) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
+            renderHeader: (params: any) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box sx={{ width: '100%' }} title={params.value}>
                     {formatDate(new Date(params.value), 'dd/MM/yyyy')}
@@ -67,7 +67,7 @@ const TabMuaHang: React.FC = () => {
             field: 'tongTienHang',
             headerName: 'Tổng tiền hàng',
             flex: 1,
-            renderHeader: (params: any) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
+            renderHeader: (params: any) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box sx={{ width: '100%' }} title={params.value}>
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
@@ -78,7 +78,7 @@ const TabMuaHang: React.FC = () => {
             field: 'tongGiamGia',
             headerName: 'Tổng giảm giá',
             flex: 1,
-            renderHeader: (params: any) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
+            renderHeader: (params: any) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value} sx={{ width: '100%' }}>
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
@@ -89,11 +89,7 @@ const TabMuaHang: React.FC = () => {
             field: 'tongPhaiTra',
             headerName: 'Tổng phải trả',
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box sx={{ fontWeight: '700' }} title={params.value}>
-                    {params.colDef.headerName}
-                </Box>
-            ),
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
             )
@@ -102,11 +98,7 @@ const TabMuaHang: React.FC = () => {
             field: 'khachDaTra',
             headerName: 'Khách đã trả',
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box sx={{ fontWeight: '700' }} title={params.value}>
-                    {params.colDef.headerName}
-                </Box>
-            ),
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
             )
@@ -115,11 +107,7 @@ const TabMuaHang: React.FC = () => {
             field: 'conNo',
             headerName: 'Còn nợ',
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box sx={{ fontWeight: '700' }} title={params.value}>
-                    {params.colDef.headerName}
-                </Box>
-            ),
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
             )
@@ -128,11 +116,7 @@ const TabMuaHang: React.FC = () => {
             field: 'trangThai',
             headerName: 'Trạng thái',
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box sx={{ fontWeight: '700' }} title={params.value}>
-                    {params.colDef.headerName}
-                </Box>
-            ),
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box
                     title={params.value}
@@ -149,7 +133,7 @@ const TabMuaHang: React.FC = () => {
 
     return (
         <>
-            <Box mt="24px">
+            <Box mt="24px" className="page-box-right">
                 <DataGrid
                     disableRowSelectionOnClick
                     hideFooter
@@ -176,44 +160,6 @@ const TabMuaHang: React.FC = () => {
                         }
                     }}
                     localeText={TextTranslate}
-                    sx={{
-                        '& .MuiDataGrid-columnHeaders': {
-                            bgcolor: '#F2EBF0'
-                        },
-                        '& .MuiDataGrid-iconButtonContainer': {
-                            display: 'none'
-                        },
-                        '& .MuiBox-root': {
-                            fontSize: '12px'
-                        },
-                        '& .MuiDataGrid-virtualScroller': {
-                            bgcolor: '#fff'
-                        },
-                        '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                            outline: 'none!important'
-                        },
-                        '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                            outline: 'none '
-                        },
-                        '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                            color: '#7C3367'
-                        },
-                        '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                            fill: '#7C3367'
-                        },
-                        '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)': {
-                            fill: '#000'
-                        },
-                        '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)': {
-                            fill: '#000'
-                        },
-                        '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                            color: '#7C3367!important'
-                        },
-                        '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within': {
-                            outline: 'none'
-                        }
-                    }}
                 />
                 <CustomTablePagination
                     currentPage={curentPage}
