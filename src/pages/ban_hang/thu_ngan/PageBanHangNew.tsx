@@ -887,7 +887,6 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             tongGiamGiaHD: tongGiamGiaHD,
             tongThanhToan: khachPhaiTra
         });
-        // todo update in cache
         try {
             await dbDexie.hoaDon.update(hoadon?.id, {
                 pTGiamGiaHD: ptGiamGiaHD,
@@ -1365,7 +1364,9 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                 gap: '6px',
                                                 padding: '4px 8px ',
                                                 overflow: 'hidden',
-                                                bgcolor: 'var( --color-main)',
+                                                // bgcolor: 'var( --color-main)',
+                                                bgcolor: idNhomHang == '' ? 'var( --color-main)' : '#ebe9e9cc',
+
                                                 borderRadius: '8px',
                                                 marginTop: '8px',
                                                 cursor: 'pointer',
@@ -1392,7 +1393,8 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                 sx={{
                                                     textAlign: 'center',
                                                     '& .MuiTypography-root': {
-                                                        color: 'white',
+                                                        // color: 'white',
+                                                        color: idNhomHang == '' ? 'white' : 'black',
                                                         whiteSpace: 'nowrap',
                                                         width: '100%',
                                                         fontSize: 'var(--font-size-main)',
@@ -1414,7 +1416,10 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                     gap: '6px',
                                                     padding: '4px 8px ',
                                                     overflow: 'hidden',
-                                                    bgcolor: '#EEF0F4',
+                                                    bgcolor:
+                                                        idNhomHang == (nhomDV?.id as unknown as string)
+                                                            ? 'rgba(0,0,0,0.3)'
+                                                            : '#ebe9e9cc',
                                                     borderRadius: '8px',
                                                     marginTop: '8px',
                                                     cursor: 'pointer',
@@ -1474,7 +1479,11 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                     gap: '6px',
                                                     padding: '4px 8px',
                                                     overflow: 'hidden',
-                                                    bgcolor: '#ebe9e9cc',
+                                                    // bgcolor: '#ebe9e9cc',
+                                                    bgcolor:
+                                                        idNhomHang == (nhomHH?.id as unknown as string)
+                                                            ? 'rgba(0,0,0,0.3)'
+                                                            : '#ebe9e9cc',
                                                     borderRadius: '8px',
                                                     marginTop: '12px',
                                                     minWidth: horizontalLayout ? '200px' : 'unset',
