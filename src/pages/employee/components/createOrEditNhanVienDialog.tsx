@@ -141,7 +141,6 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
     render(): ReactNode {
         const { visible, onCancel, title, onOk, formRef } = this.props;
         const initValues: CreateOrUpdateNhanSuDto = nhanVienStore.createEditNhanVien;
-
         return (
             <Dialog
                 open={visible}
@@ -189,31 +188,36 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                 <Formik
                     initialValues={initValues}
                     validationSchema={rules}
-                    onSubmit={async (values) => {
+                    onSubmit={async (values, { setFieldError }) => {
                         values.id = initValues.id;
+                        values.idChucVu = nhanVienStore.createEditNhanVien.idChucVu;
                         let fileId = this.state.googleDrive_fileId;
                         const fileSelect = this.state.fileImage;
                         if (!utils.checkNull(this.state.staffImage)) {
                             fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileSelect, 'NhanVien');
                             values.avatar = fileId !== '' ? `https://drive.google.com/uc?export=view&id=${fileId}` : '';
                         }
-                        const createOrEdit = await nhanVienService.createOrEdit(values);
-                        createOrEdit != null
-                            ? formRef.id === AppConsts.guidEmpty
-                                ? enqueueSnackbar('Thêm mới thành công', {
-                                      variant: 'success',
+                        if (values.idChucVu === '' || values.idChucVu === AppConsts.guidEmpty) {
+                            setFieldError('idChucVu', 'Vị trí nhân viên không được để trống');
+                        } else {
+                            const createOrEdit = await nhanVienService.createOrEdit(values);
+                            createOrEdit != null
+                                ? formRef.id === AppConsts.guidEmpty
+                                    ? enqueueSnackbar('Thêm mới thành công', {
+                                          variant: 'success',
+                                          autoHideDuration: 3000
+                                      })
+                                    : enqueueSnackbar('Cập nhật thành công', {
+                                          variant: 'success',
+                                          autoHideDuration: 3000
+                                      })
+                                : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
+                                      variant: 'error',
                                       autoHideDuration: 3000
-                                  })
-                                : enqueueSnackbar('Cập nhật thành công', {
-                                      variant: 'success',
-                                      autoHideDuration: 3000
-                                  })
-                            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
-                                  variant: 'error',
-                                  autoHideDuration: 3000
-                              });
-                        this.setState({ staffImage: '' });
-                        onOk();
+                                  });
+                            this.setState({ staffImage: '' });
+                            onOk();
+                        }
                     }}>
                     {({ isSubmitting, handleChange, errors, values, setFieldValue, touched }) => (
                         <Form
@@ -374,8 +378,8 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                         <Box display={'flex'} flexDirection={'row'} gap={1}>
                                             <Autocomplete
                                                 value={
-                                                    suggestStore.suggestChucVu.filter(
-                                                        (x) => x.idChucVu == values.idChucVu
+                                                    suggestStore.suggestChucVu?.filter(
+                                                        (x) => x.idChucVu == nhanVienStore.createEditNhanVien.idChucVu
                                                     )[0] ||
                                                     ({
                                                         idChucVu: '',
@@ -387,6 +391,9 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                 fullWidth
                                                 disablePortal
                                                 onChange={(event, value) => {
+                                                    nhanVienStore.createEditNhanVien.idChucVu = value
+                                                        ? value.idChucVu
+                                                        : '';
                                                     setFieldValue('idChucVu', value ? value.idChucVu : ''); // Cập nhật giá trị id trong Formik
                                                 }}
                                                 renderInput={(params) => (
