@@ -483,7 +483,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 multiline
                                 rows="2"
                                 label="Ghi chú"
-                                value={product.moTa}
+                                value={product?.moTa ?? ''}
                                 onChange={(event) =>
                                     setProduct((itemOlds) => {
                                         return {
@@ -542,8 +542,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                         sx={{
                             bgcolor: '#633434',
                             display:
-                                (isNew || !abpCustom.isGrandPermission('Pages.DM_HangHoa.Restore')) &&
-                                product.trangThai !== 0
+                                !abpCustom.isGrandPermission('Pages.DM_HangHoa.Restore') || product.trangThai === 1
                                     ? 'none'
                                     : ''
                         }}
