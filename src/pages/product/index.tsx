@@ -277,6 +277,7 @@ export default function PageProduct() {
 
     const doActionRow = (action: any, rowItem: any) => {
         setRowHover(rowItem);
+        console.log('rowItem ', rowItem);
         if (action < 2) {
             showModalAddProduct(action, rowItem?.idDonViQuyDoi);
         } else {
@@ -293,7 +294,7 @@ export default function PageProduct() {
     };
     const deleteProduct = async () => {
         if (!Utils.checkNull(rowHover?.idDonViQuyDoi)) {
-            await ProductService.DeleteProduct_byIDHangHoa(rowHover?.idHangHoa ?? '');
+            await ProductService.DeleteProduct_byIDHangHoa(rowHover?.id ?? '');
             setObjAlert({
                 show: true,
                 type: 1,
@@ -350,7 +351,7 @@ export default function PageProduct() {
     };
 
     const restoreProduct = async () => {
-        await ProductService.RestoreProduct_byIdHangHoa(rowHover?.idHangHoa ?? '');
+        await ProductService.RestoreProduct_byIdHangHoa(rowHover?.id ?? '');
         setObjAlert({
             show: true,
             type: 1,
