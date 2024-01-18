@@ -24,6 +24,7 @@ import { format } from 'date-fns';
 import { Stack } from '@mui/system';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import AutocompleteCustomer from '../../../components/Autocomplete/Customer';
+import abpCustom from '../../../components/abp-custom';
 
 const themOutlineInput = createTheme({
     components: {
@@ -190,7 +191,8 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack, open, onClose }: an
                                     sx={{
                                         bgcolor: '#fff!important',
                                         color: '#666466',
-                                        borderColor: '#E6E1E6!important'
+                                        borderColor: '#E6E1E6!important',
+                                        display: abpCustom.isGrandPermission('Pages.HoaDon.Print') ? '' : 'none'
                                     }}>
                                     In
                                 </Button>
@@ -200,7 +202,8 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack, open, onClose }: an
                                     sx={{
                                         bgcolor: '#fff!important',
                                         color: '#666466',
-                                        borderColor: '#E6E1E6!important'
+                                        borderColor: '#E6E1E6!important',
+                                        display: abpCustom.isGrandPermission('Pages.HoaDon.Export') ? '' : 'none'
                                     }}>
                                     Xuất
                                 </Button>
@@ -208,7 +211,8 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack, open, onClose }: an
                                     variant="contained"
                                     className="btn-container-hover"
                                     sx={{
-                                        color: '#fff'
+                                        color: '#fff',
+                                        display: 'none' // todo
                                     }}>
                                     Sao chép
                                 </Button>

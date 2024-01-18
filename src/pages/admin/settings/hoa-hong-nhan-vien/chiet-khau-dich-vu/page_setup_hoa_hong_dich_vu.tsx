@@ -44,6 +44,7 @@ import {
     CreateOrEditChietKhauDichVuDto
 } from '../../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/CreateOrEditChietKhauDichVuDto';
 import { LoaiHoaHongDichVu } from '../../../../../lib/appconst';
+import abpCustom from '../../../../../components/abp-custom';
 
 const TypeGroupPopover = {
     NHAN_VIEN: 1,
@@ -93,11 +94,11 @@ export function PopperSetupHoaHongDV_byGroup({
                 }
                 break;
         }
-        // todo focus when open popover
     }, [open]);
 
     const handleFocus = () => {
-        if (inputEl && inputEl.current) {
+        if (inputEl.current) {
+            // why not select?? todo
             inputEl.current.select();
         }
     };
@@ -160,6 +161,7 @@ export function PopperSetupHoaHongDV_byGroup({
                                     }
                                 }}
                                 onChange={(e) => changeGtriChietKhau(e.target.value)}
+                                // onFocus={handleFocus}
                                 onFocus={handleFocus}
                                 isAllowed={(values) => {
                                     const floatValue = values.floatValue;
@@ -289,6 +291,16 @@ export default function PageSetupHoaHongDichVu() {
         type = TypeGroupPopover.NHAN_VIEN,
         itemRow: GridRenderCellParams
     ) => {
+        const roleEdit = abpCustom.isGrandPermission('Pages.ChietKhauDichVu.Edit');
+        if (!roleEdit) {
+            setObjAlert({
+                ...objAlert,
+                show: true,
+                mes: `Bạn không có quyền cập nhật hoa hồng nhân viên`,
+                type: 2
+            });
+            return;
+        }
         setAnchorPopover(event.currentTarget);
         setTypePopover(type);
         setRowChosedPopover(itemRow.row);
@@ -534,6 +546,16 @@ export default function PageSetupHoaHongDichVu() {
         itemCK: ChietKhauDichVuItemDto_TachRiengCot,
         loaiChietKhau: number
     ) => {
+        const roleEdit = abpCustom.isGrandPermission('Pages.ChietKhauDichVu.Edit');
+        if (!roleEdit) {
+            setObjAlert({
+                ...objAlert,
+                show: true,
+                mes: `Bạn không có quyền cập nhật hoa hồng nhân viên`,
+                type: 2
+            });
+            return;
+        }
         const gtriCK = utils.formatNumberToFloat(gtriNew);
         // get laPhanTram old: used to update
         let laPhanTram = false;
@@ -771,6 +793,7 @@ export default function PageSetupHoaHongDichVu() {
             ),
             renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
         },
+        //// hoahong tuvan
         // {
         //     field: 'hoaHongTuVan',
         //     headerAlign: 'right',
@@ -851,11 +874,21 @@ export default function PageSetupHoaHongDichVu() {
             sortable: false,
             disableColumnMenu: true,
             renderHeader: () => (
-                <ClearOutlinedIcon sx={{ color: 'red' }} titleAccess="Xóa tất cả" onClick={onClickDeleteAll} />
+                <ClearOutlinedIcon
+                    sx={{
+                        color: 'red',
+                        display: abpCustom.isGrandPermission('Pages.ChietKhauDichVu.Delete') ? '' : 'none'
+                    }}
+                    titleAccess="Xóa tất cả"
+                    onClick={onClickDeleteAll}
+                />
             ),
             renderCell: (params) => (
                 <ClearOutlinedIcon
-                    sx={{ color: 'red' }}
+                    sx={{
+                        color: 'red',
+                        display: abpCustom.isGrandPermission('Pages.ChietKhauDichVu.Delete') ? '' : 'none'
+                    }}
                     titleAccess="Xóa dòng"
                     onClick={() => onClickDeleteRow(params.row)}
                 />
@@ -937,7 +970,11 @@ export default function PageSetupHoaHongDichVu() {
                             variant="outlined"
                             startIcon={<FileUploadOutlinedIcon />}
                             className="btnNhapXuat btn-outline-hover"
-                            sx={{ bgcolor: '#fff!important', color: '#666466' }}>
+                            sx={{
+                                bgcolor: '#fff!important',
+                                color: '#666466',
+                                display: abpCustom.isGrandPermission('Pages.ChietKhauDichVu.Export') ? '' : 'none'
+                            }}>
                             Xuất file
                         </Button>
                         {!utils.checkNull(idNhanVienChosed) && idNhanVienChosed !== Guid.EMPTY && (
@@ -947,8 +984,8 @@ export default function PageSetupHoaHongDichVu() {
                                 className=" btn-container-hover"
                                 sx={{
                                     minWidth: '143px',
-
-                                    fontSize: '14px'
+                                    fontSize: '14px',
+                                    display: abpCustom.isGrandPermission('Pages.ChietKhauDichVu.Edit') ? '' : 'none'
                                 }}
                                 startIcon={<Add />}
                                 onClick={() => showModalSetup()}>

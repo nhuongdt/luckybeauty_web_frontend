@@ -36,6 +36,7 @@ import utils from '../../utils/utils';
 import { Close } from '@mui/icons-material';
 import Cookies from 'js-cookie';
 import uploadFileService from '../../services/uploadFileService';
+import abpCustom from '../../components/abp-custom';
 
 export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [open, setOpen] = useState(false);
@@ -540,7 +541,11 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                         variant="contained"
                         sx={{
                             bgcolor: '#633434',
-                            display: !isNew && product.trangThai === 0 ? '' : 'none'
+                            display:
+                                (isNew || !abpCustom.isGrandPermission('Pages.DM_HangHoa.Restore')) &&
+                                product.trangThai !== 0
+                                    ? 'none'
+                                    : ''
                         }}
                         onClick={() => {
                             setInforDeleteProduct(
@@ -559,6 +564,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     {!(product.trangThai === 0 || isNew) && !wasClickSave && (
                         <Button
                             variant="outlined"
+                            sx={{ display: abpCustom.isGrandPermission('Pages.DM_HangHoa.Delete') ? '' : 'none' }}
                             color="error"
                             onClick={() => {
                                 setInforDeleteProduct(

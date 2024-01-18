@@ -34,7 +34,10 @@ export default function ActionViewEditDelete({ handleAction, lstOption }: any) {
                 {lstOption && lstOption.length > 0 ? (
                     <div>
                         {lstOption?.map((item: IList, index: number) => (
-                            <MenuItem onClick={() => handleClickAction(parseInt(item.id))} key={index}>
+                            <MenuItem
+                                onClick={() => handleClickAction(parseInt(item.id))}
+                                key={index}
+                                sx={{ display: item?.isShow ? '' : 'none' }}>
                                 <Typography
                                     color={item?.color}
                                     fontSize="12px"

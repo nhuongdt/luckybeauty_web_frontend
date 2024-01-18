@@ -19,7 +19,6 @@ import {
     Typography
 } from '@mui/material';
 import DialogButtonClose from '../../../components/Dialog/ButtonClose';
-import MenuIcon from '@mui/icons-material/Menu';
 import { Form, Formik } from 'formik';
 import * as yup from 'yup';
 import SelectWithData from '../../../components/Select/SelectWithData';
@@ -33,6 +32,7 @@ import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import HeThongSMSServices from '../../../services/sms/gui_tin_nhan/he_thong_sms_services';
 import { MauTinSMSDto } from '../../../services/sms/mau_tin_sms/mau_tin_dto';
 import LichSuNap_ChuyenTienService from '../../../services/sms/lich_su_nap_tien/LichSuNap_ChuyenTienService';
+import CaiDatNhacNhoService from '../../../services/sms/cai_dat_nhac_nho/CaiDatNhacNhoService';
 
 export default function ModalGuiTinNhan({
     lstBrandname,
@@ -393,6 +393,14 @@ export default function ModalGuiTinNhan({
                                             handleChange={(item: ISelect) => {
                                                 setFieldValue('idLoaiTin', item.value);
                                                 setNewSMS({ ...newSMS, idLoaiTin: item.value as number });
+                                                // set default mautin macdinh?? why not set?
+                                                const maumacdinh = lstMauTinSMS?.filter(
+                                                    (x: MauTinSMSDto) => x.idLoaiTin === item.value && x.laMacDinh
+                                                );
+                                                if (maumacdinh.length > 0) {
+                                                    setFieldValue('idMauTin', maumacdinh[0].id);
+                                                    setFieldValue('noiDungTin', maumacdinh[0].noiDungTinMau);
+                                                }
                                             }}
                                         />
                                     </Grid>

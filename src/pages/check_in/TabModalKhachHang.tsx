@@ -14,6 +14,7 @@ import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/Pa
 import { format } from 'date-fns';
 import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 import utils from '../../utils/utils';
+import abpCustom from '../../components/abp-custom';
 const TabKhachHang = ({ handleChoseCus }: any) => {
     const firsLoad = useRef(true);
     const windowWidth = useWindowWidth();
@@ -111,7 +112,8 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
                         sx={{
                             bgcolor: 'var(--color-main)',
                             marginLeft: windowWidth > 600 ? 'auto' : '0',
-                            height: 'fit-content'
+                            height: 'fit-content',
+                            display: abpCustom.isGrandPermission('Pages.KhachHang.Create') ? '' : 'none'
                         }}
                         startIcon={<AddIcon />}
                         className="btn-container-hover"

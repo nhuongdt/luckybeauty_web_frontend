@@ -632,7 +632,6 @@ class EmployeeScreen extends React.Component {
                                 <Button
                                     variant="outlined"
                                     size="small"
-                                    hidden={!abpCustom.isGrandPermission('Pages.NhanSu.Import')}
                                     startIcon={<img src={DownloadIcon} />}
                                     sx={{
                                         backgroundColor: '#fff!important',
@@ -641,7 +640,8 @@ class EmployeeScreen extends React.Component {
                                         color: '#666466',
                                         height: '40px',
                                         padding: '10px 16px',
-                                        borderRadius: '4px!important'
+                                        borderRadius: '4px!important',
+                                        display: abpCustom.isGrandPermission('Pages.NhanSu.Import') ? '' : 'none'
                                     }}
                                     onClick={this.onImportShow}
                                     className="btn-outline-hover">
@@ -650,7 +650,6 @@ class EmployeeScreen extends React.Component {
                                 <Button
                                     variant="outlined"
                                     size="small"
-                                    hidden={!abpCustom.isGrandPermission('Pages.NhanSu.Export')}
                                     startIcon={<img src={UploadIcon} />}
                                     sx={{
                                         backgroundColor: '#fff!important',
@@ -659,7 +658,8 @@ class EmployeeScreen extends React.Component {
                                         color: '#666466',
                                         padding: '10px 16px',
                                         height: '40px',
-                                        borderRadius: '4px!important'
+                                        borderRadius: '4px!important',
+                                        display: abpCustom.isGrandPermission('Pages.NhanSu.Export') ? '' : 'none'
                                     }}
                                     onClick={this.exportToExcel}
                                     className="btn-outline-hover">
@@ -670,7 +670,6 @@ class EmployeeScreen extends React.Component {
                                     sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
                                     <Button
                                         size="small"
-                                        hidden={!abpCustom.isGrandPermission('Pages.NhanSu.Create')}
                                         onClick={() => {
                                             this.createOrUpdateModalOpen('');
                                         }}
@@ -682,7 +681,8 @@ class EmployeeScreen extends React.Component {
                                             minWidth: '173px',
                                             fontSize: '14px',
                                             borderRadius: '4px!important',
-                                            backgroundColor: 'var(--color-main)!important'
+                                            backgroundColor: 'var(--color-main)!important',
+                                            display: abpCustom.isGrandPermission('Pages.NhanSu.Create') ? '' : 'none'
                                         }}
                                         className="btn-container-hover">
                                         Thêm nhân viên

@@ -51,6 +51,7 @@ import ZaloService from '../../services/sms/gui_tin_nhan/ZaloService';
 import { InforZOA, ZaloAuthorizationDto } from '../../services/sms/gui_tin_nhan/zalo_dto';
 import { Guid } from 'guid-typescript';
 import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
+import abpCustom from '../../components/abp-custom';
 
 const styleListItem = createTheme({
     components: {
@@ -854,7 +855,11 @@ const TinNhanPage = () => {
                                 variant="outlined"
                                 startIcon={<UploadIcon />}
                                 className="btnNhapXuat btn-outline-hover"
-                                sx={{ bgcolor: '#fff!important', color: '#666466' }}>
+                                sx={{
+                                    bgcolor: '#fff!important',
+                                    color: '#666466',
+                                    display: abpCustom.isGrandPermission('Pages.HeThongSMS.Export') ? '' : 'none'
+                                }}>
                                 Xuất
                             </Button>
                             <Button
@@ -862,8 +867,8 @@ const TinNhanPage = () => {
                                 variant="contained"
                                 sx={{
                                     minWidth: '143px',
-
-                                    fontSize: '14px'
+                                    fontSize: '14px',
+                                    display: abpCustom.isGrandPermission('Pages.HeThongSMS.Create') ? '' : 'none'
                                 }}
                                 startIcon={<Add />}
                                 onClick={() => setIsShowModalGuiTinZalo(true)}>
@@ -874,8 +879,8 @@ const TinNhanPage = () => {
                                 variant="contained"
                                 sx={{
                                     minWidth: '143px',
-
-                                    fontSize: '14px'
+                                    fontSize: '14px',
+                                    display: abpCustom.isGrandPermission('Pages.SMS_Template.Create') ? '' : 'none'
                                 }}
                                 startIcon={<Add />}
                                 onClick={() => setIsShowModalAddMauTin(true)}>
@@ -891,7 +896,10 @@ const TinNhanPage = () => {
                                 <Button
                                     fullWidth
                                     size="small"
-                                    sx={{ height: '40px' }}
+                                    sx={{
+                                        height: '40px',
+                                        display: abpCustom.isGrandPermission('Pages.HeThongSMS.Create') ? '' : 'none'
+                                    }}
                                     variant="contained"
                                     onClick={() => {
                                         setIsShowModalAdd(true);
@@ -971,6 +979,20 @@ const TinNhanPage = () => {
                                             <Button
                                                 variant="contained"
                                                 onClick={onClickGuiLai}
+                                                sx={{
+                                                    display:
+                                                        tabActive == 1
+                                                            ? abpCustom.isGrandPermission('Pages.HeThongSMS.Create')
+                                                                ? ''
+                                                                : 'none'
+                                                            : tabActive == 2
+                                                            ? abpCustom.isGrandPermission('Pages.HeThongSMS.Resend')
+                                                                ? ''
+                                                                : 'none'
+                                                            : abpCustom.isGrandPermission('Pages.HeThongSMS.Export')
+                                                            ? ''
+                                                            : 'none'
+                                                }}
                                                 startIcon={
                                                     tabActive != 0 ? <SendIcon style={{ width: 20 }} /> : <UploadIcon />
                                                 }>
@@ -1028,7 +1050,14 @@ const TinNhanPage = () => {
                                             //         setRowSelectionModel([]);
                                             //     }}
                                             // />
-                                            <Button variant="contained" onClick={onRowSelect_GuiTin}>
+                                            <Button
+                                                variant="contained"
+                                                onClick={onRowSelect_GuiTin}
+                                                sx={{
+                                                    display: abpCustom.isGrandPermission('Pages.HeThongSMS.Create')
+                                                        ? ''
+                                                        : 'none'
+                                                }}>
                                                 Gửi tin
                                             </Button>
                                         )}

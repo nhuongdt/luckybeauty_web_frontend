@@ -83,6 +83,7 @@ import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import { handleClickOutside } from '../../../utils/customReactHook';
+import abpCustom from '../../../components/abp-custom';
 
 const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const appContext = useContext(AppContext);
@@ -1756,7 +1757,12 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                     <Stack direction="row" spacing={'10px'}>
                                         <Add
                                             onClick={showModalCheckIn}
-                                            sx={{ color: '#1976d2' }}
+                                            sx={{
+                                                color: '#1976d2',
+                                                display: !abpCustom.isGrandPermission('Pages.CheckIn.Create')
+                                                    ? ''
+                                                    : 'none'
+                                            }}
                                             titleAccess="Thêm khách check in"
                                         />
                                         <div ref={ref}>

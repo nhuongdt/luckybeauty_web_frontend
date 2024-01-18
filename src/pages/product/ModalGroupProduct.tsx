@@ -24,6 +24,7 @@ import { ModelNhomHangHoa } from '../../services/product/dto';
 import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
 import Utils from '../../utils/utils';
 import AppConsts from '../../lib/appconst';
+import abpCustom from '../../components/abp-custom';
 
 export const GridColor = ({ handleChoseColor }: any) => {
     const [itemColor, setItemColor] = useState({});
@@ -347,7 +348,9 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     <Button
                         variant="outlined"
                         color="error"
-                        sx={{ display: isNew ? 'none' : '' }}
+                        sx={{
+                            display: isNew || !abpCustom.isGrandPermission('Pages.DM_NhomHangHoa.Delete') ? 'none' : ''
+                        }}
                         onClick={() => {
                             setInforDeleteProduct(
                                 new PropConfirmOKCancel({

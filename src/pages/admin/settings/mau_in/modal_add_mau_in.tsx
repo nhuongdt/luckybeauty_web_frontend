@@ -25,6 +25,7 @@ import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import TokenMauIn from './TokenMauIn';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import abpCustom from '../../../../components/abp-custom';
 
 const zIndexDialog = createTheme({
     components: {
@@ -263,6 +264,11 @@ export default function ModalAddMauIn({
                                                                     mes: `Bạn có chắc chắn muốn xóa mẫu in ${tenMauIn} không?`
                                                                 })
                                                             );
+                                                        }}
+                                                        sx={{
+                                                            display: abpCustom.isGrandPermission('Pages.MauIn.Delete')
+                                                                ? ''
+                                                                : 'none'
                                                         }}>
                                                         Xóa mẫu in
                                                     </Button>

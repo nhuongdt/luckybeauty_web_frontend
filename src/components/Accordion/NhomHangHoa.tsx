@@ -1,15 +1,15 @@
-import { Accordion, AccordionSummary, AccordionDetails, Box, Typography, Button } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import { useState } from 'react';
 import { OpenInNew, LocalOfferOutlined } from '@mui/icons-material';
 import { ModelNhomHangHoa } from '../../services/product/dto';
-// import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
+import abpCustom from '../abp-custom';
 
 export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: any) {
     const [rowHover, setRowHover] = useState<ModelNhomHangHoa>(new ModelNhomHangHoa({ id: '' }));
     const [isHover, setIsHover] = useState(false);
     const [idChosing, setIdChosing] = useState('');
 
-    const handleHover = (event: any, rowData: any, index: number) => {
+    const handleHover = (event: React.MouseEvent<HTMLDivElement>, rowData: any) => {
         switch (event.type) {
             case 'mouseenter': // enter
                 setIsHover(true);
@@ -26,7 +26,7 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
     };
     return (
         <>
-            {dataNhomHang.map((item: any, index: any) => (
+            {dataNhomHang.map((item: any, index: number) => (
                 <Accordion
                     disableGutters
                     key={index}
@@ -39,16 +39,15 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            // bgcolor: idChosing === item.id ? 'var(--color-bg)' : '',
                             '&:hover': {
                                 bgcolor: 'var(--color-bg)'
                             }
                         }}
-                        onMouseLeave={(event: any) => {
-                            handleHover(event, item, index);
+                        onMouseLeave={(event) => {
+                            handleHover(event, item);
                         }}
-                        onMouseEnter={(event: any) => {
-                            handleHover(event, item, index);
+                        onMouseEnter={(event) => {
+                            handleHover(event, item);
                         }}
                         onClick={() => handleClickTreeItem(false, item.id)}>
                         <LocalOfferOutlined sx={{ color: item.color, width: 20, height: 20 }} />
@@ -75,12 +74,16 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                                     event.stopPropagation();
                                     handleClickTreeItem(true, item.id);
                                 }}
-                                sx={{ position: 'absolute', right: 16 }}
+                                sx={{
+                                    position: 'absolute',
+                                    right: 16,
+                                    display: abpCustom.isGrandPermission('Pages.DM_NhomHangHoa.Edit') ? '' : 'none'
+                                }}
                             />
                         )}
                     </AccordionSummary>
 
-                    {item.children?.map((child: any, index2: any) => (
+                    {item.children?.map((child: any, index2: number) => (
                         <AccordionDetails
                             key={index2}
                             sx={{
@@ -93,11 +96,11 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                                     bgcolor: '#F2EBF0'
                                 }
                             }}
-                            onMouseLeave={(event: any) => {
-                                handleHover(event, child, index2);
+                            onMouseLeave={(event) => {
+                                handleHover(event, child);
                             }}
-                            onMouseEnter={(event: any) => {
-                                handleHover(event, child, index2);
+                            onMouseEnter={(event) => {
+                                handleHover(event, child);
                             }}
                             onClick={() => handleClickTreeItem(false, child.id)}>
                             <LocalOfferOutlined sx={{ color: item.color, opacity: '0', width: 20, height: 20 }} />
@@ -122,7 +125,11 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                                         event.stopPropagation();
                                         handleClickTreeItem(true, child.id);
                                     }}
-                                    sx={{ position: 'absolute', right: 16 }}
+                                    sx={{
+                                        position: 'absolute',
+                                        right: 16,
+                                        display: abpCustom.isGrandPermission('Pages.DM_NhomHangHoa.Edit') ? '' : 'none'
+                                    }}
                                 />
                             )}
                         </AccordionDetails>

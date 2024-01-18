@@ -20,6 +20,7 @@ import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 import Cookies from 'js-cookie';
 import { TrangThaiCheckin } from '../../lib/appconst';
+import abpCustom from '../../components/abp-custom';
 
 export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const [txtSearch, setTextSeach] = useState('');
@@ -208,7 +209,8 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 className=" btn-container-hover"
                                 variant="contained"
                                 sx={{
-                                    backgroundColor: 'var(--color-main)!important'
+                                    backgroundColor: 'var(--color-main)!important',
+                                    display: abpCustom.isGrandPermission('Pages.CheckIn.Create') ? '' : 'none'
                                 }}
                                 startIcon={<Add />}
                                 onClick={() =>

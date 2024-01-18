@@ -257,9 +257,12 @@ class ChietKhauHoaDonScreen extends Component {
                         onClick={() => {
                             this.createOrEditShowModal('');
                         }}
-                        sx={{ height: 40, color: '#FFFAFF' }}
+                        sx={{
+                            height: 40,
+                            color: '#FFFAFF',
+                            display: abpCustom.isGrandPermission('Pages.ChietKhauHoaDon.Create') ? '' : 'none'
+                        }}
                         startIcon={<AddOutlinedIcon sx={{ color: '#FFFAFF' }} />}
-                        hidden={!abpCustom.isGrandPermission('Pages.ChietKhauHoaDon.Create')}
                         className="btn-container-hover">
                         Thêm mới
                     </Button>

@@ -56,7 +56,16 @@ export default function MainPageUser({ xx }: any) {
                         <Stack flex={{ xs: 12, sm: 6, lg: 3, md: 5 }}>
                             <Button
                                 fullWidth
-                                hidden={!abpCustom.isGrandPermission('Pages.Administration.Users.Create')}
+                                sx={{
+                                    display:
+                                        tabActive == '1'
+                                            ? abpCustom.isGrandPermission('Pages.Administration.Users.Create')
+                                                ? ''
+                                                : 'none'
+                                            : abpCustom.isGrandPermission('Pages.Brandname.ChuyenTien.Create')
+                                            ? ''
+                                            : 'none'
+                                }}
                                 variant="contained"
                                 startIcon={<Add />}
                                 onClick={() => {
