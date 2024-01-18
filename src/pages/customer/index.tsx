@@ -25,11 +25,10 @@ import './customerPage.css';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
-import ClearIcon from '@mui/icons-material/Clear';
-import { ExpandMoreOutlined } from '@mui/icons-material';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import SearchIcon from '@mui/icons-material/Search';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
+import { ReactComponent as FilterIcon } from '../../images/icons/i-filter.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import fileDowloadService from '../../services/file-dowload.service';
@@ -60,6 +59,7 @@ import { ModalChuyenNhom } from '../../components/Dialog/modal_chuyen_nhom';
 import { IList } from '../../services/dto/IList';
 import { format } from 'date-fns';
 import { Guid } from 'guid-typescript';
+import CustomerFilterDrawer from './components/CustomerFilterDrawer';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -88,6 +88,7 @@ interface CustomerScreenState {
     listItemSelectedModel: Guid[];
     checkAllRow: boolean;
     lstErrImport: BangBaoLoiFileimportDto[];
+    anchorElFilter: any;
 }
 class CustomerScreen extends React.Component<any, CustomerScreenState> {
     constructor(props: any) {
@@ -120,7 +121,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             checkAllRow: false,
             expendActionSelectedRow: false,
             listItemSelectedModel: [],
-            lstErrImport: []
+            lstErrImport: [],
+            anchorElFilter: false
         };
     }
     componentDidMount(): void {
@@ -129,8 +131,12 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         this.setState({
             visibilityColumn: visibilityColumn
         });
-    }
 
+        this.getSuggest();
+    }
+    async getSuggest() {
+        await suggestStore.getSuggestNhomKhach();
+    }
     async getData() {
         const khachHangs = await khachHangService.getAll({
             keyword: this.state.keyword,
@@ -148,7 +154,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             totalPage: Math.ceil(khachHangs.totalCount / this.state.rowPerPage)
         });
 
-        await suggestStore.getSuggestNhomKhach();
         this.setState((prev) => {
             return {
                 ...prev,
@@ -707,6 +712,23 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         Xuất
                                     </Button>
                                     <Button
+                                        className="border-color btn-outline-hover"
+                                        aria-describedby="popover-filter"
+                                        variant="outlined"
+                                        sx={{
+                                            textTransform: 'capitalize',
+                                            fontWeight: '400',
+                                            color: '#666466',
+                                            padding: '10px 16px',
+                                            borderColor: '#E6E1E6',
+                                            bgcolor: '#fff!important'
+                                        }}
+                                        onClick={(e) => {
+                                            this.setState({ anchorElFilter: e.currentTarget });
+                                        }}>
+                                        <FilterIcon />
+                                    </Button>
+                                    <Button
                                         className=" btn-container-hover"
                                         onClick={() => {
                                             this.createOrUpdateModalOpen('');
@@ -725,7 +747,13 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             </Grid>
                         </Grid>
                         <Grid container spacing={2} marginTop={3} columns={13}>
-                            <Grid item lg={3} md={3} sm={3} xs={13}>
+                            <Grid
+                                item
+                                lg={3}
+                                md={3}
+                                sm={3}
+                                xs={13}
+                                display={window.screen.width < 768 ? 'none' : 'block'}>
                                 <Box className="page-box-left">
                                     <Box
                                         display="flex"
@@ -816,7 +844,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         }}
                                     />
                                 )}
-
                                 <div
                                     className="page-box-right"
                                     style={{
@@ -913,6 +940,20 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             onClose={this.onImportShow}
                             downloadImportTemplate={this.downloadImportTemplate}
                             importFile={this.handleImportData}
+                        />
+                        <CustomerFilterDrawer
+                            id={'popover-filter'}
+                            anchorEl={this.state.anchorElFilter}
+                            handleClose={() => {
+                                this.setState({ anchorElFilter: null });
+                            }}
+                            handleChangeNhomKhach={(idNhomKhach: string) => {
+                                this.setState({ idNhomKhach: idNhomKhach });
+                            }}
+                            handleOk={() => {
+                                this.setState({ anchorElFilter: null });
+                                this.getData();
+                            }}
                         />
                     </Grid>
                 ) : (

@@ -19,4 +19,5 @@ export interface CreateOrUpdateNhanSuDto {
     idChucVu: string;
     idChiNhanh?: string;
     ghiChu?: string;
+    services?: string[];
 }
