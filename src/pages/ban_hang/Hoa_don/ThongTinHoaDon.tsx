@@ -298,7 +298,13 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                         }}>
                                         {hoadonChosed?.maHoaDon}
                                     </Box>
-                                    <PrintIcon sx={{ color: 'var(--color-main)' }} onClick={InHoaDon} />
+                                    <PrintIcon
+                                        sx={{
+                                            color: 'var(--color-main)',
+                                            display: abpCustom.isGrandPermission('Pages.HoaDon.Print') ? '' : 'none'
+                                        }}
+                                        onClick={InHoaDon}
+                                    />
                                 </Stack>
                             </Grid>
                             <Grid item xs="auto">

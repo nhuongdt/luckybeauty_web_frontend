@@ -558,6 +558,9 @@ const GiaoDichThanhToan: React.FC = () => {
                             countRowSelected={rowSelectionModel.length}
                             title="hóa đơn"
                             choseAction={DataGrid_handleAction}
+                            removeItemChosed={() => {
+                                setRowSelectionModel([]);
+                            }}
                         />
                     </div>
                 )}
