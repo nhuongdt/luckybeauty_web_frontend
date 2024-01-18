@@ -189,7 +189,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     };
     onEditNhomKhach = async (isEdit: boolean, item: any) => {
         if (isEdit) {
-            // todo edit
             await khachHangStore.getNhomKhachForEdit(item.id);
             this.setState({
                 isShowNhomKhachModal: !this.state.isShowNhomKhachModal
@@ -677,7 +676,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     className="rounded-4px resize-height">
                                     <Button
                                         className="border-color btn-outline-hover"
-                                        hidden={!abpCustom.isGrandPermission('Pages.KhachHang.Import')}
                                         variant="outlined"
                                         onClick={this.onImportShow}
                                         startIcon={<img src={DownloadIcon} />}
@@ -685,14 +683,14 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                             textTransform: 'capitalize',
                                             fontWeight: '400',
                                             color: '#666466',
-                                            bgcolor: '#fff!important'
+                                            bgcolor: '#fff!important',
+                                            display: abpCustom.isGrandPermission('Pages.KhachHang.Import') ? '' : 'none'
                                         }}>
                                         Nhập
                                     </Button>
                                     <Button
                                         className="border-color btn-outline-hover"
                                         variant="outlined"
-                                        hidden={!abpCustom.isGrandPermission('Pages.KhachHang.Export')}
                                         onClick={() => {
                                             this.exportToExcel();
                                         }}
@@ -703,13 +701,13 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                             color: '#666466',
                                             padding: '10px 16px',
                                             borderColor: '#E6E1E6',
-                                            bgcolor: '#fff!important'
+                                            bgcolor: '#fff!important',
+                                            display: abpCustom.isGrandPermission('Pages.KhachHang.Export') ? '' : 'none'
                                         }}>
                                         Xuất
                                     </Button>
                                     <Button
                                         className=" btn-container-hover"
-                                        hidden={!abpCustom.isGrandPermission('Pages.KhachHang.Create')}
                                         onClick={() => {
                                             this.createOrUpdateModalOpen('');
                                         }}
@@ -718,7 +716,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         sx={{
                                             textTransform: 'capitalize',
                                             fontWeight: '400',
-                                            minWidth: '173px'
+                                            minWidth: '173px',
+                                            display: abpCustom.isGrandPermission('Pages.KhachHang.Create') ? '' : 'none'
                                         }}>
                                         Thêm khách hàng
                                     </Button>
@@ -787,20 +786,25 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             <Grid item lg={10} md={10} sm={10} xs={13}>
                                 {this.state.listItemSelectedModel.length > 0 && (
                                     <ActionRowSelect
-                                        lstOption={[
-                                            {
-                                                id: '1',
-                                                text: 'Chuyển nhóm khách'
-                                            },
-                                            {
-                                                id: '2',
-                                                text: 'Xóa khách hàng'
-                                            },
-                                            {
-                                                id: '3',
-                                                text: 'Xuất danh sách'
-                                            }
-                                        ]}
+                                        lstOption={
+                                            [
+                                                {
+                                                    id: '1',
+                                                    text: 'Chuyển nhóm khách',
+                                                    isShow: abpCustom.isGrandPermission('Pages.KhachHang.Edit')
+                                                },
+                                                {
+                                                    id: '2',
+                                                    text: 'Xóa khách hàng',
+                                                    isShow: abpCustom.isGrandPermission('Pages.KhachHang.Delete')
+                                                },
+                                                {
+                                                    id: '3',
+                                                    text: 'Xuất danh sách',
+                                                    isShow: abpCustom.isGrandPermission('Pages.KhachHang.Export')
+                                                }
+                                            ] as IList[]
+                                        }
                                         countRowSelected={this.state.listItemSelectedModel.length}
                                         title="khách hàng"
                                         choseAction={this.DataGrid_handleAction}
