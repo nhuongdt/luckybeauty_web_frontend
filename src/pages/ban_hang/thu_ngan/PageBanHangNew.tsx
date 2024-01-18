@@ -903,12 +903,11 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     // click thanh toan---> chon hinh thucthanhtoan--->   luu hoadon + phieuthu
     const saveHoaDon = async () => {
         setShowDetail(false);
-
-        // const nextIsSave = handleCheckNext();
-        // if (!nextIsSave) return;
+        setClickSave(true);
 
         const check = await checkSave();
         if (!check) {
+            setClickSave(false);
             return;
         }
 
@@ -2366,24 +2365,41 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                     <Button variant="outlined" sx={{ minWidth: 'unset' }} onClick={handleShowDetail}>
                                         <MoreHorizIcon sx={{ color: '#525F7A' }} />
                                     </Button>
-                                    <Button
-                                        variant="contained"
-                                        fullWidth
-                                        sx={{
-                                            fontSize: '16px',
-                                            fontWeight: '700',
-                                            color: '#fff',
-                                            textTransform: 'unset!important',
-                                            backgroundColor: 'var(--color-main)!important',
-                                            paddingY: '12px',
-                                            transition: '.3s',
-                                            opacity: showDetail ? '0.2' : '1',
-                                            pointerEvents: showDetail ? 'none' : 'all'
-                                        }}
-                                        className="btn-container-hover"
-                                        onClick={saveHoaDon}>
-                                        Thanh Toán
-                                    </Button>
+                                    {clickSSave ? (
+                                        <Button
+                                            variant="contained"
+                                            fullWidth
+                                            sx={{
+                                                fontSize: '16px',
+                                                fontWeight: '700',
+                                                color: '#fff',
+                                                textTransform: 'unset!important',
+                                                backgroundColor: 'var(--color-main)!important',
+                                                paddingY: '12px',
+                                                transition: '.3s'
+                                            }}>
+                                            Đang lưu
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            variant="contained"
+                                            fullWidth
+                                            sx={{
+                                                fontSize: '16px',
+                                                fontWeight: '700',
+                                                color: '#fff',
+                                                textTransform: 'unset!important',
+                                                backgroundColor: 'var(--color-main)!important',
+                                                paddingY: '12px',
+                                                transition: '.3s',
+                                                opacity: showDetail ? '0.2' : '1',
+                                                pointerEvents: showDetail ? 'none' : 'all'
+                                            }}
+                                            className="btn-container-hover"
+                                            onClick={saveHoaDon}>
+                                            Thanh Toán
+                                        </Button>
+                                    )}
                                 </Box>
                             </Box>
                         </Box>
