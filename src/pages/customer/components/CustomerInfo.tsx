@@ -172,7 +172,7 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                                     Nhóm khách
                                 </Typography>
                                 <Typography sx={{ mt: '0' }} variant="body1">
-                                    {khachHangStore.khachHangDetail.nhomKhach}
+                                    {khachHangStore.khachHangDetail.tenNhomKhach}
                                 </Typography>
                             </Stack>
                             <Stack spacing={1} direction={'row'} alignItems={'center'}>
