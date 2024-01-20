@@ -1,4 +1,5 @@
 import { Guid } from 'guid-typescript';
+import { CreateOrEditKhachHangDto } from './CreateOrEditKhachHangDto';
 
 export interface KhachHangDto {
     id: Guid;
@@ -35,6 +36,17 @@ export interface KhachHangDto {
     nguoiTao: string;
     nguoiSua: string;
     nguoiXoa: string;
+}
+
+export interface ICustomerDetail_FullInfor extends CreateOrEditKhachHangDto {
+    tenLoaiKhachHang?: string;
+    tenNguonKhach?: string;
+    tenNhomKhach?: string;
+    soLanBooking?: number;
+    soLanCheckIn?: number;
+    tongChiTieu?: number;
+    conNo?: number;
+    cuocHenGanNhat?: Date;
 }
 
 export interface LoaiKhach {
