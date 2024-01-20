@@ -6,5 +6,6 @@ export interface LichSuGiaoDich {
     tongPhaiTra: number;
     khachDaTra: number;
     conNo: number;
-    trangThai: string;
+    txtTrangThai: string;
+    trangThai: number;
 }
