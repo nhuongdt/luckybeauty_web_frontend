@@ -1,36 +1,44 @@
 import { Grid, Stack, Box, Avatar, Typography, Button, Tab } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import khachHangStore from '../../../stores/khachHangStore';
-import utils from '../../../utils/utils';
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Guid } from 'guid-typescript';
-import { KhachHangDetail } from '../../../services/khach-hang/dto/KhachHangDetail';
-import khachHangService from '../../../services/khach-hang/khachHangService';
-import { observer } from 'mobx-react';
-import DialogButtonClose from '../../../components/Dialog/ButtonClose';
+import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
+import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import TabCuocHen from './TabCuocHen';
 import TabMuaHang from './TabMuaHang';
-import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
+import utils from '../../../utils/utils';
+import { useEffect, useState } from 'react';
+import { observer } from 'mobx-react';
+import { useParams } from 'react-router-dom';
+import { Guid } from 'guid-typescript';
+import { KhachHangDetail } from '../../../services/khach-hang/dto/KhachHangDetail';
+import khachHangStore from '../../../stores/khachHangStore';
+import khachHangService from '../../../services/khach-hang/khachHangService';
+import { ICustomerDetail_FullInfor } from '../../../services/khach-hang/dto/KhachHangDto';
+import { HoatDongKhachHang } from '../../../services/khach-hang/dto/ThongTinKhachHangTongHopDto';
 
-const CustomerInfor2 = ({ cutomerInfor }: any) => {
+import { format } from 'date-fns';
+
+const CustomerInfor2 = () => {
     const { khachHangId } = useParams();
-    // const [cutomerInfor, setInforCus] = useState<KhachHangDetail>();
     const [tabActive, setTabActive] = useState('1');
+    const [inforCus, setInforCus] = useState<ICustomerDetail_FullInfor>();
+    const [nkyHoatDong, setNKyHoatDong] = useState<HoatDongKhachHang[]>([]);
     const handleChangeTab = (event: React.SyntheticEvent, newValue: string) => {
         setTabActive(newValue);
     };
 
     useEffect(() => {
-        //
+        getKhachHangInfo();
+        getNhatKyHoatDong();
     }, [khachHangId]);
     const getKhachHangInfo = async () => {
-        // const data = await khachHangService.getDetail(khachHangId as string);
-        // setInforCus(data);
-        // console.log('data ', data);
+        const data = await khachHangService.getDetail(khachHangId ?? Guid.EMPTY);
+        setInforCus(data);
+    };
+    const getNhatKyHoatDong = async () => {
+        const data = await khachHangService.GetNhatKyHoatDong_ofKhachHang(khachHangId ?? Guid.EMPTY);
+        setNKyHoatDong(data);
     };
 
     return (
@@ -44,7 +52,7 @@ const CustomerInfor2 = ({ cutomerInfor }: any) => {
                         sx={{ border: '1px solid #cccc', borderRadius: '4px' }}>
                         <Stack sx={{ position: 'relative' }}>
                             <Stack direction={'row'} spacing={1.5} alignItems={'center'}>
-                                {cutomerInfor?.avatar ? (
+                                {inforCus?.avatar ? (
                                     <Box
                                         sx={{
                                             '& img': {
@@ -56,7 +64,7 @@ const CustomerInfor2 = ({ cutomerInfor }: any) => {
                                                 borderRadius: '6px'
                                             }
                                         }}>
-                                        <img src={cutomerInfor?.avatar} alt="avatar" />
+                                        <img src={inforCus?.avatar} alt="avatar" />
                                     </Box>
                                 ) : (
                                     <Avatar
@@ -67,15 +75,15 @@ const CustomerInfor2 = ({ cutomerInfor }: any) => {
                                             color: 'var(--color-main)',
                                             fontSize: '18px'
                                         }}>
-                                        {utils.getFirstLetter(cutomerInfor?.tenKhachHang, 3)}
+                                        {utils.getFirstLetter(inforCus?.tenKhachHang, 3)}
                                     </Avatar>
                                 )}
                                 <Stack sx={{ position: 'relative' }}>
                                     <Typography sx={{ fontSize: '18px', fontWeight: 600 }}>
-                                        {cutomerInfor?.tenKhachHang}
+                                        {inforCus?.tenKhachHang}
                                     </Typography>
                                     <Typography variant="caption" color={'#b2b7bb'}>
-                                        {cutomerInfor?.maKhachHang}
+                                        {inforCus?.maKhachHang}
                                     </Typography>
                                 </Stack>
                             </Stack>
@@ -89,7 +97,7 @@ const CustomerInfor2 = ({ cutomerInfor }: any) => {
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={7} lg={8}>
-                                    <Typography variant="body2">{cutomerInfor?.soDienThoai}</Typography>
+                                    <Typography variant="body2">{inforCus?.soDienThoai}</Typography>
                                 </Grid>
                                 <Grid item xs={5} lg={4}>
                                     <Typography variant="body2" fontWeight={600}>
@@ -97,7 +105,11 @@ const CustomerInfor2 = ({ cutomerInfor }: any) => {
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={7} lg={8}>
-                                    <Typography variant="body2">{'11/12/2000'}</Typography>
+                                    <Typography variant="body2">
+                                        {!utils.checkNull(inforCus?.ngaySinh as unknown as string)
+                                            ? format(new Date(inforCus?.ngaySinh as unknown as string), 'dd/MM/yyyy')
+                                            : ''}
+                                    </Typography>
                                 </Grid>
                                 <Grid item xs={5} lg={4}>
                                     <Typography variant="body2" fontWeight={600}>
@@ -105,7 +117,7 @@ const CustomerInfor2 = ({ cutomerInfor }: any) => {
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={7} lg={8}>
-                                    <Typography variant="body2"> {cutomerInfor?.diaChi}</Typography>
+                                    <Typography variant="body2"> {inforCus?.diaChi}</Typography>
                                 </Grid>
                                 <Grid item xs={5} lg={4}>
                                     <Typography variant="body2" fontWeight={600}>
@@ -113,7 +125,7 @@ const CustomerInfor2 = ({ cutomerInfor }: any) => {
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={7} lg={8}>
-                                    <Typography variant="body2"> {cutomerInfor?.tenNhomKhach}</Typography>
+                                    <Typography variant="body2">{inforCus?.tenNhomKhach}</Typography>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Stack spacing={2} direction={'row'} justifyContent={'center'}>
@@ -130,19 +142,28 @@ const CustomerInfor2 = ({ cutomerInfor }: any) => {
                         </Stack>
                         <Stack sx={{ borderBottom: '1px solid #cccc' }} paddingBottom={2}>
                             <Stack spacing={2}>
-                                <Stack>
-                                    <Typography variant="body2">Cuộc hẹn gần nhất: 20/12/2023</Typography>
+                                <Stack justifyContent={'space-between'} direction={'row'}>
+                                    <Typography variant="body2">Cuộc hẹn gần nhất</Typography>
+
+                                    <Typography variant="body2">
+                                        {!utils.checkNull(inforCus?.cuocHenGanNhat as unknown as string)
+                                            ? format(
+                                                  new Date(inforCus?.cuocHenGanNhat as unknown as string),
+                                                  'dd/MM/yyyy'
+                                              )
+                                            : ''}
+                                    </Typography>
                                 </Stack>
                                 <Stack justifyContent={'space-between'} direction={'row'}>
                                     <Stack alignItems={'center'}>
                                         <Typography sx={{ fontSize: '18px', fontWeight: 600 }}>
-                                            {cutomerInfor?.soLanBooking}
+                                            {inforCus?.soLanBooking}
                                         </Typography>
                                         <Typography variant="caption">Cuộc hẹn</Typography>
                                     </Stack>
                                     <Stack alignItems={'center'}>
                                         <Typography sx={{ fontSize: '18px', fontWeight: 600 }}>
-                                            {utils.formatNumber(cutomerInfor?.tongChiTieu ?? 0)}
+                                            {utils.formatNumber(inforCus?.tongChiTieu ?? 0)}
                                         </Typography>
                                         <Typography variant="caption">Chi tiêu</Typography>
                                     </Stack>
@@ -151,9 +172,9 @@ const CustomerInfor2 = ({ cutomerInfor }: any) => {
                                             sx={{
                                                 fontSize: '18px',
                                                 fontWeight: 600,
-                                                color: (cutomerInfor?.conNo ?? 0) > 0 ? 'red' : 'var(--font-color-main)'
+                                                color: (inforCus?.conNo ?? 0) > 0 ? 'red' : 'var(--font-color-main)'
                                             }}>
-                                            {utils.formatNumber(cutomerInfor?.conNo ?? 0)}
+                                            {utils.formatNumber(inforCus?.conNo ?? 0)}
                                         </Typography>
                                         <Typography variant="caption">Còn nợ</Typography>
                                     </Stack>
@@ -163,23 +184,51 @@ const CustomerInfor2 = ({ cutomerInfor }: any) => {
 
                         <Stack>
                             <Stack spacing={2}>
-                                <Typography variant="body2" fontWeight={600}>
+                                <Typography variant="body2" fontWeight={600} textAlign={'center'}>
                                     Nhật ký hoạt động
                                 </Typography>
-                                <Stack></Stack>
+                                <Stack spacing={1.5} sx={{ overflow: 'auto', maxHeight: 150, paddingBottom: '16px' }}>
+                                    {nkyHoatDong?.map((item, index) => (
+                                        <Stack key={index} spacing={0.5}>
+                                            <Typography
+                                                variant="body2"
+                                                dangerouslySetInnerHTML={{ __html: item?.hoatDong }}></Typography>
+                                            <Typography variant="caption" color={'#978686'}>
+                                                {format(new Date(item?.thoiGian), 'dd/MM/yyyy HH:mm')}
+                                            </Typography>
+                                        </Stack>
+                                    ))}
+                                </Stack>
                             </Stack>
                         </Stack>
                     </Stack>
                 </Grid>
-                <Grid item xs={9} md={8} lg={9}>
-                    <Stack className="page-full" padding={2} sx={{ border: '1px solid #cccc', borderRadius: '4px' }}>
+                <Grid item xs={12} md={8} lg={9}>
+                    <Stack padding={2} className="page-full" sx={{ border: '1px solid #cccc', borderRadius: '4px' }}>
                         <TabContext value={tabActive}>
-                            <Box>
-                                <TabList onChange={handleChangeTab}>
-                                    <Tab label="Cuộc hẹn" value="1" />
-                                    <Tab label="Mua hàng" value="2" />
-                                </TabList>
-                            </Box>
+                            <Grid container alignItems={'center'}>
+                                <Grid item lg={6}>
+                                    <TabList onChange={handleChangeTab}>
+                                        <Tab label="Cuộc hẹn" value="1" />
+                                        <Tab label="Mua hàng" value="2" />
+                                    </TabList>
+                                </Grid>
+                                <Grid item lg={6}>
+                                    <Stack direction={'row'} spacing={1} justifyContent={'end'}>
+                                        <Button
+                                            variant="outlined"
+                                            startIcon={<ArrowBackOutlinedIcon />}
+                                            onClick={() => {
+                                                window.location.replace('/khach-hangs');
+                                            }}>
+                                            Quay trở lại
+                                        </Button>
+                                        <Button variant="outlined" startIcon={<FileUploadOutlinedIcon />}>
+                                            Xuất excel
+                                        </Button>
+                                    </Stack>
+                                </Grid>
+                            </Grid>
                             <TabPanel value="1" sx={{ padding: 0 }}>
                                 <TabCuocHen />
                             </TabPanel>
@@ -193,4 +242,4 @@ const CustomerInfor2 = ({ cutomerInfor }: any) => {
         </>
     );
 };
-export default observer(CustomerInfor2);
+export default CustomerInfor2;
