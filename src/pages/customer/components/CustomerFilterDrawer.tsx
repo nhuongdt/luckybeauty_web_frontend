@@ -141,13 +141,13 @@ const CustomerFilterDrawer = ({ id, anchorEl, handleClose, handleOk, handleChang
                             sx={{ fontSize: '0.875rem', color: '3D475C', fontFamily: 'Roboto', fontWeight: 500 }}>
                             Giới tính
                         </Typography>
-                        <Grid xs={12}>
+                        <Grid item xs={12}>
                             <FormControlLabel control={<Checkbox title={'Nam'} />} label="Nam" />
                         </Grid>
-                        <Grid xs={12}>
+                        <Grid item xs={12}>
                             <FormControlLabel control={<Checkbox title={'Nữ'} />} label="Nữ" />
                         </Grid>
-                        <Grid xs={12}>
+                        <Grid item xs={12}>
                             <FormControlLabel control={<Checkbox title={'Khác'} />} label="Khác" />
                         </Grid>
                     </Grid>
