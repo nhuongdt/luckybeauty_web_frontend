@@ -3,6 +3,13 @@
 .page-full {
     min-height: 85vh!important;
     max-height: 85vh!important;
+    background-color: #fff;
+}
+
+.data-grid-row-full {
+    background-color: #fff;
+    min-height: calc(70vh - 44px)!important;
+    max-height: calc(70vh - 44px)!important;
 }
 
 @media only screen and (max-width: 595px) {
