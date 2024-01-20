@@ -4,6 +4,7 @@ import {
     GridColDef,
     GridColumnVisibilityModel,
     GridRenderCellParams,
+    GridRowParams,
     GridRowSelectionModel
 } from '@mui/x-data-grid';
 import { TextTranslate } from '../../components/TableLanguage';
@@ -302,10 +303,10 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         await this.getData();
     };
 
-    handleView = () => {
+    handleView = (param: GridRowParams) => {
         // Handle View action
         this.handleCloseMenu();
-        window.location.replace(`/khach-hang-chi-tiet/${this.state.selectedRowId}`);
+        window.location.replace(`/khach-hang-chi-tiet/${param.id}`);
     };
 
     handleEdit = () => {
@@ -554,7 +555,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             },
             {
                 field: 'cuocHenGanNhat',
-                headerName: 'Cuộc hẹn gần đây',
+                headerName: 'Cuộc hẹn gần nhất',
                 renderCell: (params) => (
                     <Box
                         sx={{
@@ -564,7 +565,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             justifyContent: 'center',
                             width: '100%'
                         }}>
-                        <DateIcon style={{ marginRight: 4 }} />
                         {new Date(params.value).toLocaleDateString('en-GB')}
                     </Box>
                 ),
@@ -584,29 +584,29 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         {params.colDef.headerName}
                     </Box>
                 )
-            },
-            {
-                field: 'actions',
-                headerName: 'Hành động',
-                maxWidth: 48,
-                flex: 1,
-                disableColumnMenu: true,
-
-                renderCell: (params) => (
-                    <Box>
-                        <IconButton
-                            aria-label="Actions"
-                            aria-controls={`actions-menu-${params.row.id}`}
-                            aria-haspopup="true"
-                            onClick={(event) => {
-                                this.handleOpenMenu(event, params.row.id);
-                            }}>
-                            <MoreHorizIcon />
-                        </IconButton>
-                    </Box>
-                ),
-                renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
             }
+            // {
+            //     field: 'actions',
+            //     headerName: 'Hành động',
+            //     maxWidth: 48,
+            //     flex: 1,
+            //     disableColumnMenu: true,
+
+            //     renderCell: (params) => (
+            //         <Box>
+            //             <IconButton
+            //                 aria-label="Actions"
+            //                 aria-controls={`actions-menu-${params.row.id}`}
+            //                 aria-haspopup="true"
+            //                 onClick={(event) => {
+            //                     this.handleOpenMenu(event, params.row.id);
+            //                 }}>
+            //                 <MoreHorizIcon />
+            //             </IconButton>
+            //         </Box>
+            //     ),
+            //     renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
+            // }
         ];
 
         return (
@@ -860,7 +860,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         }
                                         rows={this.state.rowTable}
                                         columns={columns}
-                                        onRowClick={() => this.handleOpenInfor}
+                                        onRowClick={(item) => this.handleView(item)}
                                         hideFooter
                                         onColumnVisibilityModelChange={this.toggleColumnVisibility}
                                         columnVisibilityModel={this.state.visibilityColumn}
@@ -888,17 +888,17 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         }}
                                         rowSelectionModel={this.state.rowSelectionModel}
                                     />
-                                    <ActionMenuTable
+                                    {/* <ActionMenuTable
                                         selectedRowId={this.state.selectedRowId}
                                         anchorEl={this.state.anchorEl}
                                         closeMenu={this.handleCloseMenu}
-                                        handleView={this.handleView}
+                                        handleView={this.handleOpenInfor}
                                         permissionView=""
                                         handleEdit={this.handleEdit}
                                         permissionEdit="Pages.KhachHang.Edit"
                                         handleDelete={this.showConfirmDelete}
                                         permissionDelete="Pages.KhachHang.Delete"
-                                    />
+                                    /> */}
 
                                     <CustomTablePagination
                                         currentPage={this.state.currentPage}
