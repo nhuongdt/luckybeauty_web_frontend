@@ -66,8 +66,8 @@ const TabInfor: React.FC = () => {
         hoatDongs: []
     });
     const getInfor = async () => {
-        const thongTin = await khachHangService.thongTinTongHop(khachHangId ?? AppConsts.guidEmpty);
-        setThongTinKhachHang(thongTin);
+        // const thongTin = await khachHangService.thongTinTongHop(khachHangId ?? AppConsts.guidEmpty);
+        // setThongTinKhachHang(thongTin);
     };
     return (
         <Box mt="24px">
