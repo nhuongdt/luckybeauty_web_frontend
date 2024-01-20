@@ -713,7 +713,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             diaChi: '',
             idNhomKhach: '',
             idNguonKhach: '',
-            gioiTinh: false,
+            gioiTinhNam: false,
             moTa: '',
             idLoaiKhach: 1
         } as CreateOrEditKhachHangDto);

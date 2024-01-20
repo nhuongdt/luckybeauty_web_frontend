@@ -72,7 +72,7 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
             diaChi: '',
             idNhomKhach: '',
             idNguonKhach: '',
-            gioiTinh: false,
+            gioiTinhNam: false,
             moTa: ''
         } as CreateOrEditKhachHangDto);
     };
