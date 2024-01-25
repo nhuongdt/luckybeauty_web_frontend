@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Box, SelectChangeEvent } from '@mui/material';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
@@ -39,92 +39,95 @@ const TabMuaHang: React.FC = () => {
         setSortType(sortType);
         setSortBy(sortBy);
     };
-    const columns = [
+    const columns: GridColDef[] = [
         {
             field: 'maHoaDon',
             headerName: 'Mã hóa đơn',
             minWidth: 70,
             flex: 1.2,
-            renderHeader: (params: any) => <Box>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
-                <Box title={params.value} sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                    {params.value}
-                </Box>
-            )
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
         {
             field: 'ngayLapHoaDon',
             headerName: 'Ngày bán',
+            headerAlign: 'center',
+            align: 'center',
             flex: 1.2,
-            renderHeader: (params: any) => <Box>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
-                <Box sx={{ width: '100%' }} title={params.value}>
-                    {formatDate(new Date(params.value), 'dd/MM/yyyy')}
-                </Box>
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+            renderCell: (params) => (
+                <Box title={params.value}>{formatDate(new Date(params.value), 'dd/MM/yyyy HH:mm')}</Box>
             )
         },
         {
             field: 'tongTienHang',
             headerName: 'Tổng tiền hàng',
+            headerAlign: 'right',
+            align: 'right',
             flex: 1,
-            renderHeader: (params: any) => <Box>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
-                <Box sx={{ width: '100%' }} title={params.value}>
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
-            )
-        },
-        {
-            field: 'tongGiamGia',
-            headerName: 'Tổng giảm giá',
-            flex: 1,
-            renderHeader: (params: any) => <Box>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
-                <Box title={params.value} sx={{ width: '100%' }}>
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
-            )
-        },
-        {
-            field: 'tongPhaiTra',
-            headerName: 'Tổng phải trả',
-            flex: 1,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+            renderCell: (params) => (
                 <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
             )
         },
+        // {
+        //     field: 'tongGiamGia',
+        //     headerName: 'Tổng giảm giá',
+        //     flex: 1,
+        //     renderHeader: (params: any) => <Box>{params.colDef.headerName}</Box>,
+        //     renderCell: (params: any) => (
+        //         <Box title={params.value} sx={{ width: '100%' }}>
+        //             {new Intl.NumberFormat('vi-VN').format(params.value)}
+        //         </Box>
+        //     )
+        // },
+        // {
+        //     field: 'tongPhaiTra',
+        //     headerName: 'Tổng phải trả',
+        //     flex: 1,
+        //     renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+        //     renderCell: (params: any) => (
+        //         <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+        //     )
+        // },
         {
             field: 'khachDaTra',
             headerName: 'Khách đã trả',
+            headerAlign: 'right',
+            align: 'right',
             flex: 1,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
+            renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
+            renderCell: (params) => (
                 <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
             )
         },
         {
             field: 'conNo',
             headerName: 'Còn nợ',
+            headerAlign: 'right',
+            align: 'right',
             flex: 1,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
+
+            renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
+            renderCell: (params) => (
                 <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
             )
         },
         {
-            field: 'trangThai',
+            field: 'txtTrangThai',
             headerName: 'Trạng thái',
+            headerAlign: 'center',
+            align: 'center',
             flex: 1,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
+            renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
+            renderCell: (params) => (
                 <Box
                     title={params.value}
-                    sx={{
-                        color: params.value == 'Hoàn thành' ? '#50CD89' : params.value == 'Hủy' ? '#F1416C' : '#FF9900',
-                        backgroundColor:
-                            params.value == 'Hoàn thành' ? '#E8FFF3' : params.value == 'Hủy' ? '#FFF5F8' : '#FFF8DD'
-                    }}>
+                    className={
+                        params.row.trangThai === 3
+                            ? 'data-grid-cell-trangthai-active'
+                            : 'data-grid-cell-trangthai-notActive'
+                    }>
                     {params.value}
                 </Box>
             )
@@ -138,6 +141,7 @@ const TabMuaHang: React.FC = () => {
                     disableRowSelectionOnClick
                     hideFooter
                     autoHeight
+                    className="data-grid-row-full"
                     columns={columns}
                     rows={khachHangStore.lichSuGiaoDich === undefined ? [] : khachHangStore.lichSuGiaoDich.items}
                     getRowId={(row) => row.maHoaDon}
@@ -148,12 +152,6 @@ const TabMuaHang: React.FC = () => {
                     }}
                     pageSizeOptions={[5, 10, 20, 50, 100]}
                     sortingOrder={['desc', 'asc']}
-                    // sortModel={[
-                    //     {
-                    //         field: sortBy,
-                    //         sort: sortType == 'desc' ? 'desc' : 'asc'
-                    //     }
-                    // ]}
                     onSortModelChange={(newSortModel) => {
                         if (newSortModel.length > 0) {
                             onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');

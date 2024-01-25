@@ -8,29 +8,30 @@ import { PagedResultDto } from '../services/dto/pagedResultDto';
 import { LichSuGiaoDich } from '../services/khach-hang/dto/LichSuGiaoDich';
 import { CreateOrEditNhomKhachDto } from '../services/khach-hang/dto/CreateOrEditNhomKhachDto';
 import { PagedRequestDto } from '../services/dto/pagedRequestDto';
+import { ICustomerDetail_FullInfor } from '../services/khach-hang/dto/KhachHangDto';
 
 class KhachHangSrore {
     createEditKhachHangDto!: CreateOrEditKhachHangDto;
     createOrEditNhomKhachDto!: CreateOrEditNhomKhachDto;
-    khachHangDetail!: KhachHangDetail;
+    khachHangDetail!: ICustomerDetail_FullInfor;
     lichSuDatLich!: PagedResultDto<ILichSuDatLich>;
     lichSuGiaoDich!: PagedResultDto<LichSuGiaoDich>;
     constructor() {
         this.khachHangDetail = {
             id: AppConsts.guidEmpty,
             avatar: '',
-            ngaySinh: '',
+            ngaySinh: new Date(),
             maKhachHang: '',
             tenKhachHang: '',
             soDienThoai: '',
             diaChi: '',
-            gioiTinh: '',
+            gioiTinhNam: false,
             email: '',
             maSoThue: '',
-            loaiKhach: '',
-            nhomKhach: '',
-            nguonKhach: '',
-            diemThuong: 0
+            idLoaiKhach: 1,
+            tenNhomKhach: '',
+            tenNguonKhach: '',
+            tongTichDiem: 0
         };
         this.createNewNhomKhachDto();
         makeAutoObservable(this);
@@ -61,7 +62,7 @@ class KhachHangSrore {
             maKhachHang: '',
             tenKhachHang: '',
             soDienThoai: '',
-            gioiTinh: false,
+            gioiTinhNam: false,
             idLoaiKhach: 0,
             idNhomKhach: '',
             idNguonKhach: '',

@@ -27,6 +27,7 @@ import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import TokenMauIn from './TokenMauIn';
 import { width } from '@mui/system';
+import abpCustom from '../../../../components/abp-custom';
 
 export default function PageMauIn({ xx }: any) {
     const [html, setHtml] = useState('');
@@ -359,7 +360,12 @@ export default function PageMauIn({ xx }: any) {
                         <Grid item xs={12} sm={12} md={6} lg={6}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} sm={3} md={3} lg={3}>
-                                    <Button variant="contained" onClick={showModalAddMauIn}>
+                                    <Button
+                                        variant="contained"
+                                        onClick={showModalAddMauIn}
+                                        sx={{
+                                            display: abpCustom.isGrandPermission('Pages.MauIn.Create') ? '' : 'none'
+                                        }}>
                                         Thêm mới
                                     </Button>
                                 </Grid>
@@ -384,12 +390,20 @@ export default function PageMauIn({ xx }: any) {
                         {idMauInChosed.length === 36 && (
                             <Grid item xs={12} sm={12} md={6} lg={6}>
                                 <Stack spacing={1} justifyContent={'flex-end'} direction={'row'}>
-                                    <Button variant="contained" onClick={UpdateMauIn}>
+                                    <Button
+                                        variant="contained"
+                                        onClick={UpdateMauIn}
+                                        sx={{
+                                            display: abpCustom.isGrandPermission('Pages.MauIn.Edit') ? '' : 'none'
+                                        }}>
                                         Lưu mẫu in
                                     </Button>
                                     <Button
                                         variant="outlined"
                                         color="error"
+                                        sx={{
+                                            display: abpCustom.isGrandPermission('Pages.MauIn.Delete') ? '' : 'none'
+                                        }}
                                         onClick={() => {
                                             setInforObjDelete(
                                                 new PropConfirmOKCancel({

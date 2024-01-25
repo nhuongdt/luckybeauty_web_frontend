@@ -343,7 +343,9 @@ const TaiKhoanNganHangPage = () => {
                                 variant="contained"
                                 fullWidth
                                 startIcon={<AddOutlinedIcon />}
-                                hidden={!abpCustom.isGrandPermission('Pages.Administration')}
+                                sx={{
+                                    display: abpCustom.isGrandPermission('Pages.TaiKhoanNganHang.Create') ? '' : 'none'
+                                }}
                                 onClick={() => {
                                     onCreateOrEditModal('');
                                 }}>

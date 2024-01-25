@@ -25,6 +25,8 @@ import { format } from 'date-fns';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import utils from '../../../utils/utils';
 import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
+import { IList } from '../../../services/dto/IList';
+import abpCustom from '../../../components/abp-custom';
 
 export default function PageNhatKyChuyenTien({ isShowModalAdd, txtSearch, onCloseModal }: any) {
     const firstLoad = useRef(true);
@@ -248,20 +250,23 @@ export default function PageNhatKyChuyenTien({ isShowModalAdd, txtSearch, onClos
             renderCell: (params: any) =>
                 params.row.idPhieuNapTien == null && (
                     <ActionViewEditDelete
-                        lstOption={[
-                            {
-                                id: '1',
-                                text: 'Sửa',
-                                color: '#009EF7',
-                                icon: <Edit sx={{ color: '#009EF7' }} />
-                            },
-                            {
-                                id: '2',
-                                text: 'Xóa',
-                                color: '#F1416C',
-                                icon: <DeleteForever sx={{ color: '#F1416C' }} />
-                            }
-                        ]}
+                        lstOption={
+                            [
+                                {
+                                    id: '1',
+                                    text: 'Sửa',
+                                    isShow: abpCustom.isGrandPermission('Pages.Brandname.ChuyenTien.Edit'),
+                                    icon: <Edit sx={{ color: '#009EF7' }} />
+                                },
+                                {
+                                    id: '2',
+                                    text: 'Xóa',
+                                    color: '#F1416C',
+                                    isShow: abpCustom.isGrandPermission('Pages.Brandname.ChuyenTien.Delete'),
+                                    icon: <DeleteForever sx={{ color: '#F1416C' }} />
+                                }
+                            ] as IList[]
+                        }
                         handleAction={(action: number) => doActionRow(action, params.row)}
                     />
                 ),
@@ -294,13 +299,6 @@ export default function PageNhatKyChuyenTien({ isShowModalAdd, txtSearch, onClos
                 <Grid item xs={12} sm={12} md={12} lg={12}>
                     <Box className="page-box-right">
                         <Box>
-                            {rowSelectionModel.length > 0 ? (
-                                <Box mb={1}>
-                                    <Button variant="contained" color="secondary">
-                                        Xóa {rowSelectionModel.length} bản ghi đã chọn
-                                    </Button>
-                                </Box>
-                            ) : null}
                             <DataGrid
                                 rowHeight={46}
                                 autoHeight={totalCount === 0}

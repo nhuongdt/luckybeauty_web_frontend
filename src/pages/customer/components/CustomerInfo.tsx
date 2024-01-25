@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Tab, Typography, Button, IconButton, Tabs } from '@mui/material';
+import { Box, Tab, Typography, Button, IconButton, Tabs, Avatar, Stack } from '@mui/material';
 
 import { ReactComponent as ExportIcon } from '../../../images/download.svg';
 import { ReactComponent as PrintIcon } from '../../../images/printer.svg';
@@ -18,6 +18,7 @@ import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import CreateOrEditCustomerDialog from '../components/create-or-edit-customer-modal';
 import khachHangService from '../../../services/khach-hang/khachHangService';
 import { enqueueSnackbar } from 'notistack';
+import utils from '../../../utils/utils';
 interface Custom {
     onClose: () => void;
 }
@@ -97,19 +98,32 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                 }}>
                 <Box sx={{ display: 'flex', gap: '40px', alignItems: 'center' }}>
                     <Box>
-                        <Box
-                            sx={{
-                                '& img': {
-                                    maxWidth: '100%',
-                                    maxHeight: '100%',
-                                    height: '100px',
-                                    width: '100px',
-                                    objectFit: 'cover',
-                                    borderRadius: '6px'
-                                }
-                            }}>
-                            <img src={khachHangStore.khachHangDetail.avatar} alt="avatar" />
-                        </Box>
+                        {khachHangStore.khachHangDetail.avatar ? (
+                            <Box
+                                sx={{
+                                    '& img': {
+                                        maxWidth: '100%',
+                                        maxHeight: '100%',
+                                        height: '100px',
+                                        width: '100px',
+                                        objectFit: 'cover',
+                                        borderRadius: '6px'
+                                    }
+                                }}>
+                                <img src={khachHangStore.khachHangDetail.avatar} alt="avatar" />
+                            </Box>
+                        ) : (
+                            <Avatar
+                                sx={{
+                                    width: 100,
+                                    height: 100,
+                                    backgroundColor: 'var(--color-bg)',
+                                    color: 'var(--color-main)',
+                                    fontSize: '18px'
+                                }}>
+                                {utils.getFirstLetter(khachHangStore.khachHangDetail.tenKhachHang, 3)}
+                            </Avatar>
+                        )}
                     </Box>
                     <Box>
                         <Box
@@ -147,30 +161,28 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                                 display: 'flex',
                                 marginTop: '12px',
                                 '& p': {
-                                    fontSize: '13px',
                                     color: '#333233',
+                                    fontSize: 'var(--font-size-main)',
                                     mt: '4px'
                                 },
                                 flexDirection: 'column'
                             }}>
-                            <Box display={'flex'} flexDirection={'row'}>
+                            <Stack spacing={1} direction={'row'} alignItems={'center'}>
                                 <Typography sx={{ mt: '0' }} variant="body1">
-                                    Nhóm khách :{' '}
+                                    Nhóm khách
                                 </Typography>
                                 <Typography sx={{ mt: '0' }} variant="body1">
-                                    {khachHangStore.khachHangDetail.nhomKhach}
+                                    {khachHangStore.khachHangDetail.tenNhomKhach}
                                 </Typography>
-                            </Box>
-                            <Box display={'flex'} flexDirection={'row'}>
-                                <Typography variant="body1">Số điện thoại : </Typography>
-                                <Typography variant="body1">
-                                    {' ' + khachHangStore.khachHangDetail.soDienThoai}
-                                </Typography>
-                            </Box>
-                            <Box display={'flex'} flexDirection={'row'}>
-                                <Typography variant="body1">Địa chỉ : </Typography>
-                                <Typography variant="body1"> {' ' + khachHangStore.khachHangDetail.diaChi}</Typography>
-                            </Box>
+                            </Stack>
+                            <Stack spacing={1} direction={'row'} alignItems={'center'}>
+                                <Typography variant="body1">Số điện thoại </Typography>
+                                <Typography variant="body1">{khachHangStore.khachHangDetail.soDienThoai}</Typography>
+                            </Stack>
+                            <Stack spacing={1} direction={'row'} alignItems={'center'}>
+                                <Typography variant="body1">Địa chỉ </Typography>
+                                <Typography variant="body1"> {khachHangStore.khachHangDetail.diaChi}</Typography>
+                            </Stack>
                         </Box>
                     </Box>
                 </Box>

@@ -22,6 +22,8 @@ import utils from '../../../utils/utils';
 import { IOSSwitch } from '../../../components/Switch/IOSSwitch';
 import nhanVienService from '../../../services/nhan-vien/nhanVienService';
 import { Guid } from 'guid-typescript';
+import { IList } from '../../../services/dto/IList';
+import abpCustom from '../../../components/abp-custom';
 
 export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: any) {
     const firstLoad = useRef(true);
@@ -163,6 +165,17 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
 
     const changeTrangThai = async (userId: number, nhanSuId: string | null, e: React.ChangeEvent<HTMLInputElement>) => {
         const check = e.target.checked;
+        const roleActive = abpCustom.isGrandPermission(' Pages.Administration.Users.Unlock');
+        if (!roleActive) {
+            setObjAlert({
+                ...objAlert,
+                show: true,
+                mes: `Bạn không có quyền ${check ? 'kích hoạt' : 'ngừng kích hoạt'} nhân viên`,
+                type: 2
+            });
+            return;
+        }
+
         let data = false;
         let mes = '';
         if (check) {
@@ -359,20 +372,24 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
             flex: 0.5,
             renderCell: (params: any) => (
                 <ActionViewEditDelete
-                    lstOption={[
-                        {
-                            id: '1',
-                            text: 'Sửa',
-                            color: '#009EF7',
-                            icon: <Edit sx={{ color: '#009EF7' }} />
-                        },
-                        {
-                            id: '2',
-                            text: 'Xóa',
-                            color: '#F1416C',
-                            icon: <DeleteForever sx={{ color: '#F1416C' }} />
-                        }
-                    ]}
+                    lstOption={
+                        [
+                            {
+                                id: '1',
+                                text: 'Sửa',
+                                color: '#009EF7',
+                                isShow: abpCustom.isGrandPermission('Pages.Administration.Users.Edit'),
+                                icon: <Edit sx={{ color: '#009EF7' }} />
+                            },
+                            {
+                                id: '2',
+                                text: 'Xóa',
+                                color: '#F1416C',
+                                isShow: abpCustom.isGrandPermission('Pages.Administration.Users.Delete'),
+                                icon: <DeleteForever sx={{ color: '#F1416C' }} />
+                            }
+                        ] as IList[]
+                    }
                     handleAction={(action: number) => doActionRow(action, params.row)}
                 />
             ),
@@ -419,13 +436,6 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
                 <Grid item xs={12} sm={12} md={12} lg={12}>
                     <Box className="page-box-right">
                         <Box>
-                            {rowSelectionModel.length > 0 ? (
-                                <Box mb={1}>
-                                    <Button variant="contained" color="secondary">
-                                        Xóa {rowSelectionModel.length} bản ghi đã chọn
-                                    </Button>
-                                </Box>
-                            ) : null}
                             <DataGrid
                                 rowHeight={46}
                                 autoHeight={totalCount === 0}

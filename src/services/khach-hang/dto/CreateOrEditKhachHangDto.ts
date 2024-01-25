@@ -6,7 +6,7 @@ export interface CreateOrEditKhachHangDto {
     tenKhachHang: string;
     soDienThoai: string;
     diaChi?: string;
-    gioiTinh: boolean;
+    gioiTinhNam: boolean;
     email?: string;
     moTa?: string;
     trangThai?: number;
@@ -16,8 +16,8 @@ export interface CreateOrEditKhachHangDto {
     ngaySinh?: Date;
     kieuNgaySinh?: number;
     idLoaiKhach: number;
-    idNhomKhach: string;
-    idNguonKhach: string;
+    idNhomKhach?: string;
+    idNguonKhach?: string;
     idTinhThanh?: string;
     idQuanHuyen?: string;
 }

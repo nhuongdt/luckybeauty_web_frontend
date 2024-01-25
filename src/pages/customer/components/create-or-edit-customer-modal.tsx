@@ -107,6 +107,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                 <DialogTitle className="modal-title">{title}</DialogTitle>
                 <DialogContent>
                     <Formik
+                        enableReinitialize
                         initialValues={initValues}
                         validationSchema={rules}
                         onSubmit={async (values) => {
@@ -363,7 +364,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                     onChange={handleChange}
                                                     row
                                                     defaultValue={'true'}
-                                                    value={values.gioiTinh}
+                                                    value={values.gioiTinhNam ?? false}
                                                     aria-labelledby="demo-row-radio-buttons-group-label"
                                                     name="gioiTinh">
                                                     <FormControlLabel value="true" control={<Radio />} label="Nam" />
@@ -377,7 +378,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 fullWidth
                                                 name="moTa"
                                                 label="Ghi chú"
-                                                value={values.moTa}
+                                                value={values.moTa || ''}
                                                 onChange={handleChange}
                                                 // rows={2}
                                                 // maxRows={2}

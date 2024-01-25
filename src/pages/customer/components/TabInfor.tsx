@@ -66,13 +66,13 @@ const TabInfor: React.FC = () => {
         hoatDongs: []
     });
     const getInfor = async () => {
-        const thongTin = await khachHangService.thongTinTongHop(khachHangId ?? AppConsts.guidEmpty);
-        setThongTinKhachHang(thongTin);
+        // const thongTin = await khachHangService.thongTinTongHop(khachHangId ?? AppConsts.guidEmpty);
+        // setThongTinKhachHang(thongTin);
     };
     return (
         <Box mt="24px">
             <Grid container spacing={3}>
-                <Grid item xs={3}>
+                <Grid item xs={0} sx={{ display: 'none' }}>
                     <Box
                         bgcolor="#fff"
                         padding="24px"
@@ -151,7 +151,7 @@ const TabInfor: React.FC = () => {
                         </Box>
                     </Box>
                 </Grid>
-                <Grid item xs={9}>
+                <Grid item xs={12}>
                     <Box bgcolor="#fff" padding="24px" borderRadius="12px">
                         <Grid container>
                             <Grid item xs={3}>

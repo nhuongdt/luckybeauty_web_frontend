@@ -1,16 +1,5 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
-import {
-    Box,
-    Typography,
-    Grid,
-    TextField,
-    IconButton,
-    Button,
-    SelectChangeEvent,
-    Stack,
-    Select,
-    MenuItem
-} from '@mui/material';
+import { Box, Grid, TextField, IconButton, Button, SelectChangeEvent, Stack } from '@mui/material';
 
 import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
@@ -18,9 +7,7 @@ import { Search } from '@mui/icons-material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { ReactComponent as FilterIcon } from '../../../images/filter-icon.svg';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
-import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
-import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import ThongTinHoaDon from '../Hoa_don/ThongTinHoaDon';
 import { AppContext, ChiNhanhContextbyUser } from '../../../services/chi_nhanh/ChiNhanhContext';
@@ -29,7 +16,6 @@ import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
 
 import Utils from '../../../utils/utils'; // func common.
 import { format, lastDayOfMonth } from 'date-fns';
-import avatar from '../../../images/avatar.png';
 import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import { HoaDonRequestDto } from '../../../services/dto/ParamSearchDto';
 import HoaDonService from '../../../services/ban_hang/HoaDonService';
@@ -45,6 +31,8 @@ import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
 import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
 import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
 import AppConsts from '../../../lib/appconst';
+import abpCustom from '../../../components/abp-custom';
+import { IList } from '../../../services/dto/IList';
 
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
@@ -433,7 +421,6 @@ const GiaoDichThanhToan: React.FC = () => {
                     hoadon={hoadon}
                     open={openDetail}
                     handleGotoBack={childGotoBack}
-                    listMauIn={lstMauIn}
                 />
             </ChiNhanhContextbyUser.Provider>
 
@@ -528,10 +515,11 @@ const GiaoDichThanhToan: React.FC = () => {
                                     borderColor: '#CDC9CD!important',
                                     bgcolor: '#fff!important',
                                     color: '#333233',
-                                    fontSize: '14px'
+                                    fontSize: '14px',
+                                    display: abpCustom.isGrandPermission('Pages.HoaDon.Export') ? '' : 'none'
                                 }}
                                 className="btn-outline-hover">
-                                Xuất{' '}
+                                Xuất
                             </Button>
                             <Button
                                 variant="contained"
@@ -542,7 +530,7 @@ const GiaoDichThanhToan: React.FC = () => {
                                     fontSize: '14px'
                                 }}
                                 className="btn-container-hover">
-                                Bộ lọc{' '}
+                                Bộ lọc
                             </Button>
                         </Box>
                     </Grid>
@@ -551,21 +539,28 @@ const GiaoDichThanhToan: React.FC = () => {
                 {rowSelectionModel.length > 0 && (
                     <div style={{ marginTop: '24px' }}>
                         <ActionRowSelect
-                            lstOption={[
-                                {
-                                    id: '1',
-                                    text: 'Xóa hóa đơn',
-                                    icon: <DeleteSweepOutlinedIcon sx={{ width: '1rem', height: '1rem' }} />
-                                },
-                                {
-                                    id: '2',
-                                    text: 'In hóa đơn',
-                                    icon: <PrintOutlinedIcon sx={{ width: '1rem', height: '1rem' }} />
-                                }
-                            ]}
+                            lstOption={
+                                [
+                                    {
+                                        id: '1',
+                                        text: 'Xóa hóa đơn',
+                                        isShow: abpCustom.isGrandPermission('Pages.HoaDon.Delete'),
+                                        icon: <DeleteSweepOutlinedIcon sx={{ width: '1rem', height: '1rem' }} />
+                                    },
+                                    {
+                                        id: '2',
+                                        text: 'In hóa đơn',
+                                        isShow: abpCustom.isGrandPermission('Pages.HoaDon.Print'),
+                                        icon: <PrintOutlinedIcon sx={{ width: '1rem', height: '1rem' }} />
+                                    }
+                                ] as IList[]
+                            }
                             countRowSelected={rowSelectionModel.length}
                             title="hóa đơn"
                             choseAction={DataGrid_handleAction}
+                            removeItemChosed={() => {
+                                setRowSelectionModel([]);
+                            }}
                         />
                     </div>
                 )}

@@ -292,7 +292,9 @@ export const appRouters: AppRouteProps = {
                             showInMenu: false,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(() => import('../../pages/customer/components/CustomerInfo'))
+                            component: LoadableComponent(
+                                () => import('../../pages/customer/components/customer_infor2')
+                            )
                         }
                     ],
                     component: null

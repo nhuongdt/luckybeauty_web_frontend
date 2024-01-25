@@ -4,6 +4,7 @@ import {
     GridColDef,
     GridColumnVisibilityModel,
     GridRenderCellParams,
+    GridRowParams,
     GridRowSelectionModel
 } from '@mui/x-data-grid';
 import { TextTranslate } from '../../components/TableLanguage';
@@ -194,7 +195,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     };
     onEditNhomKhach = async (isEdit: boolean, item: any) => {
         if (isEdit) {
-            // todo edit
             await khachHangStore.getNhomKhachForEdit(item.id);
             this.setState({
                 isShowNhomKhachModal: !this.state.isShowNhomKhachModal
@@ -303,10 +303,10 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         await this.getData();
     };
 
-    handleView = () => {
+    handleView = (param: GridRowParams) => {
         // Handle View action
         this.handleCloseMenu();
-        window.location.replace(`/khach-hang-chi-tiet/${this.state.selectedRowId}`);
+        window.location.replace(`/khach-hang-chi-tiet/${param.id}`);
     };
 
     handleEdit = () => {
@@ -555,7 +555,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             },
             {
                 field: 'cuocHenGanNhat',
-                headerName: 'Cuộc hẹn gần đây',
+                headerName: 'Cuộc hẹn gần nhất',
                 renderCell: (params) => (
                     <Box
                         sx={{
@@ -565,7 +565,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             justifyContent: 'center',
                             width: '100%'
                         }}>
-                        <DateIcon style={{ marginRight: 4 }} />
                         {new Date(params.value).toLocaleDateString('en-GB')}
                     </Box>
                 ),
@@ -585,29 +584,29 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         {params.colDef.headerName}
                     </Box>
                 )
-            },
-            {
-                field: 'actions',
-                headerName: 'Hành động',
-                maxWidth: 48,
-                flex: 1,
-                disableColumnMenu: true,
-
-                renderCell: (params) => (
-                    <Box>
-                        <IconButton
-                            aria-label="Actions"
-                            aria-controls={`actions-menu-${params.row.id}`}
-                            aria-haspopup="true"
-                            onClick={(event) => {
-                                this.handleOpenMenu(event, params.row.id);
-                            }}>
-                            <MoreHorizIcon />
-                        </IconButton>
-                    </Box>
-                ),
-                renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
             }
+            // {
+            //     field: 'actions',
+            //     headerName: 'Hành động',
+            //     maxWidth: 48,
+            //     flex: 1,
+            //     disableColumnMenu: true,
+
+            //     renderCell: (params) => (
+            //         <Box>
+            //             <IconButton
+            //                 aria-label="Actions"
+            //                 aria-controls={`actions-menu-${params.row.id}`}
+            //                 aria-haspopup="true"
+            //                 onClick={(event) => {
+            //                     this.handleOpenMenu(event, params.row.id);
+            //                 }}>
+            //                 <MoreHorizIcon />
+            //             </IconButton>
+            //         </Box>
+            //     ),
+            //     renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
+            // }
         ];
 
         return (
@@ -682,7 +681,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     className="rounded-4px resize-height">
                                     <Button
                                         className="border-color btn-outline-hover"
-                                        hidden={!abpCustom.isGrandPermission('Pages.KhachHang.Import')}
                                         variant="outlined"
                                         onClick={this.onImportShow}
                                         startIcon={<img src={DownloadIcon} />}
@@ -690,14 +688,14 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                             textTransform: 'capitalize',
                                             fontWeight: '400',
                                             color: '#666466',
-                                            bgcolor: '#fff!important'
+                                            bgcolor: '#fff!important',
+                                            display: abpCustom.isGrandPermission('Pages.KhachHang.Import') ? '' : 'none'
                                         }}>
                                         Nhập
                                     </Button>
                                     <Button
                                         className="border-color btn-outline-hover"
                                         variant="outlined"
-                                        hidden={!abpCustom.isGrandPermission('Pages.KhachHang.Export')}
                                         onClick={() => {
                                             this.exportToExcel();
                                         }}
@@ -708,7 +706,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                             color: '#666466',
                                             padding: '10px 16px',
                                             borderColor: '#E6E1E6',
-                                            bgcolor: '#fff!important'
+                                            bgcolor: '#fff!important',
+                                            display: abpCustom.isGrandPermission('Pages.KhachHang.Export') ? '' : 'none'
                                         }}>
                                         Xuất
                                     </Button>
@@ -731,7 +730,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     </Button>
                                     <Button
                                         className=" btn-container-hover"
-                                        hidden={!abpCustom.isGrandPermission('Pages.KhachHang.Create')}
                                         onClick={() => {
                                             this.createOrUpdateModalOpen('');
                                         }}
@@ -740,7 +738,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         sx={{
                                             textTransform: 'capitalize',
                                             fontWeight: '400',
-                                            minWidth: '173px'
+                                            minWidth: '173px',
+                                            display: abpCustom.isGrandPermission('Pages.KhachHang.Create') ? '' : 'none'
                                         }}>
                                         Thêm khách hàng
                                     </Button>
@@ -815,20 +814,25 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             <Grid item lg={10} md={10} sm={10} xs={13}>
                                 {this.state.listItemSelectedModel.length > 0 && (
                                     <ActionRowSelect
-                                        lstOption={[
-                                            {
-                                                id: '1',
-                                                text: 'Chuyển nhóm khách'
-                                            },
-                                            {
-                                                id: '2',
-                                                text: 'Xóa khách hàng'
-                                            },
-                                            {
-                                                id: '3',
-                                                text: 'Xuất danh sách'
-                                            }
-                                        ]}
+                                        lstOption={
+                                            [
+                                                {
+                                                    id: '1',
+                                                    text: 'Chuyển nhóm khách',
+                                                    isShow: abpCustom.isGrandPermission('Pages.KhachHang.Edit')
+                                                },
+                                                {
+                                                    id: '2',
+                                                    text: 'Xóa khách hàng',
+                                                    isShow: abpCustom.isGrandPermission('Pages.KhachHang.Delete')
+                                                },
+                                                {
+                                                    id: '3',
+                                                    text: 'Xuất danh sách',
+                                                    isShow: abpCustom.isGrandPermission('Pages.KhachHang.Export')
+                                                }
+                                            ] as IList[]
+                                        }
                                         countRowSelected={this.state.listItemSelectedModel.length}
                                         title="khách hàng"
                                         choseAction={this.DataGrid_handleAction}
@@ -856,7 +860,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         }
                                         rows={this.state.rowTable}
                                         columns={columns}
-                                        onRowClick={() => this.handleOpenInfor}
+                                        onRowClick={(item) => this.handleView(item)}
                                         hideFooter
                                         onColumnVisibilityModelChange={this.toggleColumnVisibility}
                                         columnVisibilityModel={this.state.visibilityColumn}
@@ -884,17 +888,17 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         }}
                                         rowSelectionModel={this.state.rowSelectionModel}
                                     />
-                                    <ActionMenuTable
+                                    {/* <ActionMenuTable
                                         selectedRowId={this.state.selectedRowId}
                                         anchorEl={this.state.anchorEl}
                                         closeMenu={this.handleCloseMenu}
-                                        handleView={this.handleView}
+                                        handleView={this.handleOpenInfor}
                                         permissionView=""
                                         handleEdit={this.handleEdit}
                                         permissionEdit="Pages.KhachHang.Edit"
                                         handleDelete={this.showConfirmDelete}
                                         permissionDelete="Pages.KhachHang.Delete"
-                                    />
+                                    /> */}
 
                                     <CustomTablePagination
                                         currentPage={this.state.currentPage}

@@ -1,9 +1,6 @@
-import { Box, Grid, Stack, TextField, IconButton, Button, SelectChangeEvent, Dialog } from '@mui/material';
+import { Box, Grid, Stack, TextField, IconButton, Button, SelectChangeEvent } from '@mui/material';
 import { useContext, useEffect, useRef, useState } from 'react';
-
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
-
-import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import CreateOrEditSoQuyDialog from './components/CreateOrEditSoQuyDialog';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { TextTranslate } from '../../../components/TableLanguage';
@@ -17,7 +14,7 @@ import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import utils from '../../../utils/utils';
 import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
 import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
-import { Add, Search } from '@mui/icons-material';
+import { Add, DeleteForever, Edit, Info, Search } from '@mui/icons-material';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import fileDowloadService from '../../../services/file-dowload.service';
@@ -27,11 +24,11 @@ import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
 import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
 import MauInServices from '../../../services/mau_in/MauInServices';
 import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
-import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 import NapTienBrandname from '../../sms/brandname/nap_tien_brandname';
 import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
 import ModalPhieuThuHoaDon from './components/modal_phieu_thu_hoa_don';
+import { IList } from '../../../services/dto/IList';
 
 const PageSoQuy = ({ xx }: any) => {
     const today = new Date();
@@ -433,7 +430,31 @@ const PageSoQuy = ({ xx }: any) => {
             flex: 0.4,
             disableColumnMenu: true,
             renderCell: (params) => (
-                <ActionViewEditDelete handleAction={(action: any) => doActionRow(action, params.row)} />
+                <ActionViewEditDelete
+                    lstOption={
+                        [
+                            {
+                                id: '0',
+                                icon: <Info sx={{ color: '#009EF7' }} />,
+                                text: 'Xem',
+                                isShow: true
+                            },
+                            {
+                                id: '1',
+                                text: 'Sửa',
+                                icon: <Edit sx={{ color: '#009EF7' }} />,
+                                isShow: abpCustom.isGrandPermission('Pages.QuyHoaDon.Edit')
+                            },
+                            {
+                                id: '2',
+                                text: 'Xóa',
+                                icon: <DeleteForever sx={{ color: '#F1416C' }} />,
+                                isShow: abpCustom.isGrandPermission('Pages.QuyHoaDon.Delete')
+                            }
+                        ] as IList[]
+                    }
+                    handleAction={(action: any) => doActionRow(action, params.row)}
+                />
             ),
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         }
@@ -542,7 +563,6 @@ const PageSoQuy = ({ xx }: any) => {
                                 />
                             </Stack>
                             <Button
-                                hidden={!abpCustom.isGrandPermission('Pages.QuyHoaDon.Export')}
                                 variant="outlined"
                                 onClick={exportToExcel}
                                 startIcon={<UploadIcon />}
@@ -550,18 +570,19 @@ const PageSoQuy = ({ xx }: any) => {
                                     borderColor: '#CDC9CD!important',
                                     bgcolor: '#fff!important',
                                     color: '#333233',
-                                    fontSize: '14px'
+                                    fontSize: '14px',
+                                    display: abpCustom.isGrandPermission('Pages.QuyHoaDon.Export') ? '' : 'none'
                                 }}
                                 className="btn-outline-hover">
                                 Xuất{' '}
                             </Button>
                             <Button
-                                hidden={!abpCustom.isGrandPermission('Pages.QuyHoaDon.Create')}
                                 variant="contained"
                                 startIcon={<Add />}
                                 sx={{
                                     color: '#fff',
-                                    fontSize: '14px'
+                                    fontSize: '14px',
+                                    display: abpCustom.isGrandPermission('Pages.QuyHoaDon.Create') ? '' : 'none'
                                 }}
                                 className="btn-container-hover"
                                 onClick={() => {
@@ -577,16 +598,20 @@ const PageSoQuy = ({ xx }: any) => {
                 {rowSelectionModel.length > 0 && (
                     <div style={{ marginTop: '24px' }}>
                         <ActionRowSelect
-                            lstOption={[
-                                {
-                                    id: '1',
-                                    text: 'Xóa sổ quỹ'
-                                },
-                                {
-                                    id: '2',
-                                    text: 'In sổ quỹ'
-                                }
-                            ]}
+                            lstOption={
+                                [
+                                    {
+                                        id: '1',
+                                        text: 'Xóa sổ quỹ',
+                                        isShow: abpCustom.isGrandPermission('Pages.QuyHoaDon.Delete')
+                                    },
+                                    {
+                                        id: '2',
+                                        text: 'In sổ quỹ',
+                                        isShow: abpCustom.isGrandPermission('Pages.QuyHoaDon.Print')
+                                    }
+                                ] as IList[]
+                            }
                             countRowSelected={rowSelectionModel.length}
                             title="sổ quỹ"
                             choseAction={DataGrid_handleAction}

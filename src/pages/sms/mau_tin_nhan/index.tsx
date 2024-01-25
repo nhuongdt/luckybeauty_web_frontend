@@ -5,12 +5,15 @@ import { useEffect, useState } from 'react';
 import { GroupMauTinSMSDto, MauTinSMSDto } from '../../../services/sms/mau_tin_sms/mau_tin_dto';
 import MauTinSMService from '../../../services/sms/mau_tin_sms/MauTinSMService';
 import PageEmpty from '../../../components/DataGrid/PageEmpty';
+import abpCustom from '../../../components/abp-custom';
+import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 
 const MauTinNhan = () => {
     const [visiable, setVisiable] = useState(false);
     const [dataGroupMauTin, setDataGroupMauTin] = useState<GroupMauTinSMSDto[]>([]);
     const [idMauTin, setIdMauTin] = useState('');
     const [objMauTin, setObjMauTin] = useState<MauTinSMSDto>({} as MauTinSMSDto);
+    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
     useEffect(() => {
         GetAllMauTinSMS();
@@ -24,6 +27,11 @@ const MauTinNhan = () => {
     };
 
     const editMauTin = async (item: MauTinSMSDto) => {
+        const roleEdit = abpCustom.isGrandPermission('"Pages.SMS_Template.Create');
+        if (roleEdit) {
+            setObjAlert({ mes: `Không có quyền chỉnh sửa mẫu tin`, show: true, type: 2 });
+            return;
+        }
         setVisiable(true);
         setIdMauTin(item.id);
         setObjMauTin(item);
@@ -43,6 +51,11 @@ const MauTinNhan = () => {
                 onCancel={() => setVisiable(false)}
                 onOK={saveMauTinOK}
             />
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
 
             <Box paddingTop={2}>
                 <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} pb={2}>
@@ -51,7 +64,10 @@ const MauTinNhan = () => {
                     </Typography>
                     <Button
                         size="small"
-                        sx={{ height: '40px' }}
+                        sx={{
+                            height: '40px',
+                            display: abpCustom.isGrandPermission('"Pages.SMS_Template.Create') ? '' : 'none'
+                        }}
                         variant="contained"
                         startIcon={<img src={AddIcon} />}
                         onClick={() => {

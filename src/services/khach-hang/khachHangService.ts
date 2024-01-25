@@ -1,21 +1,20 @@
 import { Guid } from 'guid-typescript';
 import { PagedKhachHangResultRequestDto } from './dto/PagedKhachHangResultRequestDto';
 import { KhachHangItemDto } from './dto/KhachHangItemDto';
-import Cookies from 'js-cookie';
 import http from '../httpService';
 import { CreateOrEditKhachHangDto } from './dto/CreateOrEditKhachHangDto';
-import { KhachHangDto } from './dto/KhachHangDto';
+import { ICustomerDetail_FullInfor, KhachHangDto } from './dto/KhachHangDto';
 import Utils from '../../utils/utils';
-import { FileDto, IFileDto } from '../dto/FileDto';
+import { IFileDto } from '../dto/FileDto';
 import utils from '../../utils/utils';
-import { ExecuteResultDto } from '../dto/ExecuteResultDto';
 import { FileUpload } from '../dto/FileUpload';
 import QueryString from 'qs';
 import { CreateOrEditNhomKhachDto } from './dto/CreateOrEditNhomKhachDto';
 import { PagedRequestDto } from '../dto/pagedRequestDto';
 import { PagedResultDto } from '../dto/pagedResultDto';
-import { ThongTinKhachHangTongHopDto } from './dto/ThongTinKhachHangTongHopDto';
+import { HoatDongKhachHang, ThongTinKhachHangTongHopDto } from './dto/ThongTinKhachHangTongHopDto';
 import { ILichSuDatLich } from './dto/ILichSuDatLich';
+import { LichSuGiaoDich } from './dto/LichSuGiaoDich';
 
 class KhachHangService {
     public async getAll(input: PagedKhachHangResultRequestDto): Promise<PagedResultDto<KhachHangItemDto>> {
@@ -38,8 +37,12 @@ class KhachHangService {
         const result = await http.post('api/services/app/KhachHang/CreateOrEdit', input);
         return result.data.result;
     }
-    public async getDetail(id: string) {
+    public async getDetail(id: string): Promise<ICustomerDetail_FullInfor> {
         const response = await http.get(`api/services/app/KhachHang/GetKhachHangDetail?id=${id}`);
+        return response.data.result;
+    }
+    public async GetNhatKyHoatDong_ofKhachHang(id: string): Promise<HoatDongKhachHang[]> {
+        const response = await http.get(`api/services/app/KhachHang/GetNhatKyHoatDong_ofKhachHang?idKhachHang=${id}`);
         return response.data.result;
     }
     public async getKhachHang(id: string): Promise<CreateOrEditKhachHangDto> {
@@ -96,7 +99,7 @@ class KhachHangService {
         const response = await http.post('api/services/app/KhachHang/ImportFile_DanhMucKhachHang', input);
         return response.data.result;
     }
-    async lichSuGiaoDich(idKhachHang: string, input: PagedRequestDto) {
+    async lichSuGiaoDich(idKhachHang: string, input: PagedRequestDto): Promise<PagedResultDto<LichSuGiaoDich>> {
         const response = await http.post(`api/services/app/KhachHang/LichSuGiaoDich?idKhachHang=${idKhachHang}`, input);
         return response.data.result;
     }
@@ -104,10 +107,10 @@ class KhachHangService {
         const response = await http.post(`api/services/app/KhachHang/LichSuDatLich?idKhachHang=${idKhachHang}`, input);
         return response.data.result;
     }
-    async thongTinTongHop(id: string): Promise<ThongTinKhachHangTongHopDto> {
-        const response = await http.post(`api/services/app/KhachHang/ThongTinKhachHang?id=${id}`);
-        return response.data.result;
-    }
+    // async thongTinTongHop(id: string): Promise<ThongTinKhachHangTongHopDto> {
+    //     const response = await http.post(`api/services/app/KhachHang/ThongTinKhachHang?id=${id}`);
+    //     return response.data.result;
+    // }
     GetListCustomerId_byPhone = async (memberPhone: string): Promise<string> => {
         const result = await http.get(`api/services/app/KhachHang/GetListCustomerId_byPhone?phone=${memberPhone}`);
         return result.data.result;

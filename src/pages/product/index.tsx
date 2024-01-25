@@ -1,28 +1,13 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { DataGrid, GridColDef, GridRowSelectionModel, useGridApiRef } from '@mui/x-data-grid';
-import {
-    Grid,
-    Box,
-    Typography,
-    TextField,
-    Stack,
-    Button,
-    Pagination,
-    IconButton,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions
-} from '@mui/material';
-import { Add, LocalOfferOutlined, Search } from '@mui/icons-material';
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
+import { Grid, Box, Typography, TextField, Stack, Button, Pagination, IconButton } from '@mui/material';
+import { Add, DeleteForever, Edit, Info, LocalOfferOutlined, Search } from '@mui/icons-material';
 
 // prop for send data from parent to child
 import { PropModal, PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import { TextTranslate } from '../../components/TableLanguage';
-import QueryBuilderOutlinedIcon from '@mui/icons-material/QueryBuilderOutlined';
 /* custom component */
-import BreadcrumbsPageTitle from '../../components/Breadcrumbs/PageTitle';
 import AccordionNhomHangHoa from '../../components/Accordion/NhomHangHoa';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
@@ -39,10 +24,8 @@ import { ReactComponent as UploadIcon } from '../../images/upload.svg';
 import { ReactComponent as DownIcon } from '../../images/download.svg';
 import Utils from '../../utils/utils'; // func common
 import AppConsts from '../../lib/appconst';
-import { ReactComponent as SeasrchIcon } from '../../images/search-normal.svg';
 import './style.css';
 import fileDowloadService from '../../services/file-dowload.service';
-import { enqueueSnackbar } from 'notistack';
 import uploadFileService from '../../services/uploadFileService';
 import { FileUpload } from '../../services/dto/FileUpload';
 import ImportExcel from '../../components/ImportComponent/ImportExcel';
@@ -50,10 +33,9 @@ import utils from '../../utils/utils';
 import BangBaoLoiFileImport from '../../components/ImportComponent/BangBaoLoiFileImport';
 import { BangBaoLoiFileimportDto } from '../../services/dto/BangBaoLoiFileimportDto';
 import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
-import CmpIListData from '../../components/ListData/CmpIListData';
 import { IList } from '../../services/dto/IList';
-import DialogButtonClose from '../../components/Dialog/ButtonClose';
 import { ModalChuyenNhom } from '../../components/Dialog/modal_chuyen_nhom';
+import abpCustom from '../../components/abp-custom';
 
 export default function PageProduct() {
     const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
@@ -136,7 +118,7 @@ export default function PageProduct() {
     }
 
     function showModalAddProduct(action?: number, id = '') {
-        setTriggerModalProduct((old: any) => {
+        setTriggerModalProduct((old) => {
             return {
                 ...old,
                 isShow: true,
@@ -156,7 +138,7 @@ export default function PageProduct() {
             });
         } else {
             setFilterPageProduct({ ...filterPageProduct, idNhomHangHoas: item.id });
-            setTriggerModalProduct((old: any) => {
+            setTriggerModalProduct((old) => {
                 return {
                     ...old,
                     isShow: false,
@@ -295,6 +277,7 @@ export default function PageProduct() {
 
     const doActionRow = (action: any, rowItem: any) => {
         setRowHover(rowItem);
+        console.log('rowItem ', rowItem);
         if (action < 2) {
             showModalAddProduct(action, rowItem?.idDonViQuyDoi);
         } else {
@@ -311,7 +294,7 @@ export default function PageProduct() {
     };
     const deleteProduct = async () => {
         if (!Utils.checkNull(rowHover?.idDonViQuyDoi)) {
-            await ProductService.DeleteProduct_byIDHangHoa(rowHover?.idHangHoa ?? '');
+            await ProductService.DeleteProduct_byIDHangHoa(rowHover?.id ?? '');
             setObjAlert({
                 show: true,
                 type: 1,
@@ -368,7 +351,7 @@ export default function PageProduct() {
     };
 
     const restoreProduct = async () => {
-        await ProductService.RestoreProduct_byIdHangHoa(rowHover?.idHangHoa ?? '');
+        await ProductService.RestoreProduct_byIdHangHoa(rowHover?.id ?? '');
         setObjAlert({
             show: true,
             type: 1,
@@ -535,7 +518,34 @@ export default function PageProduct() {
             disableColumnMenu: true,
 
             renderCell: (params) => (
-                <ActionViewEditDelete handleAction={(action: any) => doActionRow(action, params.row)} />
+                <ActionViewEditDelete
+                    lstOption={
+                        [
+                            {
+                                id: '0',
+                                color: '#009EF7',
+                                icon: <Info sx={{ color: '#009EF7' }} />,
+                                text: 'Xem',
+                                isShow: true
+                            },
+                            {
+                                id: '1',
+                                text: 'Sửa',
+                                color: '#009EF7',
+                                icon: <Edit sx={{ color: '#009EF7' }} />,
+                                isShow: abpCustom.isGrandPermission('Pages.DM_HangHoa.Edit')
+                            },
+                            {
+                                id: '2',
+                                text: 'Xóa',
+                                color: '#F1416C',
+                                icon: <DeleteForever sx={{ color: '#F1416C' }} />,
+                                isShow: abpCustom.isGrandPermission('Pages.DM_HangHoa.Delete')
+                            }
+                        ] as IList[]
+                    }
+                    handleAction={(action: any) => doActionRow(action, params.row)}
+                />
             ),
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         }
@@ -632,7 +642,11 @@ export default function PageProduct() {
                             variant="outlined"
                             startIcon={<DownIcon />}
                             className="btnNhapXuat btn-outline-hover"
-                            sx={{ bgcolor: '#fff!important', color: '#666466' }}>
+                            sx={{
+                                bgcolor: '#fff!important',
+                                color: '#666466',
+                                display: abpCustom.isGrandPermission('Pages.DM_HangHoa.Import') ? '' : 'none'
+                            }}>
                             Nhập
                         </Button>
                         <Button
@@ -641,7 +655,11 @@ export default function PageProduct() {
                             variant="outlined"
                             startIcon={<UploadIcon />}
                             className="btnNhapXuat btn-outline-hover"
-                            sx={{ bgcolor: '#fff!important', color: '#666466' }}>
+                            sx={{
+                                bgcolor: '#fff!important',
+                                color: '#666466',
+                                display: abpCustom.isGrandPermission('Pages.DM_HangHoa.Export') ? '' : 'none'
+                            }}>
                             Xuất
                         </Button>
                         <Button
@@ -650,8 +668,8 @@ export default function PageProduct() {
                             className=" btn-container-hover"
                             sx={{
                                 minWidth: '143px',
-
-                                fontSize: '14px'
+                                fontSize: '14px',
+                                display: abpCustom.isGrandPermission('Pages.DM_HangHoa.Create') ? '' : 'none'
                             }}
                             startIcon={<Add />}
                             onClick={() => showModalAddProduct()}>
@@ -681,7 +699,10 @@ export default function PageProduct() {
                                         width: '32px',
                                         borderRadius: '4px',
                                         padding: '4px 0px',
-                                        border: '1px solid #cccc'
+                                        border: '1px solid #cccc',
+                                        display: abpCustom.isGrandPermission('Pages.DM_NhomHangHoa.Create')
+                                            ? ''
+                                            : 'none'
                                     }}
                                     onClick={() => showModalAddNhomHang()}
                                 />
@@ -724,11 +745,13 @@ export default function PageProduct() {
                                 lstOption={[
                                     {
                                         id: '1',
-                                        text: 'Chuyển nhóm'
+                                        text: 'Chuyển nhóm',
+                                        isShow: abpCustom.isGrandPermission('Pages.DM_HangHoa.Edit')
                                     },
                                     {
                                         id: '2',
-                                        text: 'Xóa dịch vụ'
+                                        text: 'Xóa dịch vụ',
+                                        isShow: abpCustom.isGrandPermission('Pages.DM_HangHoa.Delete')
                                     }
                                 ]}
                                 countRowSelected={rowSelectionModel.length}
@@ -780,7 +803,6 @@ export default function PageProduct() {
                                         />
                                         <Pagination
                                             shape="rounded"
-                                            // color="primary"
                                             count={pageDataProduct.totalPage}
                                             page={filterPageProduct.currentPage}
                                             defaultPage={filterPageProduct.currentPage}

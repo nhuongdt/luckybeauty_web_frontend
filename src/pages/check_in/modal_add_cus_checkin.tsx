@@ -34,7 +34,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
         idLoaiKhach: 1,
         soDienThoai: '',
         diaChi: '',
-        gioiTinh: false,
+        gioiTinhNam: false,
         idNguonKhach: '',
         idNhomKhach: ''
     });
@@ -49,7 +49,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                 idLoaiKhach: 1,
                 soDienThoai: '',
                 diaChi: '',
-                gioiTinh: false,
+                gioiTinhNam: false,
                 idNguonKhach: '',
                 idNhomKhach: ''
             });

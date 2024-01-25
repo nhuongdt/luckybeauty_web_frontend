@@ -1,27 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {
-    Grid,
-    Box,
-    Typography,
-    Button,
-    Tabs,
-    Tab,
-    TextField,
-    Select,
-    MenuItem,
-    Dialog,
-    Link,
-    IconButton,
-    DialogContent
-} from '@mui/material';
+import { Grid, Box, Typography, Button, Tabs, Tab, TextField, Dialog, IconButton } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import AddLogoIcon from '../../../images/add-logo.svg';
 
 import PrintIcon from '@mui/icons-material/Print';
-import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
-import { ReactComponent as InIcon } from '../../../images/printer.svg';
-import Avatar from '../../../images/xinh.png';
 import TabInfo from './Tab_info';
 import TabDiary from './Tab_diary';
 import { ReactComponent as ArrowIcon } from '../../../images/arrow_back.svg';
@@ -30,31 +13,24 @@ import HoaDonService from '../../../services/ban_hang/HoaDonService';
 import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import PageHoaDonChiTietDto from '../../../services/ban_hang/PageHoaDonChiTietDto';
 import DateTimePickerCustom from '../../../components/DatetimePicker/DateTimePickerCustom';
-import { ReactComponent as ArrowDown } from '../.././../images/arow-down.svg';
 import { AppContext, ChiNhanhContextbyUser } from '../../../services/chi_nhanh/ChiNhanhContext';
 
 import AutocompleteChiNhanh from '../../../components/Autocomplete/ChiNhanh';
 import ModalEditChiTietGioHang from '../thu_ngan/modal_edit_chitiet';
 import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
-import { format } from 'date-fns';
 import { Stack } from '@mui/system';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
-import AutocompleteCustomer from '../../../components/Autocomplete/Customer';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
-import { ReactComponent as printIcon } from '../../../images/printer-title.svg';
 import utils from '../../../utils/utils';
-import ProductService from '../../../services/product/ProductService';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import DetailHoaDon from '../thu_ngan/DetailHoaDon';
-import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
-import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
 import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
-import { MauInDto } from '../../../services/mau_in/MauInDto';
 import MauInServices from '../../../services/mau_in/MauInServices';
 import TaiKhoanNganHangServices from '../../../services/so_quy/TaiKhoanNganHangServices';
 import { TaiKhoanNganHangDto } from '../../../services/so_quy/Dto/TaiKhoanNganHangDto';
 import HoaHongNhanVienHoaDon from '../../nhan_vien_thuc_hien/hoa_hong_nhan_vien_hoa_don';
+import abpCustom from '../../../components/abp-custom';
 const themOutlineInput = createTheme({
     components: {
         MuiOutlinedInput: {
@@ -67,7 +43,7 @@ const themOutlineInput = createTheme({
     }
 });
 
-const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: any) => {
+const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [isShowModalThanhToan, setIsShowModalThanhToan] = useState(false);
@@ -322,7 +298,13 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                         }}>
                                         {hoadonChosed?.maHoaDon}
                                     </Box>
-                                    <PrintIcon sx={{ color: 'var(--color-main)' }} onClick={InHoaDon} />
+                                    <PrintIcon
+                                        sx={{
+                                            color: 'var(--color-main)',
+                                            display: abpCustom.isGrandPermission('Pages.HoaDon.Print') ? '' : 'none'
+                                        }}
+                                        onClick={InHoaDon}
+                                    />
                                 </Stack>
                             </Grid>
                             <Grid item xs="auto">
@@ -615,7 +597,10 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                             variant="outlined"
                                             sx={{
                                                 borderColor: '#3B4758',
-                                                color: 'var(--color-main)'
+                                                color: 'var(--color-main)',
+                                                display: abpCustom.isGrandPermission('Pages.QuyHoaDon.Create')
+                                                    ? ''
+                                                    : 'none'
                                             }}
                                             className="btn-outline-hover"
                                             onClick={() => setIsShowModalThanhToan(true)}>
@@ -625,14 +610,21 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
 
                                     <Button
                                         variant="outlined"
-                                        sx={{ borderColor: '#3B4758', color: 'var(--color-main)' }}
+                                        sx={{
+                                            borderColor: '#3B4758',
+                                            color: 'var(--color-main)',
+                                            display: abpCustom.isGrandPermission('Pages.QuyHoaDon.Edit') ? '' : 'none'
+                                        }}
                                         className="btn-outline-hover"
                                         onClick={showModalEditGioHang}>
                                         Chỉnh sửa
                                     </Button>
                                     <Button
                                         variant="contained"
-                                        sx={{ color: '#fff' }}
+                                        sx={{
+                                            color: '#fff',
+                                            display: abpCustom.isGrandPermission('Pages.QuyHoaDon.Edit') ? '' : 'none'
+                                        }}
                                         className="btn-container-hover"
                                         onClick={updateHoaDon}>
                                         Lưu
@@ -647,7 +639,8 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                             color: '#fff',
                                             '&:hover': {
                                                 bgcolor: 'red!important'
-                                            }
+                                            },
+                                            display: abpCustom.isGrandPermission('Pages.QuyHoaDon.Delete') ? '' : 'none'
                                         }}>
                                         Xóa
                                     </Button>

@@ -19,6 +19,7 @@ import SendIcon from '@mui/icons-material/Send';
 import { ReactComponent as UploadIcon } from '../../images/upload.svg';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
+import NearMeOutlinedIcon from '@mui/icons-material/NearMeOutlined';
 import CakeOutlinedIcon from '@mui/icons-material/CakeOutlined';
 import EventNoteOutlinedIcon from '@mui/icons-material/EventNoteOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
@@ -50,7 +51,7 @@ import ModalGuiTinNhanZalo from './components/modal_gui_tin_zalo';
 import ZaloService from '../../services/sms/gui_tin_nhan/ZaloService';
 import { InforZOA, ZaloAuthorizationDto } from '../../services/sms/gui_tin_nhan/zalo_dto';
 import { Guid } from 'guid-typescript';
-import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
+import abpCustom from '../../components/abp-custom';
 
 const styleListItem = createTheme({
     components: {
@@ -129,15 +130,15 @@ const TinNhanPage = () => {
             headerAlign: 'center',
             align: 'center',
             flex: 0.6,
-            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
-            renderCell: (params) => <CellDate date={params.value} dateType="dd/MM/yyyy HH:mm" />
+            renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
+            renderCell: (params) => <CellDate date={params?.value} dateType="dd/MM/yyyy HH:mm" />
         },
         {
             field: 'tenKhachHang',
             headerName: 'Khách hàng',
             minWidth: 118,
             flex: 1,
-            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+            renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
             renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
         {
@@ -146,7 +147,7 @@ const TinNhanPage = () => {
             headerAlign: 'center',
             minWidth: 118,
             flex: 0.5,
-            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+            renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
             renderCell: (params) => (
                 <Box title={params.value} width="100%" textAlign="center">
                     {params.value}
@@ -157,7 +158,7 @@ const TinNhanPage = () => {
             field: 'loaiTin',
             headerName: 'Loại tin',
             flex: 0.5,
-            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+            renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
             renderCell: (params) => (
                 <Box
                     sx={{
@@ -179,7 +180,7 @@ const TinNhanPage = () => {
             headerName: 'Nội dung',
             minWidth: 350,
             flex: 2,
-            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+            renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>
         }
     ];
 
@@ -580,7 +581,7 @@ const TinNhanPage = () => {
                         field: 'tenKhachHang',
                         headerName: 'Khách hàng',
                         flex: 1.5,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
                         renderCell: (params) => <Box title={params.value}>{params.value}</Box>
                     },
                     {
@@ -588,7 +589,7 @@ const TinNhanPage = () => {
                         headerName: 'Số điện thoại',
                         headerAlign: 'center',
                         flex: 1,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
                         renderCell: (params) => (
                             <Box title={params.value} width="100%" textAlign="center">
                                 {params.value}
@@ -601,7 +602,7 @@ const TinNhanPage = () => {
                         align: 'center',
                         headerName: 'Mã giao dịch',
                         flex: 1,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>
                     },
                     {
                         field: 'ngayLapHoaDon',
@@ -609,7 +610,7 @@ const TinNhanPage = () => {
                         headerAlign: 'center',
                         align: 'center',
                         flex: 1,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
                         renderCell: (params) => <CellDate date={params.value} dateType="dd/MM/yyyy HH:mm" />
                     },
                     {
@@ -618,7 +619,7 @@ const TinNhanPage = () => {
                         headerAlign: 'center',
                         align: 'center',
                         flex: 1,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
                         renderCell: (params) => (
                             <Box
                                 sx={{
@@ -640,7 +641,7 @@ const TinNhanPage = () => {
                         field: 'tenKhachHang',
                         headerName: 'Khách hàng',
                         flex: 1.2,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
                         renderCell: (params) => <Box title={params.value}>{params.value}</Box>
                     },
                     {
@@ -648,7 +649,7 @@ const TinNhanPage = () => {
                         headerName: 'Số điện thoại',
                         headerAlign: 'center',
                         flex: 0.8,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
                         renderCell: (params) => (
                             <Box title={params.value} width="100%" textAlign="center">
                                 {params.value}
@@ -662,7 +663,7 @@ const TinNhanPage = () => {
                         headerAlign: 'center',
                         align: 'center',
                         flex: 0.6,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
                         renderCell: (params) => <CellDate date={params.value} />
                     },
                     {
@@ -671,13 +672,13 @@ const TinNhanPage = () => {
                         headerAlign: 'center',
                         align: 'center',
                         flex: 0.8,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>
                     },
                     {
                         field: 'tenHangHoa',
                         headerName: 'Dịch vụ hẹn ',
                         flex: 1.5,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>
                     },
                     {
                         field: 'sTrangThaiGuiTinNhan',
@@ -685,7 +686,7 @@ const TinNhanPage = () => {
                         headerAlign: 'center',
                         align: 'center',
                         flex: 0.8,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
                         renderCell: (params) => (
                             <Box
                                 sx={{
@@ -712,7 +713,7 @@ const TinNhanPage = () => {
                         field: 'tenKhachHang',
                         headerName: 'Khách hàng',
                         flex: 2,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
                         renderCell: (params) => <Box title={params.value}>{params.value}</Box>
                     },
                     {
@@ -720,7 +721,7 @@ const TinNhanPage = () => {
                         headerName: 'Số điện thoại',
                         headerAlign: 'center',
                         flex: 1,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
                         renderCell: (params) => (
                             <Box title={params.value} width="100%" textAlign="center">
                                 {params.value}
@@ -734,14 +735,14 @@ const TinNhanPage = () => {
                         headerAlign: 'center',
                         align: 'center',
                         flex: 1,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
                         renderCell: (params) => <CellDate date={params.value} />
                     },
                     {
                         field: 'sTrangThaiGuiTinNhan',
                         headerName: 'Trạng thái',
                         flex: 1,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>
                     }
                 ];
                 break;
@@ -854,7 +855,11 @@ const TinNhanPage = () => {
                                 variant="outlined"
                                 startIcon={<UploadIcon />}
                                 className="btnNhapXuat btn-outline-hover"
-                                sx={{ bgcolor: '#fff!important', color: '#666466' }}>
+                                sx={{
+                                    bgcolor: '#fff!important',
+                                    color: '#666466',
+                                    display: abpCustom.isGrandPermission('Pages.HeThongSMS.Export') ? '' : 'none'
+                                }}>
                                 Xuất
                             </Button>
                             <Button
@@ -862,8 +867,8 @@ const TinNhanPage = () => {
                                 variant="contained"
                                 sx={{
                                     minWidth: '143px',
-
-                                    fontSize: '14px'
+                                    fontSize: '14px',
+                                    display: abpCustom.isGrandPermission('Pages.HeThongSMS.Create') ? '' : 'none'
                                 }}
                                 startIcon={<Add />}
                                 onClick={() => setIsShowModalGuiTinZalo(true)}>
@@ -874,8 +879,8 @@ const TinNhanPage = () => {
                                 variant="contained"
                                 sx={{
                                     minWidth: '143px',
-
-                                    fontSize: '14px'
+                                    fontSize: '14px',
+                                    display: abpCustom.isGrandPermission('Pages.SMS_Template.Create') ? '' : 'none'
                                 }}
                                 startIcon={<Add />}
                                 onClick={() => setIsShowModalAddMauTin(true)}>
@@ -891,7 +896,10 @@ const TinNhanPage = () => {
                                 <Button
                                     fullWidth
                                     size="small"
-                                    sx={{ height: '40px' }}
+                                    sx={{
+                                        height: '40px',
+                                        display: abpCustom.isGrandPermission('Pages.HeThongSMS.Create') ? '' : 'none'
+                                    }}
                                     variant="contained"
                                     onClick={() => {
                                         setIsShowModalAdd(true);
@@ -971,8 +979,26 @@ const TinNhanPage = () => {
                                             <Button
                                                 variant="contained"
                                                 onClick={onClickGuiLai}
+                                                sx={{
+                                                    display:
+                                                        tabActive == 1
+                                                            ? abpCustom.isGrandPermission('Pages.HeThongSMS.Create')
+                                                                ? ''
+                                                                : 'none'
+                                                            : tabActive == 2
+                                                            ? abpCustom.isGrandPermission('Pages.HeThongSMS.Resend')
+                                                                ? ''
+                                                                : 'none'
+                                                            : abpCustom.isGrandPermission('Pages.HeThongSMS.Export')
+                                                            ? ''
+                                                            : 'none'
+                                                }}
                                                 startIcon={
-                                                    tabActive != 0 ? <SendIcon style={{ width: 20 }} /> : <UploadIcon />
+                                                    tabActive != 0 ? (
+                                                        <NearMeOutlinedIcon style={{ width: 20 }} />
+                                                    ) : (
+                                                        <UploadIcon />
+                                                    )
                                                 }>
                                                 {tabActive == 1 ? 'Gửi tin' : tabActive == 2 ? 'Gửi lại' : 'Xuất excel'}
                                             </Button>
@@ -984,7 +1010,6 @@ const TinNhanPage = () => {
                                                 rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'
                                             }
                                             rowHeight={46}
-                                            autoHeight={pageSMS.items.length === 0}
                                             columns={columnGrid}
                                             rows={pageSMS.items}
                                             hideFooter
@@ -1028,7 +1053,15 @@ const TinNhanPage = () => {
                                             //         setRowSelectionModel([]);
                                             //     }}
                                             // />
-                                            <Button variant="contained" onClick={onRowSelect_GuiTin}>
+                                            <Button
+                                                variant="contained"
+                                                onClick={onRowSelect_GuiTin}
+                                                startIcon={<NearMeOutlinedIcon />}
+                                                sx={{
+                                                    display: abpCustom.isGrandPermission('Pages.HeThongSMS.Create')
+                                                        ? ''
+                                                        : 'none'
+                                                }}>
                                                 Gửi tin
                                             </Button>
                                         )}
@@ -1040,7 +1073,6 @@ const TinNhanPage = () => {
                                                 rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'
                                             }
                                             rowHeight={46}
-                                            autoHeight={pageCutomerSMS.items.length === 0}
                                             columns={columnGrid}
                                             rows={pageCutomerSMS.items}
                                             hideFooter

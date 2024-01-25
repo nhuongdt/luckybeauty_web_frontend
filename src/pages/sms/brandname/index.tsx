@@ -26,6 +26,8 @@ import fileDowloadService from '../../../services/file-dowload.service';
 import NapTienBrandname from './nap_tien_brandname';
 import AppConsts from '../../../lib/appconst';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
+import abpCustom from '../../../components/abp-custom';
+import { IList } from '../../../services/dto/IList';
 
 export default function PageBrandname() {
     const firstLoad = useRef(true);
@@ -460,7 +462,11 @@ export default function PageBrandname() {
                             variant="outlined"
                             startIcon={<FileUploadOutlined />}
                             className="btnNhapXuat btn-outline-hover"
-                            sx={{ bgcolor: '#fff!important', color: '#666466' }}>
+                            sx={{
+                                bgcolor: '#fff!important',
+                                color: '#666466',
+                                display: abpCustom.isGrandPermission('Pages.Brandname.Export') ? '' : 'none'
+                            }}>
                             Xuất
                         </Button>
                         <Button
@@ -469,7 +475,8 @@ export default function PageBrandname() {
                                 setIsShowModalAdd(true);
                                 setBrandChosed({ id: '' } as BrandnameDto);
                             }}
-                            startIcon={<Add />}>
+                            startIcon={<Add />}
+                            sx={{ display: abpCustom.isGrandPermission('Pages.Brandname.Create') ? '' : 'none' }}>
                             Thêm mới
                         </Button>
                         <Button
@@ -477,7 +484,8 @@ export default function PageBrandname() {
                             onClick={() => {
                                 setIsShowModalNapTien(true);
                             }}
-                            startIcon={<PaidOutlined />}>
+                            startIcon={<PaidOutlined />}
+                            sx={{ display: abpCustom.isGrandPermission('Pages.Brandname.NopTien') ? '' : 'none' }}>
                             Nạp tiền
                         </Button>
                     </Stack>
@@ -486,18 +494,22 @@ export default function PageBrandname() {
                     {rowSelectionModel.length > 0 && (
                         <div style={{ marginTop: '24px' }}>
                             <ActionRowSelect
-                                lstOption={[
-                                    {
-                                        id: '1',
-                                        text: 'Xóa brandname',
-                                        icon: <DeleteSweepOutlined sx={{ width: '1rem', height: '1rem' }} />
-                                    },
-                                    {
-                                        id: '2',
-                                        text: 'Kích hoạt',
-                                        icon: <PrintOutlined sx={{ width: '1rem', height: '1rem' }} />
-                                    }
-                                ]}
+                                lstOption={
+                                    [
+                                        {
+                                            id: '1',
+                                            text: 'Xóa brandname',
+                                            isShow: abpCustom.isGrandPermission('Pages.Brandname.Delete'),
+                                            icon: <DeleteSweepOutlined sx={{ width: '1rem', height: '1rem' }} />
+                                        },
+                                        {
+                                            id: '2',
+                                            text: 'Kích hoạt',
+                                            isShow: abpCustom.isGrandPermission('Pages.Brandname.Unlock'),
+                                            icon: <PrintOutlined sx={{ width: '1rem', height: '1rem' }} />
+                                        }
+                                    ] as IList[]
+                                }
                                 countRowSelected={rowSelectionModel.length}
                                 title="brandname"
                                 choseAction={DataGrid_handleAction}

@@ -19,6 +19,7 @@ import utils from '../../utils/utils';
 import Cookies from 'js-cookie';
 import { SuggestNhanVienDichVuDto } from '../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import { ListNhanVienDataContext } from '../../services/nhan-vien/dto/NhanVienDataContext';
+import abpCustom from '../../components/abp-custom';
 const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     const arrTrangThaiBook = [
         {
@@ -147,7 +148,8 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                         sx={{
                             bgcolor: 'var(--color-main)',
                             marginLeft: windowWidth > 600 ? 'auto' : '0',
-                            height: 'fit-content'
+                            height: 'fit-content',
+                            display: abpCustom.isGrandPermission('Pages.Booking.Create') ? '' : 'none'
                         }}
                         startIcon={<AddIcon />}
                         className="btn-container-hover"

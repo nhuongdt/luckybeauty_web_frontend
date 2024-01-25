@@ -21,6 +21,7 @@ import khachHangService from '../../../services/khach-hang/khachHangService';
 import { observer } from 'mobx-react';
 import khachHangStore from '../../../stores/khachHangStore';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import abpCustom from '../../../components/abp-custom';
 interface ModalProps {
     visiable: boolean;
     handleClose: () => void;
@@ -129,6 +130,13 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
                                                         AppConsts.guidEmpty && (
                                                         <Button
                                                             variant="outlined"
+                                                            sx={{
+                                                                display: abpCustom.isGrandPermission(
+                                                                    'Pages.NhomKhach.Delete'
+                                                                )
+                                                                    ? ''
+                                                                    : 'none'
+                                                            }}
                                                             onClick={() =>
                                                                 this.setState({
                                                                     isShowConfirmDelete: true,

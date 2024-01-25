@@ -45,7 +45,7 @@ const TabCuocHen: React.FC = () => {
             headerName: 'Ngày hẹn',
             headerAlign: 'center',
             align: 'center',
-            flex: 0.8,
+            flex: 1,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => <Box title={params.value}>{formatDate(new Date(params.value), 'dd/MM/yyyy')}</Box>
         },
@@ -54,14 +54,14 @@ const TabCuocHen: React.FC = () => {
             headerName: 'Thời gian hẹn',
             headerAlign: 'center',
             align: 'center',
-            flex: 0.8,
+            flex: 1,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
         {
             field: 'tenHangHoa',
             headerName: 'Dịch vụ',
-            flex: 1,
+            flex: 2,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
                 <Box title={params.value} sx={{ textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }}>
@@ -69,37 +69,37 @@ const TabCuocHen: React.FC = () => {
                 </Box>
             )
         },
-
-        {
-            field: 'giaBan',
-            headerName: 'Đơn giá',
-            flex: 0.5,
-            headerAlign: 'right',
-            align: 'right',
-            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
-            renderCell: (params) => (
-                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
-            )
-        },
+        // {
+        //     field: 'giaBan',
+        //     headerName: 'Đơn giá',
+        //     flex: 0.5,
+        //     headerAlign: 'right',
+        //     align: 'right',
+        //     renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+        //     renderCell: (params) => (
+        //         <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+        //     )
+        // },
         {
             field: 'nvBook',
-            headerName: 'Nhân viên book',
+            headerName: 'Nhân viên',
             flex: 1,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
-        {
-            field: 'nvThucHiens',
-            headerName: 'Nhân viên TH',
-            flex: 1,
-            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
-            renderCell: (params) => <Box title={params.value}>{utils.Remove_LastComma(params.value)}</Box>
-        },
+        // {
+        //     field: 'nvThucHiens',
+        //     headerName: 'Nhân viên TH',
+        //     flex: 1,
+        //     renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+        //     renderCell: (params) => <Box title={params.value}>{utils.Remove_LastComma(params.value)}</Box>
+        // },
         {
             field: 'txtTrangThai',
             headerName: 'Trạng thái',
             flex: 0.8,
-            headerAlign: 'left',
+            headerAlign: 'center',
+            align: 'center',
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
                 <Box
@@ -126,6 +126,7 @@ const TabCuocHen: React.FC = () => {
                     disableRowSelectionOnClick
                     hideFooter
                     autoHeight
+                    className="data-grid-row-full"
                     columns={columns}
                     rows={khachHangStore.lichSuDatLich === undefined ? [] : khachHangStore.lichSuDatLich.items}
                     getRowId={(row) => row.bookingDate}
