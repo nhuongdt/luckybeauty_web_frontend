@@ -25,6 +25,7 @@ import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/CreateOrEditKhachHangDto';
+import uploadFileService from '../../../services/uploadFileService';
 
 const CustomerInfor2 = () => {
     const { khachHangId } = useParams();
@@ -84,20 +85,6 @@ const CustomerInfor2 = () => {
 
     const onSaveEditCustomer = async () => {
         await getKhachHangInfo();
-        // get lai thong tin: vì hàm createOrEdit không trả về thông tin (tenNhomKhach)
-        // const data = await khachHangService.getDetail(khachHangId ?? Guid.EMPTY);
-        // setInforCus({
-        //     ...inforCus,
-        //     id: data?.id,
-        //     idLoaiKhach: data?.idLoaiKhach,
-        //     maKhachHang: data?.maKhachHang,
-        //     tenKhachHang: data?.tenKhachHang,
-        //     gioiTinhNam: data?.gioiTinhNam,
-        //     ngaySinh: data?.ngaySinh,
-        //     diaChi: data?.diaChi,
-        //     soDienThoai: data?.soDienThoai,
-        //     tenNhomKhach: data?.tenNhomKhach
-        // });
         setIsShowEditKhachHang(false);
     };
 
@@ -124,7 +111,7 @@ const CustomerInfor2 = () => {
                 formRef={cusEdit}
             />
             <Grid container paddingTop={2} spacing={1}>
-                <Grid item xs={12} md={4} lg={3} sx={{ position: 'relative' }}>
+                <Grid item xs={12} md={4} lg={4} sx={{ position: 'relative' }}>
                     <Stack
                         padding={2}
                         spacing={2}
@@ -145,7 +132,10 @@ const CustomerInfor2 = () => {
                                                     borderRadius: '6px'
                                                 }
                                             }}>
-                                            <img src={inforCus?.avatar} alt="avatar" />
+                                            <img
+                                                src={uploadFileService.GoogleApi_NewLink(inforCus?.avatar)}
+                                                alt="avatar"
+                                            />
                                         </Stack>
                                     ) : (
                                         <Avatar
@@ -159,7 +149,7 @@ const CustomerInfor2 = () => {
                                             {utils.getFirstLetter(inforCus?.tenKhachHang, 3)}
                                         </Avatar>
                                     )}
-                                    <ModeEditOutlinedIcon
+                                    {/* <ModeEditOutlinedIcon
                                         sx={{
                                             position: 'absolute',
                                             right: '0px',
@@ -167,7 +157,7 @@ const CustomerInfor2 = () => {
                                             width: '20px',
                                             color: '#5292e1'
                                         }}
-                                    />
+                                    /> */}
                                 </Stack>
                                 <Stack sx={{ position: 'relative' }}>
                                     <Typography sx={{ fontSize: '18px', fontWeight: 600 }}>
@@ -228,7 +218,7 @@ const CustomerInfor2 = () => {
                                             onClick={onShowModalEditCustomer}>
                                             Thay đổi thông tin
                                         </Button>
-                                        <DeleteOutlinedIcon
+                                        {/* <DeleteOutlinedIcon
                                             titleAccess="Xóa khách hàng"
                                             sx={{ color: '#b75151' }}
                                             onClick={() => {
@@ -239,7 +229,7 @@ const CustomerInfor2 = () => {
                                                     mes: 'Bạn có chắc chắn muốn xóa khách hàng này không?'
                                                 });
                                             }}
-                                        />
+                                        /> */}
                                     </Stack>
                                 </Grid>
                             </Grid>
@@ -258,29 +248,34 @@ const CustomerInfor2 = () => {
                                             : ''}
                                     </Typography>
                                 </Stack>
-                                <Stack justifyContent={'space-between'} direction={'row'}>
-                                    <Stack alignItems={'center'}>
-                                        <Typography sx={{ fontSize: '18px', fontWeight: 600 }}>
-                                            {inforCus?.soLanBooking}
-                                        </Typography>
-                                        <Typography variant="caption">Cuộc hẹn</Typography>
-                                    </Stack>
-                                    <Stack alignItems={'center'}>
-                                        <Typography sx={{ fontSize: '18px', fontWeight: 600 }}>
-                                            {utils.formatNumber(inforCus?.tongChiTieu ?? 0)}
-                                        </Typography>
-                                        <Typography variant="caption">Chi tiêu</Typography>
-                                    </Stack>
-                                    <Stack alignItems={'center'}>
-                                        <Typography
-                                            sx={{
-                                                fontSize: '18px',
-                                                fontWeight: 600,
-                                                color: (inforCus?.conNo ?? 0) > 0 ? '#b75151' : 'var(--font-color-main)'
-                                            }}>
-                                            {utils.formatNumber(inforCus?.conNo ?? 0)}
-                                        </Typography>
-                                        <Typography variant="caption">Còn nợ</Typography>
+                                <Stack>
+                                    <Stack justifyContent={'space-between'} direction={'row'}>
+                                        <Stack alignItems={'center'}>
+                                            <Typography sx={{ fontSize: '18px', fontWeight: 600 }}>
+                                                {inforCus?.soLanBooking}
+                                            </Typography>
+                                            <Typography variant="caption">Cuộc hẹn</Typography>
+                                        </Stack>
+                                        <Stack alignItems={'center'}>
+                                            <Typography sx={{ fontSize: '18px', fontWeight: 600 }}>
+                                                {utils.formatNumber(inforCus?.tongChiTieu ?? 0)}
+                                            </Typography>
+                                            <Typography variant="caption">Chi tiêu</Typography>
+                                        </Stack>
+                                        <Stack alignItems={'center'}>
+                                            <Typography
+                                                sx={{
+                                                    fontSize: '18px',
+                                                    fontWeight: 600,
+                                                    color:
+                                                        (inforCus?.conNo ?? 0) > 0
+                                                            ? '#b75151'
+                                                            : 'var(--font-color-main)'
+                                                }}>
+                                                {utils.formatNumber(inforCus?.conNo ?? 0)}
+                                            </Typography>
+                                            <Typography variant="caption">Còn nợ</Typography>
+                                        </Stack>
                                     </Stack>
                                 </Stack>
                             </Stack>
@@ -311,7 +306,7 @@ const CustomerInfor2 = () => {
                         </Stack>
                     </Stack>
                 </Grid>
-                <Grid item xs={12} md={8} lg={9}>
+                <Grid item xs={12} md={8} lg={8}>
                     <Stack padding={2} className="page-full" sx={{ border: '1px solid #cccc', borderRadius: '4px' }}>
                         <TabContext value={tabActive}>
                             <Grid container alignItems={'center'}>
