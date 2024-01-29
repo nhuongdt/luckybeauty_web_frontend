@@ -59,7 +59,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
         if (nextProp.formRef !== undefined) {
             const objUpdate = JSON.parse(JSON.stringify(nextProp.formRef));
             this.setState({
-                cusImage: objUpdate?.avatar ?? '',
+                cusImage: uploadFileService.GoogleApi_NewLink(objUpdate?.avatar ?? ''),
                 googleDrive_fileId: uploadFileService.GoogleApi_GetFileIdfromLink(objUpdate?.avatar ?? '')
             });
         }
@@ -366,7 +366,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                     defaultValue={'true'}
                                                     value={values.gioiTinhNam ?? false}
                                                     aria-labelledby="demo-row-radio-buttons-group-label"
-                                                    name="gioiTinh">
+                                                    name="gioiTinhNam">
                                                     <FormControlLabel value="true" control={<Radio />} label="Nam" />
                                                     <FormControlLabel value="false" control={<Radio />} label="Nữ" />
                                                     <FormControlLabel value="" control={<Radio />} label="Khác" />
