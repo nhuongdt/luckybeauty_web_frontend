@@ -317,12 +317,14 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                                     avatar: '',
                                                                     chucVu: '',
                                                                     soDienThoai: '',
-                                                                    tenNhanVien: ''
+                                                                    tenNhanVien: '',
+                                                                    trangThai: 0
                                                                 } as SuggestNhanVienDichVuDto)
                                                             }
                                                             size="small"
                                                             fullWidth
                                                             disablePortal
+                                                            getOptionDisabled={(option) => option.trangThai !== 1}
                                                             onChange={(event, value) => {
                                                                 setFieldValue('idNhanVien', value ? value.id : ''); // Cập nhật giá trị id trong Formik
                                                             }}

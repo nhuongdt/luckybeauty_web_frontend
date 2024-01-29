@@ -66,6 +66,7 @@ class NhanVienStore {
             avatar: '',
             idChucVu: '',
             idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
+            trangThai: 1,
             ghiChu: ''
         };
     }

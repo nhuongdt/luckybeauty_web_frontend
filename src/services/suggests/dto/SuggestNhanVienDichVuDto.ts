@@ -4,4 +4,5 @@ export interface SuggestNhanVienDichVuDto {
     avatar: string;
     soDienThoai: string;
     chucVu: string;
+    trangThai: number;
 }
