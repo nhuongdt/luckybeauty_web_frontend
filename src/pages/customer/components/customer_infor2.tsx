@@ -1,9 +1,6 @@
-import { Grid, Stack, Box, Avatar, Typography, Button, Tab } from '@mui/material';
+import { Grid, Stack, Avatar, Typography, Button, Tab } from '@mui/material';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
-import ModeEditOutlinedIcon from '@mui/icons-material/ModeEditOutlined';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import ClearIcon from '@mui/icons-material/Clear';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
@@ -11,11 +8,7 @@ import TabCuocHen from './TabCuocHen';
 import TabMuaHang from './TabMuaHang';
 import utils from '../../../utils/utils';
 import { useEffect, useState } from 'react';
-import { observer } from 'mobx-react';
-import { useParams } from 'react-router-dom';
 import { Guid } from 'guid-typescript';
-import { KhachHangDetail } from '../../../services/khach-hang/dto/KhachHangDetail';
-import khachHangStore from '../../../stores/khachHangStore';
 import khachHangService from '../../../services/khach-hang/khachHangService';
 import { ICustomerDetail_FullInfor } from '../../../services/khach-hang/dto/KhachHangDto';
 import { HoatDongKhachHang } from '../../../services/khach-hang/dto/ThongTinKhachHangTongHopDto';
@@ -27,13 +20,15 @@ import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import uploadFileService from '../../../services/uploadFileService';
 
-const CustomerInfor2 = () => {
-    const { khachHangId } = useParams();
+export interface IScreenCustomerInfor {
+    khachHangId?: string;
+    onClose: () => void;
+}
+
+const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
     const [tabActive, setTabActive] = useState('1');
     const [isShowEditKhachHang, setIsShowEditKhachHang] = useState(false);
-    const [inforCus, setInforCus] = useState<ICustomerDetail_FullInfor>();
-    // vi khong dung Mobx nên phải k hai báo 2 lần inforCus, cusEdit
-    const [cusEdit, setCusEdit] = useState<CreateOrEditKhachHangDto>({} as CreateOrEditKhachHangDto);
+    const [cusEdit, setCusEdit] = useState<ICustomerDetail_FullInfor>({} as ICustomerDetail_FullInfor);
     const [nkyHoatDong, setNKyHoatDong] = useState<HoatDongKhachHang[]>([]);
     const [objAlert, setObjAlert] = useState({ show: false, mes: '', type: 1 });
     const [objDelete, setObjDelete] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
@@ -43,37 +38,42 @@ const CustomerInfor2 = () => {
     };
 
     useEffect(() => {
-        getKhachHangInfo();
         getNhatKyHoatDong();
+        getKhachHangInfo();
     }, [khachHangId]);
-    const getKhachHangInfo = async () => {
-        const data = await khachHangService.getDetail(khachHangId ?? Guid.EMPTY);
-        setInforCus(data);
-    };
+
     const getNhatKyHoatDong = async () => {
         const data = await khachHangService.GetNhatKyHoatDong_ofKhachHang(khachHangId ?? Guid.EMPTY);
         setNKyHoatDong(data);
     };
 
-    const onShowModalEditCustomer = async () => {
-        setIsShowEditKhachHang(true);
-        const dataEdit = await khachHangService.getKhachHang(khachHangId ?? Guid.EMPTY);
+    const getKhachHangInfo = async () => {
+        const data = await khachHangService.getDetail(khachHangId ?? Guid.EMPTY);
         setCusEdit({
             ...cusEdit,
-            id: dataEdit?.id,
-            maKhachHang: dataEdit?.maKhachHang,
-            tenKhachHang: dataEdit?.tenKhachHang,
-            soDienThoai: dataEdit?.soDienThoai,
-            ngaySinh: dataEdit?.ngaySinh,
-            diaChi: dataEdit?.diaChi ?? '',
-            gioiTinhNam: dataEdit?.gioiTinhNam ?? false,
-            moTa: dataEdit?.moTa ?? ''
+            id: data.id,
+            maKhachHang: data?.maKhachHang as string,
+            tenKhachHang: data?.tenKhachHang as string,
+            soDienThoai: data?.soDienThoai as string,
+            ngaySinh: data?.ngaySinh as Date,
+            diaChi: data?.diaChi as string,
+            idNhomKhach: data?.idNhomKhach as string,
+            avatar: data?.avatar,
+            tenNhomKhach: data?.tenNhomKhach,
+            cuocHenGanNhat: data?.cuocHenGanNhat,
+            soLanBooking: data?.soLanBooking,
+            tongChiTieu: data?.tongChiTieu,
+            conNo: data?.conNo
         });
-        // await khachHangStore.getForEdit(khachHangId ?? Guid.EMPTY);
+    };
+
+    const onShowModalEditCustomer = async () => {
+        setIsShowEditKhachHang(true);
     };
 
     const gotoBack = () => {
-        window.location.replace('/khach-hangs');
+        // window.location.replace('/khach-hangs');
+        onClose();
     };
 
     const onDeleteCustomer = async () => {
@@ -108,7 +108,22 @@ const CustomerInfor2 = () => {
                 }}
                 onOk={onSaveEditCustomer}
                 title={'Cập nhật thông tin khách hàng'}
-                formRef={cusEdit}
+                formRef={
+                    {
+                        id: khachHangId,
+                        maKhachHang: cusEdit?.maKhachHang,
+                        tenKhachHang: cusEdit?.tenKhachHang,
+                        soDienThoai: cusEdit?.soDienThoai,
+                        ngaySinh: cusEdit?.ngaySinh,
+                        diaChi: cusEdit?.diaChi ?? '',
+                        gioiTinhNam: cusEdit?.gioiTinhNam ?? false,
+                        moTa: cusEdit?.moTa ?? '',
+                        idNhomKhach: cusEdit?.idNhomKhach,
+                        idNguonKhach: cusEdit?.idNguonKhach,
+                        avatar: cusEdit?.avatar,
+                        idLoaiKhach: cusEdit?.idLoaiKhach
+                    } as CreateOrEditKhachHangDto
+                }
             />
             <Grid container paddingTop={2} spacing={1}>
                 <Grid item xs={12} md={4} lg={4} sx={{ position: 'relative' }}>
@@ -120,7 +135,7 @@ const CustomerInfor2 = () => {
                         <Stack sx={{ position: 'relative' }}>
                             <Stack direction={'row'} spacing={1.5} alignItems={'center'}>
                                 <Stack position={'relative'}>
-                                    {inforCus?.avatar ? (
+                                    {cusEdit?.avatar ? (
                                         <Stack
                                             sx={{
                                                 '& img': {
@@ -133,7 +148,7 @@ const CustomerInfor2 = () => {
                                                 }
                                             }}>
                                             <img
-                                                src={uploadFileService.GoogleApi_NewLink(inforCus?.avatar)}
+                                                src={uploadFileService.GoogleApi_NewLink(cusEdit?.avatar)}
                                                 alt="avatar"
                                             />
                                         </Stack>
@@ -146,25 +161,16 @@ const CustomerInfor2 = () => {
                                                 color: 'var(--color-main)',
                                                 fontSize: '18px'
                                             }}>
-                                            {utils.getFirstLetter(inforCus?.tenKhachHang, 3)}
+                                            {utils.getFirstLetter(cusEdit?.tenKhachHang, 3)}
                                         </Avatar>
                                     )}
-                                    {/* <ModeEditOutlinedIcon
-                                        sx={{
-                                            position: 'absolute',
-                                            right: '0px',
-                                            bottom: '-7px',
-                                            width: '20px',
-                                            color: '#5292e1'
-                                        }}
-                                    /> */}
                                 </Stack>
                                 <Stack sx={{ position: 'relative' }}>
                                     <Typography sx={{ fontSize: '18px', fontWeight: 600 }}>
-                                        {inforCus?.tenKhachHang}
+                                        {cusEdit?.tenKhachHang}
                                     </Typography>
                                     <Typography variant="caption" color={'#b2b7bb'}>
-                                        {inforCus?.maKhachHang}
+                                        {cusEdit?.maKhachHang}
                                     </Typography>
                                 </Stack>
                             </Stack>
@@ -178,7 +184,7 @@ const CustomerInfor2 = () => {
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={7} lg={8}>
-                                    <Typography variant="body2">{inforCus?.soDienThoai}</Typography>
+                                    <Typography variant="body2">{cusEdit?.soDienThoai}</Typography>
                                 </Grid>
                                 <Grid item xs={5} lg={4}>
                                     <Typography variant="body2" fontWeight={600}>
@@ -187,8 +193,8 @@ const CustomerInfor2 = () => {
                                 </Grid>
                                 <Grid item xs={7} lg={8}>
                                     <Typography variant="body2">
-                                        {!utils.checkNull(inforCus?.ngaySinh as unknown as string)
-                                            ? format(new Date(inforCus?.ngaySinh as unknown as string), 'dd/MM/yyyy')
+                                        {!utils.checkNull(cusEdit?.ngaySinh as unknown as string)
+                                            ? format(new Date(cusEdit?.ngaySinh as unknown as string), 'dd/MM/yyyy')
                                             : ''}
                                     </Typography>
                                 </Grid>
@@ -198,7 +204,7 @@ const CustomerInfor2 = () => {
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={7} lg={8}>
-                                    <Typography variant="body2"> {inforCus?.diaChi}</Typography>
+                                    <Typography variant="body2"> {cusEdit?.diaChi}</Typography>
                                 </Grid>
                                 <Grid item xs={5} lg={4}>
                                     <Typography variant="body2" fontWeight={600}>
@@ -206,7 +212,7 @@ const CustomerInfor2 = () => {
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={7} lg={8}>
-                                    <Typography variant="body2">{inforCus?.tenNhomKhach}</Typography>
+                                    <Typography variant="body2">{cusEdit?.tenNhomKhach}</Typography>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Stack spacing={1} direction={'row'} justifyContent={'center'}>
@@ -240,9 +246,9 @@ const CustomerInfor2 = () => {
                                     <Typography variant="body2">Cuộc hẹn gần nhất</Typography>
 
                                     <Typography variant="body2">
-                                        {!utils.checkNull(inforCus?.cuocHenGanNhat as unknown as string)
+                                        {!utils.checkNull(cusEdit?.cuocHenGanNhat as unknown as string)
                                             ? format(
-                                                  new Date(inforCus?.cuocHenGanNhat as unknown as string),
+                                                  new Date(cusEdit?.cuocHenGanNhat as unknown as string),
                                                   'dd/MM/yyyy'
                                               )
                                             : ''}
@@ -252,13 +258,13 @@ const CustomerInfor2 = () => {
                                     <Stack justifyContent={'space-between'} direction={'row'}>
                                         <Stack alignItems={'center'}>
                                             <Typography sx={{ fontSize: '18px', fontWeight: 600 }}>
-                                                {inforCus?.soLanBooking}
+                                                {cusEdit?.soLanBooking}
                                             </Typography>
                                             <Typography variant="caption">Cuộc hẹn</Typography>
                                         </Stack>
                                         <Stack alignItems={'center'}>
                                             <Typography sx={{ fontSize: '18px', fontWeight: 600 }}>
-                                                {utils.formatNumber(inforCus?.tongChiTieu ?? 0)}
+                                                {utils.formatNumber(cusEdit?.tongChiTieu ?? 0)}
                                             </Typography>
                                             <Typography variant="caption">Chi tiêu</Typography>
                                         </Stack>
@@ -268,11 +274,9 @@ const CustomerInfor2 = () => {
                                                     fontSize: '18px',
                                                     fontWeight: 600,
                                                     color:
-                                                        (inforCus?.conNo ?? 0) > 0
-                                                            ? '#b75151'
-                                                            : 'var(--font-color-main)'
+                                                        (cusEdit?.conNo ?? 0) > 0 ? '#b75151' : 'var(--font-color-main)'
                                                 }}>
-                                                {utils.formatNumber(inforCus?.conNo ?? 0)}
+                                                {utils.formatNumber(cusEdit?.conNo ?? 0)}
                                             </Typography>
                                             <Typography variant="caption">Còn nợ</Typography>
                                         </Stack>
@@ -331,10 +335,10 @@ const CustomerInfor2 = () => {
                                 </Grid>
                             </Grid>
                             <TabPanel value="1" sx={{ padding: 0 }}>
-                                <TabCuocHen />
+                                <TabCuocHen khachHangId={khachHangId} />
                             </TabPanel>
                             <TabPanel value="2" sx={{ padding: 0 }}>
-                                <TabMuaHang />
+                                <TabMuaHang khachHangId={khachHangId} />
                             </TabPanel>
                         </TabContext>
                     </Stack>
