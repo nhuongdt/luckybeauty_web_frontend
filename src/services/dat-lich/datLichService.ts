@@ -44,5 +44,10 @@ class BookingServices {
         const result = await http.post(`api/services/app/Booking/DeleteBooking?id=${idBooking}`);
         return result.data.result;
     };
+    HuyLichHen = async (idBooking: string) => {
+        // # xóalichhen: chỉ update trangthai
+        const result = await http.post(`api/services/app/Booking/CancelBooking?id=${idBooking}`);
+        return result.data.result;
+    };
 }
 export default new BookingServices();

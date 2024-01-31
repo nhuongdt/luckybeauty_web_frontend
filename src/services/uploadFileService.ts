@@ -26,7 +26,20 @@ class UpLoadFileService {
         return '';
     };
 
+    GoogleApi_NewLink = (url: string) => {
+        if (!utils.checkNull(url)) {
+            const arr = url.split('=');
+            if (arr.length === 3) {
+                // https://lh3.googleusercontent.com/d/1lNQmIG-fprdjfZ7hEAEGc_id6acx19v5
+                return `https://lh3.googleusercontent.com/d/${arr[2]}`;
+            }
+        }
+        return '';
+    };
+
     GoogleApi_UploaFileToDrive = async (fileSelect: File, subFolder = '') => {
+        // const pathFile = URL.createObjectURL(fileSelect); // Lưu trong bộ nhớ của trình duyệt
+
         // cấu trúc lưu file: luckyBeauty/tenantName/subFolder/fileName
         let tenantName = Cookies.get('TenantName');
         if (utils.checkNull(tenantName)) {

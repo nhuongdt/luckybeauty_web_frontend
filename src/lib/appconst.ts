@@ -162,7 +162,7 @@ const AppConsts = {
         { value: TrangThaiBooking.Confirm, name: 'Đã xác nhận' },
         { value: TrangThaiBooking.CheckIn, name: 'Check in' },
         { value: TrangThaiBooking.Success, name: 'Hoàn thành' },
-        { value: TrangThaiBooking.Cancel, name: 'Xóa' }
+        { value: TrangThaiBooking.Cancel, name: 'Hủy lịch hẹn' }
     ],
     hinhThucThanhToan: [
         { value: 1, text: 'Tiền mặt' },

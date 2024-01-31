@@ -358,10 +358,12 @@ const LichHen: React.FC = () => {
             <LichhenDetail />
             <ConfirmDelete
                 isShow={bookingStore.isShowConfirmDelete}
+                mes="Bạn có chắc chắn muốn hủy lịch hẹn không?"
+                title="Xác nhận hủy"
                 onOk={async () => {
-                    const deleteReult = await datLichService.DeleteBooking(bookingStore.idBooking);
+                    const deleteReult = await datLichService.HuyLichHen(bookingStore.idBooking);
                     deleteReult === true
-                        ? enqueueSnackbar('Xóa bản ghi thành công', {
+                        ? enqueueSnackbar('Hủy lịch hẹn thành công', {
                               variant: 'success',
                               autoHideDuration: 3000
                           })

@@ -68,7 +68,8 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     laHangHoa: old.idLoaiHangHoa === 1
                 };
             });
-            setProductImage(obj.image);
+            // setProductImage(obj.image);
+            setProductImage(uploadFileService.GoogleApi_NewLink(obj.image));
             setgoogleDrive_fileId(uploadFileService.GoogleApi_GetFileIdfromLink(obj.image));
 
             // find nhomhang

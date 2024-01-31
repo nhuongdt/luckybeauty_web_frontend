@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Box, SelectChangeEvent } from '@mui/material';
-import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
 import { observer } from 'mobx-react';
 import khachHangStore from '../../../stores/khachHangStore';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { format as formatDate } from 'date-fns';
-import { useParams } from 'react-router-dom';
-import AppConsts from '../../../lib/appconst';
-import utils from '../../../utils/utils';
-const TabCuocHen: React.FC = () => {
-    const { khachHangId } = useParams();
+const TabCuocHen = ({ khachHangId }: any) => {
+    // const { khachHangId } = useParams();
     const [curentPage, setCurrentPage] = useState<number>(1);
     const [maxResultCount, setMaxResultCount] = useState<number>(10);
     const [sortBy, setSortBy] = useState('creationTime');
@@ -20,7 +16,7 @@ const TabCuocHen: React.FC = () => {
         getLichSuDatLich();
     }, [curentPage, maxResultCount, sortBy, sortType]);
     const getLichSuDatLich = async () => {
-        await khachHangStore.getLichSuDatLich(khachHangId ?? AppConsts.guidEmpty, {
+        await khachHangStore.getLichSuDatLich(khachHangId, {
             keyword: '',
             maxResultCount: maxResultCount,
             skipCount: curentPage,

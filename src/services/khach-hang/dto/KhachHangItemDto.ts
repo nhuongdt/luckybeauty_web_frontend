@@ -10,6 +10,7 @@ export interface KhachHangItemDto {
     tenNhomKhach?: string;
     gioiTinh?: string;
     tongChiTieu?: number;
+    conNo?: number;
     cuocHenGanNhat: Date;
     tongTichDiem: number;
     soLanCheckIn?: number;

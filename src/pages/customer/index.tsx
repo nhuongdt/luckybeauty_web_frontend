@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
     DataGrid,
+    GridCellParams,
     GridColDef,
     GridColumnVisibilityModel,
     GridRenderCellParams,
@@ -28,14 +29,11 @@ import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import SearchIcon from '@mui/icons-material/Search';
-import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import { ReactComponent as FilterIcon } from '../../images/icons/i-filter.svg';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import fileDowloadService from '../../services/file-dowload.service';
 import CreateOrEditCustomerDialog from './components/create-or-edit-customer-modal';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
-import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
 import { observer } from 'mobx-react';
@@ -52,7 +50,6 @@ import CreateOrEditNhomKhachModal from './components/create-nhom-khach-modal';
 import AccordionNhomKhachHang from '../../components/Accordion/NhomKhachHang';
 import { SuggestNhomKhachDto } from '../../services/suggests/dto/SuggestNhomKhachDto';
 import utils from '../../utils/utils';
-import SuggestService from '../../services/suggests/SuggestService';
 import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
 import BangBaoLoiFileImport from '../../components/ImportComponent/BangBaoLoiFileImport';
 import { BangBaoLoiFileimportDto } from '../../services/dto/BangBaoLoiFileimportDto';
@@ -61,6 +58,10 @@ import { IList } from '../../services/dto/IList';
 import { format } from 'date-fns';
 import { Guid } from 'guid-typescript';
 import CustomerFilterDrawer from './components/CustomerFilterDrawer';
+import { ICustomerDetail_FullInfor } from '../../services/khach-hang/dto/KhachHangDto';
+import CustomerInfor2 from './components/customer_infor2';
+import ActionRow2Button from '../../components/DataGrid/ActionRow2Button';
+import { TypeAction } from '../../lib/appconst';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -305,8 +306,30 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
 
     handleView = (param: GridRowParams) => {
         // Handle View action
-        this.handleCloseMenu();
-        window.location.replace(`/khach-hang-chi-tiet/${param.id}`);
+        // this.handleCloseMenu();
+        // window.location.href = `/khach-hang-chi-tiet/${param.id}`;
+        this.setState({ information: true, idkhachHang: param.id.toString() });
+    };
+    handleCellClick = (param: GridCellParams) => {
+        if (param.field == 'checkBox' || param.field == 'action') {
+            return;
+        }
+        this.setState({ information: true, idkhachHang: param.id.toString() });
+    };
+    handleClickAction = async (type: number, param: GridCellParams) => {
+        this.setState({ selectedRowId: param.id.toString() });
+        switch (type) {
+            case TypeAction.DELETE:
+                {
+                    this.setState({ isShowConfirmDelete: true });
+                }
+                break;
+            case TypeAction.UPDATE:
+                {
+                    this.createOrUpdateModalOpen(param.id.toString());
+                }
+                break;
+        }
     };
 
     handleEdit = () => {
@@ -328,8 +351,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                   });
             this.getData();
         } else {
-            this.delete(this.state.selectedRowId ?? '');
-
+            await this.delete(this.state.selectedRowId ?? '');
             this.handleCloseMenu();
         }
         this.showConfirmDelete();
@@ -457,7 +479,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 sortable: false,
                 filterable: false,
                 disableColumnMenu: true,
-                width: 65,
+                flex: 0.2,
                 renderHeader: (params) => {
                     return <Checkbox onClick={this.handleSelectAllGridRowClick} checked={this.state.checkAllRow} />;
                 },
@@ -471,8 +493,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             {
                 field: 'tenKhachHang',
                 headerName: 'Tên khách hàng',
-                minWidth: 185,
-                flex: 1.2,
+                flex: 2,
                 renderCell: (params) => (
                     <Box
                         style={{
@@ -483,7 +504,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         }}
                         title={params.value}>
                         <Avatar
-                            src={params.row.avatar}
+                            src={uploadFileService.GoogleApi_NewLink(params.row.avatar)}
                             alt="Avatar"
                             style={{ width: 24, height: 24, marginRight: 8 }}
                         />
@@ -503,14 +524,12 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             {
                 field: 'soDienThoai',
                 headerName: 'Số điện thoại',
-                minWidth: 114,
                 flex: 1,
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             },
             {
                 field: 'ngaySinh',
                 headerName: 'Ngày sinh',
-                minWidth: 112,
                 flex: 1,
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
                 renderCell: (params) => (
@@ -537,14 +556,14 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             {
                 field: 'tenNhomKhach',
                 headerName: 'Nhóm khách',
-                minWidth: 112,
                 flex: 1,
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             },
             {
                 field: 'tongChiTieu',
                 headerName: 'Tổng mua',
-                minWidth: 113,
+                headerAlign: 'right',
+                align: 'right',
                 flex: 1,
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
                 renderCell: (params) => (
@@ -554,59 +573,63 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 )
             },
             {
-                field: 'cuocHenGanNhat',
-                headerName: 'Cuộc hẹn gần nhất',
-                renderCell: (params) => (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            fontSize: 'var(--font-size-main)',
-                            justifyContent: 'center',
-                            width: '100%'
-                        }}>
-                        {new Date(params.value).toLocaleDateString('en-GB')}
-                    </Box>
-                ),
-                minWidth: 160,
+                field: 'conNo',
+                headerName: 'Còn nợ',
+                headerAlign: 'right',
+                align: 'right',
                 flex: 1,
-                renderHeader: (params) => (
-                    <Box
-                        sx={{
-                            fontWeight: '700',
-                            width: '100%',
-                            textAlign: 'left',
-                            '& svg': {
-                                width: '16px',
-                                height: '16px'
-                            }
-                        }}>
-                        {params.colDef.headerName}
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
+                renderCell: (params) => (
+                    <Box title={params.value} color={params.value > 0 ? 'red' : ''}>
+                        {new Intl.NumberFormat('vi-VN').format(params.value)}
                     </Box>
                 )
-            }
+            },
             // {
-            //     field: 'actions',
-            //     headerName: 'Hành động',
-            //     maxWidth: 48,
-            //     flex: 1,
-            //     disableColumnMenu: true,
-
+            //     field: 'cuocHenGanNhat',
+            //     headerName: 'Cuộc hẹn gần nhất',
             //     renderCell: (params) => (
-            //         <Box>
-            //             <IconButton
-            //                 aria-label="Actions"
-            //                 aria-controls={`actions-menu-${params.row.id}`}
-            //                 aria-haspopup="true"
-            //                 onClick={(event) => {
-            //                     this.handleOpenMenu(event, params.row.id);
-            //                 }}>
-            //                 <MoreHorizIcon />
-            //             </IconButton>
+            //         <Box
+            //             sx={{
+            //                 display: 'flex',
+            //                 alignItems: 'center',
+            //                 fontSize: 'var(--font-size-main)',
+            //                 justifyContent: 'center',
+            //                 width: '100%'
+            //             }}>
+            //             {new Date(params.value).toLocaleDateString('en-GB')}
             //         </Box>
             //     ),
-            //     renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
+            //     minWidth: 160,
+            //     flex: 1,
+            //     renderHeader: (params) => (
+            //         <Box
+            //             sx={{
+            //                 fontWeight: '700',
+            //                 width: '100%',
+            //                 textAlign: 'left',
+            //                 '& svg': {
+            //                     width: '16px',
+            //                     height: '16px'
+            //                 }
+            //             }}>
+            //             {params.colDef.headerName}
+            //         </Box>
+            //     )
             // }
+            {
+                field: 'action',
+                headerName: '#',
+                flex: 0.5,
+                align: 'center',
+                headerAlign: 'center',
+                disableColumnMenu: true,
+                sortable: false,
+                renderCell: (params) => (
+                    <ActionRow2Button handleClickAction={(type: number) => this.handleClickAction(type, params)} />
+                ),
+                renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+            }
         ];
 
         return (
@@ -624,7 +647,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             icon={<PersonOutlineIcon />}
                             isOpen={this.state.isShowModalChuyenNhom}
                             lstData={this.state.listAllNhomKhach
-                                .filter((x) => !utils.checkNull(x.id))
+                                ?.filter((x) => !utils.checkNull(x.id))
                                 .map((item: any, index: number) => {
                                     return {
                                         id: item.id,
@@ -645,6 +668,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         <TextField
                                             fullWidth
                                             size="small"
+                                            value={this.state.keyword}
                                             sx={{
                                                 backgroundColor: '#fff',
                                                 borderColor: '#CDC9CD'
@@ -860,7 +884,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         }
                                         rows={this.state.rowTable}
                                         columns={columns}
-                                        onRowClick={(item) => this.handleView(item)}
+                                        // onRowClick={(item) => this.handleView(item)}
+                                        onCellClick={this.handleCellClick}
                                         hideFooter
                                         onColumnVisibilityModelChange={this.toggleColumnVisibility}
                                         columnVisibilityModel={this.state.visibilityColumn}
@@ -957,7 +982,13 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         />
                     </Grid>
                 ) : (
-                    <CustomerInfo onClose={this.handleCloseInfor} />
+                    <CustomerInfor2
+                        khachHangId={this.state.idkhachHang}
+                        onClose={() => {
+                            this.setState({ information: false });
+                            this.getData();
+                        }}
+                    />
                 )}
             </>
         );

@@ -38,288 +38,6 @@ import { dbDexie } from '../../../lib/dexie/dexieDB';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
-// const LichHenDetail: FC = () => {
-//     return (
-//         <Dialog
-//             open={bookingStore.isShowBookingInfo}
-//             onClose={async () => {
-//                 await bookingStore.onShowBookingInfo();
-//                 bookingStore.idBooking = AppConsts.guidEmpty;
-//             }}
-//             sx={{ borderRadius: '8px' }}
-//             fullWidth
-//             maxWidth="sm">
-//             <Box>
-//                 <Box
-//                     display={'flex'}
-//                     justifyContent={'space-between'}
-//                     padding={'16px 24px'}
-//                     borderBottom="1px solid #C2C9D6">
-//                     <Typography fontSize="24px" fontWeight={700}>
-//                         Chi tiết cuộc hẹn
-//                     </Typography>
-//                     <IconButton
-//                         onClick={async () => {
-//                             await bookingStore.onShowBookingInfo();
-//                             bookingStore.idBooking = AppConsts.guidEmpty;
-//                         }}>
-//                         <CloseIcon />
-//                     </IconButton>
-//                 </Box>
-//                 <Box>
-//                     <Grid container>
-//                         <Grid item xs={12} padding={'8px 24px'} justifyContent={'space-between'}>
-//                             <Box display={'flex'} justifyContent={'space-between'}>
-//                                 <Box display={'flex'}>
-//                                     <Avatar src={bookingStore.bookingInfoDto?.avatarKhachHang} />
-//                                     <Box
-//                                         display={'flex'}
-//                                         flexDirection={'column'}
-//                                         justifyContent={'space-between'}
-//                                         marginLeft={'5px'}>
-//                                         <Typography>{bookingStore.bookingInfoDto?.tenKhachHang}</Typography>
-//                                         <Typography>{bookingStore.bookingInfoDto?.soDienThoai}</Typography>
-//                                     </Box>
-//                                 </Box>
-//                                 <Box>
-//                                     <ButtonGroup orientation="horizontal">
-//                                         <Button
-//                                             onClick={async () => {
-//                                                 await bookingStore.onShowBookingInfo();
-//                                                 await bookingStore.getForEditBooking(bookingStore.bookingInfoDto?.id);
-//                                                 bookingStore.isShowCreateOrEdit = true;
-//                                             }}>
-//                                             Chỉnh sửa
-//                                         </Button>
-//                                         <Button
-//                                             onClick={async () => {
-//                                                 bookingStore.isShowConfirmDelete = true;
-//                                             }}>
-//                                             Xóa
-//                                         </Button>
-//                                     </ButtonGroup>
-//                                 </Box>
-//                             </Box>
-//                         </Grid>
-//                         <Grid
-//                             item
-//                             xs={12}
-//                             padding={'8px'}
-//                             display={'flex'}
-//                             justifyContent={'center'}
-//                             alignItems={'center'}>
-//                             <Table>
-//                                 <TableHead>
-//                                     <TableRow>
-//                                         <TableCell sx={{ fontSize: '13px' }}>Ngày</TableCell>
-//                                         <TableCell sx={{ fontSize: '13px' }}>Dịch vụ</TableCell>
-//                                         <TableCell sx={{ fontSize: '13px' }}>Giá</TableCell>
-//                                         <TableCell sx={{ fontSize: '13px' }}>Nhân viên</TableCell>
-//                                         <TableCell sx={{ fontSize: '13px' }}>Ghi chú</TableCell>
-//                                     </TableRow>
-//                                 </TableHead>
-//                                 <TableBody>
-//                                     <TableRow>
-//                                         <TableCell>
-//                                             <Typography
-//                                                 sx={{
-//                                                     color: 'black',
-//                                                     fontFamily: 'Roboto',
-//                                                     fontSize: '13px',
-//                                                     fontWeight: '500',
-//                                                     marginLeft: '8px'
-//                                                 }}>
-//                                                 {formatDate(
-//                                                     new Date(bookingStore.bookingInfoDto.bookingDate),
-//                                                     'iii, dd/MM/yyyy',
-//                                                     { locale: vi }
-//                                                 )}{' '}
-//                                                 ({bookingStore.bookingInfoDto.startTime} -{' '}
-//                                                 {bookingStore.bookingInfoDto.endTime})
-//                                             </Typography>
-//                                         </TableCell>
-//                                         <TableCell>
-//                                             <Typography
-//                                                 sx={{
-//                                                     color: 'black',
-//                                                     fontFamily: 'Roboto',
-//                                                     fontSize: '13px',
-//                                                     fontWeight: '500',
-//                                                     marginLeft: '8px'
-//                                                 }}>
-//                                                 {bookingStore.bookingInfoDto.tenDichVu}
-//                                             </Typography>
-//                                         </TableCell>
-//                                         <TableCell>
-//                                             {new Intl.NumberFormat('vi-VN').format(bookingStore.bookingInfoDto.donGia)}
-//                                         </TableCell>
-//                                         <TableCell>
-//                                             <Typography
-//                                                 sx={{
-//                                                     color: 'black',
-//                                                     fontFamily: 'Roboto',
-//                                                     fontSize: '13px',
-//                                                     fontWeight: '500',
-//                                                     marginLeft: '8px'
-//                                                 }}>
-//                                                 {bookingStore.bookingInfoDto.nhanVienThucHien}
-//                                             </Typography>
-//                                         </TableCell>
-//                                         <TableCell>
-//                                             <Typography
-//                                                 sx={{
-//                                                     color: 'black',
-//                                                     fontFamily: 'Roboto',
-//                                                     fontSize: '13px',
-//                                                     fontWeight: '500',
-//                                                     marginLeft: '8px'
-//                                                 }}>
-//                                                 {bookingStore.bookingInfoDto.ghiChu}
-//                                             </Typography>
-//                                         </TableCell>
-//                                     </TableRow>
-//                                 </TableBody>
-//                             </Table>
-//                         </Grid>
-//                         <Grid item xs={12} padding={'8px 24px'}>
-//                             <Box
-//                                 padding={'12px'}
-//                                 display={'flex'}
-//                                 alignItems={'center'}
-//                                 justifyContent={'space-between'}>
-//                                 <Typography fontSize={'13px'}>Trạng thái:</Typography>
-//                                 <Stack direction="row">
-//                                     <Button
-//                                         variant="text"
-//                                         onClick={() => {
-//                                             bookingStore.bookingInfoDto.trangThai = TrangThaiBooking.Wait;
-//                                         }}
-//                                         sx={{
-//                                             '&:hover': {
-//                                                 background: '#FF9900',
-//                                                 color: '#FFF'
-//                                             },
-//                                             background:
-//                                                 bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Wait
-//                                                     ? '#FF9900'
-//                                                     : '#FF99001a',
-//                                             color:
-//                                                 bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Wait
-//                                                     ? '#FFF'
-//                                                     : '#FF9900'
-//                                         }}>
-//                                         Đang chờ
-//                                     </Button>
-//                                     <Button
-//                                         onClick={() => {
-//                                             bookingStore.bookingInfoDto.trangThai = TrangThaiBooking.Confirm;
-//                                         }}
-//                                         sx={{
-//                                             '&:hover': {
-//                                                 background: '#7DC1FF',
-//                                                 color: '#FFF'
-//                                             },
-//                                             background:
-//                                                 bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Confirm
-//                                                     ? '#7DC1FF'
-//                                                     : '#7DC1FF1a',
-//                                             color:
-//                                                 bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Confirm
-//                                                     ? '#FFF'
-//                                                     : '#7DC1FF'
-//                                         }}>
-//                                         Đã xác nhận
-//                                     </Button>
-//                                     <Button
-//                                         onClick={() => {
-//                                             bookingStore.bookingInfoDto.trangThai = TrangThaiBooking.CheckIn;
-//                                         }}
-//                                         sx={{
-//                                             '&:hover': {
-//                                                 background: '#009EF7',
-//                                                 color: '#FFF'
-//                                             },
-//                                             background:
-//                                                 bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.CheckIn
-//                                                     ? '#009EF7'
-//                                                     : '#009EF71a',
-//                                             color:
-//                                                 bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.CheckIn
-//                                                     ? '#FFF'
-//                                                     : '#009EF7'
-//                                         }}>
-//                                         Đã checkin
-//                                     </Button>
-//                                     <Button
-//                                         onClick={() => {
-//                                             bookingStore.bookingInfoDto.trangThai = TrangThaiBooking.Success;
-//                                         }}
-//                                         sx={{
-//                                             '&:hover': {
-//                                                 background: '#50CD89',
-//                                                 color: '#FFF'
-//                                             },
-//                                             background:
-//                                                 bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Success
-//                                                     ? '#50CD89'
-//                                                     : '#50CD891a',
-//                                             color:
-//                                                 bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Success
-//                                                     ? '#FFF'
-//                                                     : '#50CD89'
-//                                         }}>
-//                                         Đã hoàn thành
-//                                     </Button>
-//                                     <Button
-//                                         onClick={() => {
-//                                             bookingStore.bookingInfoDto.trangThai = TrangThaiBooking.Cancel;
-//                                         }}
-//                                         sx={{
-//                                             '&:hover': {
-//                                                 background: '#F1416C',
-//                                                 color: '#FFF'
-//                                             },
-//                                             background:
-//                                                 bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Cancel
-//                                                     ? '#F1416C'
-//                                                     : '#F1416C1a',
-//                                             color:
-//                                                 bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Cancel
-//                                                     ? '#FFF'
-//                                                     : '#F1416C'
-//                                         }}>
-//                                         Hủy
-//                                     </Button>
-//                                 </Stack>
-//                             </Box>
-//                         </Grid>
-//                     </Grid>
-//                 </Box>
-//                 <DialogActions>
-//                     <Button
-//                         color="primary"
-//                         variant="contained"
-//                         onClick={async () => {
-//                             const result = await datLichService.UpdateTrangThaiBooking(
-//                                 bookingStore.bookingInfoDto?.id,
-//                                 bookingStore.bookingInfoDto?.trangThai
-//                             );
-//                             await bookingStore.onShowBookingInfo();
-//                             bookingStore.idBooking = AppConsts.guidEmpty;
-//                             await bookingStore.getData();
-//                             enqueueSnackbar(result.message, {
-//                                 variant: result.status,
-//                                 autoHideDuration: 3000
-//                             });
-//                         }}>
-//                         Lưu trạng thái
-//                     </Button>
-//                 </DialogActions>
-//             </Box>
-//         </Dialog>
-//     );
-// };
-// export default observer(LichHenDetail);
 
 const LichHenDetail: FC = () => {
     const [firstCharCustomer, setfirstCharCustomer] = useState('');
@@ -358,7 +76,7 @@ const LichHenDetail: FC = () => {
         bookingStore.idBooking = AppConsts.guidEmpty;
     };
 
-    const deleteCusChecking = async () => {
+    const huyLichHen = async () => {
         const arrIdCheckin = await CheckinService.GetArrIdChecking_fromIdBooking(bookingStore?.bookingInfoDto.id);
         if (arrIdCheckin != null && arrIdCheckin.length > 0) {
             const idCheckIn = arrIdCheckin[0];
@@ -476,13 +194,13 @@ const LichHenDetail: FC = () => {
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
-            <ConfirmDelete
+            {/* <ConfirmDelete
                 isShow={inforDelete.show}
                 title={inforDelete.title}
                 mes={inforDelete.mes}
-                onOk={deleteCusChecking}
-                onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
-            <Dialog open={bookingStore.isShowBookingInfo} maxWidth="sm" fullWidth>
+                onOk={huyLichHen}
+                onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete> */}
+            <Dialog open={bookingStore.isShowBookingInfo} maxWidth="sm" fullWidth onClose={onCloseThisForm}>
                 <DialogTitle sx={{ backgroundColor: bookingStore?.bookingInfoDto?.color, color: 'white' }}>
                     <Stack direction={'row'} spacing={1}>
                         <span>Thông tin cuộc hẹn</span>
@@ -594,45 +312,73 @@ const LichHenDetail: FC = () => {
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Stepper
-                                activeStep={bookingStore.bookingInfoDto?.trangThai - 1}
-                                alternativeLabel
-                                sx={{ paddingTop: '16px', paddingBottom: '16px' }}>
-                                {AppConsts.trangThaiBooking
-                                    .filter((x) => x.value !== 0)
-                                    .map((item) => (
-                                        <Step
-                                            key={item.value}
+
+                        {bookingStore.bookingInfoDto.trangThai === 0 ? (
+                            <Grid item xs={12}>
+                                <Grid container padding={'16px 16px 0px 0px'} spacing={2} alignItems={'center'}>
+                                    <Grid item xs={2} sm={3} md={3} lg={3}>
+                                        <Typography
                                             sx={{
-                                                '& .MuiSvgIcon-root ': {
-                                                    width: 30,
-                                                    height: 30
-                                                },
-                                                ' & .MuiStepIcon-root.Mui-active': {
-                                                    color: bookingStore?.bookingInfoDto?.color
-                                                }
-                                            }}
-                                            onClick={() => updateTrangThai(item.value)}>
-                                            <StepLabel title="Click vào đây để cập nhật trạng thái">
-                                                {item.name}
-                                            </StepLabel>
-                                        </Step>
-                                    ))}
-                            </Stepper>
-                        </Grid>
+                                                fontSize: '15px',
+                                                display: { xs: 'none', md: 'block', sm: '', lg: '' }
+                                            }}>
+                                            Trạng thái
+                                        </Typography>
+                                        <SpaOutlinedIcon
+                                            sx={{ display: { xs: '', md: 'none', sm: 'none', lg: 'none' } }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={10} sm={9} md={9} lg={9} style={{ fontWeight: 600 }}>
+                                        Đã hủy
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        ) : (
+                            <Grid item xs={12}>
+                                <Stepper
+                                    activeStep={bookingStore.bookingInfoDto?.trangThai - 1}
+                                    alternativeLabel
+                                    sx={{ paddingTop: '16px', paddingBottom: '16px' }}>
+                                    {AppConsts.trangThaiBooking
+                                        .filter((x) => x.value !== 0)
+                                        .map((item) => (
+                                            <Step
+                                                key={item.value}
+                                                sx={{
+                                                    '& .MuiSvgIcon-root ': {
+                                                        width: 30,
+                                                        height: 30
+                                                    },
+                                                    ' & .MuiStepIcon-root.Mui-active': {
+                                                        color: bookingStore?.bookingInfoDto?.color
+                                                    }
+                                                }}
+                                                onClick={() => updateTrangThai(item.value)}>
+                                                <StepLabel title="Click vào đây để cập nhật trạng thái">
+                                                    {item.name}
+                                                </StepLabel>
+                                            </Step>
+                                        ))}
+                                </Stepper>
+                            </Grid>
+                        )}
+
                         <Grid item xs={12}>
                             <Stack direction={'row'} spacing={1} justifyContent={'flex-end'} paddingTop={3}>
                                 <Button variant="outlined" onClick={onCloseThisForm} startIcon={<BlockOutlinedIcon />}>
                                     Đóng
                                 </Button>
-                                <Button
-                                    variant="outlined"
-                                    color="error"
-                                    startIcon={<DeleteOutlinedIcon />}
-                                    onClick={() => (bookingStore.isShowConfirmDelete = true)}>
-                                    Xóa lịch hẹn
-                                </Button>
+                                {bookingStore.bookingInfoDto.trangThai !== 0 && (
+                                    <Button
+                                        variant="outlined"
+                                        color="error"
+                                        startIcon={<DeleteOutlinedIcon />}
+                                        onClick={() => {
+                                            bookingStore.isShowConfirmDelete = true;
+                                        }}>
+                                        Hủy lịch hẹn
+                                    </Button>
+                                )}
                             </Stack>
                         </Grid>
                     </Grid>
