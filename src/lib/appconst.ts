@@ -232,6 +232,11 @@ const AppConsts = {
         hangHoa: 2,
         hoaDon: 1
     },
+    trangThaiNhanVien: {
+        Nghi: 0,
+        Ranh: 1,
+        Ban: 2
+    },
     listColumnCustomer: {
         actions: true,
         cuocHenGanNhat: true,
