@@ -71,6 +71,8 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
             tenancyName: formRef.tenancyName,
             adminEmailAddress: formRef.adminEmailAddress,
             connectionString: formRef.connectionString,
+            isDefaultPassword: formRef.isDefaultPassword,
+            password: formRef.password,
             isActive: formRef.isActive
         };
         return (
@@ -254,32 +256,109 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                     />
                                                 </FormGroup>
                                             )}
-                                            {tenantId !== 0 ? null : (
-                                                <Typography variant="body1" fontSize="14px" textAlign="center">
-                                                    Mật khẩu mặc định là : 123qwe
-                                                </Typography>
-                                            )}
-                                            <FormGroup>
-                                                <FormControlLabel
-                                                    sx={{
-                                                        '& .MuiTypography-root': {
-                                                            fontSize: '14px'
+                                            {tenantId !== 0 ? (
+                                                <FormGroup>
+                                                    <FormControlLabel
+                                                        sx={{
+                                                            '& .MuiTypography-root': {
+                                                                fontSize: '14px'
+                                                            }
+                                                        }}
+                                                        name="isActive"
+                                                        value={values.isActive}
+                                                        onChange={handleChange}
+                                                        checked={values.isActive}
+                                                        control={
+                                                            <Checkbox
+                                                            // sx={{
+                                                            //     color: 'var(--color-main)!important'
+                                                            // }}
+                                                            />
                                                         }
-                                                    }}
-                                                    name="isActive"
-                                                    value={values.isActive}
-                                                    onChange={handleChange}
-                                                    checked={values.isActive}
-                                                    control={
-                                                        <Checkbox
-                                                        // sx={{
-                                                        //     color: 'var(--color-main)!important'
-                                                        // }}
+                                                        label="IsActive"
+                                                    />
+                                                </FormGroup>
+                                            ) : (
+                                                <Box>
+                                                    <FormGroup>
+                                                        <FormControlLabel
+                                                            sx={{
+                                                                '& .MuiTypography-root': {
+                                                                    fontSize: '14px'
+                                                                }
+                                                            }}
+                                                            name="isDefaultPassword"
+                                                            value={values.isDefaultPassword}
+                                                            onChange={handleChange}
+                                                            checked={values.isDefaultPassword}
+                                                            control={
+                                                                <Checkbox
+                                                                // sx={{
+                                                                //     color: 'var(--color-main)!important'
+                                                                // }}
+                                                                />
+                                                            }
+                                                            label="Mật khẩu mặc định"
                                                         />
-                                                    }
-                                                    label="IsActive"
-                                                />
-                                            </FormGroup>
+                                                    </FormGroup>
+                                                    {values.isDefaultPassword === true ? (
+                                                        <Typography variant="body1" fontSize="14px" textAlign="center">
+                                                            Mật khẩu mặc định là : 123qwe
+                                                        </Typography>
+                                                    ) : (
+                                                        <FormGroup>
+                                                            <TextField
+                                                                label={
+                                                                    <label>
+                                                                        Mật khẩu
+                                                                        <span
+                                                                            style={{
+                                                                                color: 'red',
+                                                                                marginLeft: '3px'
+                                                                            }}>
+                                                                            *
+                                                                        </span>
+                                                                    </label>
+                                                                }
+                                                                error={
+                                                                    touched.password && errors.password ? true : false
+                                                                }
+                                                                helperText={
+                                                                    touched.password &&
+                                                                    errors.password && <span>{errors.password}</span>
+                                                                }
+                                                                type="text"
+                                                                size="small"
+                                                                name="password"
+                                                                value={values.password}
+                                                                onChange={handleChange}
+                                                                fullWidth
+                                                            />
+                                                        </FormGroup>
+                                                    )}
+                                                    <FormGroup>
+                                                        <FormControlLabel
+                                                            sx={{
+                                                                '& .MuiTypography-root': {
+                                                                    fontSize: '14px'
+                                                                }
+                                                            }}
+                                                            name="isActive"
+                                                            value={values.isActive}
+                                                            onChange={handleChange}
+                                                            checked={values.isActive}
+                                                            control={
+                                                                <Checkbox
+                                                                // sx={{
+                                                                //     color: 'var(--color-main)!important'
+                                                                // }}
+                                                                />
+                                                            }
+                                                            label="IsActive"
+                                                        />
+                                                    </FormGroup>
+                                                </Box>
+                                            )}
                                         </Box>
                                         <DialogActions sx={{ paddingRight: '0!important' }}>
                                             <Button

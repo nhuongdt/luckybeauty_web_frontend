@@ -39,7 +39,9 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
             name: '',
             adminEmailAddress: '',
             connectionString: '',
-            tenancyName: ''
+            tenancyName: '',
+            isDefaultPassword: false,
+            password: ''
         } as CreateTenantInput,
         isShowConfirmDelete: false,
         anchorEl: null,
@@ -97,7 +99,9 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     name: '',
                     adminEmailAddress: '',
                     connectionString: '',
-                    tenancyName: ''
+                    tenancyName: '',
+                    isDefaultPassword: false,
+                    password: ''
                 }
             });
         } else {
