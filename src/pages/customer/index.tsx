@@ -71,6 +71,11 @@ interface CustomerScreenState {
     keyword: string;
     sortBy: string;
     sortType: string;
+    timeFrom?: Date;
+    timeTo?: Date;
+    tongChiTieuTu?: number;
+    tongChiTieuDen?: number;
+    gioiTinh?: boolean;
     totalItems: number;
     totalPage: number;
     isShowConfirmDelete: boolean;
@@ -105,6 +110,11 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             keyword: '',
             sortBy: 'createTime',
             sortType: 'desc',
+            timeFrom: undefined,
+            timeTo: undefined,
+            tongChiTieuDen: undefined,
+            tongChiTieuTu: undefined,
+            gioiTinh: undefined,
             importShow: false,
             totalItems: 0,
             totalPage: 0,
@@ -147,6 +157,11 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             loaiDoiTuong: 0,
             sortBy: this.state.sortBy,
             sortType: this.state.sortType,
+            timeFrom: this.state.timeFrom,
+            timeTo: this.state.timeTo,
+            gioiTinh: this.state.gioiTinh,
+            tongChiTieuDen: this.state.tongChiTieuDen,
+            tongChiTieuTu: this.state.tongChiTieuTu,
             idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined,
             idNhomKhach: this.state.idNhomKhach == '' ? undefined : this.state.idNhomKhach
         });
@@ -974,6 +989,15 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             }}
                             handleChangeNhomKhach={(idNhomKhach: string) => {
                                 this.setState({ idNhomKhach: idNhomKhach });
+                            }}
+                            handleChangeTongChiTieuTu={(value: any) => {
+                                this.setState({ tongChiTieuTu: value });
+                            }}
+                            handleChangeTongChiTieuDen={(value: any) => {
+                                this.setState({ tongChiTieuDen: value });
+                            }}
+                            handleChangeGioiTinh={(value: any) => {
+                                this.setState({ gioiTinh: value });
                             }}
                             handleOk={() => {
                                 this.setState({ anchorElFilter: null });

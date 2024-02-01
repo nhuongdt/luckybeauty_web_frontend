@@ -18,49 +18,22 @@ import DatePickerRequireCustom from '../../../components/DatetimePicker/DatePick
 import { format as formatDate } from 'date-fns';
 import { SuggestNhomKhachDto } from '../../../services/suggests/dto/SuggestNhomKhachDto';
 import SuggestService from '../../../services/suggests/SuggestService';
-// const CustomerFilterDrawer = ({ visiable, handleClose, handleOpen, handleOk }: any) => {
-//     return (
-//         // <Drawer anchor="right" open={visiable} onClose={handleClose}>
-//         //     <Box
-//         //         role="presentation"
-//         //         sx={{
-//         //             height: 'fit-content',
-//         //             borderRadius: 2,
-//         //             padding: 2,
-//         //             position: 'fixed',
-//         //             top: 20,
-//         //             right: 20,
-//         //             bottom: 20,
-//         //             background: 'white'
-//         //         }}>
-//         //         <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-//         //             <Typography>Bộ lọc</Typography>
-//         //             <Box display={'inline'}>
-//         //                 <CachedIcon />
-//         //                 <CloseIcon />
-//         //             </Box>
-//         //         </Box>
-//         //         <Grid container spacing={2} mt={2}>
-//         //             <Grid item xs={12}>
-//         //                 <TextField fullWidth size="medium" />{' '}
-//         //             </Grid>
-//         //             <Grid container item xs={12} spacing={2}>
-//         //                 <Grid item xs={6}>
-//         //                     <TextField fullWidth size="medium" />
-//         //                 </Grid>
-//         //                 <Grid item xs={6}>
-//         //                     <TextField fullWidth size="medium" />
-//         //                 </Grid>
-//         //             </Grid>
-//         //         </Grid>
-//         //     </Box>
-//         // </Drawer>
 
-//     );
-// };
-
-const CustomerFilterDrawer = ({ id, anchorEl, handleClose, handleOk, handleChangeNhomKhach }: any) => {
+const CustomerFilterDrawer = ({
+    id,
+    anchorEl,
+    handleClose,
+    handleOk,
+    handleChangeNhomKhach,
+    handleChangeTongChiTieuTu,
+    handleChangeTongChiTieuDen,
+    handleChangeGioiTinh,
+    handleChangeTimeFrom,
+    handleChangeTimeTo
+}: any) => {
     const [idNhomKhach, setIdNhomKhach] = useState('');
+    const [tongTienTu, setTongTienTu] = useState('');
+    const [tongTienDen, setTongTienDen] = useState('');
     // const [suggestNhomKhach, setSuggestNhomKhach] = useState([] as SuggestNhomKhachDto[]);
     // const getSuggest = async () => {
     //     const nhomKhachs = await SuggestService.SuggestNhomKhach();
@@ -69,7 +42,7 @@ const CustomerFilterDrawer = ({ id, anchorEl, handleClose, handleOk, handleChang
     // useEffect(() => {
     //     getSuggest();
     // }, []);
-
+    const [gioiTinh, setGioiTinh] = useState(-1);
     return (
         <Popover
             id={id}
@@ -130,10 +103,28 @@ const CustomerFilterDrawer = ({ id, anchorEl, handleClose, handleOk, handleChang
                             </Typography>
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField fullWidth size="small" label="Từ" />
+                            <TextField
+                                fullWidth
+                                size="small"
+                                label="Từ"
+                                value={tongTienTu}
+                                onChange={(e) => {
+                                    setTongTienTu(e.target.value);
+                                    handleChangeTongChiTieuTu(e.target.value);
+                                }}
+                            />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField fullWidth size="small" label="Đến" />
+                            <TextField
+                                fullWidth
+                                size="small"
+                                label="Đến"
+                                value={tongTienDen}
+                                onChange={(e) => {
+                                    setTongTienDen(e.target.value);
+                                    handleChangeTongChiTieuDen(e.target.value);
+                                }}
+                            />
                         </Grid>
                     </Grid>
                     <Grid container item xs={12}>
@@ -142,18 +133,54 @@ const CustomerFilterDrawer = ({ id, anchorEl, handleClose, handleOk, handleChang
                             Giới tính
                         </Typography>
                         <Grid item xs={12}>
-                            <FormControlLabel control={<Checkbox title={'Nam'} />} label="Nam" />
+                            <FormControlLabel
+                                control={<Checkbox title={'Nam'} />}
+                                label="Nam"
+                                checked={gioiTinh === 1 ? true : false}
+                                onChange={(e, v) => {
+                                    setGioiTinh(1);
+                                    handleChangeGioiTinh(1);
+                                }}
+                            />
                         </Grid>
                         <Grid item xs={12}>
-                            <FormControlLabel control={<Checkbox title={'Nữ'} />} label="Nữ" />
+                            <FormControlLabel
+                                control={<Checkbox title={'Nữ'} />}
+                                label="Nữ"
+                                checked={gioiTinh === 0 ? true : false}
+                                onChange={(e, v) => {
+                                    setGioiTinh(0);
+                                    handleChangeGioiTinh(0);
+                                }}
+                            />
                         </Grid>
                         <Grid item xs={12}>
-                            <FormControlLabel control={<Checkbox title={'Khác'} />} label="Khác" />
+                            <FormControlLabel
+                                control={<Checkbox title={'Tất cả'} />}
+                                label="Tất cả"
+                                checked={gioiTinh === -1 ? true : false}
+                                onChange={(e, v) => {
+                                    setGioiTinh(-1);
+                                    handleChangeGioiTinh(undefined);
+                                }}
+                            />
                         </Grid>
                     </Grid>
                     <Grid container item xs={12} spacing={3}>
                         <Grid item xs={6}>
-                            <Button fullWidth variant="outlined" className="border-color btn-outline-hover">
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                className="border-color btn-outline-hover"
+                                onClick={() => {
+                                    setGioiTinh(-1);
+                                    handleChangeTongChiTieuDen('');
+                                    handleChangeTongChiTieuTu('');
+                                    handleChangeGioiTinh(undefined);
+                                    setTongTienDen('');
+                                    setTongTienTu('');
+                                    setIdNhomKhach('');
+                                }}>
                                 Đặt lại
                             </Button>
                         </Grid>
