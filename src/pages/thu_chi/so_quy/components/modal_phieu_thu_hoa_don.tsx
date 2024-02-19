@@ -367,7 +367,7 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                                         </Stack>
                                         <Stack spacing={2} direction={'row'} alignItems={'end'}>
                                             <Stack flex={4}>
-                                                <Typography variant="body2">Ngày lập phiếu</Typography>
+                                                <Typography variant="body2">Ngày lập</Typography>
                                             </Stack>
                                             <Stack flex={8}>
                                                 <ThemeProvider theme={themeDate}>
