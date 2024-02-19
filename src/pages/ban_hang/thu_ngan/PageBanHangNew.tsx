@@ -61,7 +61,7 @@ import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/Creat
 import CreateOrEditCustomerDialog from '../../customer/components/create-or-edit-customer-modal';
 import { KHCheckInDto, PageKhachHangCheckInDto } from '../../../services/check_in/CheckinDto';
 import ModalAddCustomerCheckIn from '../../check_in/modal_add_cus_checkin';
-import AppConsts, { ISelect, TrangThaiCheckin } from '../../../lib/appconst';
+import AppConsts, { HINH_THUC_THANH_TOAN, ISelect, TrangThaiCheckin } from '../../../lib/appconst';
 import { NumericFormat } from 'react-number-format';
 import khachHangService from '../../../services/khach-hang/khachHangService';
 import { ListNhanVienDataContext } from '../../../services/nhan-vien/dto/NhanVienDataContext';
@@ -84,6 +84,7 @@ import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import { handleClickOutside } from '../../../utils/customReactHook';
 import abpCustom from '../../../components/abp-custom';
+import BankAccount from '../../../components/Switch/BankAccount';
 
 const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const appContext = useContext(AppContext);
@@ -869,6 +870,17 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
 
         setSumTienKhachTra(tienKhachTra);
         setTienThuaTraKhach(tienKhachTra - hoadon?.tongThanhToan);
+
+        const itChuyenKhoan = arrQCT?.filter((x) => x.hinhThucThanhToan !== HINH_THUC_THANH_TOAN.TIEN_MAT);
+        if (itChuyenKhoan.length > 0) {
+            setTaiKhoanNganHang({
+                ...taiKhoanNganHang,
+                id: itChuyenKhoan[0].idTaiKhoanNganHang as unknown as string,
+                soTaiKhoan: itChuyenKhoan[0].soTaiKhoan ?? '',
+                tenTaiKhoan: itChuyenKhoan[0].tenChuThe ?? '',
+                bin: itChuyenKhoan[0].maPinNganHang ?? ''
+            });
+        }
     };
 
     const onChangeGhiChuHD_atPayment = async (ghiChuHD: string) => {
@@ -1067,23 +1079,39 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     };
 
     const changeHinhThucThanhToan = (item: ISelect) => {
-        if (item?.value === 2 && allAccountBank.length > 0) {
-            // chuyen khoan: set default taikhoan ngan hang first
-            const accFirst = allAccountBank[0];
+        const hinhThucNew = item?.value as number;
+        let hinhThucOld = HINH_THUC_THANH_TOAN.TIEN_MAT;
+        if (lstQuyCT.length > 0) {
+            hinhThucOld = lstQuyCT[0].hinhThucThanhToan;
+        }
+
+        // mat --> ck,pos
+        if (hinhThucOld === HINH_THUC_THANH_TOAN.TIEN_MAT && hinhThucOld !== hinhThucNew) {
+            const accDefault = allAccountBank?.filter((x: TaiKhoanNganHangDto) => x.isDefault);
+            let accFirst: TaiKhoanNganHangDto = {} as TaiKhoanNganHangDto;
+            if (accDefault.length > 0) {
+                accFirst = accDefault[0];
+            } else {
+                if (allAccountBank?.length > 0) {
+                    accFirst = allAccountBank[0];
+                }
+            }
+
             setLstQuyCT(
                 lstQuyCT.map((itemCT: QuyChiTietDto) => {
                     return {
                         ...itemCT,
-                        hinhThucThanhToan: item.value as number,
+                        hinhThucThanhToan: hinhThucNew,
                         sHinhThucThanhToan: item?.text,
-                        idTaiKhoanNganHang: accFirst.id,
-                        tenNganHang: accFirst.tenNganHang,
-                        tenChuThe: accFirst.tenChuThe,
-                        soTaiKhoan: accFirst.soTaiKhoan,
-                        maPinNganHang: accFirst.maPinNganHang
+                        idTaiKhoanNganHang: accFirst?.id,
+                        tenNganHang: accFirst?.tenNganHang,
+                        tenChuThe: accFirst?.tenChuThe,
+                        soTaiKhoan: accFirst?.soTaiKhoan,
+                        maPinNganHang: accFirst?.maPinNganHang
                     };
                 })
             );
+
             setTaiKhoanNganHang({
                 id: accFirst?.id,
                 soTaiKhoan: accFirst?.soTaiKhoan,
@@ -1092,27 +1120,15 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                 bin: accFirst?.maPinNganHang
             });
         } else {
+            // only change hinhthucTT
             setLstQuyCT(
                 lstQuyCT.map((itemCT: QuyChiTietDto) => {
                     return {
                         ...itemCT,
-                        hinhThucThanhToan: item.value as number,
-                        sHinhThucThanhToan: item?.text,
-                        idTaiKhoanNganHang: null,
-                        tenNganHang: '',
-                        tenChuThe: '',
-                        soTaiKhoan: '',
-                        maPinNganHang: ''
+                        hinhThucThanhToan: hinhThucNew
                     };
                 })
             );
-            setTaiKhoanNganHang({
-                id: null,
-                soTaiKhoan: '',
-                tenRutGon: '',
-                tenTaiKhoan: '',
-                bin: ''
-            });
         }
     };
 
@@ -1155,10 +1171,11 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     });
     const GetAllTaiKhoanNganHang = async () => {
         const data = await TaiKhoanNganHangServices.GetAllBankAccount(idChiNhanh as undefined);
-        setAllAccountBank(data);
+        setAllAccountBank(data?.filter((x) => x.trangThai === 1));
     };
 
     const changeTaiKhoanNganHang = async (item: TaiKhoanNganHangDto) => {
+        console.log('changeTaiKhoanNganHang ', item.tenNganHang);
         setTaiKhoanNganHang({
             id: item?.id,
             soTaiKhoan: item?.soTaiKhoan,
@@ -1168,7 +1185,10 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         });
         setLstQuyCT(
             lstQuyCT.map((itemCT: QuyChiTietDto) => {
-                if (itemCT.hinhThucThanhToan === 2) {
+                if (
+                    itemCT.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN ||
+                    itemCT.hinhThucThanhToan === HINH_THUC_THANH_TOAN.QUYET_THE
+                ) {
                     return {
                         ...itemCT,
                         idTaiKhoanNganHang: item?.id
@@ -1691,6 +1711,8 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                             marginTop: '-24px!important'
                         }}>
                         <DetailHoaDon
+                            listAccountBank={allAccountBank}
+                            idAccounBank={taiKhoanNganHang?.id ?? ''}
                             toggleDetail={handleShowDetail}
                             hinhThucTT={lstQuyCT.length === 1 ? lstQuyCT[0].hinhThucThanhToan : 0}
                             tongTienHang={hoadon?.tongTienHang}
@@ -1699,6 +1721,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                             onChangeQuyChiTiet={assignThongTinThanhToan}
                             onChangeHoaDon={editInforHoaDon_atPayment}
                             onChangeGhiChuHD={onChangeGhiChuHD_atPayment}
+                            onChangeTaiKhoanNganHang={changeTaiKhoanNganHang}
                             onClickThanhToan={saveHoaDon}
                         />
                     </Grid>
@@ -2337,8 +2360,8 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                             {new Intl.NumberFormat('vi-VN').format(Math.abs(tienThuaTraKhach))}
                                         </Typography>
                                     </Box>
-                                    {lstQuyCT[0].hinhThucThanhToan === 2 && (
-                                        <Box>
+                                    {lstQuyCT[0].hinhThucThanhToan !== 1 && (
+                                        <Stack>
                                             <AutocompleteAccountBank
                                                 handleChoseItem={changeTaiKhoanNganHang}
                                                 idChosed={
@@ -2346,13 +2369,23 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                 }
                                                 listOption={allAccountBank}
                                             />
-                                            {qrCode && (
+                                            {/* <Stack style={{ marginTop: '16px' }}>
+                                                <BankAccount
+                                                    lstBankAccount={allAccountBank}
+                                                    idChosed={
+                                                        utils.checkNull(taiKhoanNganHang.id) ? '' : taiKhoanNganHang.id
+                                                    }
+                                                    handleChoseItem={changeTaiKhoanNganHang}
+                                                />
+                                            </Stack> */}
+
+                                            {/* {qrCode && (
                                                 <img
                                                     src={qrCode}
                                                     style={{ width: '128px', height: '128px', marginTop: '8px' }}
                                                 />
-                                            )}
-                                        </Box>
+                                            )} */}
+                                        </Stack>
                                     )}
                                 </Box>
                                 <Box

@@ -9,21 +9,32 @@ import {
     Grid,
     RadioGroup,
     FormControlLabel,
-    Input
+    Input,
+    Stack
 } from '@mui/material';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import utils from '../../../utils/utils';
 import { NumericFormat } from 'react-number-format';
-import AppConsts, { ISelect } from '../../../lib/appconst';
+import AppConsts, { HINH_THUC_THANH_TOAN, ISelect } from '../../../lib/appconst';
 import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 import { Guid } from 'guid-typescript';
 import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import { format } from 'date-fns';
+import AutocompleteAccountBank from '../../../components/Autocomplete/AccountBank';
+import { TaiKhoanNganHangDto } from '../../../services/so_quy/Dto/TaiKhoanNganHangDto';
+import BankAccount from '../../../components/Switch/BankAccount';
+
+export const FORM_TYPE = {
+    ThuNgan: 1,
+    DSHoaDon: 2
+};
 
 const DetailHoaDon = ({
+    listAccountBank,
+    idAccounBank,
     toggleDetail,
     tongTienHang,
     ptGiamGiaHD_Parent = 0,
@@ -33,11 +44,14 @@ const DetailHoaDon = ({
     onChangeHoaDon,
     onChangeGhiChuHD,
     onClickThanhToan,
-    formType = 1, // 1. at banhang
+    onChangeTaiKhoanNganHang,
+    formType = FORM_TYPE.ThuNgan,
     dataHoaDonAfterSave
 }: any) => {
     const arrHinhThucThanhToan = [...AppConsts.hinhThucThanhToan, { value: 0, text: 'Kết hợp' }];
     const [idHinhThucTT, setIdHinhThucTT] = React.useState(hinhThucTT);
+    const [idTaiKhoanNganHang, setIdTaiKhoanNganHang] = React.useState(idAccounBank);
+
     const appContext = useContext(AppContext);
     const chinhanhCurrent = appContext.chinhanhCurrent;
     const idChiNhanh = chinhanhCurrent?.id;
@@ -55,13 +69,13 @@ const DetailHoaDon = ({
     const [lstQuyCT, setLstQuyCT] = useState<QuyChiTietDto[]>([
         new QuyChiTietDto({
             hinhThucThanhToan: hinhThucTT,
-            tienThu: formType === 1 ? tongTienHang : noHDCu
+            tienThu: formType === FORM_TYPE.ThuNgan ? tongTienHang : noHDCu
         })
     ]);
 
     // pass data from parent to child
     useEffect(() => {
-        const khachPhaiTra = formType === 1 ? tongTienHang - tongGiamGiaHD_Parent : noHDCu;
+        const khachPhaiTra = formType === FORM_TYPE.ThuNgan ? tongTienHang - tongGiamGiaHD_Parent : noHDCu;
         setPTGiamGiaHD(ptGiamGiaHD_Parent);
         setTongGiamGiaHD(tongGiamGiaHD_Parent);
         setKhachPhaiTra(khachPhaiTra);
@@ -71,8 +85,6 @@ const DetailHoaDon = ({
             setlaPTGiamGia(false);
         }
 
-        const lstQuyCTNew = GetQuyCTNew(hinhThucTT, khachPhaiTra);
-        setLstQuyCT([...lstQuyCTNew]);
         setTienKhachTraMax(khachPhaiTra);
         setSumTienKhachTra(khachPhaiTra);
         setTienThuaTraKhach(0);
@@ -81,12 +93,68 @@ const DetailHoaDon = ({
     // change hinhThucTT at parent- -> update to child
     useEffect(() => {
         setIdHinhThucTT(hinhThucTT);
-        const itemHT = arrHinhThucThanhToan.filter((x: ISelect) => x.value === hinhThucTT);
-        if (itemHT.length > 0) {
-            const lstQuyCTNew = GetQuyCTNew(hinhThucTT, khachPhaiTra);
-            setLstQuyCT(() => [...lstQuyCTNew]);
+
+        switch (hinhThucTT) {
+            case HINH_THUC_THANH_TOAN.KET_HOP:
+                {
+                    //
+                }
+                break;
+            default:
+                {
+                    setLstQuyCT(
+                        lstQuyCT.map((itemCT: QuyChiTietDto) => {
+                            return {
+                                ...itemCT,
+                                hinhThucThanhToan: hinhThucTT
+                            };
+                        })
+                    );
+                }
+                break;
         }
     }, [hinhThucTT]);
+
+    useEffect(() => {
+        setIdTaiKhoanNganHang(idAccounBank);
+
+        // find accBacnk
+        const itemAcc = listAccountBank?.filter((x: TaiKhoanNganHangDto) => x.id === idAccounBank);
+        let tenNganHang = '',
+            tenChuThe = '',
+            soTaiKhoan = '',
+            maPinNganHang = '';
+        if (itemAcc?.length > 0) {
+            tenNganHang = itemAcc[0].tenNganHang;
+            tenChuThe = itemAcc[0].tenChuThe;
+            soTaiKhoan = itemAcc[0].soTaiKhoan;
+            maPinNganHang = itemAcc[0].maPinNganHang;
+        }
+
+        switch (hinhThucTT) {
+            case HINH_THUC_THANH_TOAN.KET_HOP:
+                {
+                    //
+                }
+                break;
+            default:
+                {
+                    setLstQuyCT(
+                        lstQuyCT.map((itemCT: QuyChiTietDto) => {
+                            return {
+                                ...itemCT,
+                                idTaiKhoanNganHang: idAccounBank,
+                                tenNganHang: tenNganHang,
+                                tenChuThe: tenChuThe,
+                                soTaiKhoan: soTaiKhoan,
+                                maPinNganHang: maPinNganHang
+                            };
+                        })
+                    );
+                }
+                break;
+        }
+    }, [idAccounBank]);
 
     const onClickPTramVND = (newVal: boolean) => {
         let gtriPT = 0;
@@ -126,17 +194,17 @@ const DetailHoaDon = ({
     const onChangeTienKhachTra = (gtri: string, loai: number) => {
         const gtriNhapNew = utils.formatNumberToFloat(gtri);
         let lstQuyCTNew: QuyChiTietDto[] = [];
-        if (hinhThucTT === 0) {
+        if (hinhThucTT === HINH_THUC_THANH_TOAN.KET_HOP) {
             // tinh lai  tien
             switch (loai) {
-                case 1: // tinhtien chuyenkhoan
+                case HINH_THUC_THANH_TOAN.TIEN_MAT: // tinhtien chuyenkhoan
                     {
                         const conLai = tienKhachTraMax - gtriNhapNew;
                         lstQuyCTNew = lstQuyCT.map((item: QuyChiTietDto) => {
-                            if (item.hinhThucThanhToan === 1) {
+                            if (item.hinhThucThanhToan === HINH_THUC_THANH_TOAN.TIEN_MAT) {
                                 return { ...item, tienThu: gtriNhapNew };
                             } else {
-                                if (item.hinhThucThanhToan === 2) {
+                                if (item.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN) {
                                     return { ...item, tienThu: conLai > 0 ? conLai : 0 };
                                 } else {
                                     return { ...item, tienThu: 0 };
@@ -148,19 +216,19 @@ const DetailHoaDon = ({
                     }
 
                     break;
-                case 2: // tinhtien pos
+                case HINH_THUC_THANH_TOAN.CHUYEN_KHOAN: // tinhtien pos
                     {
                         const sumTienMat = lstQuyCT
-                            .filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 1)
+                            .filter((x: QuyChiTietDto) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.TIEN_MAT)
                             .reduce((currentValue: number, item: QuyChiTietDto) => {
                                 return item.tienThu + currentValue;
                             }, 0);
                         const conLai = tienKhachTraMax - sumTienMat - gtriNhapNew;
                         lstQuyCTNew = lstQuyCT.map((item: QuyChiTietDto) => {
-                            if (item.hinhThucThanhToan === 1) {
+                            if (item.hinhThucThanhToan === HINH_THUC_THANH_TOAN.TIEN_MAT) {
                                 return { ...item };
                             } else {
-                                if (item.hinhThucThanhToan === 2) {
+                                if (item.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN) {
                                     return { ...item, tienThu: gtriNhapNew };
                                 } else {
                                     return { ...item, tienThu: conLai > 0 ? conLai : 0 };
@@ -171,10 +239,10 @@ const DetailHoaDon = ({
                         setTienThuaTraKhach(0);
                     }
                     break;
-                case 3:
+                case HINH_THUC_THANH_TOAN.QUYET_THE:
                     {
                         const sumMatCK = lstQuyCT
-                            .filter((x: QuyChiTietDto) => x.hinhThucThanhToan !== 3)
+                            .filter((x: QuyChiTietDto) => x.hinhThucThanhToan !== HINH_THUC_THANH_TOAN.QUYET_THE)
                             .reduce((currentValue: number, item: QuyChiTietDto) => {
                                 return item.tienThu + currentValue;
                             }, 0);
@@ -184,7 +252,7 @@ const DetailHoaDon = ({
                             tienthua = tongTT - khachPhaiTra;
 
                             lstQuyCTNew = lstQuyCT.map((item: QuyChiTietDto) => {
-                                if (item.hinhThucThanhToan !== 3) {
+                                if (item.hinhThucThanhToan !== HINH_THUC_THANH_TOAN.QUYET_THE) {
                                     return { ...item };
                                 } else {
                                     return { ...item, tienThu: gtriNhapNew };
@@ -195,6 +263,7 @@ const DetailHoaDon = ({
                         }
                         setSumTienKhachTra(tongTT);
                         setTienThuaTraKhach(tienthua);
+                        setTienKhachTraMax(tongTT);
                     }
                     break;
             }
@@ -209,66 +278,252 @@ const DetailHoaDon = ({
             setSumTienKhachTra(gtriNhapNew);
             setTienThuaTraKhach(gtriNhapNew - khachPhaiTra);
         }
+
         setLstQuyCT([...lstQuyCTNew]);
-        if (formType === 1) {
+        if (formType === FORM_TYPE.ThuNgan) {
             onChangeQuyChiTiet(lstQuyCTNew);
         }
     };
 
-    const GetQuyCTNew = (hinhThucTT: number, khachPhaiTra = 0) => {
-        let lstQuyCTNew: QuyChiTietDto[] = [];
-        if (hinhThucTT !== 0) {
-            lstQuyCTNew = [
-                new QuyChiTietDto({
-                    tienThu: khachPhaiTra,
-                    hinhThucThanhToan: hinhThucTT
-                })
-            ];
+    const changeTaiKhoanNganHang = (item: TaiKhoanNganHangDto) => {
+        setIdTaiKhoanNganHang(item?.id);
+
+        setLstQuyCT(
+            lstQuyCT.map((itemCT: QuyChiTietDto) => {
+                if (
+                    itemCT.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN ||
+                    itemCT.hinhThucThanhToan === HINH_THUC_THANH_TOAN.QUYET_THE
+                ) {
+                    return {
+                        ...itemCT,
+                        idTaiKhoanNganHang: item?.id,
+                        tenNganHang: item?.tenNganHang,
+                        tenChuThe: item?.tenChuThe,
+                        soTaiKhoan: item?.soTaiKhoan,
+                        maPinNganHang: item?.maPinNganHang
+                    };
+                } else {
+                    return { ...itemCT };
+                }
+            })
+        );
+
+        if (formType === FORM_TYPE.ThuNgan) {
+            onChangeTaiKhoanNganHang(item);
         } else {
-            lstQuyCTNew = [
-                new QuyChiTietDto({
-                    tienThu: khachPhaiTra,
-                    hinhThucThanhToan: 1
-                }),
-                new QuyChiTietDto({
-                    tienThu: 0,
-                    hinhThucThanhToan: 2
-                }),
-                new QuyChiTietDto({
-                    tienThu: 0,
-                    hinhThucThanhToan: 3
-                })
-            ];
+            // setLstQuyCT(
+            //     lstQuyCT.map((itemCT: QuyChiTietDto) => {
+            //         if (
+            //             itemCT.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN ||
+            //             itemCT.hinhThucThanhToan === HINH_THUC_THANH_TOAN.QUYET_THE
+            //         ) {
+            //             return {
+            //                 ...itemCT,
+            //                 idTaiKhoanNganHang: item?.id,
+            //                 tenNganHang: item?.tenNganHang,
+            //                 tenChuThe: item?.tenChuThe,
+            //                 soTaiKhoan: item?.soTaiKhoan,
+            //                 maPinNganHang: item?.maPinNganHang
+            //             };
+            //         } else {
+            //             return { ...itemCT };
+            //         }
+            //     })
+            // );
         }
-        return lstQuyCTNew;
+    };
+
+    const GetData_forHinhThucKetHop = () => {
+        const arr: QuyChiTietDto[] = [
+            new QuyChiTietDto({ hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT, tienThu: 0 }),
+            new QuyChiTietDto({ hinhThucThanhToan: HINH_THUC_THANH_TOAN.CHUYEN_KHOAN, tienThu: 0 }),
+            new QuyChiTietDto({ hinhThucThanhToan: HINH_THUC_THANH_TOAN.QUYET_THE, tienThu: 0 })
+        ];
+        return arr;
+    };
+
+    const GetData_forMatPosCK = (idAccounBank: string | null) => {
+        const itemAcc = listAccountBank?.filter((x: TaiKhoanNganHangDto) => x.id === idAccounBank);
+        let tenNganHang = '',
+            tenChuThe = '',
+            soTaiKhoan = '',
+            maPinNganHang = '';
+        if (itemAcc?.length > 0) {
+            tenNganHang = itemAcc[0].tenNganHang;
+            tenChuThe = itemAcc[0].tenChuThe;
+            soTaiKhoan = itemAcc[0].soTaiKhoan;
+            maPinNganHang = itemAcc[0].maPinNganHang;
+        }
+        return new QuyChiTietDto({
+            tienThu: sumTienKhachTra,
+            idTaiKhoanNganHang: idAccounBank as unknown as undefined,
+            tenNganHang: tenNganHang,
+            tenChuThe: tenChuThe,
+            soTaiKhoan: soTaiKhoan,
+            maPinNganHang: maPinNganHang
+        });
     };
 
     const choseHinhThucThanhToan = (item: ISelect) => {
-        setIdHinhThucTT(item.value);
+        const hinhthucNew = item.value as number;
+        setIdHinhThucTT(hinhthucNew);
+
+        // update hinhThucTT at parent
         // keep value old of tienKhachDua
-        const lstQuyCTNew = GetQuyCTNew(item.value as number, sumTienKhachTra);
+        let lstQuyCTNew: QuyChiTietDto[] = [];
+
+        // nếu hinhthucTT cũ = mặt, và chuyển sang hình thức TT mới --> get default tk nganhang
+        // else keep value idTaiKhoanNganHang
+
+        if (idHinhThucTT === HINH_THUC_THANH_TOAN.TIEN_MAT && hinhthucNew !== HINH_THUC_THANH_TOAN.TIEN_MAT) {
+            const accDefault = listAccountBank?.filter((x: TaiKhoanNganHangDto) => x.isDefault);
+            let accFirst: TaiKhoanNganHangDto = {} as TaiKhoanNganHangDto;
+            if (accDefault.length > 0) {
+                accFirst = accDefault[0];
+            } else {
+                if (listAccountBank?.length > 0) {
+                    accFirst = listAccountBank[0];
+                }
+            }
+
+            switch (hinhthucNew) {
+                case HINH_THUC_THANH_TOAN.KET_HOP:
+                    {
+                        // reset to tienMat
+                        lstQuyCTNew = GetData_forHinhThucKetHop();
+                        lstQuyCTNew = lstQuyCTNew.map((itemCT: QuyChiTietDto) => {
+                            if (itemCT.hinhThucThanhToan === HINH_THUC_THANH_TOAN.TIEN_MAT) {
+                                return {
+                                    ...itemCT,
+                                    tienThu: sumTienKhachTra,
+                                    idTaiKhoanNganHang: null
+                                };
+                            } else {
+                                return {
+                                    ...itemCT,
+                                    tienThu: 0,
+                                    idTaiKhoanNganHang: accFirst?.id as unknown as string,
+                                    tenNganHang: accFirst?.tenNganHang,
+                                    tenChuThe: accFirst?.tenChuThe,
+                                    soTaiKhoan: accFirst?.soTaiKhoan,
+                                    maPinNganHang: accFirst?.maPinNganHang
+                                };
+                            }
+                        });
+                    }
+                    break;
+                default:
+                    {
+                        lstQuyCTNew = [GetData_forMatPosCK(accFirst?.id)];
+                        lstQuyCTNew[0].hinhThucThanhToan = hinhthucNew;
+                    }
+                    break;
+            }
+        } else {
+            switch (hinhthucNew) {
+                case HINH_THUC_THANH_TOAN.KET_HOP:
+                    {
+                        // reset to tienMat
+                        lstQuyCTNew = GetData_forHinhThucKetHop();
+                        lstQuyCTNew = lstQuyCTNew.map((itemCT: QuyChiTietDto) => {
+                            if (itemCT.hinhThucThanhToan === HINH_THUC_THANH_TOAN.TIEN_MAT) {
+                                return {
+                                    ...itemCT,
+                                    tienThu: sumTienKhachTra
+                                };
+                            } else {
+                                // get idtaikhoanngan old
+                                const itemAcc = listAccountBank?.filter(
+                                    (x: TaiKhoanNganHangDto) => x.id === idTaiKhoanNganHang
+                                );
+                                let tenNganHang = '',
+                                    tenChuThe = '',
+                                    soTaiKhoan = '',
+                                    maPinNganHang = '';
+                                if (itemAcc?.length > 0) {
+                                    tenNganHang = itemAcc[0].tenNganHang;
+                                    tenChuThe = itemAcc[0].tenChuThe;
+                                    soTaiKhoan = itemAcc[0].soTaiKhoan;
+                                    maPinNganHang = itemAcc[0].maPinNganHang;
+                                }
+                                return {
+                                    ...itemCT,
+                                    idTaiKhoanNganHang: idTaiKhoanNganHang,
+                                    tenNganHang: tenNganHang,
+                                    tenChuThe: tenChuThe,
+                                    soTaiKhoan: soTaiKhoan,
+                                    maPinNganHang: maPinNganHang,
+                                    tienThu: 0
+                                };
+                            }
+                        });
+                    }
+                    break;
+                default:
+                    {
+                        lstQuyCTNew = [GetData_forMatPosCK(idTaiKhoanNganHang)];
+                        lstQuyCTNew[0].hinhThucThanhToan = hinhthucNew;
+                    }
+                    break;
+            }
+        }
+
         setLstQuyCT(() => [...lstQuyCTNew]);
-        if (formType === 1) {
+        if (formType === FORM_TYPE.ThuNgan) {
             onChangeQuyChiTiet(lstQuyCTNew);
         }
     };
 
     const changeGiamGia_passToParent = (ptGiamNew: number, tongGiamNew: number) => {
-        const khachPhaiTraNew = formType === 1 ? tongTienHang - tongGiamNew : noHDCu;
-        const lstQuyCTNew = GetQuyCTNew(hinhThucTT, khachPhaiTraNew);
-        if (formType === 1) {
+        const khachPhaiTraNew = formType === FORM_TYPE.ThuNgan ? tongTienHang - tongGiamNew : noHDCu;
+        // quyCT: only change tienThu
+        switch (hinhThucTT) {
+            case HINH_THUC_THANH_TOAN.KET_HOP:
+                {
+                    // reset to tienMat
+                    setLstQuyCT(
+                        lstQuyCT.map((itemCT: QuyChiTietDto) => {
+                            if (itemCT.hinhThucThanhToan === HINH_THUC_THANH_TOAN.TIEN_MAT) {
+                                return {
+                                    ...itemCT,
+                                    tienThu: khachPhaiTraNew
+                                };
+                            } else {
+                                return {
+                                    ...itemCT,
+                                    tienThu: 0
+                                };
+                            }
+                        })
+                    );
+                }
+                break;
+            default:
+                {
+                    setLstQuyCT(
+                        lstQuyCT.map((itemCT: QuyChiTietDto) => {
+                            return {
+                                ...itemCT,
+                                tienThu: khachPhaiTraNew
+                            };
+                        })
+                    );
+                }
+                break;
+        }
+        if (formType === FORM_TYPE.ThuNgan) {
             onChangeHoaDon(ptGiamNew, tongGiamNew, khachPhaiTraNew);
             setTienKhachTraMax(khachPhaiTraNew);
             setSumTienKhachTra(khachPhaiTraNew);
             setKhachPhaiTra(khachPhaiTraNew);
             setTienThuaTraKhach(0);
         }
-        setLstQuyCT(lstQuyCTNew);
     };
 
     const clickThanhToan = async () => {
         let tongThuThucTe = sumTienKhachTra;
-        if (formType !== 1) {
+        if (formType !== FORM_TYPE.ThuNgan) {
+            // DS hóa đơn - thanh toán công nợ:  lưu phiếu thu
             tongThuThucTe = await savePhieuThu();
         }
         onClickThanhToan(tongThuThucTe);
@@ -297,12 +552,7 @@ const DetailHoaDon = ({
         await SoQuyServices.CreateQuyHoaDon(quyHD); // todo hoahong NV hoadon
         return tongThu;
     };
-    // useEffect(() => {
-    //     document.documentElement.style.overflowY = 'hidden';
-    //     return () => {
-    //         document.documentElement.style.overflowY = 'unset';
-    //     };
-    // }, []);
+
     return (
         <>
             <Box
@@ -328,7 +578,7 @@ const DetailHoaDon = ({
                 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Typography variant="h3" color="#29303D" fontSize="24px" fontWeight="700">
-                        {formType === 1 ? 'Chi tiết hóa đơn' : 'Thông tin thanh toán'}
+                        {formType === FORM_TYPE.ThuNgan ? 'Chi tiết hóa đơn' : 'Thông tin thanh toán'}
                     </Typography>
                     <IconButton
                         sx={{
@@ -342,7 +592,7 @@ const DetailHoaDon = ({
                 </Box>
                 <Box
                     sx={{
-                        display: formType == 1 ? 'flex' : 'none',
+                        display: formType == FORM_TYPE.ThuNgan ? 'flex' : 'none',
                         justifyContent: 'space-between'
                     }}>
                     {' '}
@@ -355,7 +605,7 @@ const DetailHoaDon = ({
                 </Box>
                 <Box
                     sx={{
-                        display: formType == 1 ? 'flex' : 'none',
+                        display: formType == FORM_TYPE.ThuNgan ? 'flex' : 'none',
                         justifyContent: 'space-between',
                         alignItems: 'center'
                     }}>
@@ -417,7 +667,7 @@ const DetailHoaDon = ({
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography variant="body1" color="#3D475C" fontWeight="700" fontSize="16px">
-                        {formType == 1 ? 'Thanh toán' : 'Còn nợ'}
+                        {formType == FORM_TYPE.ThuNgan ? 'Thanh toán' : 'Còn nợ'}
                     </Typography>
                     <Typography variant="body1" color="#29303D" fontWeight="700" fontSize="16px">
                         {new Intl.NumberFormat('vi-VN').format(khachPhaiTra)}
@@ -463,14 +713,15 @@ const DetailHoaDon = ({
                         </RadioGroup>
                     </Grid>
                     <Grid item xs={12}>
-                        {hinhThucTT !== 0 && (
+                        {hinhThucTT !== HINH_THUC_THANH_TOAN.KET_HOP && (
                             <NumericFormat
                                 size="small"
                                 fullWidth
                                 sx={{
                                     '& input': {
                                         paddingY: '13.5px',
-                                        textAlign: 'right'
+                                        textAlign: 'right',
+                                        fontWeight: 500
                                     }
                                 }}
                                 decimalSeparator=","
@@ -480,14 +731,15 @@ const DetailHoaDon = ({
                                 onChange={(event) => onChangeTienKhachTra(event.target.value, idHinhThucTT)}
                             />
                         )}
-                        {hinhThucTT === 0 && (
+                        {hinhThucTT === HINH_THUC_THANH_TOAN.KET_HOP && (
                             <NumericFormat
                                 size="small"
                                 fullWidth
                                 sx={{
                                     '& input': {
                                         paddingY: '13.5px',
-                                        textAlign: 'right'
+                                        textAlign: 'right',
+                                        fontWeight: 500
                                     }
                                 }}
                                 decimalSeparator=","
@@ -496,6 +748,24 @@ const DetailHoaDon = ({
                                 value={tienKhachTraMax}
                                 onChange={(event) => setTienKhachTraMax(utils.formatNumberToFloat(event.target.value))}
                             />
+                        )}
+                    </Grid>
+                    <Grid item xs={12}>
+                        {idHinhThucTT !== HINH_THUC_THANH_TOAN.TIEN_MAT && (
+                            <Stack>
+                                {/* <AutocompleteAccountBank
+                                    handleChoseItem={changeTaiKhoanNganHang}
+                                    idChosed={idTaiKhoanNganHang}
+                                    listOption={listAccountBank}
+                                /> */}
+                                <Stack style={{ marginTop: '16px' }}>
+                                    <BankAccount
+                                        lstBankAccount={listAccountBank}
+                                        idChosed={idTaiKhoanNganHang}
+                                        handleChoseItem={changeTaiKhoanNganHang}
+                                    />
+                                </Stack>
+                            </Stack>
                         )}
                     </Grid>
                     {idHinhThucTT === 0 ? (
@@ -514,7 +784,8 @@ const DetailHoaDon = ({
                                                 textAlign: 'right',
                                                 color: '#525F7A',
                                                 fontSizze: '16px',
-                                                outline: 'none'
+                                                outline: 'none',
+                                                fontWeight: 500
                                             },
                                             '& input::-webkit-outer-spin-button,& input::-webkit-inner-spin-button': {
                                                 WebkitAppearance: 'none',
