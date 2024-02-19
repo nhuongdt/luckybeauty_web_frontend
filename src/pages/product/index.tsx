@@ -23,7 +23,7 @@ import { ModelNhomHangHoa, ModelHangHoaDto, PagedProductSearchDto } from '../../
 import { ReactComponent as UploadIcon } from '../../images/upload.svg';
 import { ReactComponent as DownIcon } from '../../images/download.svg';
 import Utils from '../../utils/utils'; // func common
-import AppConsts from '../../lib/appconst';
+import AppConsts, { TypeAction } from '../../lib/appconst';
 import './style.css';
 import fileDowloadService from '../../services/file-dowload.service';
 import uploadFileService from '../../services/uploadFileService';
@@ -36,6 +36,7 @@ import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
 import { IList } from '../../services/dto/IList';
 import { ModalChuyenNhom } from '../../components/Dialog/modal_chuyen_nhom';
 import abpCustom from '../../components/abp-custom';
+import ActionRow2Button from '../../components/DataGrid/ActionRow2Button';
 
 export default function PageProduct() {
     const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
@@ -275,11 +276,31 @@ export default function PageProduct() {
         }
     };
 
-    const doActionRow = (action: any, rowItem: any) => {
+    const doActionRow = (type: number, rowItem: any) => {
         setRowHover(rowItem);
-        console.log('rowItem ', rowItem);
-        if (action < 2) {
-            showModalAddProduct(action, rowItem?.idDonViQuyDoi);
+        switch (type) {
+            case TypeAction.DELETE:
+                {
+                    const role = abpCustom.isGrandPermission('Pages.DM_HangHoa.Delete');
+                    if (!role) {
+                        setObjAlert({ ...objAlert, show: true, type: 2, mes: 'Không có quyền xóa dịch vụ' });
+                        return;
+                    }
+                }
+                break;
+            case TypeAction.UPDATE:
+                {
+                    const role = abpCustom.isGrandPermission('Pages.DM_HangHoa.Edit');
+                    if (!role) {
+                        setObjAlert({ ...objAlert, show: true, type: 2, mes: 'Không có quyền cập nhật dịch vụ' });
+                        return;
+                    }
+                }
+                break;
+        }
+
+        if (type < 3) {
+            showModalAddProduct(type, rowItem?.idDonViQuyDoi);
         } else {
             setInforDeleteProduct(
                 new PropConfirmOKCancel({
@@ -516,37 +537,40 @@ export default function PageProduct() {
             maxWidth: 60,
             flex: 1,
             disableColumnMenu: true,
-
             renderCell: (params) => (
-                <ActionViewEditDelete
-                    lstOption={
-                        [
-                            {
-                                id: '0',
-                                color: '#009EF7',
-                                icon: <Info sx={{ color: '#009EF7' }} />,
-                                text: 'Xem',
-                                isShow: true
-                            },
-                            {
-                                id: '1',
-                                text: 'Sửa',
-                                color: '#009EF7',
-                                icon: <Edit sx={{ color: '#009EF7' }} />,
-                                isShow: abpCustom.isGrandPermission('Pages.DM_HangHoa.Edit')
-                            },
-                            {
-                                id: '2',
-                                text: 'Xóa',
-                                color: '#F1416C',
-                                icon: <DeleteForever sx={{ color: '#F1416C' }} />,
-                                isShow: abpCustom.isGrandPermission('Pages.DM_HangHoa.Delete')
-                            }
-                        ] as IList[]
-                    }
-                    handleAction={(action: any) => doActionRow(action, params.row)}
-                />
+                <ActionRow2Button handleClickAction={(type: number) => doActionRow(type, params.row)} />
             ),
+
+            // renderCell: (params) => (
+            //     <ActionViewEditDelete
+            //         lstOption={
+            //             [
+            //                 {
+            //                     id: '0',
+            //                     color: '#009EF7',
+            //                     icon: <Info sx={{ color: '#009EF7' }} />,
+            //                     text: 'Xem',
+            //                     isShow: true
+            //                 },
+            //                 {
+            //                     id: '1',
+            //                     text: 'Sửa',
+            //                     color: '#009EF7',
+            //                     icon: <Edit sx={{ color: '#009EF7' }} />,
+            //                     isShow: abpCustom.isGrandPermission('Pages.DM_HangHoa.Edit')
+            //                 },
+            //                 {
+            //                     id: '2',
+            //                     text: 'Xóa',
+            //                     color: '#F1416C',
+            //                     icon: <DeleteForever sx={{ color: '#F1416C' }} />,
+            //                     isShow: abpCustom.isGrandPermission('Pages.DM_HangHoa.Delete')
+            //                 }
+            //             ] as IList[]
+            //         }
+            //         handleAction={(action: any) => doActionRow(action, params.row)}
+            //     />
+            // ),
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         }
     ];

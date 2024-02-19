@@ -51,7 +51,7 @@ import abpCustom from '../../components/abp-custom';
 import { AppContext, IAppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
 import suggestStore from '../../stores/suggestStore';
-import AppConsts from '../../lib/appconst';
+import AppConsts, { TypeAction } from '../../lib/appconst';
 import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
 import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import AccordionWithData from '../../components/Accordion/AccordionWithData';
@@ -59,6 +59,7 @@ import { IList } from '../../services/dto/IList';
 import CreateOrEditChucVuModal from './chuc-vu/components/create-or-edit-chuc-vu-modal';
 import { CreateOrEditChucVuDto } from '../../services/nhan-vien/chuc_vu/dto/CreateOrEditChucVuDto';
 import { Guid } from 'guid-typescript';
+import ActionRow2Button from '../../components/DataGrid/ActionRow2Button';
 class EmployeeScreen extends React.Component {
     static contextType = AppContext;
     state = {
@@ -153,7 +154,7 @@ class EmployeeScreen extends React.Component {
                   variant: 'success',
                   autoHideDuration: 3000
               })
-            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+            : enqueueSnackbar('Có lỗi xảy ra vui lòng thử lại sau!', {
                   variant: 'error',
                   autoHideDuration: 3000
               });
@@ -255,6 +256,39 @@ class EmployeeScreen extends React.Component {
             idNhanSu: ''
         });
         this.getData();
+    };
+    doActionRow = (type: number, rowItem: any) => {
+        switch (type) {
+            case TypeAction.DELETE:
+                {
+                    const role = abpCustom.isGrandPermission('Pages.NhanSu.Delete');
+                    if (!role) {
+                        enqueueSnackbar('Không có quyền xóa nhân viên', {
+                            variant: 'error',
+                            autoHideDuration: 3000
+                        });
+                        return;
+                    }
+                    this.setState({
+                        isShowConfirmDelete: true,
+                        selectedRowId: rowItem?.id
+                    });
+                }
+                break;
+            case TypeAction.UPDATE:
+                {
+                    const role = abpCustom.isGrandPermission('Pages.NhanSu.Edit');
+                    if (!role) {
+                        enqueueSnackbar('Không có quyền cập nhật thông tin nhân viên', {
+                            variant: 'error',
+                            autoHideDuration: 3000
+                        });
+                        return;
+                    }
+                    this.createOrUpdateModalOpen(rowItem?.id);
+                }
+                break;
+        }
     };
     exportToExcel = async () => {
         const { filter, maxResultCount, currentPage, sortBy, sortType } = this.state;
@@ -543,6 +577,7 @@ class EmployeeScreen extends React.Component {
                     {params.value}
                 </Typography>
             ),
+
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         },
         {
@@ -554,15 +589,16 @@ class EmployeeScreen extends React.Component {
             flex: 0.4,
             disableColumnMenu: true,
             renderCell: (params) => (
-                <IconButton
-                    aria-label="Actions"
-                    aria-controls={`actions-menu-${params.row.id}`}
-                    aria-haspopup="true"
-                    onClick={(event: any) => {
-                        params.row.trangThai == 'Hoạt động' ? this.handleOpenMenu(event, params.row.id) : null;
-                    }}>
-                    <MoreHorizIcon />
-                </IconButton>
+                // <IconButton
+                //     aria-label="Actions"
+                //     aria-controls={`actions-menu-${params.row.id}`}
+                //     aria-haspopup="true"
+                //     onClick={(event: any) => {
+                //         params.row.trangThai == 'Hoạt động' ? this.handleOpenMenu(event, params.row.id) : null;
+                //     }}>
+                //     <MoreHorizIcon />
+                // </IconButton>
+                <ActionRow2Button handleClickAction={(type: number) => this.doActionRow(type, params.row)} />
             ),
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         }
@@ -793,7 +829,7 @@ class EmployeeScreen extends React.Component {
                                     />
                                 </div>
 
-                                <ActionMenuTable
+                                {/* <ActionMenuTable
                                     selectedRowId={this.state.selectedRowId}
                                     anchorEl={this.state.anchorEl}
                                     closeMenu={this.handleCloseMenu}
@@ -803,7 +839,7 @@ class EmployeeScreen extends React.Component {
                                     permissionEdit="Pages.NhanSu.Edit"
                                     handleDelete={this.handleDelete}
                                     permissionDelete="Pages.NhanSu.Delete"
-                                />
+                                /> */}
                                 <CustomTablePagination
                                     currentPage={this.state.currentPage}
                                     rowPerPage={this.state.maxResultCount}
