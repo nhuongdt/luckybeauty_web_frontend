@@ -13,7 +13,7 @@ class TaiKhoanNganHangServices {
         const xx = await http.get(`api/services/app/TaiKhoanNganHang/GetAll`);
         return xx.data.result;
     }
-    async GetAllBankAccount(idChiNhanh = Guid.EMPTY) {
+    async GetAllBankAccount(idChiNhanh = Guid.EMPTY): Promise<TaiKhoanNganHangDto[]> {
         const xx = await http.get(`api/services/app/TaiKhoanNganHang/GetAllBankAccount?idChiNhanh=${idChiNhanh}`);
         return xx.data.result;
     }
