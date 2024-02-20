@@ -82,6 +82,12 @@ export class ResultESMSDto {
     }
 }
 
+export interface IResultESMS_CountSuccess {
+    success?: number;
+    err?: number;
+    messageStatus?: number;
+}
+
 export class CustomerSMSDto extends CustomerBasicDto {
     id = '';
     ngaySinh?: Date | null;
