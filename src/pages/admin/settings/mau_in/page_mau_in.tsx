@@ -3,6 +3,8 @@ import { Box, Grid, Tabs, Tab, Stack, Button, Select, IconButton } from '@mui/ma
 import { useEffect, useRef, useState } from 'react';
 import TabPanel from '../../../../components/TabPanel/TabPanel';
 import { OpenInNew, LocalOffer } from '@mui/icons-material';
+import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
+
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import MauInServices from '../../../../services/mau_in/MauInServices';
 import PageHoaDonDto from '../../../../services/ban_hang/PageHoaDonDto';
@@ -26,8 +28,9 @@ import { Guid } from 'guid-typescript';
 import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import TokenMauIn from './TokenMauIn';
-import { width } from '@mui/system';
 import abpCustom from '../../../../components/abp-custom';
+import { useNavigate } from 'react-router-dom';
+import { ButtonNavigate } from '../../../../components/Button/ButtonNavigate';
 
 export default function PageMauIn({ xx }: any) {
     const [html, setHtml] = useState('');
@@ -224,6 +227,7 @@ export default function PageMauIn({ xx }: any) {
                 return {
                     ...newMauIn,
                     id: dataNew.id,
+                    idChiNhanh: dataNew.idChiNhanh,
                     loaiChungTu: idLoaiChungTu,
                     tenMauIn: dataMauIn.tenMauIn,
                     noiDungMauIn: dataMauIn.noiDungMauIn
@@ -390,6 +394,7 @@ export default function PageMauIn({ xx }: any) {
                         {idMauInChosed.length === 36 && (
                             <Grid item xs={12} sm={12} md={6} lg={6}>
                                 <Stack spacing={1} justifyContent={'flex-end'} direction={'row'}>
+                                    <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
                                     <Button
                                         variant="contained"
                                         onClick={UpdateMauIn}
@@ -427,7 +432,7 @@ export default function PageMauIn({ xx }: any) {
                     <CustomCkeditor html={html} handleChange={onChangeCkeditor} />
                 </Grid>
 
-                <Grid item xs={12} sm={12} md={6} lg={6}>
+                <Grid item xs={12} sm={12} md={6} lg={6} style={{ backgroundColor: 'white' }}>
                     <div className="ck-content" dangerouslySetInnerHTML={{ __html: dataPrint }}></div>
                 </Grid>
             </Grid>

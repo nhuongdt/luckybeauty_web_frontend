@@ -19,6 +19,7 @@ import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import { enqueueSnackbar } from 'notistack';
 import abpCustom from '../../components/abp-custom';
+import { ButtonNavigate } from '../../components/Button/ButtonNavigate';
 const TaiKhoanNganHangPage = () => {
     const [filter, setFilter] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -315,14 +316,14 @@ const TaiKhoanNganHangPage = () => {
     return (
         <Box paddingTop={2}>
             <Grid container>
-                <Grid item xs={12} md={5} sm={6} lg={7}>
+                <Grid item xs={12} md={5} sm={6} lg={6}>
                     <Typography fontSize={'18px'} fontWeight={700} fontFamily={'Roboto'}>
                         Tài khoản ngân hàng
                     </Typography>
                 </Grid>
-                <Grid item xs={12} md={7} sm={6} lg={5}>
+                <Grid item xs={12} md={7} sm={6} lg={6}>
                     <Grid container spacing={1}>
-                        <Grid item lg={8} md={7} xs={6} sm={7}>
+                        <Grid item lg={7} md={12} xs={12} sm={12}>
                             <TextField
                                 size="small"
                                 fullWidth
@@ -338,19 +339,25 @@ const TaiKhoanNganHangPage = () => {
                                 }}
                             />
                         </Grid>
-                        <Grid item lg={4} md={5} xs={6} sm={5}>
-                            <Button
-                                variant="contained"
-                                fullWidth
-                                startIcon={<AddOutlinedIcon />}
-                                sx={{
-                                    display: abpCustom.isGrandPermission('Pages.TaiKhoanNganHang.Create') ? '' : 'none'
-                                }}
-                                onClick={() => {
-                                    onCreateOrEditModal('');
-                                }}>
-                                Thêm tài khoản
-                            </Button>
+                        <Grid item lg={5} md={12} xs={12} sm={12}>
+                            <Stack direction={'row'} spacing={1} justifyContent={'flex-end'}>
+                                <Button
+                                    variant="contained"
+                                    size="small"
+                                    startIcon={<AddOutlinedIcon />}
+                                    sx={{
+                                        display: abpCustom.isGrandPermission('Pages.TaiKhoanNganHang.Create')
+                                            ? ''
+                                            : 'none'
+                                    }}
+                                    onClick={() => {
+                                        onCreateOrEditModal('');
+                                    }}>
+                                    Thêm tài khoản
+                                </Button>
+
+                                <ButtonNavigate navigateTo="/settings" btnText="Quay lại" />
+                            </Stack>
                         </Grid>
                     </Grid>
                 </Grid>
