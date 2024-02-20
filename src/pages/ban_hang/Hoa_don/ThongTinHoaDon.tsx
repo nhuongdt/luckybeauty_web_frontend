@@ -31,6 +31,7 @@ import TaiKhoanNganHangServices from '../../../services/so_quy/TaiKhoanNganHangS
 import { TaiKhoanNganHangDto } from '../../../services/so_quy/Dto/TaiKhoanNganHangDto';
 import HoaHongNhanVienHoaDon from '../../nhan_vien_thuc_hien/hoa_hong_nhan_vien_hoa_don';
 import abpCustom from '../../../components/abp-custom';
+import { SuggestTaiKhoanNganHangQrDto } from '../../../services/suggests/dto/SuggestTaiKhoanNganHangQrDTo';
 const themOutlineInput = createTheme({
     components: {
         MuiOutlinedInput: {
@@ -44,21 +45,28 @@ const themOutlineInput = createTheme({
 });
 
 const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
+    const appContext = useContext(AppContext);
+    const allChiNhanh = useContext(ChiNhanhContextbyUser);
     const [openDialog, setOpenDialog] = useState(false);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [isShowModalThanhToan, setIsShowModalThanhToan] = useState(false);
-    const appContext = useContext(AppContext);
 
+    const [allAccountBank, setAllAccountBank] = useState<TaiKhoanNganHangDto[]>([]);
     const [hoadonChosed, setHoaDonChosed] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
     const [chitietHoaDon, setChiTietHoaDon] = useState<PageHoaDonChiTietDto[]>([]);
 
     const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
     const [idCTHDChosing, setIdCTHDChosing] = useState('');
     const [typeAction, setTypeAction] = useState(0); // 1.update, 2.delete, 0. khong lam gi
-
     const [isShowHoaHongHD, setIsShowHoaHongHD] = useState(false);
 
-    const allChiNhanh = useContext(ChiNhanhContextbyUser);
+    const [taiKhoanNganHang, setTaiKhoanNganHang] = useState<SuggestTaiKhoanNganHangQrDto>({
+        id: null,
+        bin: '',
+        soTaiKhoan: '',
+        tenRutGon: '',
+        tenTaiKhoan: ''
+    });
 
     const GetChiTietHoaDon_byIdHoaDon = async () => {
         if (!utils.checkNull(idHoaDon)) {
@@ -67,11 +75,30 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
         }
     };
 
+    const GetAllTaiKhoanNganHang = async () => {
+        const data = await TaiKhoanNganHangServices.GetAllBankAccount(hoadon?.idChiNhanh);
+        setAllAccountBank(data?.filter((x) => x.trangThai === 1));
+    };
+
     useEffect(() => {
         GetChiTietHoaDon_byIdHoaDon();
         setHoaDonChosed(hoadon);
         setTypeAction(0);
     }, [idHoaDon]);
+
+    useEffect(() => {
+        GetAllTaiKhoanNganHang();
+    }, []);
+
+    const changeTaiKhoanNganHang = async (item: TaiKhoanNganHangDto) => {
+        setTaiKhoanNganHang({
+            id: item?.id,
+            soTaiKhoan: item?.soTaiKhoan,
+            tenRutGon: item?.tenRutGon,
+            tenTaiKhoan: item?.tenChuThe,
+            bin: item?.maPinNganHang
+        });
+    };
 
     const changeNgayLapHoaDon = (value: any) => {
         setHoaDonChosed({ ...hoadonChosed, ngayLapHoaDon: value });
@@ -242,10 +269,13 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
             <Dialog open={isShowModalThanhToan} onClose={() => setIsShowModalThanhToan(false)} maxWidth="md">
                 <DetailHoaDon
                     formType={0}
+                    listAccountBank={allAccountBank}
+                    idAccounBank={taiKhoanNganHang?.id ?? ''}
                     toggleDetail={() => setIsShowModalThanhToan(false)}
                     tongTienHang={hoadonChosed?.tongTienHang}
                     dataHoaDonAfterSave={hoadonChosed}
                     onClickThanhToan={savePhieuThuOK}
+                    onChangeTaiKhoanNganHang={changeTaiKhoanNganHang}
                 />
             </Dialog>
             <HoaHongNhanVienHoaDon
