@@ -6,7 +6,8 @@ import {
     CustomerZaloDto,
     ESMSDto,
     NhatKyGuiTinSMSDto,
-    ResultESMSDto
+    ResultESMSDto,
+    IResultESMS_CountSuccess
 } from './gui_tin_nhan_dto';
 import http from '../../httpService';
 import { IFileDto } from '../../dto/FileDto';
@@ -38,7 +39,7 @@ class HeThongSMSServices {
         const result = await http.post(`api/services/app/HeThongSMS/Update_HeThongSMS`, input);
         return result.data.result;
     };
-    GuiLai_TinNhan_ThatBai = async (listId: any, brandname: string): Promise<number> => {
+    GuiLai_TinNhan_ThatBai = async (listId: any, brandname: string): Promise<IResultESMS_CountSuccess> => {
         const result = await http.post(
             `api/services/app/HeThongSMS/GuiLai_TinNhan_ThatBai?brandname=${brandname}`,
             listId
