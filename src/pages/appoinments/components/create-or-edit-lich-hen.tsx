@@ -64,6 +64,14 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
         this.setState({ isShowKhachHangModal: !this.state.isShowKhachHangModal });
     };
     handleSubmit = async (values: any) => {
+        if (values.idNhanVien === AppConsts.guidEmpty || values.idNhanVien === '') {
+            const nhanVienRanh = suggestStore.suggestKyThuatVien?.filter((x) => x.trangThai === 1);
+            if (nhanVienRanh && nhanVienRanh.length > 0) {
+                const randomIndex = Math.floor(Math.random() * nhanVienRanh.length);
+                const nhanVien = nhanVienRanh[randomIndex];
+                values.idNhanVien = nhanVien.id;
+            }
+        }
         const createResult = await bookingStore.onCreateOrEditBooking({
             id: values.id,
             idChiNhanh: Cookies.get('IdChiNhanh') ?? '',

@@ -8,4 +8,8 @@ export default class CreateTenantInput {
     connectionString!: string;
 
     isActive!: boolean;
+
+    isDefaultPassword!: boolean;
+
+    password!: string;
 }

@@ -7,4 +7,9 @@ export interface PagedKhachHangResultRequestDto extends PagedFilterAndSortedRequ
     idNhomKhach?: string;
     sortBy: string;
     sortType: string;
+    timeFrom?: Date;
+    timeTo?: Date;
+    tongChiTieuTu?: number;
+    tongChiTieuDen?: number;
+    gioiTinh?: boolean;
 }
