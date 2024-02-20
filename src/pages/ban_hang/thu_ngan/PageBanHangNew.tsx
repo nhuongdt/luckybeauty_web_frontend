@@ -1175,7 +1175,6 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     };
 
     const changeTaiKhoanNganHang = async (item: TaiKhoanNganHangDto) => {
-        console.log('changeTaiKhoanNganHang ', item.tenNganHang);
         setTaiKhoanNganHang({
             id: item?.id,
             soTaiKhoan: item?.soTaiKhoan,
@@ -1191,7 +1190,12 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                 ) {
                     return {
                         ...itemCT,
-                        idTaiKhoanNganHang: item?.id
+                        idTaiKhoanNganHang: item?.id,
+                        soTaiKhoan: item?.soTaiKhoan,
+                        tenChuThe: item?.tenChuThe,
+                        tenNganHang: item?.tenNganHang,
+                        tenRutGon: item?.tenRutGon,
+                        maPinNganHang: item?.maPinNganHang
                     };
                 } else {
                     return { ...itemCT };
