@@ -146,6 +146,7 @@ class DataMauIn {
             const arrHDLienQuan = this.phieuthu.quyHoaDon_ChiTiet?.filter(
                 (x: QuyChiTietDto) => !utils.checkNull(x?.maHoaDonLienQuan)
             );
+
             if (arrHDLienQuan !== undefined && arrHDLienQuan?.length > 0) {
                 const arrMa = arrHDLienQuan
                     ?.map((item: QuyChiTietDto) => {
@@ -153,7 +154,6 @@ class DataMauIn {
                     })
                     .sort();
                 sHoaDonLienQuan = Array.from(new Set(arrMa))?.toString();
-                console.log('arrHDLienQuan', arrMa);
             }
             data = data.replaceAll('{HoaDonLienQuan}', sHoaDonLienQuan);
 
@@ -172,6 +172,20 @@ class DataMauIn {
                         this.phieuthu?.tenNguoiNop,
                         sHoaDonLienQuan
                     );
+                } else {
+                    if (quyPos.length > 0) {
+                        qrCode = await TaiKhoanNganHangServices.GetQRCode(
+                            {
+                                tenChuThe: quyPos[0].tenChuThe,
+                                soTaiKhoan: quyPos[0].soTaiKhoan,
+                                tenNganHang: quyPos[0].tenNganHang,
+                                maPinNganHang: quyPos[0].maPinNganHang
+                            } as TaiKhoanNganHangDto,
+                            tienCK,
+                            this.phieuthu?.tenNguoiNop,
+                            sHoaDonLienQuan
+                        );
+                    }
                 }
                 if (utils.checkNull(qrCode)) {
                     // get default first tknganhang (order by createtime desc)
