@@ -75,6 +75,7 @@ const DetailHoaDon = ({
 
     // pass data from parent to child
     useEffect(() => {
+        console.log('formTT');
         const khachPhaiTra = formType === FORM_TYPE.ThuNgan ? tongTienHang - tongGiamGiaHD_Parent : noHDCu;
         setPTGiamGiaHD(ptGiamGiaHD_Parent);
         setTongGiamGiaHD(tongGiamGiaHD_Parent);
@@ -310,26 +311,6 @@ const DetailHoaDon = ({
 
         if (formType === FORM_TYPE.ThuNgan) {
             onChangeTaiKhoanNganHang(item);
-        } else {
-            // setLstQuyCT(
-            //     lstQuyCT.map((itemCT: QuyChiTietDto) => {
-            //         if (
-            //             itemCT.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN ||
-            //             itemCT.hinhThucThanhToan === HINH_THUC_THANH_TOAN.QUYET_THE
-            //         ) {
-            //             return {
-            //                 ...itemCT,
-            //                 idTaiKhoanNganHang: item?.id,
-            //                 tenNganHang: item?.tenNganHang,
-            //                 tenChuThe: item?.tenChuThe,
-            //                 soTaiKhoan: item?.soTaiKhoan,
-            //                 maPinNganHang: item?.maPinNganHang
-            //             };
-            //         } else {
-            //             return { ...itemCT };
-            //         }
-            //     })
-            // );
         }
     };
 
@@ -385,6 +366,7 @@ const DetailHoaDon = ({
                     accFirst = listAccountBank[0];
                 }
             }
+            setIdTaiKhoanNganHang(accFirst?.id);
 
             switch (hinhthucNew) {
                 case HINH_THUC_THANH_TOAN.KET_HOP:
