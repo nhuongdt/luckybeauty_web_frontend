@@ -452,8 +452,13 @@ const TinNhanPage = () => {
                             rowSelectionModel,
                             lstBrandname[0].brandname
                         );
-                        if (data > 0) {
-                            setObjAlert({ mes: `Gửi lại thành công ${data} tin nhắn`, show: true, type: 1 });
+                        if (data?.success ?? 0 > 0) {
+                            setObjAlert({ mes: `Gửi lại thành công ${data.success} tin nhắn`, show: true, type: 1 });
+                        } else {
+                            const typeMes = AppConsts.ListTrangThaiGuiTin.filter((x) => x.value == data.messageStatus);
+                            if (typeMes.length > 0) {
+                                setObjAlert({ mes: `Gửi lại thất bại. ${typeMes[0].text}`, show: true, type: 2 });
+                            }
                         }
                     }
                 }

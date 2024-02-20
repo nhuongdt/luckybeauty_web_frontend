@@ -33,6 +33,7 @@ import HeThongSMSServices from '../../../services/sms/gui_tin_nhan/he_thong_sms_
 import { MauTinSMSDto } from '../../../services/sms/mau_tin_sms/mau_tin_dto';
 import LichSuNap_ChuyenTienService from '../../../services/sms/lich_su_nap_tien/LichSuNap_ChuyenTienService';
 import CaiDatNhacNhoService from '../../../services/sms/cai_dat_nhac_nho/CaiDatNhacNhoService';
+import { Guid } from 'guid-typescript';
 
 export default function ModalGuiTinNhan({
     lstBrandname,
@@ -61,7 +62,6 @@ export default function ModalGuiTinNhan({
 
     useEffect(() => {
         if (isShow) {
-            console.log('idLoaiTin ', idLoaiTin);
             if (utils.checkNull(idTinNhan)) {
                 setNewSMS({ ...newSMS, id: '', idLoaiTin: idLoaiTin ?? 1, soTinGui: 0 });
             } else {
@@ -83,7 +83,7 @@ export default function ModalGuiTinNhan({
 
     const rules = yup.object().shape({
         noiDungTin: yup.string().required('Vui lòng nhập nội dung tin nhắn'),
-        lstCustomer: yup.array().required('Vui lòng chọn khách hàng')
+        lstCustomer: yup.array().min(1, 'Vui lòng chọn ít nhất một khách hàng').required('Vui lòng chọn khách hàng')
     });
 
     const GetBrandnameBalance_byUserLogin = async () => {
@@ -239,6 +239,7 @@ export default function ModalGuiTinNhan({
 
     const saveDraft = async (params: CreateOrEditSMSDto) => {
         const noiDungTin = params.noiDungTin;
+        // lưu nháp: không bắt buộc chọn khách hàng
         if (lstCustomerChosed.length > 0) {
             for (let i = 0; i < lstCustomerChosed.length; i++) {
                 const itFor = lstCustomerChosed[i];
@@ -267,6 +268,7 @@ export default function ModalGuiTinNhan({
             objSMS.trangThai = TrangThaiSMS.DRAFT;
             await HeThongSMSServices.Insert_HeThongSMS(objSMS);
         }
+        setObjAlert({ ...objAlert, show: true, type: 1, mes: 'Lưu nháp thành công' });
         onSaveOK(1);
     };
 
@@ -356,6 +358,24 @@ export default function ModalGuiTinNhan({
 
                 const htSMS = await HeThongSMSServices.Insert_HeThongSMS(objSMS);
                 await saveNhatKyGuiTin(htSMS.id, htSMS.idKhachHang, htSMS?.idLoaiTin);
+
+                switch (sendSMS.messageStatus) {
+                    case TrangThaiSMS.SUCCESS:
+                        {
+                            setObjAlert({ ...objAlert, show: true, mes: 'Gửi tin thành công', type: 1 });
+                        }
+                        break;
+                    default:
+                        {
+                            const typeMes = AppConsts.ListTrangThaiGuiTin.filter(
+                                (x) => x.value == sendSMS.messageStatus
+                            );
+                            if (typeMes.length > 0) {
+                                setObjAlert({ mes: `Gửi tin thất bại. ${typeMes[0].text}`, show: true, type: 2 });
+                            }
+                        }
+                        break;
+                }
                 onSaveOK(1);
             }
         }
@@ -416,7 +436,7 @@ export default function ModalGuiTinNhan({
                                                         choseCustomer(lst);
                                                         setFieldValue('lstCustomer', lst);
                                                     }}
-                                                    error={touched.lstCustomer && Boolean(errors?.lstCustomer)}
+                                                    error={touched.lstCustomer && Boolean(errors.lstCustomer)}
                                                     helperText={touched.lstCustomer && errors.lstCustomer}
                                                 />
                                                 {/* <MenuIcon className="btnIcon" /> */}
