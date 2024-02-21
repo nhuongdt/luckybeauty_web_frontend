@@ -15,9 +15,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                     <div key={index}>
                         <p key={`value-${index}`} className="value" style={{ color: entry.color }}>
                             {entry.name == 'thangTruoc'
-                                ? 'Tháng trước'
+                                ? 'Năm trước'
                                 : entry.name == 'thangNay'
-                                ? 'Tháng này'
+                                ? 'Năm này'
                                 : entry.name}
                             : {formatCurrency(entry.value)}
                         </p>

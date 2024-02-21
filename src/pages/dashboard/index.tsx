@@ -190,7 +190,7 @@ const Dashboard: React.FC = () => {
                                                     fontSize: '12px',
                                                     fontWeight: '400'
                                                 }}>
-                                                Tháng này
+                                                Năm này
                                             </Typography>
                                         </Box>
 
@@ -210,7 +210,7 @@ const Dashboard: React.FC = () => {
                                                     fontSize: '12px',
                                                     fontWeight: '400'
                                                 }}>
-                                                Tháng trước
+                                                Năm trước
                                             </Typography>
                                         </Box>
                                     </Box>
