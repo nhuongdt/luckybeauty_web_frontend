@@ -13,10 +13,12 @@ export interface TaiKhoanNganHangDto {
     soTaiKhoan: string;
     idNganHang: string;
     ghiChu?: string;
+    trangThai?: number;
 
     maNganHang: string;
     tenNganHang: string;
     logoNganHang: string;
     maPinNganHang: string;
     tenRutGon: string;
+    isDefault?: boolean;
 }

@@ -39,7 +39,8 @@ export default class QuyChiTietDto {
         tenChuThe = '',
         soTaiKhoan = '',
         tenNganHang = '',
-        tenKhoanThuChi = ''
+        tenKhoanThuChi = '',
+        maPinNganHang = ''
     }) {
         this.id = id;
         this.idHoaDonLienQuan = idHoaDonLienQuan;
@@ -58,6 +59,7 @@ export default class QuyChiTietDto {
         this.soTaiKhoan = soTaiKhoan;
         this.tenNganHang = tenNganHang;
         this.tenKhoanThuChi = tenKhoanThuChi;
+        this.maPinNganHang = maPinNganHang;
 
         Object.defineProperties(this, {
             sHinhThucThanhToan: {

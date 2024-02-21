@@ -45,6 +45,7 @@ import {
 } from '../../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/CreateOrEditChietKhauDichVuDto';
 import { LoaiHoaHongDichVu } from '../../../../../lib/appconst';
 import abpCustom from '../../../../../components/abp-custom';
+import { ButtonNavigate } from '../../../../../components/Button/ButtonNavigate';
 
 const TypeGroupPopover = {
     NHAN_VIEN: 1,
@@ -964,6 +965,8 @@ export default function PageSetupHoaHongDichVu() {
                         </Grid>
                     </Grid>
                     <Grid item xs={12} md={6} lg={6} display="flex" gap="8px" justifyContent="end">
+                        <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
+
                         <Button
                             size="small"
                             onClick={exportToExcel}

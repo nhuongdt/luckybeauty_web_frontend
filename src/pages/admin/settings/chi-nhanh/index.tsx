@@ -38,6 +38,7 @@ import uploadFileService from '../../../../services/uploadFileService';
 import ImportExcel from '../../../../components/ImportComponent/ImportExcel';
 import ActionRowSelect from '../../../../components/DataGrid/ActionRowSelect';
 import { addYears } from 'date-fns';
+import { ButtonNavigate } from '../../../../components/Button/ButtonNavigate';
 
 class ChiNhanhScreen extends Component {
     dataGridRef: RefObject<any> = React.createRef<GridApi>();
@@ -429,6 +430,7 @@ class ChiNhanhScreen extends Component {
                         </Grid>
                     </Grid>
                     <Grid xs={12} md={6} item display="flex" gap="8px" justifyContent="end">
+                        <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
                         <Button
                             className="border-color btn-outline-hover"
                             variant="outlined"

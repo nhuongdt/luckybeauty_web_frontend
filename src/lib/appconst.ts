@@ -83,6 +83,13 @@ export const TrangThaiActive = {
     NOT_ACTIVE: 0
 };
 
+export const HINH_THUC_THANH_TOAN = {
+    KET_HOP: 0,
+    TIEN_MAT: 1,
+    CHUYEN_KHOAN: 2,
+    QUYET_THE: 3
+};
+
 const AppConsts = {
     userManagement: {
         defaultAdminUserName: 'admin'

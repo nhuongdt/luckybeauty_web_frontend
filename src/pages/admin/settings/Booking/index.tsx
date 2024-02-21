@@ -1,9 +1,21 @@
-import { Box, TextField, Typography, Select, Checkbox, Button, Grid, MenuItem, FormControlLabel } from '@mui/material';
+import {
+    Box,
+    Stack,
+    TextField,
+    Typography,
+    Select,
+    Checkbox,
+    Button,
+    Grid,
+    MenuItem,
+    FormControlLabel
+} from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import React, { useState } from 'react';
 import { ReactComponent as HelpIcon } from '../../../../images/help-circle.svg';
 import { ReactComponent as ArrowDown } from '../../../../images/arow-down.svg';
 import Cookies from 'js-cookie';
+import { ButtonNavigate } from '../../../../components/Button/ButtonNavigate';
 const Booking: React.FC = () => {
     const [option1, setOption1] = useState('1');
     const [option2, setOption2] = useState('1');
@@ -23,26 +35,29 @@ const Booking: React.FC = () => {
     };
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column' }} paddingTop={'16px'}>
-            <Box
-                sx={{ display: 'flex', flexDirection: 'row' }}
-                paddingRight={'16px'}
-                justifyContent={'space-between'}
-                alignItems={'center'}>
-                <Typography variant="h4" fontSize="18px" fontWeight="700">
-                    Cài đặt booking
-                </Typography>
-                <Button
-                    variant="contained"
-                    sx={{
-                        mb: '16px',
-                        width: 'fit-content',
-                        marginLeft: 'auto',
-                        height: '40px'
-                    }}
-                    className="btn-container-hover">
-                    Cập nhật
-                </Button>
-            </Box>
+            <Grid container paddingRight={'16px'}>
+                <Grid item xs={12} sm={4} md={4} lg={4}>
+                    <Typography variant="h4" fontSize="18px" fontWeight="700">
+                        Cài đặt booking
+                    </Typography>
+                </Grid>
+                <Grid item xs={12} sm={8} md={8} lg={8}>
+                    <Stack spacing={1} direction={'row'} justifyContent={'end'}>
+                        <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
+                        <Button
+                            variant="contained"
+                            sx={{
+                                mb: '16px',
+                                width: 'fit-content',
+                                marginLeft: 'auto',
+                                height: '40px'
+                            }}
+                            className="btn-container-hover">
+                            Cập nhật
+                        </Button>
+                    </Stack>
+                </Grid>
+            </Grid>
 
             <Box
                 sx={{

@@ -3,7 +3,6 @@ import { Box, Typography, Grid, TextField, Button, Stack, InputAdornment } from 
 import AddLogoIcon from '../../../../images/add-logo.svg';
 import cuaHangService from '../../../../services/cua_hang/cuaHangService';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
-import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import Cookies from 'js-cookie';
 import { EditCuaHangDto } from '../../../../services/cua_hang/Dto/EditCuaHangDto';
 import { enqueueSnackbar } from 'notistack';
@@ -17,11 +16,14 @@ import { ReactComponent as InstagramIcon } from '../../../../images/icons/instag
 import { ReactComponent as TwitterIcon } from '../../../../images/icons/twitter.svg';
 import TaiKhoanNganHangServices from '../../../../services/so_quy/TaiKhoanNganHangServices';
 import { TaiKhoanNganHangDto } from '../../../../services/so_quy/Dto/TaiKhoanNganHangDto';
+import { ButtonNavigate } from '../../../../components/Button/ButtonNavigate';
+
 class StoreDetail extends Component {
     state = {
         fileSelect: {} as File,
         googleDrive_fileId: '',
         isSaving: false,
+        // navigate: useNavigate(),
         editCuaHang: {
             id: '',
             diaChi: '',
@@ -243,13 +245,7 @@ class StoreDetail extends Component {
                                             </Button>
                                         ) : (
                                             <Stack direction={'row'} spacing={1}>
-                                                <Button
-                                                    variant="outlined"
-                                                    sx={{ color: '#525f7a' }}
-                                                    startIcon={<ArrowBackOutlinedIcon />}
-                                                    onClick={() => (window.location.href = '/settings')}>
-                                                    Trở về trang cài đặt
-                                                </Button>
+                                                <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
                                                 <Button
                                                     variant="contained"
                                                     onClick={this.handSubmit}

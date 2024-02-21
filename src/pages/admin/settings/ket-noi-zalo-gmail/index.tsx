@@ -11,6 +11,7 @@ import { InforZOA, ZaloAuthorizationDto } from '../../../../services/sms/gui_tin
 import utils from '../../../../utils/utils';
 import { Guid } from 'guid-typescript';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
+import { ButtonNavigate } from '../../../../components/Button/ButtonNavigate';
 
 export default function ThietLapKetNoiZaloGmail({ xx }: any) {
     const [tabActive, setTabActive] = useState('2');
@@ -140,12 +141,18 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
             <Grid container>
                 <Grid item xs={12}>
                     <TabContext value={tabActive}>
-                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                            <TabList onChange={handleChange} aria-label="lab API tabs example">
-                                <Tab label="Zalo" value="2" />
-                                <Tab label="Email" value="3" />
-                            </TabList>
-                        </Box>
+                        <Stack direction={'row'} justifyContent={'space-between'} alignItems={'end'}>
+                            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                <TabList onChange={handleChange}>
+                                    <Tab label="Zalo" value="2" />
+                                    <Tab label="Email" value="3" />
+                                </TabList>
+                            </Box>
+                            <Stack>
+                                <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
+                            </Stack>
+                        </Stack>
+
                         <TabPanel value="2">
                             {!zaloToken?.accessToken && (
                                 <Grid container spacing={3}>

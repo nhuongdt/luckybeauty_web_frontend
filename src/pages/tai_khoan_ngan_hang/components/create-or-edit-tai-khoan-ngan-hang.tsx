@@ -220,7 +220,7 @@ const CreateOrEditTaiKhoanNganHangModal = ({ visiable, onCancel, onOk, formRef }
                                         <Checkbox
                                             checked={values.trangThai === 1 ? true : false}
                                             onChange={(event, value) => {
-                                                setFieldValue('trangThai', value);
+                                                setFieldValue('trangThai', value ? 1 : 0);
                                             }}
                                         />
                                         <Typography variant="body2">Kích hoạt</Typography>

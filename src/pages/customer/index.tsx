@@ -58,7 +58,6 @@ import { IList } from '../../services/dto/IList';
 import { format } from 'date-fns';
 import { Guid } from 'guid-typescript';
 import CustomerFilterDrawer from './components/CustomerFilterDrawer';
-import { ICustomerDetail_FullInfor } from '../../services/khach-hang/dto/KhachHangDto';
 import CustomerInfor2 from './components/customer_infor2';
 import ActionRow2Button from '../../components/DataGrid/ActionRow2Button';
 import { TypeAction } from '../../lib/appconst';
@@ -336,11 +335,27 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         switch (type) {
             case TypeAction.DELETE:
                 {
+                    const role = abpCustom.isGrandPermission('Pages.KhachHang.Delete');
+                    if (!role) {
+                        enqueueSnackbar('Không có quyền xóa khách hàng', {
+                            variant: 'error',
+                            autoHideDuration: 3000
+                        });
+                        return;
+                    }
                     this.setState({ isShowConfirmDelete: true });
                 }
                 break;
             case TypeAction.UPDATE:
                 {
+                    const role = abpCustom.isGrandPermission('Pages.KhachHang.Delete');
+                    if (!role) {
+                        enqueueSnackbar('Không có quyền cập nhật khách hàng', {
+                            variant: 'error',
+                            autoHideDuration: 3000
+                        });
+                        return;
+                    }
                     this.createOrUpdateModalOpen(param.id.toString());
                 }
                 break;

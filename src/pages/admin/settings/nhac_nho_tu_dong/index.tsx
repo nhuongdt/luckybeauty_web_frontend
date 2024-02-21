@@ -19,6 +19,7 @@ import {
 } from '../../../../services/sms/cai_dat_nhac_nho/cai_dat_nhac_nho_dto';
 import CaiDatNhacNhoService from '../../../../services/sms/cai_dat_nhac_nho/CaiDatNhacNhoService';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
+import { ButtonNavigate } from '../../../../components/Button/ButtonNavigate';
 
 interface ICaiDatNhacNho {
     id: string;
@@ -303,9 +304,12 @@ export default function PageCaiDatNhacTuDong({ aa }: any) {
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Grid container spacing={3} paddingTop={2}>
                 <Grid item xs={12}>
-                    <Typography fontSize={18} fontWeight={600}>
-                        Tin nhắn tự động
-                    </Typography>
+                    <Stack justifyContent={'space-between'} direction={'row'}>
+                        <Typography fontSize={18} fontWeight={600}>
+                            Tin nhắn tự động
+                        </Typography>
+                        <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
+                    </Stack>
                 </Grid>
                 {arrSetup?.map((item: ICaiDatNhacNho, index) => (
                     <Grid item xs={12} sm={6} md={4} lg={4} key={index}>

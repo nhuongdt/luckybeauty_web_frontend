@@ -1,6 +1,10 @@
 import { Stack } from '@mui/material';
+import { ReactComponent as DeleteIcon } from '../../images/trash.svg';
+
 import ClearIcon from '@mui/icons-material/Clear';
 import BorderHorizontalOutlinedIcon from '@mui/icons-material/BorderHorizontalOutlined';
+import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { TypeAction } from '../../lib/appconst';
 
 export default function ActionRow2Button({ handleClickAction }: any) {
@@ -10,11 +14,16 @@ export default function ActionRow2Button({ handleClickAction }: any) {
     return (
         <>
             <Stack spacing={1} direction={'row'}>
-                <BorderHorizontalOutlinedIcon
-                    sx={{ width: '16px', color: 'blue' }}
+                <BorderColorOutlinedIcon
+                    titleAccess="Cập nhật"
+                    sx={{ width: '16px', color: '#7e7979' }}
                     onClick={() => onClickAction(TypeAction.UPDATE)}
                 />
-                <ClearIcon sx={{ width: '16px', color: 'red' }} onClick={() => onClickAction(TypeAction.DELETE)} />
+                <DeleteIcon
+                    title="Xóa"
+                    style={{ width: '16px', color: '#7e7979' }}
+                    onClick={() => onClickAction(TypeAction.DELETE)}
+                />
             </Stack>
         </>
     );
