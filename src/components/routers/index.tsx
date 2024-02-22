@@ -521,6 +521,19 @@ export const appRouters: AppRouteProps = {
                             component: LoadableComponent(() => import('../../pages/admin/tenant/index'))
                         },
                         {
+                            path: '/editions',
+                            permission: 'Pages.Editions',
+                            title: 'Phiên bản',
+                            name: 'phiên bản',
+                            iconActive: null,
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            showInMenu: true,
+                            children: [],
+
+                            isLayout: false,
+                            component: LoadableComponent(() => import('../../pages/admin/edition/index'))
+                        },
+                        {
                             path: '/Brandname',
                             permission: 'Pages.Tenants',
                             title: 'Brandname',
