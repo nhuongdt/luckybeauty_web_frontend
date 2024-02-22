@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import {
+    Autocomplete,
     Box,
     Button,
     Checkbox,
@@ -20,6 +21,10 @@ import CreateTenantInput from '../../../../services/tenant/dto/createTenantInput
 import tenantService from '../../../../services/tenant/tenantService';
 import rules from './createOrUpdateTenant.validation';
 import { enqueueSnackbar } from 'notistack';
+import http from '../../../../services/httpService';
+import { EditionListDto } from '../../../../services/editions/dto/EditionListDto';
+import editionService from '../../../../services/editions/editionService';
+import { PagedResultDto } from '../../../../services/dto/pagedResultDto';
 export interface ICreateOrEditTenantProps {
     visible: boolean;
     onCancel: () => void;
@@ -30,8 +35,16 @@ export interface ICreateOrEditTenantProps {
 }
 class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
     state = {
-        isHostDatabase: false
+        isHostDatabase: false,
+        suggestEditions: {} as PagedResultDto<EditionListDto>
     };
+    getEditions = async () => {
+        const data = await editionService.getAllEdition();
+        this.setState({ suggestEditions: data });
+    };
+    componentDidMount(): void {
+        this.getEditions();
+    }
     handleSubmit = async (values: CreateTenantInput, formikHelper: FormikHelpers<any>) => {
         try {
             if (this.props.tenantId === 0) {
@@ -46,7 +59,8 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                     id: this.props.tenantId,
                     isActive: values.isActive,
                     name: values.name,
-                    tenancyName: values.tenancyName
+                    tenancyName: values.tenancyName,
+                    editionId: values.editionId
                 });
                 enqueueSnackbar('Cập nhật thông tin thành công!', {
                     variant: 'success',
@@ -66,6 +80,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
     render(): React.ReactNode {
         const { visible, onCancel, modalType, tenantId, formRef } = this.props;
         const { isHostDatabase } = this.state;
+        const suggestEditions = this.state.suggestEditions.items ?? [];
         const initialValues = {
             name: formRef.name,
             tenancyName: formRef.tenancyName,
@@ -73,7 +88,8 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
             connectionString: formRef.connectionString,
             isDefaultPassword: formRef.isDefaultPassword,
             password: formRef.password,
-            isActive: formRef.isActive
+            isActive: formRef.isActive,
+            editionId: formRef.editionId
         };
         return (
             <>
@@ -102,7 +118,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                 onSubmit={(e, formikHelper) => {
                                     this.handleSubmit(e, formikHelper);
                                 }}>
-                                {({ handleChange, values, errors, touched, isSubmitting }) => (
+                                {({ handleChange, values, errors, touched, isSubmitting, setFieldValue }) => (
                                     <Form onKeyPress={this.handleFormKeyPress}>
                                         <Box
                                             display="flex"
@@ -256,6 +272,47 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                     />
                                                 </FormGroup>
                                             )}
+                                            <FormGroup>
+                                                <Autocomplete
+                                                    options={suggestEditions}
+                                                    value={
+                                                        suggestEditions?.filter((x) => x.id == values.editionId)[0] ?? {
+                                                            displayName: '',
+                                                            name: '',
+                                                            id: 0
+                                                        }
+                                                    }
+                                                    getOptionLabel={(option) => option.displayName}
+                                                    onChange={(e, v) => {
+                                                        setFieldValue('editionId', v?.id);
+                                                    }}
+                                                    fullWidth
+                                                    size="small"
+                                                    renderInput={(params) => (
+                                                        <TextField
+                                                            {...params}
+                                                            label={
+                                                                <label>
+                                                                    Phiên bản
+                                                                    <span
+                                                                        style={{
+                                                                            color: 'red',
+                                                                            marginLeft: '3px'
+                                                                        }}>
+                                                                        *
+                                                                    </span>
+                                                                </label>
+                                                            }
+                                                            error={touched.editionId && errors.editionId ? true : false}
+                                                            helperText={
+                                                                touched.editionId &&
+                                                                errors.editionId && <span>{errors.editionId}</span>
+                                                            }
+                                                            placeholder="Chọn phiên bản"
+                                                        />
+                                                    )}
+                                                />
+                                            </FormGroup>
                                             {tenantId !== 0 ? (
                                                 <FormGroup>
                                                     <FormControlLabel

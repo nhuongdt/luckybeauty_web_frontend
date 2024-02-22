@@ -41,7 +41,8 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
             connectionString: '',
             tenancyName: '',
             isDefaultPassword: false,
-            password: ''
+            password: '',
+            editionId: 0
         } as CreateTenantInput,
         isShowConfirmDelete: false,
         anchorEl: null,
@@ -101,7 +102,8 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     connectionString: '',
                     tenancyName: '',
                     isDefaultPassword: false,
-                    password: ''
+                    password: '',
+                    editionId: 0
                 }
             });
         } else {
@@ -112,7 +114,8 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     name: createOrEdit.name,
                     tenancyName: createOrEdit.tenancyName,
                     adminEmailAddress: '',
-                    connectionString: createOrEdit.connectionString
+                    connectionString: createOrEdit.connectionString,
+                    editionId: createOrEdit.editionId
                 }
             });
         }

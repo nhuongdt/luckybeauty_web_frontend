@@ -12,4 +12,6 @@ export default class CreateTenantInput {
     isDefaultPassword!: boolean;
 
     password!: string;
+
+    editionId!: number;
 }

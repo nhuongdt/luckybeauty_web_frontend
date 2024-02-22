@@ -17,7 +17,8 @@ const rules = Yup.object().shape({
                 )
                 .required('Mật khẩu là bắt buộc'),
         otherwise: (schema) => schema.notRequired()
-    })
+    }),
+    editionId: Yup.number().min(1, 'Vui lòng chọn phiên bản').required('Vui lòng chọn phiên bản')
 });
 
 export default rules;

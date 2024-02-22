@@ -6,4 +6,5 @@ export default class GetTenantOutput {
     isActive!: boolean;
 
     id!: number;
+    editionId!: number;
 }
