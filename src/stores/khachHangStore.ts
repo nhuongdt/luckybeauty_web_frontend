@@ -63,7 +63,7 @@ class KhachHangSrore {
             tenKhachHang: '',
             soDienThoai: '',
             gioiTinhNam: false,
-            idLoaiKhach: 0,
+            idLoaiKhach: 1,
             idNhomKhach: '',
             idNguonKhach: '',
             diaChi: '',
