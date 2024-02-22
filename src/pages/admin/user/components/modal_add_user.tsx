@@ -282,8 +282,14 @@ export default function ModalAddUser({
             const data = await userService.CreateUser(values);
             if (data !== null) {
                 userIdNew = data.id;
+                await roleService.CreateRole_byChiNhanhOfUser(userIdNew, lstChosed);
                 enqueueSnackbar('Thêm mới người dùng thành công', {
                     variant: 'success',
+                    autoHideDuration: 3000
+                });
+            } else {
+                enqueueSnackbar('Số lượng người dùng đã đến giới hạn,Vui lòng nâng cấp gói cước để sử dụng tính năng', {
+                    variant: 'error',
                     autoHideDuration: 3000
                 });
             }
@@ -291,13 +297,18 @@ export default function ModalAddUser({
             const data = await userService.UpdateUser(values);
             if (data !== null) {
                 userIdNew = userId;
+                await roleService.CreateRole_byChiNhanhOfUser(userIdNew, lstChosed);
                 enqueueSnackbar('Cập nhật người dùng thành công', {
                     variant: 'success',
                     autoHideDuration: 3000
                 });
+            } else {
+                enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
+                    variant: 'error',
+                    autoHideDuration: 3000
+                });
             }
         }
-        await roleService.CreateRole_byChiNhanhOfUser(userIdNew, lstChosed);
         const userLogin = Cookies.get('userId');
         if (userLogin === userId.toString()) {
             if (!passNew_samePassOld) return authenticationStore.logout(); // logout if change pass
