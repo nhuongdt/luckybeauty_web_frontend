@@ -391,41 +391,44 @@ export default function PageMauIn({ xx }: any) {
                                 </Grid>
                             </Grid>
                         </Grid>
-                        {idMauInChosed.length === 36 && (
-                            <Grid item xs={12} sm={12} md={6} lg={6}>
-                                <Stack spacing={1} justifyContent={'flex-end'} direction={'row'}>
-                                    <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
-                                    <Button
-                                        variant="contained"
-                                        onClick={UpdateMauIn}
-                                        sx={{
-                                            display: abpCustom.isGrandPermission('Pages.MauIn.Edit') ? '' : 'none'
-                                        }}>
-                                        Lưu mẫu in
-                                    </Button>
-                                    <Button
-                                        variant="outlined"
-                                        color="error"
-                                        sx={{
-                                            display: abpCustom.isGrandPermission('Pages.MauIn.Delete') ? '' : 'none'
-                                        }}
-                                        onClick={() => {
-                                            setInforObjDelete(
-                                                new PropConfirmOKCancel({
-                                                    show: true,
-                                                    title: 'Xác nhận xóa',
-                                                    mes: `Bạn có chắc chắn muốn xóa mẫu in ${newMauIn?.tenMauIn} không?`
-                                                })
-                                            );
-                                        }}>
-                                        Xóa mẫu in
-                                    </Button>
-                                    <Button variant="contained" sx={{ display: 'none' }}>
-                                        Sao chép
-                                    </Button>
-                                </Stack>
-                            </Grid>
-                        )}
+
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <Stack spacing={1} justifyContent={'flex-end'} direction={'row'}>
+                                <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
+                                {idMauInChosed.length === 36 && (
+                                    <Stack spacing={1} justifyContent={'flex-end'} direction={'row'}>
+                                        <Button
+                                            variant="contained"
+                                            onClick={UpdateMauIn}
+                                            sx={{
+                                                display: abpCustom.isGrandPermission('Pages.MauIn.Edit') ? '' : 'none'
+                                            }}>
+                                            Lưu mẫu in
+                                        </Button>
+                                        <Button
+                                            variant="outlined"
+                                            color="error"
+                                            sx={{
+                                                display: abpCustom.isGrandPermission('Pages.MauIn.Delete') ? '' : 'none'
+                                            }}
+                                            onClick={() => {
+                                                setInforObjDelete(
+                                                    new PropConfirmOKCancel({
+                                                        show: true,
+                                                        title: 'Xác nhận xóa',
+                                                        mes: `Bạn có chắc chắn muốn xóa mẫu in ${newMauIn?.tenMauIn} không?`
+                                                    })
+                                                );
+                                            }}>
+                                            Xóa mẫu in
+                                        </Button>
+                                        <Button variant="contained" sx={{ display: 'none' }}>
+                                            Sao chép
+                                        </Button>
+                                    </Stack>
+                                )}
+                            </Stack>
+                        </Grid>
                     </Grid>
                 </Grid>
                 <Grid item xs={12} sm={12} md={6} lg={6}>
