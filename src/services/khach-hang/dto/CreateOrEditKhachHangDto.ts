@@ -4,6 +4,7 @@ export interface CreateOrEditKhachHangDto {
     id: string;
     maKhachHang: string;
     tenKhachHang: string;
+    tenKhachHang_KhongDau?: string;
     soDienThoai: string;
     diaChi?: string;
     gioiTinhNam: boolean;

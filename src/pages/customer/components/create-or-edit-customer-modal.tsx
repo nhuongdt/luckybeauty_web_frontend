@@ -131,6 +131,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                             }
                             // gán lại image theo id mới
                             values.avatar = fileId !== '' ? `https://drive.google.com/uc?export=view&id=${fileId}` : '';
+                            values.tenKhachHang_KhongDau = utils.strToEnglish(values.tenKhachHang);
                             const createOrEdit = await khachHangService.createOrEdit(values);
                             bookingStore.createOrEditBookingDto.idKhachHang = createOrEdit.id.toString();
                             createOrEdit != null
