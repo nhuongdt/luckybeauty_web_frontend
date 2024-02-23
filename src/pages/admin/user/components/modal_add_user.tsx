@@ -303,7 +303,7 @@ export default function ModalAddUser({
                     autoHideDuration: 3000
                 });
             } else {
-                enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
+                enqueueSnackbar('Có lỗi xảy ra vui lòng thử lại sau', {
                     variant: 'error',
                     autoHideDuration: 3000
                 });

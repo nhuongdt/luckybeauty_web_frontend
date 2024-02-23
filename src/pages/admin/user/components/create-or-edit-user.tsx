@@ -98,7 +98,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
             helper.resetForm();
             onOk();
         } catch (error) {
-            enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+            enqueueSnackbar('Có lỗi xảy ra vui lòng thử lại sau!', {
                 variant: 'error',
                 autoHideDuration: 3000
             });
