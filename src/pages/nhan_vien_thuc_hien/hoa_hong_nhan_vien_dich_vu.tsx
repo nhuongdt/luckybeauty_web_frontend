@@ -8,13 +8,14 @@ import {
     Stack,
     Avatar,
     DialogActions,
-    Button
+    Button,
+    Tab
 } from '@mui/material';
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
 import DialogButtonClose from '../../components/Dialog/ButtonClose';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
 import { PagedNhanSuRequestDto } from '../../services/nhan-vien/dto/PagedNhanSuRequestDto';
-import React, { KeyboardEventHandler, useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 import NhanVienThucHienDto from '../../services/nhan_vien_thuc_hien/NhanVienThucHienDto';
 import { Search } from '@mui/icons-material';
@@ -24,14 +25,22 @@ import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { NumericFormat } from 'react-number-format';
 import NhanVienThucHienServices from '../../services/nhan_vien_thuc_hien/NhanVienThucHienServices';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
-import HoaDonChiTietDto from '../../services/ban_hang/HoaDonChiTietDto';
 import chietKhauDichVuService from '../../services/hoa_hong/chiet_khau_dich_vu/chietKhauDichVuService';
+import TabList from '@mui/lab/TabList';
+import TabContext from '@mui/lab/TabContext';
+import { LoaiHoaHongDichVu, TypeAction } from '../../lib/appconst';
+import { enqueueSnackbar } from 'notistack';
+import Cookies from 'js-cookie';
 
-export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTiet, onSaveOK }: any) {
+export default function HoaHongNhanVienDichVu({ iShow, isNew = false, onClose, itemHoaDonChiTiet, onSaveOK }: any) {
     const appContext = useContext(AppContext);
     const chinhanhCurrent = appContext.chinhanhCurrent;
-    const idChiNhanh = chinhanhCurrent?.id;
+    let idChiNhanh = chinhanhCurrent?.id;
+    if (utils.checkNull(idChiNhanh)) {
+        idChiNhanh = Cookies.get('IdChiNhanh') as string;
+    }
     const [txtSearch, setTxtSearch] = useState('');
+    const [tabActive, setTabActive] = useState(LoaiHoaHongDichVu.THUC_HIEN.toString());
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
     const [lstNVThucHien, setLstNhanVienChosed] = useState<NhanVienThucHienDto[]>([]);
@@ -49,7 +58,7 @@ export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTie
 
     const GetNhanVienThucHien_byIdHoaDonChiTiet = async () => {
         const data = await NhanVienThucHienServices.GetNhanVienThucHien_byIdHoaDonChiTiet(itemHoaDonChiTiet?.id);
-        console.log('GetNhanVienThucHien_byIdHoaDonChiTiet ', data);
+
         if (data != null && data.length > 0) {
             const arr = data.map((x: NhanVienThucHienDto) => {
                 return { ...x, laPhanTram: x.ptChietKhau > 0 };
@@ -65,8 +74,14 @@ export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTie
     }, []);
 
     useEffect(() => {
+        setTabActive(LoaiHoaHongDichVu.THUC_HIEN.toString());
         // get hoahongHD from db
-        GetNhanVienThucHien_byIdHoaDonChiTiet();
+        if (isNew) {
+            // page thungan
+            setLstNhanVienChosed(itemHoaDonChiTiet?.nhanVienThucHien);
+        } else {
+            GetNhanVienThucHien_byIdHoaDonChiTiet();
+        }
     }, [iShow]);
 
     const SearchNhanVienClient = () => {
@@ -96,10 +111,17 @@ export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTie
     const ChoseNhanVien = async (item: NhanSuItemDto) => {
         const nvEX = lstNVThucHien.filter((x) => x.idNhanVien === item.id);
         if (nvEX.length > 0) {
-            setObjAlert({ ...objAlert, show: true, mes: `Nhân viên ${item.tenNhanVien} đã được chọn` });
+            // nếu có 2 modal lồng nhau: ObjAlert bị nằm bên dưới
+            // tạm thời dùng cái này
+            enqueueSnackbar(`Nhân viên ${item.tenNhanVien} đã được chọn`, {
+                variant: 'error',
+                autoHideDuration: 3000
+            });
+            // setObjAlert({ ...objAlert, show: true, mes: `Nhân viên ${item.tenNhanVien} đã được chọn` });
             return;
         }
-
+        // check tab active
+        const loaiCKActive = parseInt(tabActive);
         const newNV = new NhanVienThucHienDto({
             idNhanVien: item.id,
             maNhanVien: item.maNhanVien,
@@ -107,26 +129,29 @@ export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTie
             soDienThoai: item.soDienThoai,
             gioiTinh: item.gioiTinh,
             avatar: item.avatar,
-            loaiChietKhau: 1, //  1.NV thực hiện, 2.NV tư vấn, 3. NV thực hiện theo yêu cầu
+            loaiChietKhau: loaiCKActive,
             ptChietKhau: 0,
             tienChietKhau: 0,
-            tinhHoaHongTruocCK: false
+            tinhHoaHongTruocCK: false,
+            laPhanTram: true
         });
         const ckSetup = await chietKhauDichVuService.GetHoaHongNV_theoDichVu(
             newNV.idNhanVien as unknown as string,
             itemHoaDonChiTiet.idDonViQuyDoi,
             idChiNhanh
         );
-        if (ckSetup != null && ckSetup.length > 0) {
-            const gtriSetup = ckSetup[0].giaTri ?? 0;
+        const ckSetup_byLoai = ckSetup?.filter((x) => x.loaiChietKhau === loaiCKActive);
+        if (ckSetup_byLoai != null && ckSetup_byLoai.length > 0) {
+            const gtriSetup = ckSetup_byLoai[0].giaTri ?? 0;
 
-            newNV.ptChietKhau = ckSetup[0].laPhanTram ? gtriSetup : 0;
+            newNV.ptChietKhau = ckSetup_byLoai[0].laPhanTram ? gtriSetup : 0;
             newNV.chietKhauMacDinh = gtriSetup;
 
             if (newNV.ptChietKhau > 0) {
                 newNV.tienChietKhau = (newNV.ptChietKhau * itemHoaDonChiTiet?.thanhTienSauCK) / 100;
             } else {
                 newNV.tienChietKhau = gtriSetup * itemHoaDonChiTiet?.soLuong;
+                newNV.laPhanTram = false;
             }
         }
         setLstNhanVienChosed([newNV, ...lstNVThucHien]);
@@ -187,7 +212,6 @@ export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTie
     };
 
     const changeTienChietKhau = (gtriNew: string, nv: NhanVienThucHienDto) => {
-        console.log('changeTienChietKhau ');
         const tienCK = utils.formatNumberToFloat(gtriNew);
         setLstNhanVienChosed(
             lstNVThucHien.map((x: NhanVienThucHienDto) => {
@@ -226,10 +250,17 @@ export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTie
         }
     };
 
+    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+        setTabActive(newValue);
+    };
+
     const saveHoaHongDV = async () => {
-        setObjAlert({ ...objAlert, mes: 'Cập nhật hoa hồng dịch vụ thành công', show: true, type: 1 });
-        await NhanVienThucHienServices.UpdateNVThucHien_byIdHoaDonChiTiet(itemHoaDonChiTiet?.id, lstNVThucHien);
-        onSaveOK();
+        if (!isNew) {
+            setObjAlert({ ...objAlert, mes: 'Cập nhật hoa hồng dịch vụ thành công', show: true, type: 1 });
+            await NhanVienThucHienServices.UpdateNVThucHien_byIdHoaDonChiTiet(itemHoaDonChiTiet?.id, lstNVThucHien);
+        }
+
+        onSaveOK(lstNVThucHien);
     };
 
     return (
@@ -246,7 +277,35 @@ export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTie
                 </DialogTitle>
                 <DialogContent>
                     <Grid container>
-                        <Grid item xs={4}></Grid>
+                        <Grid item xs={4}>
+                            <TabContext value={tabActive}>
+                                <TabList
+                                    onChange={handleChange}
+                                    sx={{
+                                        ' button': {
+                                            textTransform: 'unset',
+                                            paddingTop: '4px',
+                                            paddingBottom: '4px'
+                                        },
+                                        '.MuiTabs-indicator': {
+                                            backgroundColor: 'unset'
+                                        }
+                                    }}>
+                                    <Tab
+                                        label="Thực hiện"
+                                        value={`${LoaiHoaHongDichVu.THUC_HIEN}`}
+                                        className={
+                                            tabActive == LoaiHoaHongDichVu.THUC_HIEN.toString() ? 'tab-active' : ''
+                                        }></Tab>
+                                    <Tab
+                                        label="Tư vấn"
+                                        value={`${LoaiHoaHongDichVu.TU_VAN}`}
+                                        className={
+                                            tabActive == LoaiHoaHongDichVu.TU_VAN.toString() ? 'tab-active' : ''
+                                        }></Tab>
+                                </TabList>
+                            </TabContext>
+                        </Grid>
                         <Grid item xs={8}>
                             <Stack flex={4} fontSize={14}>
                                 <Stack
@@ -276,7 +335,7 @@ export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTie
                                 <TextField
                                     size="small"
                                     fullWidth
-                                    label="Tìm kiếm"
+                                    placeholder="Tìm kiếm"
                                     value={txtSearch}
                                     onChange={(event) => {
                                         setTxtSearch(event.target.value);
@@ -325,7 +384,7 @@ export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTie
                                     spacing={1}
                                     sx={{
                                         fontWeight: '600',
-                                        padding: '10px',
+                                        padding: '8px',
                                         background: 'var(--color-header-table)'
                                     }}>
                                     <Stack flex={1}>STT</Stack>
@@ -339,10 +398,19 @@ export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTie
                                 </Stack>
                                 {lstNVThucHien?.map((nv: NhanVienThucHienDto, index: number) => (
                                     <Stack direction={'row'} spacing={1} padding={'10px'} key={index}>
-                                        <Stack flex={1} alignItems={'center'}>
+                                        <Stack flex={1} alignItems={'center'} textAlign={'center'}>
                                             {index + 1}
                                         </Stack>
-                                        <Stack flex={5}>{nv.tenNhanVien}</Stack>
+                                        <Stack flex={5}>
+                                            <Stack>{nv.tenNhanVien}</Stack>
+                                            <Stack>
+                                                <Typography variant="caption" color={'var(--color-text-secondary)'}>
+                                                    {nv.loaiChietKhau === LoaiHoaHongDichVu.THUC_HIEN
+                                                        ? 'Thực hiện'
+                                                        : 'Tư vấn'}
+                                                </Typography>
+                                            </Stack>
+                                        </Stack>
                                         <Stack flex={3} alignItems={'center'} sx={{ cursor: 'pointer' }}>
                                             <Stack sx={{ color: 'var(--color-main)' }}>
                                                 <NumericFormat
@@ -436,7 +504,7 @@ export default function HoaHongNhanVienDichVu({ iShow, onClose, itemHoaDonChiTie
                         Bỏ qua
                     </Button>
                     <Button variant="contained" onClick={saveHoaHongDV}>
-                        Cập nhật
+                        {isNew ? 'Đồng ý' : ' Cập nhật'}
                     </Button>
                 </DialogActions>
             </Dialog>
