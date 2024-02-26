@@ -469,6 +469,18 @@ export const appRouters: AppRouteProps = {
                             isLayout: false,
                             children: [],
                             component: LoadableComponent(() => import('../../pages/bao_cao/Bao_cao_dat_lich'))
+                        },
+                        {
+                            path: '/bao-cao/hoa-hong',
+                            permission: 'Pages',
+                            title: 'Báo cáo hoa hồng',
+                            name: 'baoCaoHoaHong',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/bao_cao/bao_cao_hoa_hong/main_page'))
                         }
                     ],
                     component: null
