@@ -129,11 +129,11 @@ body .font-normal {
 /* style main button*/
 
 .btnNhapXuat {
-    background-color: #fff;
-    color: #666466;
+    background-color: #fff!important;
+    color: #666466!important;
     padding: 10px 16px;
-    border-color: #e6e1e6;
-    height: 40px;
+    border-color: #e6e1e6!important;
+    height: 40px!important;
 }
 
 .button-not-active {
@@ -372,4 +372,11 @@ body .font-normal {
 .text-search .MuiButtonBase-root {
     /* ô tìm kiếm: nếu có Icon search: reset paddingLeft = 0 */
     margin-left: -12px!important;
+}
+
+.tab-active {
+    border-radius: 16px!important;
+    border-bottom-right-radius: unset!important;
+    border-bottom-left-radius: unset!important;
+    background-color: var(--color-bg)!important;
 }
