@@ -10,6 +10,11 @@ export interface ISelect {
     text: string;
 }
 
+export const LoaiBaoCao = {
+    TONG_HOP: '1',
+    CHI_TIET: '2'
+};
+
 export const DateType = {
     HOM_NAY: 'HOM_NAY',
     HOM_QUA: 'HOM_QUA',
