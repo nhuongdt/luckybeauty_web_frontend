@@ -215,6 +215,10 @@ class ZaloService {
         }
         return null;
     };
+    async ZaloWebhook_UserSendMessage() {
+        const res = await http.get(`/api/zalo/webhook/user-send-message`);
+        return res.data;
+    }
     GuiTinTuVan = async (access_token: string, userId = '6441788310775550433', noiDungTin = '') => {
         const param = {
             recipient: {
