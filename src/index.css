@@ -16,7 +16,7 @@ body {
 
 html {
     font-family: var(--font-family-main);
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
     width: 100vw;
 }
 
@@ -65,8 +65,3 @@ html {
     color: #DC3545;
     font-size: 13px;
 }
-
-
-
-
-
