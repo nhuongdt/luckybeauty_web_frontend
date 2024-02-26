@@ -575,7 +575,7 @@ const GiaoDichThanhToan: React.FC = () => {
                         rows={pageDataHoaDon.items}
                         hideFooter
                         checkboxSelection
-                        onRowClick={(item: any) => choseRow(item)}
+                        onRowClick={(item) => choseRow(item)}
                         localeText={TextTranslate}
                         onRowSelectionModelChange={(newRowSelectionModel) => {
                             setRowSelectionModel(newRowSelectionModel);
