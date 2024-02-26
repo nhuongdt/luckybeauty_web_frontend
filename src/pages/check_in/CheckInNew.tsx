@@ -144,17 +144,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                 onOk={deleteCusChecking}
                 onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
             <Grid item xs={12} sm={6} md={8} lg={8} xl={8}>
-                {/* <Box
-                    sx={{
-                        position: 'absolute',
-                        height: '100vh',
-                        width: '100vw',
-                        left: '0',
-                        top: '0',
-                        pointerEvents: 'none',
-                        bgcolor: '#f8f8f8',
-                        zIndex: '-5'
-                    }}></Box> */}
                 <Grid container>
                     <Grid item xs={12}>
                         <Stack
@@ -274,7 +263,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 {utils.checkNull(item?.avatar) ? (
                                     <BadgeFistCharOfName firstChar={utils.getFirstLetter(item?.tenKhachHang ?? '')} />
                                 ) : (
-                                    // <Avatar src={item.avatar} />
                                     <img src={item.avatar} style={{ width: 40, height: 40, borderRadius: '100%' }} />
                                 )}
 
@@ -325,10 +313,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                         <Box
                                             component="span"
                                             sx={{
-                                                // padding: '4px 12px ',
                                                 borderRadius: '20px',
-                                                // backgroundColor:
-                                                //     item.trangThaiCheckIn === 1 ? '#FFF8DD' : 'var(--color-bg)',
                                                 color: item.trangThaiCheckIn === 1 ? '#FFC700' : 'var(--color-main)',
                                                 fontSize: '12px',
                                                 float: 'right'
