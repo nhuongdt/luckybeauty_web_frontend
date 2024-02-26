@@ -85,6 +85,8 @@ import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import { handleClickOutside } from '../../../utils/customReactHook';
 import abpCustom from '../../../components/abp-custom';
 import BankAccount from '../../../components/Switch/BankAccount';
+import MyDialog from '../../../components/Drawer/DrawerMy';
+import HoaHongNhanVienDichVu from '../../nhan_vien_thuc_hien/hoa_hong_nhan_vien_dich_vu';
 
 const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const appContext = useContext(AppContext);
@@ -562,6 +564,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         });
     };
     const AgreeNVThucHien = (lstNVChosed: any) => {
+        setPropNVThucHien({ ...propNVThucHien, isShow: false });
         // update cthd + save to cache
         setHoaDonChiTiet(
             hoaDonChiTiet.map((x) => {
@@ -1238,7 +1241,14 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                 title="Thêm mới khách hàng"
                 formRef={newCus}
             />
-            <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} idChiNhanh={idChiNhanh} />
+            {/* <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} idChiNhanh={idChiNhanh} /> */}
+            <HoaHongNhanVienDichVu
+                isNew={true}
+                iShow={propNVThucHien.isShow}
+                itemHoaDonChiTiet={propNVThucHien.item}
+                onSaveOK={AgreeNVThucHien}
+                onClose={() => setPropNVThucHien({ ...propNVThucHien, isShow: false })}
+            />
             <ModalEditChiTietGioHang
                 formType={1}
                 isShow={isShowEditGioHang}
@@ -1263,6 +1273,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             </div> */}
             <Grid
                 container
+                className="page-ban-hang"
                 spacing={2}
                 width={'100%'} // width={'100%'}: khong duoc xoa dong nay: fix loi MUI tự động set width calc(100% + 16px)
                 marginTop={showDetail ? '-24px' : '24px'}
@@ -1366,7 +1377,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                         ref={containerRef}
                                         onWheel={handleWheel}
                                         sx={{
-                                            height: 66,
+                                            height: 60,
                                             display: horizontalLayout ? 'flex' : 'block',
                                             columnGap: '12px',
                                             flexWrap: horizontalLayout ? 'nowrap' : 'wrap',
@@ -1383,49 +1394,20 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                         }}>
                                         <ListItem
                                             component="a"
+                                            className="list-item-nhomhanghoa"
                                             onClick={() => choseLoaiHang(2)}
                                             sx={{
                                                 gap: '6px',
-                                                padding: '4px 8px ',
-                                                overflow: 'hidden',
-                                                // bgcolor: 'var( --color-main)',
+                                                padding: '4px 8px',
                                                 bgcolor: idNhomHang == '' ? 'var( --color-main)' : '#ebe9e9cc',
-
-                                                borderRadius: '8px',
-                                                marginTop: '8px',
-                                                cursor: 'pointer',
-                                                transition: '.4s',
                                                 minWidth: horizontalLayout ? '100px' : 'unset',
-                                                maxWidth: horizontalLayout ? '100px' : 'unset',
-                                                position: 'relative',
-                                                '&::after': {
-                                                    content: '""',
-                                                    position: 'absolute',
-                                                    height: '100%',
-                                                    width: '100%',
-                                                    left: '0',
-                                                    bottom: '0',
-                                                    backgroundColor: 'rgba(0,0,0,0.3)',
-                                                    opacity: '0',
-                                                    transition: '.4s'
-                                                },
-                                                '&:hover::after': {
-                                                    opacity: '1'
-                                                }
+                                                maxWidth: horizontalLayout ? '100px' : 'unset'
                                             }}>
                                             <ListItemText
+                                                className="ten-nhom-hang"
                                                 sx={{
-                                                    textAlign: 'center',
                                                     '& .MuiTypography-root': {
-                                                        // color: 'white',
-                                                        color: idNhomHang == '' ? 'white' : 'black',
-                                                        whiteSpace: 'nowrap',
-                                                        width: '100%',
-                                                        fontSize: 'var(--font-size-main)',
-                                                        overflow: 'hidden',
-                                                        textOverflow: 'ellipsis',
-                                                        fontWeight: '600',
-                                                        position: 'relative'
+                                                        color: idNhomHang == '' ? 'white!important' : 'black!important'
                                                     }
                                                 }}>
                                                 Tất cả
@@ -1434,37 +1416,17 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                         {nhomDichVu.map((nhomDV, index) => (
                                             <ListItem
                                                 component="a"
+                                                className="list-item-nhomhanghoa"
                                                 key={index}
                                                 onClick={() => choseNhomDichVu(nhomDV)}
                                                 sx={{
                                                     gap: '6px',
-                                                    padding: '4px 8px ',
-                                                    overflow: 'hidden',
                                                     bgcolor:
                                                         idNhomHang == (nhomDV?.id as unknown as string)
                                                             ? 'rgba(0,0,0,0.3)'
-                                                            : '#ebe9e9cc',
-                                                    borderRadius: '8px',
-                                                    marginTop: '8px',
-                                                    cursor: 'pointer',
-                                                    transition: '.4s',
-                                                    minWidth: horizontalLayout ? '200px' : 'unset',
-                                                    maxWidth: horizontalLayout ? '200px' : 'unset',
-                                                    position: 'relative',
-                                                    '&::after': {
-                                                        content: '""',
-                                                        position: 'absolute',
-                                                        height: '100%',
-                                                        width: '100%',
-                                                        left: '0',
-                                                        bottom: '0',
-                                                        backgroundColor: 'rgba(0,0,0,0.3)',
-                                                        opacity: '0',
-                                                        transition: '.4s'
-                                                    },
-                                                    '&:hover::after': {
-                                                        opacity: '1'
-                                                    }
+                                                            : '#ebe9e9cc'
+                                                    // minWidth: horizontalLayout ? '200px' : 'unset',
+                                                    // maxWidth: horizontalLayout ? '200px' : 'unset',
                                                 }}>
                                                 <ListItemIcon
                                                     sx={{
@@ -1476,20 +1438,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                     }}>
                                                     <IconDv />
                                                 </ListItemIcon>
-                                                <ListItemText
-                                                    sx={{
-                                                        '& .MuiTypography-root': {
-                                                            color: 'black',
-                                                            whiteSpace: 'nowrap',
-                                                            width: '100%',
-                                                            fontSize: 'var(--font-size-main)',
-                                                            overflow: 'hidden',
-                                                            textOverflow: 'ellipsis',
-                                                            fontWeight: '600',
-                                                            position: 'relative'
-                                                        }
-                                                    }}
-                                                    title={nhomDV.tenNhomHang}>
+                                                <ListItemText className="ten-nhom-hang" title={nhomDV.tenNhomHang}>
                                                     {nhomDV.tenNhomHang}
                                                 </ListItemText>
                                             </ListItem>
@@ -1497,39 +1446,17 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                         {nhomHangHoa.map((nhomHH, index) => (
                                             <ListItem
                                                 component="a"
+                                                className="list-item-nhomhanghoa"
                                                 href={'#' + nhomHH.id}
                                                 key={index}
                                                 sx={{
                                                     gap: '6px',
-                                                    padding: '4px 8px',
-                                                    overflow: 'hidden',
-                                                    // bgcolor: '#ebe9e9cc',
                                                     bgcolor:
                                                         idNhomHang == (nhomHH?.id as unknown as string)
                                                             ? 'rgba(0,0,0,0.3)'
-                                                            : '#ebe9e9cc',
-                                                    borderRadius: '8px',
-                                                    marginTop: '12px',
-                                                    minWidth: horizontalLayout ? '200px' : 'unset',
-                                                    maxWidth: horizontalLayout ? '200px' : 'unset',
-                                                    cursor: 'pointer',
-                                                    transition: '.4s',
-
-                                                    position: 'relative',
-                                                    '&::after': {
-                                                        content: '""',
-                                                        position: 'absolute',
-                                                        height: '100%',
-                                                        width: '100%',
-                                                        left: '0',
-                                                        bottom: '0',
-                                                        backgroundColor: 'rgba(0,0,0,0.3)',
-                                                        opacity: '0',
-                                                        transition: '.4s'
-                                                    },
-                                                    '&:hover::after': {
-                                                        opacity: '1'
-                                                    }
+                                                            : '#ebe9e9cc'
+                                                    // minWidth: horizontalLayout ? '200px' : 'unset',
+                                                    // maxWidth: horizontalLayout ? '200px' : 'unset',
                                                 }}
                                                 onClick={() => choseNhomDichVu(nhomHH)}>
                                                 <ListItemIcon
@@ -1542,20 +1469,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                     }}>
                                                     <IconDv />
                                                 </ListItemIcon>
-                                                <ListItemText
-                                                    sx={{
-                                                        '& .MuiTypography-root': {
-                                                            color: 'black',
-                                                            whiteSpace: 'nowrap',
-                                                            width: '100%',
-                                                            fontWeight: '600',
-                                                            fontSize: '14px',
-                                                            overflow: 'hidden',
-                                                            textOverflow: 'ellipsis',
-                                                            position: 'relative'
-                                                        }
-                                                    }}
-                                                    title={nhomHH.tenNhomHang}>
+                                                <ListItemText className="ten-nhom-hang" title={nhomHH.tenNhomHang}>
                                                     {nhomHH.tenNhomHang}
                                                 </ListItemText>
                                             </ListItem>
@@ -1730,6 +1644,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                         />
                     </Grid>
                 )}
+
                 <Grid item md={5} sx={{ paddingRight: '0' }}>
                     <Stack
                         sx={{
