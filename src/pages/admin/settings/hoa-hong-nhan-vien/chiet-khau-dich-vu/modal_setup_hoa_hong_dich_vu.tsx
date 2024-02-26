@@ -527,7 +527,9 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
                     </Grid>
                 </DialogContent>
                 <DialogActions sx={{ paddingBottom: '16px!important' }}>
-                    <Button variant="outlined"> Bỏ qua</Button>
+                    <Button variant="outlined" onClick={onClose}>
+                        Bỏ qua
+                    </Button>
                     {isSaving ? (
                         <Button variant="contained">Đang lưu</Button>
                     ) : (

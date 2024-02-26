@@ -794,78 +794,78 @@ export default function PageSetupHoaHongDichVu() {
             ),
             renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
         },
-        //// hoahong tuvan
-        // {
-        //     field: 'hoaHongTuVan',
-        //     headerAlign: 'right',
-        //     headerName: 'Tư vấn',
-        //     align: 'right',
-        //     flex: 0.5,
-        //     renderCell: (params) => (
-        //         <Stack direction={'row'} spacing={1}>
-        //             <NumericFormat
-        //                 fullWidth
-        //                 size="small"
-        //                 variant="standard"
-        //                 thousandSeparator={'.'}
-        //                 decimalSeparator={','}
-        //                 value={params.value}
-        //                 customInput={TextField}
-        //                 InputProps={{
-        //                     inputProps: {
-        //                         style: { textAlign: 'right' }
-        //                     }
-        //                 }}
-        //                 onChange={(e) => changeGtriChietKhau(e.target.value, params.row, LoaiHoaHongDichVu.TU_VAN)}
-        //                 inputRef={(el: any) =>
-        //                     (refInputTuVan.current[params.row.idNhanVien + '_' + params.row.idDonViQuiDoi] = el)
-        //                 }
-        //                 onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) => {
-        //                     // find id of row next
-        //                     const indexCurrent = pageResultChietKhauDV.items.findIndex(
-        //                         (x) =>
-        //                             x.idNhanVien + '_' + x.idDonViQuiDoi ===
-        //                             params.row.idNhanVien + '_' + params.row.idDonViQuiDoi
-        //                     );
-        //                     let indexNext = indexCurrent + 1;
-        //                     if (indexNext > pageResultChietKhauDV.items.length - 1) {
-        //                         indexNext = 0;
-        //                     }
-        //                     const rowNext = pageResultChietKhauDV.items.filter(
-        //                         (x: ChietKhauDichVuItemDto_TachRiengCot, index: number) => {
-        //                             return index === indexNext;
-        //                         }
-        //                     );
-        //                     gotoNextInputTuVan(
-        //                         e,
-        //                         refInputTuVan.current[rowNext[0].idNhanVien + '_' + rowNext[0].idDonViQuiDoi]
-        //                     );
-        //                 }}
-        //             />
-        //             <Stack>
-        //                 {params?.row?.laPhanTram_HoaHongTuVan ? (
-        //                     <Avatar
-        //                         style={{
-        //                             width: 25,
-        //                             height: 25,
-        //                             fontSize: '12px',
-        //                             backgroundColor: 'var(--color-main)'
-        //                         }}
-        //                         onClick={() => onClickPtramVND(params.row, false, LoaiHoaHongDichVu.TU_VAN)}>
-        //                         %
-        //                     </Avatar>
-        //                 ) : (
-        //                     <Avatar
-        //                         style={{ width: 25, height: 25, fontSize: '12px' }}
-        //                         onClick={() => onClickPtramVND(params.row, true, LoaiHoaHongDichVu.TU_VAN)}>
-        //                         đ
-        //                     </Avatar>
-        //                 )}
-        //             </Stack>
-        //         </Stack>
-        //     ),
-        //     renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-        // },
+        // hoahong tuvan
+        {
+            field: 'hoaHongTuVan',
+            headerAlign: 'right',
+            headerName: 'Tư vấn',
+            align: 'right',
+            flex: 0.5,
+            renderCell: (params) => (
+                <Stack direction={'row'} spacing={1}>
+                    <NumericFormat
+                        fullWidth
+                        size="small"
+                        variant="standard"
+                        thousandSeparator={'.'}
+                        decimalSeparator={','}
+                        value={params.value}
+                        customInput={TextField}
+                        InputProps={{
+                            inputProps: {
+                                style: { textAlign: 'right' }
+                            }
+                        }}
+                        onChange={(e) => changeGtriChietKhau(e.target.value, params.row, LoaiHoaHongDichVu.TU_VAN)}
+                        inputRef={(el: any) =>
+                            (refInputTuVan.current[params.row.idNhanVien + '_' + params.row.idDonViQuiDoi] = el)
+                        }
+                        onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) => {
+                            // find id of row next
+                            const indexCurrent = pageResultChietKhauDV.items.findIndex(
+                                (x) =>
+                                    x.idNhanVien + '_' + x.idDonViQuiDoi ===
+                                    params.row.idNhanVien + '_' + params.row.idDonViQuiDoi
+                            );
+                            let indexNext = indexCurrent + 1;
+                            if (indexNext > pageResultChietKhauDV.items.length - 1) {
+                                indexNext = 0;
+                            }
+                            const rowNext = pageResultChietKhauDV.items.filter(
+                                (x: ChietKhauDichVuItemDto_TachRiengCot, index: number) => {
+                                    return index === indexNext;
+                                }
+                            );
+                            gotoNextInputTuVan(
+                                e,
+                                refInputTuVan.current[rowNext[0].idNhanVien + '_' + rowNext[0].idDonViQuiDoi]
+                            );
+                        }}
+                    />
+                    <Stack>
+                        {params?.row?.laPhanTram_HoaHongTuVan ? (
+                            <Avatar
+                                style={{
+                                    width: 25,
+                                    height: 25,
+                                    fontSize: '12px',
+                                    backgroundColor: 'var(--color-main)'
+                                }}
+                                onClick={() => onClickPtramVND(params.row, false, LoaiHoaHongDichVu.TU_VAN)}>
+                                %
+                            </Avatar>
+                        ) : (
+                            <Avatar
+                                style={{ width: 25, height: 25, fontSize: '12px' }}
+                                onClick={() => onClickPtramVND(params.row, true, LoaiHoaHongDichVu.TU_VAN)}>
+                                đ
+                            </Avatar>
+                        )}
+                    </Stack>
+                </Stack>
+            ),
+            renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
+        },
         {
             field: '#',
             headerName: '#',
