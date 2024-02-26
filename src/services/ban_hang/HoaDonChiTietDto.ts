@@ -2,6 +2,14 @@ import { Guid } from 'guid-typescript';
 import NhanVienThucHienDto from '../nhan_vien_thuc_hien/NhanVienThucHienDto';
 import { ClassInputNumber } from '../../services/dto/InputFormat';
 
+export interface IHoaDonChiTiet_UseForBaoCao {
+    soLuong?: number;
+    tienChietKhau?: number;
+    tienThue?: number;
+    thanhTienTruocCK?: number;
+    thanhTienSauCK?: number;
+}
+
 export default class HoaDonChiTietDto {
     id = Guid.create().toString();
     stt = 0;

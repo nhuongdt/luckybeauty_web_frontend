@@ -1,6 +1,13 @@
 import Utils from '../../utils/utils';
 import { ParamSearchDto } from '../dto/ParamSearchDto';
 
+export interface IHangHoaInfor_UseForBaoCao {
+    maHangHoa?: string;
+    tenHangHoa?: string;
+    tenNhomHang?: string;
+    tenDonViTinh?: string;
+}
+
 export class ModelHangHoaDto {
     id?: string | null = Utils.GuidEmpty;
     tenHangHoa?: string = '';

@@ -10,11 +10,30 @@ export interface PageBaoCaoHoaHongTongHop {
     hoaHongTuVan_TienChietKhau: number;
     tongHoaHong: number;
 }
-export interface PageBaoCaoHoaHongChiTiet
+export interface IHoaHongChiTiet_ListDetail {
+    maNhanVien: string;
+    tenNhanVien: string;
+    hoaHongThucHien_PTChietKhau: number;
+    hoaHongTuVan_PTChietKhau: number;
+    hoaHongThucHien_TienChietKhau: number;
+    hoaHongTuVan_TienChietKhau: number;
+    tongHoaHong: number;
+}
+export interface PageBaoCaoHoaHongChiTiet extends IHangHoaInfor_UseForBaoCao, IHoaDonChiTiet_UseForBaoCao {
+    idHoaDonChiTiet: string;
+    maHoaDon: string;
+    ngayLapHoaDon: string;
+    maKhachHang: string;
+    tenKhachHang: string;
+    rowSpan: number;
+    lstDetail: IHoaHongChiTiet_ListDetail[];
+}
+
+export interface IPageBaoCaoHoaHongChiTiet
     extends PageBaoCaoHoaHongTongHop,
         IHangHoaInfor_UseForBaoCao,
         IHoaDonChiTiet_UseForBaoCao {
-    id: string; //--- chỉ lấy ra với mục đích tránh lỗi samekey data grid MUI (id in Bh_NhanVienThucHien)
+    idHoaDonChiTiet: string;
     maHoaDon: string;
     ngayLapHoaDon: string;
     maKhachHang: string;

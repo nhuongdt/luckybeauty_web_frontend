@@ -1,7 +1,12 @@
 import { IFileDto } from '../../dto/FileDto';
 import { PagedResultDto } from '../../dto/pagedResultDto';
 import http from '../../httpService';
-import { PageBaoCaoHoaHongChiTiet, PageBaoCaoHoaHongTongHop, ParamSearchBaoCaoHoaHong } from './BaoCaoHoaHongDto';
+import {
+    IPageBaoCaoHoaHongChiTiet,
+    PageBaoCaoHoaHongChiTiet,
+    PageBaoCaoHoaHongTongHop,
+    ParamSearchBaoCaoHoaHong
+} from './BaoCaoHoaHongDto';
 
 class BaoCaoHoaHongServices {
     GetBaoCaoHoaHongTongHop = async (
@@ -12,8 +17,14 @@ class BaoCaoHoaHongServices {
     };
     GetBaoCaoHoaHongChiTiet = async (
         input: ParamSearchBaoCaoHoaHong
-    ): Promise<PagedResultDto<PageBaoCaoHoaHongChiTiet>> => {
+    ): Promise<PagedResultDto<IPageBaoCaoHoaHongChiTiet>> => {
         const response = await http.post('api/services/app/BaoCao/BaoCaoHoaHongChiTiet', input);
+        return response.data.result;
+    };
+    GetBaoCaoHoaHongChiTietGr = async (
+        input: ParamSearchBaoCaoHoaHong
+    ): Promise<PagedResultDto<PageBaoCaoHoaHongChiTiet>> => {
+        const response = await http.post('api/services/app/BaoCao/BaoCaoHoaHongChiTietGr', input);
         return response.data.result;
     };
     ExportToExcel_BaoCaoHoaHongTongHop = async (input: ParamSearchBaoCaoHoaHong): Promise<IFileDto> => {
