@@ -818,30 +818,21 @@ const DetailHoaDon = ({
                         </Grid>
                     )}
                 </Grid>
-                <Box
-                    sx={{
-                        wiidth: '100%',
-                        '& textarea': {
-                            height: '80px',
-                            width: '100%',
-                            borderRadius: '8px',
-                            borderColor: '#C2C9D6',
-                            outline: 'none',
-                            color: '#A3ADC2',
-                            padding: '8px'
-                        }
-                    }}>
+                <Box>
                     <Typography fontSize="14px" color="#525F7A">
                         Ghi chú
                     </Typography>
-                    <textarea
+                    <TextField
+                        fullWidth
+                        multiline
+                        rows={3}
                         value={ghichuHD}
                         onChange={(e) => {
                             setGhichuHD(e.target.value);
                             if (formType === 1) {
                                 onChangeGhiChuHD(e.target.value);
                             }
-                        }}></textarea>
+                        }}></TextField>
                 </Box>
                 <Button
                     variant="contained"
