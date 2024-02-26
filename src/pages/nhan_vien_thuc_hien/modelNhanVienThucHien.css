@@ -1,4 +1,4 @@
-#poppup-nhanVienThucHien {
+/* #poppup-nhanVienThucHien {
     position: fixed;
     width: calc(100vw - 64px);
     height: calc(100vh - 64px);
@@ -37,4 +37,4 @@
 .overlay.show {
     pointer-events: all;
     opacity: 1;
-}
+} */

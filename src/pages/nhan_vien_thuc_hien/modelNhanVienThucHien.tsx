@@ -23,6 +23,8 @@ import { PagedNhanSuRequestDto } from '../../services/nhan-vien/dto/PagedNhanSuR
 import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 import DialogButtonClose from '../../components/Dialog/ButtonClose';
 import chietKhauDichVuService from '../../services/hoa_hong/chiet_khau_dich_vu/chietKhauDichVuService';
+import DialogDraggable from '../../components/Dialog/DialogDraggable';
+
 const ModelNhanVienThucHien = ({ triggerModal, handleSave, idChiNhanh }: any) => {
     const [isShow, setIsShow] = useState(false);
     const [txtSearch, setTxtSearch] = useState('');
@@ -40,13 +42,35 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave, idChiNhanh }: any) =>
                 // get from db
                 GetListNVThucHien_DichVu();
             }
+            updateNVChosed_ToListNhanVien();
         }
-    }, [triggerModal]);
+    }, [triggerModal?.id, triggerModal?.show]);
     const handleClose = () => {
         setIsShow(false);
     };
     const GetListNVThucHien_DichVu = () => {
         return null;
+    };
+
+    const updateNVChosed_ToListNhanVien = () => {
+        const arrNV: any = [...allNhanVien];
+        arrNV.map((x: any) => {
+            x['isChosed'] = false;
+            x['ptChietKhau'] = 0; // chỉ có mục đích hiển thị
+            x['tienChietKhau'] = 0;
+        });
+        if (triggerModal?.item?.nhanVienThucHien?.length > 0) {
+            for (let i = 0; i < arrNV.length; i++) {
+                const itemNV = triggerModal?.item?.nhanVienThucHien?.filter((x: any) => x.idNhanVien === arrNV[i].id);
+                if (itemNV.length > 0) {
+                    arrNV[i].isChosed = true;
+                    arrNV[i].ptChietKhau = itemNV[0].ptChietKhau;
+                    arrNV[i].tienChietKhau = itemNV[0].tienChietKhau;
+                }
+            }
+        }
+
+        setLstNhanVien([...arrNV]);
     };
 
     const GetListNhanVien = async () => {
@@ -56,9 +80,7 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave, idChiNhanh }: any) =>
             maxResultCount: 100
         } as PagedNhanSuRequestDto);
         const arrNV = [...data.items];
-        arrNV.map((x: any) => {
-            x['isChosed'] = false;
-        });
+
         setAllNhanVien([...arrNV]);
         setLstNhanVien([...arrNV]);
     };
@@ -71,18 +93,19 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave, idChiNhanh }: any) =>
         if (!utils.checkNull(txtSearch)) {
             const txt = txtSearch.trim().toLowerCase();
             const txtUnsign = utils.strToEnglish(txt);
-            const data = allNhanVien.filter(
-                (x) =>
-                    (x.maNhanVien !== null && x.maNhanVien.trim().toLowerCase().indexOf(txt) > -1) ||
-                    (x.tenNhanVien !== null && x.tenNhanVien.trim().toLowerCase().indexOf(txt) > -1) ||
-                    (x.soDienThoai !== null && x.soDienThoai.trim().toLowerCase().indexOf(txt) > -1) ||
-                    (x.maNhanVien !== null && utils.strToEnglish(x.maNhanVien).indexOf(txtUnsign) > -1) ||
-                    (x.tenNhanVien !== null && utils.strToEnglish(x.tenNhanVien).indexOf(txtUnsign) > -1) ||
-                    (x.soDienThoai !== null && utils.strToEnglish(x.soDienThoai).indexOf(txtUnsign) > -1)
+            setLstNhanVien(
+                lstNhanVien.filter(
+                    (x) =>
+                        (x.maNhanVien !== null && x.maNhanVien.trim().toLowerCase().indexOf(txt) > -1) ||
+                        (x.tenNhanVien !== null && x.tenNhanVien.trim().toLowerCase().indexOf(txt) > -1) ||
+                        (x.soDienThoai !== null && x.soDienThoai.trim().toLowerCase().indexOf(txt) > -1) ||
+                        (x.maNhanVien !== null && utils.strToEnglish(x.maNhanVien).indexOf(txtUnsign) > -1) ||
+                        (x.tenNhanVien !== null && utils.strToEnglish(x.tenNhanVien).indexOf(txtUnsign) > -1) ||
+                        (x.soDienThoai !== null && utils.strToEnglish(x.soDienThoai).indexOf(txtUnsign) > -1)
+                )
             );
-            setLstNhanVien(data);
         } else {
-            setLstNhanVien([...allNhanVien]);
+            updateNVChosed_ToListNhanVien();
         }
     };
 
@@ -114,6 +137,7 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave, idChiNhanh }: any) =>
                 newNV.tienChietKhau = hoahongDV[0].giaTri * triggerModal.item.soLuong;
             }
         }
+
         // check exists
         const nvEX = lstNVThucHien.filter((x) => x.idNhanVien === newNV.idNhanVien);
         if (nvEX.length > 0) {
@@ -122,26 +146,28 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave, idChiNhanh }: any) =>
         } else {
             setLstNhanVienChosed([newNV, ...lstNVThucHien]);
         }
-    };
 
-    const UpdateStatus = () => {
-        const arrNV = lstNVThucHien.map((x) => {
-            return x.idNhanVien;
-        });
+        const isChosedAgain = nvEX.length > 0;
         setLstNhanVien(
-            lstNhanVien.map((x) => {
-                if (arrNV.includes(x.id)) {
-                    return { ...x, isChosed: true };
+            lstNhanVien.map((x: any) => {
+                if (x.id === item.id) {
+                    return {
+                        ...x,
+                        isChosed: !isChosedAgain,
+                        ptChietKhau: newNV?.ptChietKhau,
+                        tienChietKhau: newNV?.tienChietKhau
+                    };
                 } else {
-                    return { ...x, isChosed: false };
+                    return { ...x };
                 }
             })
         );
     };
 
-    useEffect(() => {
-        UpdateStatus();
-    }, [lstNVThucHien]);
+    // useEffect(() => {
+    //     UpdateStatus();
+    //     console.log('into');
+    // }, [nvCurrentChosed]);
 
     const onSave = () => {
         setIsShow(false);
@@ -150,9 +176,17 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave, idChiNhanh }: any) =>
 
     return (
         <>
-            <Dialog open={isShow} onClose={handleClose} fullWidth maxWidth="md">
+            <Dialog
+                open={isShow}
+                onClose={handleClose}
+                fullWidth
+                maxWidth="md"
+                aria-labelledby="dialogIdTitle"
+                PaperComponent={DialogDraggable}>
                 <DialogTitle>
-                    <Typography className="modal-title">Chọn kỹ thuật viên</Typography>
+                    <Typography className="modal-title" id="dialogIdTitle">
+                        Chọn kỹ thuật viên
+                    </Typography>
                     <DialogButtonClose onClose={() => setIsShow(false)} />
                 </DialogTitle>
                 <DialogContent>
@@ -179,7 +213,8 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave, idChiNhanh }: any) =>
                         marginBottom={'8px'}>
                         Danh sách kỹ thuật viên
                     </Typography>
-                    <Grid container className="list-persons" spacing={2}>
+
+                    <Grid container spacing={2} id="idContainer">
                         {lstNhanVien?.map((person: any, index: any) => (
                             <Grid
                                 className="person-item"
@@ -197,7 +232,7 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave, idChiNhanh }: any) =>
                                         position: 'relative',
                                         padding: '20px 12px',
                                         borderRadius: '8px',
-                                        transition: '.4s',
+                                        transition: '.2s',
                                         cursor: 'pointer',
                                         border: '1px solid #CDC9CD',
                                         borderColor: person.isChosed ? 'var(--color-main)' : '',
@@ -212,7 +247,7 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave, idChiNhanh }: any) =>
                                             borderRadius: '50%',
                                             top: '-5px',
                                             zIndex: '2',
-                                            transition: '.4s',
+                                            transition: '.2s',
                                             opacity: person.isChosed ? '1' : '0'
                                         }
                                     }}>
@@ -235,16 +270,36 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave, idChiNhanh }: any) =>
                                             <Avatar sx={{ width: 40, height: 40 }} src={person?.avatar} />
                                         )}
                                     </div>
-                                    <Stack maxWidth="calc(100% - 50px)">
+                                    <Stack maxWidth="calc(100% - 50px)" minWidth={'calc(100% - 50px)'}>
                                         <Typography
                                             title={person.tenNhanVien}
                                             variant="subtitle2"
                                             className="lableOverflow">
                                             {person.tenNhanVien}
                                         </Typography>
-                                        <Typography variant="caption" className="person-position" color={'#333233'}>
-                                            {person.tenChucVu}
-                                        </Typography>
+                                        <Stack direction={'row'} justifyContent={'space-between'}>
+                                            <Typography
+                                                variant="caption"
+                                                className="person-position"
+                                                color={'var(--color-text-secondary)'}>
+                                                {person.tenChucVu}
+                                            </Typography>
+                                            {person.isChosed && (
+                                                <Typography
+                                                    variant="caption"
+                                                    color={'#8d8b8b'}
+                                                    sx={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                                    onClick={(event) => {
+                                                        event.stopPropagation(); // dừng không cho gọi đến sự kiện click của parent
+                                                    }}>
+                                                    {person?.ptChietKhau > 0
+                                                        ? `${person?.ptChietKhau} %`
+                                                        : new Intl.NumberFormat('vi-VN').format(
+                                                              person?.tienChietKhau ?? 0
+                                                          )}
+                                                </Typography>
+                                            )}
+                                        </Stack>
                                     </Stack>
                                 </Box>
                             </Grid>
