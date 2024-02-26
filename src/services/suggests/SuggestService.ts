@@ -87,7 +87,7 @@ class SuggestService {
             const result = await http.post(apiUrl);
             return result.data.result;
         } catch (error) {
-            console.error('Có lỗi sảy ra khi lấy dữ liệu:', error);
+            console.error('Có lỗi xảy ra khi lấy dữ liệu:', error);
             return [];
         }
     }

@@ -173,7 +173,7 @@ class EmployeeHoliday extends Component {
                   variant: 'success',
                   autoHideDuration: 3000
               })
-            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+            : enqueueSnackbar('Có lỗi xảy ra vui lòng thử lại sau!', {
                   variant: 'error',
                   autoHideDuration: 3000
               });

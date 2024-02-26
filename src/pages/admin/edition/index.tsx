@@ -2,22 +2,107 @@ import React, { useEffect, useState } from 'react';
 import { Box, Grid, TextField, Button, Typography, IconButton } from '@mui/material';
 import abpCustom from '../../../components/abp-custom';
 import AddIcon from '../../../images/add.svg';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid';
 import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import editionService from '../../../services/editions/editionService';
 import { da } from 'date-fns/locale';
 import { EditionListDto } from '../../../services/editions/dto/EditionListDto';
+import CreateOrEditEditionModal from './createOrEditEditionModal';
+import CreateOrEditEditionDto from '../../../services/editions/dto/CreateOrEditEditionDto';
+import NameValueDto from '../../../services/dto/NameValueDto';
+import FlatFeatureDto from '../../../services/editions/dto/FlatFeatureDto';
+import ActionRow2Button from '../../../components/DataGrid/ActionRow2Button';
+import { TypeAction } from '../../../lib/appconst';
+import { enqueueSnackbar } from 'notistack';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 const index = () => {
     const [listData, setListData] = useState([] as EditionListDto[]);
+    const [visiable, setVisiable] = useState(false);
+    const [selectedRowId, setSelectedRowId] = useState(0);
+    const [isShowConfirmDelete, setIsShowConfirmDelete] = useState(false);
+    const [createOrEditInput, setCreateOrEditInput] = useState({} as CreateOrEditEditionDto);
+    const [allFeatureValues, setAllFeatureValues] = useState([] as NameValueDto[]);
+    const [allFeatures, setAllFeatures] = useState([] as FlatFeatureDto[]);
     const getEditions = async () => {
         const data = await editionService.getAllEdition();
         setListData(data.items);
     };
     useEffect(() => {
         getEditions();
+        getFeatureDetail();
     }, []);
+    const onModal = () => {
+        setVisiable(!visiable);
+    };
+    const getFeatureDetail = async () => {
+        const data = await editionService.getAllFeature();
+        setAllFeatureValues(data.featureValues);
+        setAllFeatures(data.features);
+    };
+    const getForEdit = async (id: number) => {
+        const data = await editionService.getForEdit(id);
+        if (id === 0) {
+            setCreateOrEditInput({
+                edition: {
+                    id: 0,
+                    displayName: '',
+                    name: '',
+                    price: 0
+                },
+                featureValues: data.featureValues
+            });
+        } else {
+            setCreateOrEditInput({ edition: data.edition, featureValues: data.featureValues });
+        }
+        onModal();
+    };
+    const onOkDelete = async () => {
+        const response = await editionService.deleteEdition(selectedRowId);
+        response.success == true
+            ? enqueueSnackbar('Xóa phiên bản thành công', {
+                  variant: 'success',
+                  autoHideDuration: 3000
+              })
+            : enqueueSnackbar('Xóa phiên bản thất bại', {
+                  variant: 'error',
+                  autoHideDuration: 3000
+              });
+        getEditions();
+        setIsShowConfirmDelete(false);
+    };
+    const handleClickAction = async (type: number, param: GridCellParams) => {
+        setSelectedRowId(Number.parseInt(param.id.toString()) ?? 0);
+        switch (type) {
+            case TypeAction.DELETE:
+                {
+                    const role = abpCustom.isGrandPermission('Pages.Editions.Delete');
+                    if (!role) {
+                        enqueueSnackbar('Không có quyền xóa phiên bản', {
+                            variant: 'error',
+                            autoHideDuration: 3000
+                        });
+                        return;
+                    }
+                    setIsShowConfirmDelete(true);
+                }
+                break;
+            case TypeAction.UPDATE:
+                {
+                    const role = abpCustom.isGrandPermission('Pages.Editions.Edit');
+                    if (!role) {
+                        enqueueSnackbar('Không có quyền cập nhật phiên bản', {
+                            variant: 'error',
+                            autoHideDuration: 3000
+                        });
+                        return;
+                    }
+                    getForEdit(Number.parseInt(param.id.toString()));
+                }
+                break;
+        }
+    };
     const columns = [
         {
             field: 'displayName',
@@ -85,17 +170,7 @@ const index = () => {
             flex: 1,
             disableColumnMenu: true,
             renderCell: (params: any) => (
-                <Box>
-                    <IconButton
-                        aria-label="Actions"
-                        aria-controls={`actions-menu-${params.row.id}`}
-                        aria-haspopup="true"
-                        onClick={(event) => {
-                            //this.handleOpenMenu(event, params.row.id);
-                        }}>
-                        <MoreHorizIcon />
-                    </IconButton>
-                </Box>
+                <ActionRow2Button handleClickAction={(type: number) => handleClickAction(type, params)} />
             ),
             renderHeader: (params: any) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
         }
@@ -120,6 +195,9 @@ const index = () => {
                         textTransform: 'unset',
                         fontWeight: '400',
                         backgroundColor: 'var(--color-main)!important'
+                    }}
+                    onClick={() => {
+                        getForEdit(0);
                     }}>
                     Tạo phiên bản mới
                 </Button>
@@ -140,6 +218,24 @@ const index = () => {
                     hideFooter
                     localeText={TextTranslate}></DataGrid>
             </Box>
+            <CreateOrEditEditionModal
+                visible={visiable}
+                onCancel={onModal}
+                onOk={() => {
+                    getEditions();
+                    onModal();
+                }}
+                formRef={createOrEditInput}
+                allFeatureValues={allFeatureValues}
+                allFeatures={allFeatures}
+            />
+            <ConfirmDelete
+                isShow={isShowConfirmDelete}
+                onOk={onOkDelete}
+                onCancel={() => {
+                    setIsShowConfirmDelete(false);
+                }}
+            />
         </Box>
     );
 };
