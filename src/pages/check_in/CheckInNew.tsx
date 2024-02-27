@@ -34,7 +34,9 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         mes: ''
     });
 
-    const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(new PropModal({ isShow: false }));
+    const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(
+        new PropModal({ isShow: false, isNew: true })
+    );
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
 
     const GetListCustomerChecking = async () => {
