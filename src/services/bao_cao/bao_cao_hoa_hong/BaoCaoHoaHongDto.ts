@@ -29,19 +29,6 @@ export interface PageBaoCaoHoaHongChiTiet extends IHangHoaInfor_UseForBaoCao, IH
     lstDetail: IHoaHongChiTiet_ListDetail[];
 }
 
-export interface IPageBaoCaoHoaHongChiTiet
-    extends PageBaoCaoHoaHongTongHop,
-        IHangHoaInfor_UseForBaoCao,
-        IHoaDonChiTiet_UseForBaoCao {
-    idHoaDonChiTiet: string;
-    maHoaDon: string;
-    ngayLapHoaDon: string;
-    maKhachHang: string;
-    tenKhachHang: string;
-    hoaHongThucHien_PTChietKhau: number;
-    hoaHongTuVan_PTChietKhau: number;
-}
-
 export class ParamSearchBaoCaoHoaHong extends RequestFromToDto {
     idLoaiChungTus?: string[];
     idNhomHangs?: string[];
