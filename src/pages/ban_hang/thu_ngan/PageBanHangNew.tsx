@@ -46,7 +46,6 @@ import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
 import CheckinService from '../../../services/check_in/CheckinService';
 import { IHangHoaGroupTheoNhomDto, ModelNhomHangHoa } from '../../../services/product/dto';
 import { PropConfirmOKCancel, PropModal } from '../../../utils/PropParentToChild';
-import ModelNhanVienThucHien from '../../nhan_vien_thuc_hien/modelNhanVienThucHien';
 import ModalEditChiTietGioHang from './modal_edit_chitiet';
 import Cookies from 'js-cookie';
 import { ReactComponent as IconDv } from '../../../images/icon-DV.svg';
@@ -61,7 +60,7 @@ import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/Creat
 import CreateOrEditCustomerDialog from '../../customer/components/create-or-edit-customer-modal';
 import { KHCheckInDto, PageKhachHangCheckInDto } from '../../../services/check_in/CheckinDto';
 import ModalAddCustomerCheckIn from '../../check_in/modal_add_cus_checkin';
-import AppConsts, { HINH_THUC_THANH_TOAN, ISelect, TrangThaiCheckin } from '../../../lib/appconst';
+import AppConsts, { HINH_THUC_THANH_TOAN, ISelect, TrangThaiCheckin, TypeAction } from '../../../lib/appconst';
 import { NumericFormat } from 'react-number-format';
 import khachHangService from '../../../services/khach-hang/khachHangService';
 import { ListNhanVienDataContext } from '../../../services/nhan-vien/dto/NhanVienDataContext';
@@ -85,7 +84,6 @@ import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import { handleClickOutside } from '../../../utils/customReactHook';
 import abpCustom from '../../../components/abp-custom';
 import BankAccount from '../../../components/Switch/BankAccount';
-import MyDialog from '../../../components/Drawer/DrawerMy';
 import HoaHongNhanVienDichVu from '../../nhan_vien_thuc_hien/hoa_hong_nhan_vien_dich_vu';
 
 const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
@@ -118,7 +116,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
 
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
-    const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(new PropModal({ isShow: false }));
+    const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(new PropModal({ isShow: false, isNew: true }));
     const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(new PropModal({ isShow: false }));
     const ref = handleClickOutside(() => setIsExpandShoppingCart(false));
 
@@ -294,7 +292,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                 };
             });
         }
-        setTriggerAddCheckIn({ ...triggerAddCheckIn, id: customerChosed?.idCheckIn });
+        setTriggerAddCheckIn({ ...triggerAddCheckIn, id: customerChosed?.idCheckIn, isShow: false });
         await GetSetCusChosing(customerChosed.idKhachHang);
     };
 
@@ -673,7 +671,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             cusChecking.idCheckIn = dataCheckIn.id;
             cusChecking.dateTimeCheckIn = dataCheckIn.dateTimeCheckIn;
 
-            setTriggerAddCheckIn({ ...triggerAddCheckIn, id: dataCheckIn.id });
+            setTriggerAddCheckIn({ ...triggerAddCheckIn, id: dataCheckIn.id, isShow: false });
 
             setCusChosing({
                 ...cusChosing,
@@ -703,7 +701,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             soDienThoai: cusChecking?.soDienThoai
         });
 
-        await updateCache_IfChangeCus(cusChecking, 0);
+        await updateCache_IfChangeCus(cusChecking, hoadon.id);
         setNewCus(item); // gán luôn để nếu có click xem thông tin khách hàng, thì không phải DB để lấy nữa
     };
 
@@ -733,46 +731,65 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         setIsShowModalAddCus(true);
     };
 
-    const updateCache_IfChangeCus = async (dataCheckIn: any, type = 0) => {
-        const idCheckInOld = triggerAddCheckIn.id as string; // always get state Id_Old
-        // remove checkin DB
-        await CheckinService.UpdateTrangThaiCheckin(idCheckInOld, TrangThaiCheckin.DELETED);
-
-        const cacheOld = await dbDexie.hoaDon.where('id').equals(hoadon?.id).toArray();
-
-        //  update cache hoadon with new {idcus, cusName,..}
-        // const cacheHD = await dbDexie.hoaDon.where('id').equals(hoadon?.id).toArray();
-        if (type === 0) {
-            //only change cus (not from booking)
-            // find data of cache old --> set again
-            if (cacheOld.length > 0) {
-                await dbDexie.hoaDon.update(hoadon?.id, {
-                    idCheckIn: dataCheckIn?.idCheckIn,
-                    idKhachHang: dataCheckIn?.idKhachHang,
-                    tenKhachHang: dataCheckIn?.tenKhachHang,
-                    maKhachHang: dataCheckIn?.maKhachHang,
-                    soDienThoai: dataCheckIn?.soDienThoai
-                });
-            }
-        } else {
-            await dbDexie.hoaDon.where('idCheckIn').equals(idCheckInOld).delete();
+    const updateCache_IfChangeCus = async (dataCheckIn: any, idHoaDon: string) => {
+        const action = triggerAddCheckIn?.isNew ? TypeAction.INSEART : TypeAction.UPDATE;
+        switch (action) {
+            case TypeAction.INSEART:
+                {
+                    const dataHD: PageHoaDonDto = {
+                        ...hoadon,
+                        id: idHoaDon,
+                        idChiNhanh: idChiNhanh,
+                        idCheckIn: dataCheckIn?.idCheckIn,
+                        idKhachHang: dataCheckIn?.idKhachHang,
+                        maKhachHang: dataCheckIn?.maKhachHang,
+                        tenKhachHang: dataCheckIn?.tenKhachHang ?? 'Khách lẻ',
+                        soDienThoai: dataCheckIn?.soDienThoai,
+                        hoaDonChiTiet: []
+                    };
+                    await dbDexie.hoaDon.add(dataHD);
+                }
+                break;
+            case TypeAction.UPDATE:
+                {
+                    const cacheOld = await dbDexie.hoaDon.where('id').equals(hoadon?.id).toArray();
+                    if (cacheOld.length > 0) {
+                        await dbDexie.hoaDon.update(hoadon?.id, {
+                            idCheckIn: dataCheckIn?.idCheckIn,
+                            idKhachHang: dataCheckIn?.idKhachHang,
+                            tenKhachHang: dataCheckIn?.tenKhachHang,
+                            maKhachHang: dataCheckIn?.maKhachHang,
+                            soDienThoai: dataCheckIn?.soDienThoai
+                        });
+                    } else {
+                        const dataHD: PageHoaDonDto = {
+                            ...hoadon,
+                            id: idHoaDon,
+                            idChiNhanh: idChiNhanh,
+                            idCheckIn: dataCheckIn?.idCheckIn,
+                            idKhachHang: dataCheckIn?.idKhachHang,
+                            maKhachHang: dataCheckIn?.maKhachHang,
+                            tenKhachHang: dataCheckIn?.tenKhachHang ?? 'Khách lẻ',
+                            soDienThoai: dataCheckIn?.soDienThoai
+                        };
+                        await dbDexie.hoaDon.add(dataHD);
+                    }
+                }
+                break;
+            case TypeAction.DELETE:
+                {
+                    const idCheckInOld = triggerAddCheckIn.id as string;
+                    await dbDexie.hoaDon.where('idCheckIn').equals(idCheckInOld).delete();
+                }
+                break;
         }
     };
 
-    const showModalCheckIn = async () => {
-        setTriggerAddCheckIn({ ...triggerAddCheckIn, isShow: true, id: customerChosed?.idCheckIn });
+    const showModalCheckIn = async (isNew = true) => {
+        setTriggerAddCheckIn({ ...triggerAddCheckIn, isShow: true, isNew: isNew });
     };
 
-    const saveCheckInOK = async (dataCheckIn: any, type = 0) => {
-        const cusChecking: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
-            idKhachHang: dataCheckIn.idKhachHang,
-            idCheckIn: dataCheckIn.idCheckIn,
-            maKhachHang: dataCheckIn.maKhachHang,
-            tenKhachHang: dataCheckIn.tenKhachHang,
-            soDienThoai: dataCheckIn.soDienThoai,
-            tongTichDiem: dataCheckIn.tongTichDiem,
-            dateTimeCheckIn: dataCheckIn.dateTimeCheckIn
-        });
+    const saveCheckInOK = async (dataCheckIn: any, typeAction = TypeAction.INSEART) => {
         setTriggerAddCheckIn({ ...triggerAddCheckIn, id: dataCheckIn.idCheckIn, isShow: false });
 
         // get dataHoaDon if khach was booking
@@ -793,19 +810,29 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             });
             setHoaDonChiTiet(hdctCache);
         } else {
-            // keep hdold
-            setHoaDon({
+            const action = triggerAddCheckIn?.isNew ? TypeAction.INSEART : TypeAction.UPDATE;
+            let idHoaDon = hoadon?.id;
+            let hdCT: PageHoaDonChiTietDto[] = hoadon?.hoaDonChiTiet ?? [];
+
+            if (action === TypeAction.INSEART) {
+                idHoaDon = Guid.create().toString();
+                hdCT = [];
+            }
+            const dataHD: PageHoaDonDto = {
                 ...hoadon,
+                id: idHoaDon,
                 idChiNhanh: idChiNhanh,
-                idKhachHang: dataCheckIn.idKhachHang,
-                idCheckIn: dataCheckIn.idCheckIn,
-                maKhachHang: dataCheckIn.maKhachHang,
-                tenKhachHang: dataCheckIn.tenKhachHang
-            });
+                idCheckIn: dataCheckIn?.idCheckIn,
+                idKhachHang: dataCheckIn?.idKhachHang,
+                maKhachHang: dataCheckIn?.maKhachHang,
+                tenKhachHang: dataCheckIn?.tenKhachHang ?? 'Khách lẻ',
+                soDienThoai: dataCheckIn?.soDienThoai
+            };
+            setHoaDon(dataHD);
+            setHoaDonChiTiet(hdCT);
+            await updateCache_IfChangeCus(dataCheckIn, idHoaDon);
+            await GetAllInvoiceWaiting();
         }
-
-        await updateCache_IfChangeCus(cusChecking, type);
-
         await GetSetCusChosing(dataCheckIn.idKhachHang);
     };
 
@@ -1268,9 +1295,6 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
 
-            {/* <div style={{ display: 'none' }}>
-                <MauInHoaDon ref={componentRef} props={propMauIn} />
-            </div> */}
             <Grid
                 container
                 className="page-ban-hang"
@@ -1685,7 +1709,10 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                     <Avatar sx={{ width: 40, height: 40 }} src={cusChosing?.avatar} />
                                 )}
 
-                                <Box>
+                                <Box
+                                    sx={{ cursor: 'pointer' }}
+                                    title="Thay đổi khách hàng"
+                                    onClick={() => showModalCheckIn(false)}>
                                     <Typography variant="subtitle2" color="#3D475C">
                                         {hoadon?.tenKhachHang}
                                     </Typography>
@@ -1697,12 +1724,12 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                 <Box sx={{ marginLeft: 'auto' }}>
                                     <Stack direction="row" spacing={'10px'}>
                                         <Add
-                                            onClick={showModalCheckIn}
+                                            onClick={() => showModalCheckIn(true)}
                                             sx={{
                                                 color: '#1976d2',
                                                 display: !abpCustom.isGrandPermission('Pages.CheckIn.Create')
-                                                    ? ''
-                                                    : 'none'
+                                                    ? 'none'
+                                                    : ''
                                             }}
                                             titleAccess="Thêm khách check in"
                                         />
