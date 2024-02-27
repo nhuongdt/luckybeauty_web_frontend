@@ -16,6 +16,17 @@ class CheckinService {
             });
         return xx;
     };
+    GetInforCheckIn_byId = async (idCheckIn: string) => {
+        if (utils.checkNull(idCheckIn) || idCheckIn == Guid.EMPTY) {
+            return new KHCheckInDto({ id: Guid.EMPTY });
+        }
+        const xx = await http
+            .get(`api/services/app/CheckIn/GetInforCheckIn_byId?idCheckIn=${idCheckIn}`)
+            .then((res: { data: { result: KHCheckInDto } }) => {
+                return res.data.result;
+            });
+        return xx;
+    };
     InsertCustomerCheckIn = async (input: KHCheckInDto) => {
         const xx = await http
             .post(`api/services/app/CheckIn/InsertCustomerCheckIn`, input)
