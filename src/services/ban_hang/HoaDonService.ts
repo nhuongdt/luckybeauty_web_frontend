@@ -29,12 +29,12 @@ class HoaDonService {
     };
     Update_InforHoaDon = async (input: any) => {
         // only update hoadon
-        const result = await http.put('api/services/app/HoaDon/Update_InforHoaDon', input);
+        const result = await http.post('api/services/app/HoaDon/Update_InforHoaDon', input);
         return result.data.result;
     };
     Update_ChiTietHoaDon = async (input: any, idHoaDon: string) => {
         // only update chitiet
-        const result = await http.put(`api/services/app/HoaDon/Update_ChiTietHoaDon?idHoadon=${idHoaDon}`, input);
+        const result = await http.post(`api/services/app/HoaDon/Update_ChiTietHoaDon?idHoadon=${idHoaDon}`, input);
         return result.data.result;
     };
     GetListHoaDon = async (input: HoaDonRequestDto): Promise<PagedResultDto<PageHoaDonDto>> => {
