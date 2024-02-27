@@ -85,6 +85,9 @@ import { handleClickOutside } from '../../../utils/customReactHook';
 import abpCustom from '../../../components/abp-custom';
 import BankAccount from '../../../components/Switch/BankAccount';
 import HoaHongNhanVienDichVu from '../../nhan_vien_thuc_hien/hoa_hong_nhan_vien_dich_vu';
+import DateTimePickerCustom from '../../../components/DatetimePicker/DateTimePickerCustom';
+import DatePickerRequireCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
+import { format } from 'date-fns';
 
 const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const appContext = useContext(AppContext);
@@ -99,6 +102,56 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const [allNhomHangHoa, setAllNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
     const [listProduct, setListProduct] = useState<IHangHoaGroupTheoNhomDto[]>([]);
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
+
+    const [dateDefault, setDateDefault] = useState('');
+
+    // let timmer: any;
+
+    // const timer = () => {
+    //     // yyyy-MM-dd HH:mm
+    //     const toDay = new Date();
+    //     const date = toDay.getDate();
+    //     const month = toDay.getMonth() + 1;
+    //     const year = toDay.getFullYear();
+    //     const hours = toDay.getHours();
+    //     const minutes = toDay.getMinutes();
+    //     const seconds = toDay.getSeconds();
+
+    //     let ngaythangnam = `${year}`;
+    //     let giophut = `${hours}`;
+
+    //     if (month < 10) {
+    //         ngaythangnam += `-0${month}`;
+    //     } else {
+    //         ngaythangnam += `-${month}`;
+    //     }
+    //     if (date < 10) {
+    //         ngaythangnam += `-0${date}`;
+    //     } else {
+    //         ngaythangnam += `-${date}`;
+    //     }
+
+    //     if (hours < 10) {
+    //         giophut = `0${hours}`;
+    //     }
+    //     if (minutes < 10) {
+    //         giophut += `:0${minutes}`;
+    //     } else {
+    //         giophut += `:${minutes}`;
+    //     }
+
+    //     timmer = setTimeout(timer, 1000);
+    //     console.log(`${ngaythangnam} ${giophut}`);
+    //     setDateDefault(`${ngaythangnam} ${giophut}`);
+    // };
+    // const OnOff_Timer = () => {
+    //     if (utils.checkNull(hoadon?.ngayLapHoaDon)) {
+    //         clearTimeout(timmer);
+    //         timer();
+    //     } else {
+    //         clearTimeout(timmer);
+    //     }
+    // };
 
     const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
     const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
@@ -177,6 +230,10 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         setAllInvoiceWaiting(allHD);
         setLstSearchInvoiceWaiting([...allHD]);
     };
+
+    // useEffect(() => {
+    //     OnOff_Timer();
+    // }, [hoadon?.ngayLapHoaDon]);
 
     const PageLoad = async () => {
         await GetTreeNhomHangHoa();
@@ -802,6 +859,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                 idKhachHang: dataCheckIn.idKhachHang,
                 idCheckIn: dataCheckIn.idCheckIn,
                 maKhachHang: dataCheckIn.maKhachHang,
+                soDienThoai: dataCheckIn?.soDienThoai,
                 tenKhachHang: dataCheckIn.tenKhachHang,
                 tongTienHang: data[0].tongTienHang,
                 tongTienHDSauVAT: data[0].tongTienHDSauVAT,
@@ -1723,6 +1781,28 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
 
                                 <Box sx={{ marginLeft: 'auto' }}>
                                     <Stack direction="row" spacing={'10px'}>
+                                        {/* <Stack
+                                            sx={
+                                                {
+                                                    '& .MuiSvgIcon-root': {
+                                                        display: 'none'
+                                                    }
+                                                }
+                                            }>
+                                            <DateTimePickerCustom
+                                                props={{
+                                                    width: '100%',
+                                                    size: 'small'
+                                                }}
+                                                defaultVal={dateDefault}
+                                                handleChangeDate={(dt: string) => {
+                                                    setHoaDon({
+                                                        ...hoadon,
+                                                        ngayLapHoaDon: dt
+                                                    });
+                                                }}
+                                            />
+                                        </Stack> */}
                                         <Add
                                             onClick={() => showModalCheckIn(true)}
                                             sx={{
