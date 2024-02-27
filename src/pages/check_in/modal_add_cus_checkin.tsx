@@ -16,16 +16,26 @@ import { BookingDetail_ofCustomerDto } from '../../services/dat-lich/dto/Booking
 import { dbDexie } from '../../lib/dexie/dexieDB';
 import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
 import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
-import { TrangThaiCheckin } from '../../lib/appconst';
+import { TrangThaiCheckin, TypeAction } from '../../lib/appconst';
+import utils from '../../utils/utils';
+
+export const CheckIn_TabName = {
+    CUSTOMER: 0,
+    BOOKING: 1
+};
 export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
     const appContext = useContext(AppContext);
     const chiNhanhCurrent = appContext.chinhanhCurrent;
     const idChiNhanh = chiNhanhCurrent?.id ?? Cookies.get('IdChiNhanh');
+    const [currentTab, setCurrentTab] = useState(CheckIn_TabName.BOOKING);
+
     const [isShow, setIsShow] = useState(false);
     const [isSave, setIsSave] = useState(false);
     const [errPhone, setErrPhone] = useState(false);
     const [errCheckIn, setErrCheckIn] = useState(false);
     const [objAlert, setObjAlert] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
+
+    const [objCheckIn, setObjCheckIn] = useState<KHCheckInDto>({} as KHCheckInDto);
 
     const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>({
         id: Guid.EMPTY,
@@ -53,9 +63,22 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                 idNguonKhach: '',
                 idNhomKhach: ''
             });
+
+            // nếu thay đổi khách hàng (từ A -->B)
+            if (trigger?.isNew ?? true) {
+                setCurrentTab(CheckIn_TabName.BOOKING);
+            } else {
+                setCurrentTab(CheckIn_TabName.CUSTOMER);
+                getInforCheckIn();
+            }
         }
         setIsSave(false);
     }, [trigger]);
+
+    const getInforCheckIn = async () => {
+        const dataCheckInDB = await CheckinService.GetInforCheckIn_byId(trigger?.id);
+        setObjCheckIn(dataCheckInDB);
+    };
 
     const checkSaveCheckin = async (idCus: string) => {
         const exists = await CheckinService.CheckExistCusCheckin(idCus);
@@ -66,9 +89,9 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
         }
         return true;
     };
-    const saveCheckIn = async (cusChosed: any, type = 0) => {
+    const saveCheckIn = async (cusChosed: any, tabActive = 0) => {
         // 0.from tab customer, 1.add from booking
-        if (type === 1) {
+        if (tabActive === CheckIn_TabName.BOOKING) {
             cusChosed.id = cusChosed.idKhachHang;
         } else {
             // only check if checkin from tabKhachHang
@@ -92,33 +115,53 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
         // vì trangthaiCheckin: đang tính theo tổng số dịch vụ đang có (hoaDonChiTiet.length)
         // nên: nếu khách hàng có lịch hẹn và checkin: auto set trạng thái = Đang thực hiện
         // ngược lại: nếu chọn check in từ tab khách hàng: trạng thái = Đang chờ
-        const objCheckIn: KHCheckInDto = new KHCheckInDto({
+        const newObjCheckin: KHCheckInDto = new KHCheckInDto({
             idKhachHang: cusChosed.id,
             idChiNhanh: idChiNhanh,
-            trangThai: type === 1 ? TrangThaiCheckin.DOING : TrangThaiCheckin.WAITING
-        });
-        const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
-        const objCheckInNew: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
-            idCheckIn: dataCheckIn.id,
-            idKhachHang: objCheckIn.idKhachHang,
-            maKhachHang: cusChosed.maKhachHang,
-            tenKhachHang: cusChosed.tenKhachHang,
-            soDienThoai: cusChosed.soDienThoai,
-            tongTichDiem: cusChosed.tongTichDiem,
-            dateTimeCheckIn: dataCheckIn.dateTimeCheckIn,
-            txtTrangThaiCheckIn: type === 1 ? 'Đang thực hiện' : 'Đang chờ'
+            trangThai: tabActive === CheckIn_TabName.BOOKING ? TrangThaiCheckin.DOING : TrangThaiCheckin.WAITING
         });
 
-        // save to Booking_Checkin_HD
-        await CheckinService.InsertCheckInHoaDon({
-            idCheckIn: dataCheckIn.id,
-            idBooking: cusChosed?.idBooking
-        } as ICheckInHoaDonto);
-        if (type === 1) {
-            // save to cache hdDB
-            await addDataBooking_toCacheHD(cusChosed, dataCheckIn.id);
+        if (trigger?.isNew || (!trigger?.isNew && (utils.checkNull(trigger?.id) || trigger?.id == Guid.EMPTY))) {
+            const dataCheckIn = await CheckinService.InsertCustomerCheckIn(newObjCheckin);
+            const pageObjCheckin: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
+                idCheckIn: dataCheckIn.id,
+                idKhachHang: newObjCheckin.idKhachHang,
+                maKhachHang: cusChosed.maKhachHang,
+                tenKhachHang: cusChosed.tenKhachHang,
+                soDienThoai: cusChosed.soDienThoai,
+                tongTichDiem: cusChosed.tongTichDiem,
+                dateTimeCheckIn: dataCheckIn.dateTimeCheckIn,
+                txtTrangThaiCheckIn: tabActive === CheckIn_TabName.BOOKING ? 'Đang thực hiện' : 'Đang chờ'
+            });
+            // save to Booking_Checkin_HD
+            await CheckinService.InsertCheckInHoaDon({
+                idCheckIn: dataCheckIn.id,
+                idBooking: cusChosed?.idBooking
+            } as ICheckInHoaDonto);
+            if (tabActive === CheckIn_TabName.BOOKING) {
+                // save to cache hdDB
+                await addDataBooking_toCacheHD(cusChosed, dataCheckIn.id);
+            }
+            handleSave(pageObjCheckin, TypeAction.INSEART);
+        } else {
+            // only change customer
+            newObjCheckin.id = objCheckIn.id;
+            newObjCheckin.idKhachHang = cusChosed.id;
+            newObjCheckin.dateTimeCheckIn = objCheckIn.dateTimeCheckIn;
+            newObjCheckin.idChiNhanh = objCheckIn.idChiNhanh;
+            newObjCheckin.ghiChu = objCheckIn.ghiChu;
+            await CheckinService.UpdateCustomerCheckIn(newObjCheckin);
+            const dataCheckInOld = new PageKhachHangCheckInDto({
+                idCheckIn: trigger?.id,
+                idKhachHang: cusChosed?.id,
+                maKhachHang: cusChosed.maKhachHang,
+                tenKhachHang: cusChosed.tenKhachHang,
+                soDienThoai: cusChosed.soDienThoai,
+                tongTichDiem: cusChosed.tongTichDiem,
+                txtTrangThaiCheckIn: 'Đang thực hiện'
+            });
+            handleSave(dataCheckInOld, TypeAction.UPDATE);
         }
-        handleSave(objCheckInNew, type);
     };
 
     const addDataBooking_toCacheHD = async (itemBook: BookingDetail_ofCustomerDto, idCheckIn: string) => {
@@ -157,7 +200,6 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
         await dbDexie.hoaDon.add(hoadon);
     };
 
-    const [currentTab, setCurrentTab] = useState(1);
     const handleChangeTab = (value: number) => {
         setCurrentTab(value);
     };
@@ -193,7 +235,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                         width: '100%'
                     }}>
                     <Box fontWeight="700!important" fontSize="24px">
-                        Thêm checkin
+                        {trigger?.isNew ?? true ? 'Thêm check in' : 'Cập nhật khách hàng check in'}
                     </Box>
                     <IconButton
                         onClick={() => setIsShow(false)}
@@ -207,42 +249,46 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                 </DialogTitle>
 
                 <DialogContent sx={{ overflow: 'visible' }}>
-                    <Stack
-                        direction="row"
-                        gap="32px"
-                        sx={{
-                            '& button': {
-                                minWidth: 'unset',
-                                padding: '0',
-                                transition: '.4s'
-                            }
-                        }}>
-                        <Button
+                    {/* thu ngân: nếu thay đổi khách hàng --> ẩn tab */}
+                    {(trigger?.isNew ?? true) && (
+                        <Stack
+                            direction="row"
+                            gap="32px"
                             sx={{
-                                color: currentTab === 1 ? 'var(--color-main)' : '#999699',
-                                '&::after': {
-                                    content: '""',
-                                    position: 'absolute',
-                                    bottom: '-5px',
-                                    transition: '.4s',
-                                    left: currentTab === 1 ? '0' : 'calc(100% + 32px)',
-                                    width: currentTab === 1 ? '100%' : '77.2px',
-                                    borderTop: '2px solid var(--color-main)'
+                                '& button': {
+                                    minWidth: 'unset',
+                                    padding: '0',
+                                    transition: '.4s'
                                 }
-                            }}
-                            variant="text"
-                            onClick={() => handleChangeTab(1)}>
-                            Cuộc hẹn
-                        </Button>
-                        <Button
-                            sx={{ color: currentTab === 2 ? 'var(--color-main)' : '#999699' }}
-                            variant="text"
-                            onClick={() => handleChangeTab(2)}>
-                            Khách hàng
-                        </Button>
-                    </Stack>
+                            }}>
+                            <Button
+                                sx={{
+                                    color: currentTab === 1 ? 'var(--color-main)' : '#999699',
+                                    '&::after': {
+                                        content: '""',
+                                        position: 'absolute',
+                                        bottom: '-5px',
+                                        transition: '.4s',
+                                        left: currentTab === 1 ? '0' : 'calc(100% + 32px)',
+                                        width: currentTab === 1 ? '100%' : '77.2px',
+                                        borderTop: '2px solid var(--color-main)'
+                                    }
+                                }}
+                                variant="text"
+                                onClick={() => handleChangeTab(1)}>
+                                Cuộc hẹn
+                            </Button>
+                            <Button
+                                sx={{ color: currentTab === 2 ? 'var(--color-main)' : '#999699' }}
+                                variant="text"
+                                onClick={() => handleChangeTab(2)}>
+                                Khách hàng
+                            </Button>
+                        </Stack>
+                    )}
+
                     <Box sx={{ marginTop: '20px' }}>
-                        {currentTab === 1 ? (
+                        {currentTab === CheckIn_TabName.BOOKING ? (
                             <TabCuocHen handleChoseCusBooking={saveCheckIn} />
                         ) : (
                             <TabKhachHang handleChoseCus={saveCheckIn} />
