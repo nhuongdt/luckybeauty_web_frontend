@@ -18,6 +18,7 @@ import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
 import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
 import { TrangThaiCheckin, TypeAction } from '../../lib/appconst';
 import utils from '../../utils/utils';
+import DialogDraggable from '../../components/Dialog/DialogDraggable';
 
 export const CheckIn_TabName = {
     CUSTOMER: 0,
@@ -100,6 +101,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                 return;
             }
         }
+        cusChosed.idKhachHang = cusChosed.id;
 
         setIsShow(false);
 
@@ -138,10 +140,8 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                 idCheckIn: dataCheckIn.id,
                 idBooking: cusChosed?.idBooking
             } as ICheckInHoaDonto);
-            if (tabActive === CheckIn_TabName.BOOKING) {
-                // save to cache hdDB
-                await addDataBooking_toCacheHD(cusChosed, dataCheckIn.id);
-            }
+            // save to cache hdDB
+            await addDataBooking_toCacheHD(cusChosed, dataCheckIn.id);
             handleSave(pageObjCheckin, TypeAction.INSEART);
         } else {
             // only change customer
@@ -169,8 +169,8 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
         const hoadonCT = [];
         let tongTienHang = 0;
 
-        for (let i = 0; i < itemBook.details.length; i++) {
-            const itFor = itemBook.details[i];
+        for (let i = 0; i < itemBook?.details?.length; i++) {
+            const itFor = itemBook?.details[i];
             const newCT = new PageHoaDonChiTietDto({
                 idDonViQuyDoi: itFor.idDonViQuyDoi as unknown as null,
                 maHangHoa: itFor.maHangHoa,
@@ -186,10 +186,10 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
         // create cache hd with new id
         const hoadon = new PageHoaDonDto({
             idChiNhanh: idChiNhanh,
-            idKhachHang: itemBook.idKhachHang as unknown as null,
-            maKhachHang: itemBook.maKhachHang,
-            tenKhachHang: itemBook.tenKhachHang,
-            soDienThoai: itemBook.soDienThoai,
+            idKhachHang: itemBook?.idKhachHang as unknown as null,
+            maKhachHang: itemBook?.maKhachHang,
+            tenKhachHang: itemBook?.tenKhachHang,
+            soDienThoai: itemBook?.soDienThoai,
             tongTienHang: tongTienHang
         });
         hoadon.idCheckIn = idCheckIn;
@@ -210,6 +210,8 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                 onClose={() => setIsShow(false)}
                 fullWidth
                 maxWidth="md"
+                aria-labelledby="dialogIdTitle"
+                PaperComponent={DialogDraggable}
                 sx={{
                     '& .MuiDialog-paperScrollPaper': {
                         overflowX: 'hidden'
@@ -223,6 +225,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                         setObjAlert({ show: false, mes: '', type: 1 } as PropConfirmOKCancel)
                     }></SnackbarAlert>
                 <DialogTitle
+                    id="dialogIdTitle"
                     sx={{
                         display: 'flex',
                         position: 'sticky',
