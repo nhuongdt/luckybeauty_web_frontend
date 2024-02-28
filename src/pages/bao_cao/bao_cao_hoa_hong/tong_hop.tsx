@@ -12,6 +12,7 @@ import { PagedResultDto } from '../../../services/dto/pagedResultDto';
 import { BaoCaoHoaHongDataContextFilter } from '../../../services/bao_cao/bao_cao_hoa_hong/BaoCaoHoaHongContext';
 import { LoaiBaoCao } from '../../../lib/appconst';
 import BaoCaoHoaHongServices from '../../../services/bao_cao/bao_cao_hoa_hong/BaoCaoHoaHongServices';
+import { Guid } from 'guid-typescript';
 
 export default function PageBaoCaoHoaHongNhanVienTongHop({ onChangePage, onChangePageSize }: any) {
     const dataFilterContext = useContext(BaoCaoHoaHongDataContextFilter);
@@ -36,12 +37,34 @@ export default function PageBaoCaoHoaHongNhanVienTongHop({ onChangePage, onChang
 
     const GetBaoCaoHoaHongTongHop = async () => {
         const data = await BaoCaoHoaHongServices.GetBaoCaoHoaHongTongHop(dataFilterContext?.filter);
-        setPageDataBaoCaoTongHop({
-            ...pageDataBaoCaoTongHop,
-            items: data?.items,
-            totalCount: data?.totalCount,
-            totalPage: Math.ceil(data?.totalCount / (dataFilterContext?.filter?.pageSize ?? 10))
-        });
+        if (data?.items?.length > 0) {
+            const itFirst = data?.items[0];
+            const footerRow = {
+                idNhanVien: Guid.EMPTY,
+                maNhanVien: 'Tổng',
+                tenNhanVien: '',
+                hoaHongThucHien_TienChietKhau: itFirst?.sumHoaHongThucHien ?? 0,
+                hoaHongTuVan_TienChietKhau: itFirst?.sumHoaHongTuVan ?? 0,
+                tongHoaHong: itFirst?.sumTongHoaHong ?? 0,
+                sumHoaHongThucHien: 0,
+                sumHoaHongTuVan: 0,
+                sumTongHoaHong: 0
+            } as PageBaoCaoHoaHongTongHop;
+
+            setPageDataBaoCaoTongHop({
+                ...pageDataBaoCaoTongHop,
+                items: [...(data?.items ?? []), footerRow],
+                totalCount: data?.totalCount,
+                totalPage: Math.ceil(data?.totalCount / (dataFilterContext?.filter?.pageSize ?? 10))
+            });
+        } else {
+            setPageDataBaoCaoTongHop({
+                ...pageDataBaoCaoTongHop,
+                items: data?.items,
+                totalCount: data?.totalCount,
+                totalPage: Math.ceil(data?.totalCount / (dataFilterContext?.filter?.pageSize ?? 10))
+            });
+        }
     };
 
     const handlePageChange = async (event: any, value: number) => {
@@ -103,7 +126,7 @@ export default function PageBaoCaoHoaHongNhanVienTongHop({ onChangePage, onChang
                     <Box className="page-box-right">
                         <Box>
                             <DataGrid
-                                rowHeight={46}
+                                rowHeight={40}
                                 autoHeight={pageDataBaoCaoTongHop?.totalCount === 0}
                                 className="data-grid-row"
                                 columns={columns}
@@ -114,6 +137,12 @@ export default function PageBaoCaoHoaHongNhanVienTongHop({ onChangePage, onChang
                                 hideFooterPagination
                                 hideFooter
                                 localeText={TextTranslate}
+                                sx={{
+                                    ' & .MuiDataGrid-row--lastVisible': {
+                                        fontWeight: 600,
+                                        backgroundColor: 'var(--color-header-table)'
+                                    }
+                                }}
                             />
                         </Box>
                         <CustomTablePagination

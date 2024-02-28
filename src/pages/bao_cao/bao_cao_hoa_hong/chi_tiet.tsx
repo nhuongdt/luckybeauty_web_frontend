@@ -9,7 +9,8 @@ import {
     TableHead,
     TableRow,
     TableCell,
-    TableBody
+    TableBody,
+    TableFooter
 } from '@mui/material';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { useContext, useEffect, useRef, useState } from 'react';
@@ -185,6 +186,44 @@ export default function PageBaoCaoHoaHongNhanVienChiTiet({ onChangePage, onChang
                                             ))}
                                         </TableBody>
                                     ))}
+
+                                    <TableFooter>
+                                        {pageDataBaoCaoChiTiet?.items?.length > 0 ? (
+                                            <TableRow>
+                                                <TableCell colSpan={4}>Tổng</TableCell>
+                                                <TableCell align="right">
+                                                    {pageDataBaoCaoChiTiet?.items[0]?.sumSoLuong}
+                                                </TableCell>
+                                                <TableCell align="right">
+                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                        pageDataBaoCaoChiTiet?.items[0]?.sumThanhTienSauCK ?? 0
+                                                    )}
+                                                </TableCell>
+                                                <TableCell align="right"></TableCell>
+                                                <TableCell align="center">
+                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                        pageDataBaoCaoChiTiet?.items[0]?.sumHoaHongThucHien ?? 0
+                                                    )}
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                        pageDataBaoCaoChiTiet?.items[0]?.sumHoaHongTuVan ?? 0
+                                                    )}
+                                                </TableCell>
+                                                <TableCell align="right">
+                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                        pageDataBaoCaoChiTiet?.items[0]?.sumTongHoaHong ?? 0
+                                                    )}
+                                                </TableCell>
+                                            </TableRow>
+                                        ) : (
+                                            <TableRow className="table-empty">
+                                                <TableCell colSpan={20} align="center">
+                                                    Báo cáo không có dữ liệu
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableFooter>
                                 </Table>
                             </TableContainer>
                         </Box>
