@@ -9,7 +9,8 @@ import {
     DialogTitle,
     Button,
     DialogActions,
-    Typography
+    Typography,
+    Pagination
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
@@ -27,11 +28,15 @@ import chietKhauDichVuService from '../../../../../services/hoa_hong/chiet_khau_
 import { ChietKhauDichVuDto_AddMultiple } from '../../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/CreateOrEditChietKhauDichVuDto';
 import Cookies from 'js-cookie';
 import { Guid } from 'guid-typescript';
-import { LoaiHoaHongDichVu } from '../../../../../lib/appconst';
+import AppConsts, { LoaiHoaHongDichVu } from '../../../../../lib/appconst';
+import CustomTablePagination from '../../../../../components/Pagination/CustomTablePagination';
+import { ParamSearchDto } from '../../../../../services/dto/ParamSearchDto';
+import { LabelDisplayedRows } from '../../../../../components/Pagination/LabelDisplayedRows';
 
 export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNhanVien, onClose, onSaveOK }: any) {
     const [txtSearchNV, setTxtSearchNV] = useState('');
-    const [txtSearchProduct, setTxtSearchProduct] = useState('');
+    const [totalCount, setTotalCount] = useState(0);
+    const [totalPage, setTotalPage] = useState(1);
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
     const [listProduct, setListProduct] = useState<ModelHangHoaDto[]>([]);
     const [arrIdQuyDoiChosed, setArrIdQuyDoiChosed] = useState<string[]>([]);
@@ -49,6 +54,15 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
         loaiChietKhau: LoaiHoaHongDichVu.TU_VAN,
         laPhanTram: true,
         giaTri: 0
+    });
+
+    const [paramSearch, setParamSearch] = useState<PagedProductSearchDto>({
+        textSearch: '',
+        idChiNhanhs: [''],
+        currentPage: 1,
+        pageSize: AppConsts.pageOption[0].value,
+        columnSort: 'NgayLapHoaDon',
+        typeSort: 'DESC'
     });
 
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
@@ -83,7 +97,7 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
 
             setArrIdQuyDoiChosed([]);
             setTxtSearchNV('');
-            setTxtSearchProduct('');
+            setParamSearch({ ...paramSearch, textSearch: '', currentPage: 1, pageSize: AppConsts.pageOption[0].value });
             if (nhanVienChosed != null) {
                 setArrIdNhanVienChosed([nhanVienChosed?.id]);
             } else {
@@ -98,15 +112,26 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
 
     const debounceProduct = useRef(
         debounce(async (input: string) => {
-            const param = new PagedProductSearchDto({ textSearch: input, columnSort: 'tenNhomHang' });
-            const data = await ProductService.Get_DMHangHoa(param);
-            setListProduct(data.items);
+            GetDanhMucHangHoa(input);
         }, 500)
     ).current;
 
+    const GetDanhMucHangHoa = async (input = '') => {
+        const param = { ...paramSearch };
+        param.textSearch = input;
+        const data = await ProductService.Get_DMHangHoa(param);
+        setListProduct(data.items);
+        setTotalCount(data?.totalCount);
+        setTotalPage(Math.ceil(data?.totalCount / (paramSearch?.pageSize ?? 10)));
+    };
+
     useEffect(() => {
-        debounceProduct(txtSearchProduct);
-    }, [txtSearchProduct]);
+        debounceProduct(paramSearch?.textSearch ?? '');
+    }, [paramSearch?.textSearch]);
+
+    useEffect(() => {
+        GetDanhMucHangHoa();
+    }, [paramSearch?.currentPage]);
 
     const NVien_changeCheckAll = () => {
         const gtriNew = !checkAllNVien;
@@ -238,6 +263,13 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
         onSaveOK();
     };
 
+    const handleChangePage = (event: any, value: number) => {
+        setParamSearch({
+            ...paramSearch,
+            currentPage: value
+        });
+    };
+
     return (
         <>
             <SnackbarAlert
@@ -317,9 +349,9 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
                                     size="small"
                                     fullWidth
                                     label="Tìm dịch vụ"
-                                    value={txtSearchProduct}
+                                    value={paramSearch?.textSearch ?? ''}
                                     onChange={(event) => {
-                                        setTxtSearchProduct(event.currentTarget.value);
+                                        setParamSearch({ ...paramSearch, textSearch: event.currentTarget.value });
                                     }}
                                     InputProps={{
                                         startAdornment: <Search />
@@ -527,16 +559,38 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
                     </Grid>
                 </DialogContent>
                 <DialogActions sx={{ paddingBottom: '16px!important' }}>
-                    <Button variant="outlined" onClick={onClose}>
-                        Bỏ qua
-                    </Button>
-                    {isSaving ? (
-                        <Button variant="contained">Đang lưu</Button>
-                    ) : (
-                        <Button variant="contained" onClick={saveSetup}>
-                            Áp dụng
-                        </Button>
-                    )}
+                    <Grid container sx={{ paddingRight: '16px', paddingLeft: '24px' }}>
+                        <Grid item xs={8}>
+                            <Stack direction="row">
+                                <LabelDisplayedRows
+                                    currentPage={paramSearch?.currentPage ?? 1}
+                                    pageSize={paramSearch?.pageSize ?? 10}
+                                    totalCount={totalCount}
+                                />
+                                <Pagination
+                                    shape="rounded"
+                                    count={totalPage}
+                                    page={paramSearch?.currentPage ?? 1}
+                                    defaultPage={paramSearch?.currentPage ?? 1}
+                                    onChange={handleChangePage}
+                                />
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Stack spacing={1} direction={'row'} justifyContent={'end'}>
+                                <Button variant="outlined" onClick={onClose}>
+                                    Bỏ qua
+                                </Button>
+                                {isSaving ? (
+                                    <Button variant="contained">Đang lưu</Button>
+                                ) : (
+                                    <Button variant="contained" onClick={saveSetup}>
+                                        Áp dụng
+                                    </Button>
+                                )}
+                            </Stack>
+                        </Grid>
+                    </Grid>
                 </DialogActions>
             </Dialog>
         </>
