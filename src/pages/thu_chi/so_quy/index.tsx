@@ -1,4 +1,4 @@
-import { Box, Grid, Stack, TextField, IconButton, Button, SelectChangeEvent } from '@mui/material';
+import { Box, Grid, Stack, TextField, IconButton, Button, SelectChangeEvent, Typography } from '@mui/material';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import CreateOrEditSoQuyDialog from './components/CreateOrEditSoQuyDialog';
@@ -29,6 +29,7 @@ import NapTienBrandname from '../../sms/brandname/nap_tien_brandname';
 import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
 import ModalPhieuThuHoaDon from './components/modal_phieu_thu_hoa_don';
 import { IList } from '../../../services/dto/IList';
+import { Guid } from 'guid-typescript';
 
 const PageSoQuy = ({ xx }: any) => {
     const today = new Date();
@@ -67,9 +68,20 @@ const PageSoQuy = ({ xx }: any) => {
     ]);
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
     const [isShowThanhToanHD, setIsShowThanhToanHD] = useState(false);
+    const [sumTongThu, setSumTongThu] = useState(0);
+    const [sumTongChi, setSumTongChi] = useState(0);
 
     const GetListSoQuy = async () => {
         const data = await SoQuyServices.getAll(paramSearch);
+        if (data?.items.length > 0) {
+            const itFirst = data?.items[0];
+            setSumTongThu(itFirst?.sumTongTienThu ?? 0);
+            setSumTongChi(itFirst?.sumTongTienChi ?? 0);
+        } else {
+            setSumTongThu(0);
+            setSumTongChi(0);
+        }
+
         setPageDataSoQuy({
             totalCount: data.totalCount,
             totalPage: utils.getTotalPage(data.totalCount, paramSearch.pageSize),
@@ -595,38 +607,69 @@ const PageSoQuy = ({ xx }: any) => {
                     </Grid>
                 </Grid>
 
-                {rowSelectionModel.length > 0 && (
-                    <div style={{ marginTop: '24px' }}>
-                        <ActionRowSelect
-                            lstOption={
-                                [
-                                    {
-                                        id: '1',
-                                        text: 'Xóa sổ quỹ',
-                                        isShow: abpCustom.isGrandPermission('Pages.QuyHoaDon.Delete')
-                                    },
-                                    {
-                                        id: '2',
-                                        text: 'In sổ quỹ',
-                                        isShow: abpCustom.isGrandPermission('Pages.QuyHoaDon.Print')
-                                    }
-                                ] as IList[]
-                            }
-                            countRowSelected={rowSelectionModel.length}
-                            title="sổ quỹ"
-                            choseAction={DataGrid_handleAction}
-                            removeItemChosed={() => {
-                                setRowSelectionModel([]);
-                            }}
-                        />
-                    </div>
-                )}
-                <Box marginTop={rowSelectionModel.length > 0 ? 1 : 5} className="page-box-right">
+                <Grid container style={{ marginTop: '24px', paddingRight: '8px' }}>
+                    <Grid item xs={8}>
+                        {rowSelectionModel.length > 0 && (
+                            <ActionRowSelect
+                                lstOption={
+                                    [
+                                        {
+                                            id: '1',
+                                            text: 'Xóa sổ quỹ',
+                                            isShow: abpCustom.isGrandPermission('Pages.QuyHoaDon.Delete')
+                                        },
+                                        {
+                                            id: '2',
+                                            text: 'In sổ quỹ',
+                                            isShow: abpCustom.isGrandPermission('Pages.QuyHoaDon.Print')
+                                        }
+                                    ] as IList[]
+                                }
+                                countRowSelected={rowSelectionModel.length}
+                                title="sổ quỹ"
+                                choseAction={DataGrid_handleAction}
+                                removeItemChosed={() => {
+                                    setRowSelectionModel([]);
+                                }}
+                            />
+                        )}
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Stack
+                            direction={'row'}
+                            justifyContent={'flex-end'}
+                            sx={{
+                                '& p': {
+                                    fontWeight: '600!important'
+                                }
+                            }}>
+                            <Stack spacing={1} flex={10} justifyContent={'end'} direction={'row'}>
+                                <Typography variant="body2">Tổng thu:</Typography>
+                                <Typography variant="body2">
+                                    {new Intl.NumberFormat('vi-VN').format(sumTongThu)}
+                                </Typography>
+                            </Stack>
+                            <Stack
+                                spacing={1}
+                                flex={10}
+                                justifyContent={'end'}
+                                direction={'row'}
+                                sx={{ color: 'brown' }}>
+                                <Typography variant="body2">Tổng chi:</Typography>
+                                <Typography variant="body2">
+                                    {new Intl.NumberFormat('vi-VN').format(sumTongChi)}
+                                </Typography>
+                            </Stack>
+                        </Stack>
+                    </Grid>
+                </Grid>
+
+                <Box marginTop={rowSelectionModel.length > 0 ? 1 : 2}>
                     <DataGrid
                         disableRowSelectionOnClick
                         className={rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'}
                         autoHeight={pageDataSoQuy?.totalCount == 0}
-                        rowHeight={46}
+                        rowHeight={40}
                         rows={pageDataSoQuy.items}
                         columns={columns}
                         checkboxSelection
