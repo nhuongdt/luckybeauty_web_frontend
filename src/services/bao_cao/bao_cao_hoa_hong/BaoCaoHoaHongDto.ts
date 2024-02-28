@@ -9,6 +9,10 @@ export interface PageBaoCaoHoaHongTongHop {
     hoaHongThucHien_TienChietKhau: number;
     hoaHongTuVan_TienChietKhau: number;
     tongHoaHong: number;
+
+    sumHoaHongTuVan?: number;
+    sumHoaHongThucHien?: number;
+    sumTongHoaHong?: number;
 }
 export interface IHoaHongChiTiet_ListDetail {
     maNhanVien: string;
@@ -26,6 +30,12 @@ export interface PageBaoCaoHoaHongChiTiet extends IHangHoaInfor_UseForBaoCao, IH
     maKhachHang: string;
     tenKhachHang: string;
     rowSpan: number;
+
+    sumSoLuong?: number;
+    sumThanhTienSauCK?: number;
+    sumHoaHongTuVan?: number;
+    sumHoaHongThucHien?: number;
+    sumTongHoaHong?: number;
     lstDetail: IHoaHongChiTiet_ListDetail[];
 }
 

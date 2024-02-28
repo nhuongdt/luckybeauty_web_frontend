@@ -38,6 +38,9 @@ export default class QuyHoaDonDto {
     tenNganHang? = '';
     tenChuThe? = '';
 
+    sumTongTienThu? = 0;
+    sumTongTienChi? = 0;
+
     constructor({
         id = Guid.create().toString(),
         idLoaiChungTu = 11,

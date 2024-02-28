@@ -23,6 +23,12 @@ export default class PageHoaDonDto extends HoaDonDto {
     txtTrangThaiHD = 'Hoàn thành';
     hoaDonChiTiet?: PageHoaDonChiTietDto[];
 
+    // used to at DS hoadon: footer
+    sumTongTienHang?: number;
+    sumTongGiamGiaHD?: number;
+    sumTongThanhToan?: number;
+    sumDaThanhToan?: number;
+
     constructor({
         id = Guid.create().toString(),
         idKhachHang = null,
