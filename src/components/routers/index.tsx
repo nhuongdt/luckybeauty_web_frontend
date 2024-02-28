@@ -220,7 +220,7 @@ export const appRouters: AppRouteProps = {
                         {
                             path: '/giao-dich-thanh-toan',
                             permission: 'Pages.QuyHoaDon',
-                            title: 'Giao dịch thanh toán',
+                            title: 'Danh sách hóa đơn',
                             name: 'giaoDichThanhToan',
                             icon: <BsDot style={{ fontSize: 20 }} />,
                             iconActive: null,
