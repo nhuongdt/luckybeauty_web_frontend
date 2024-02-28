@@ -111,6 +111,21 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                         initialValues={initValues}
                         validationSchema={rules}
                         onSubmit={async (values) => {
+                            // check exists sodienthoai
+                            if (!utils.checkNull(values?.soDienThoai)) {
+                                const existPhone = await khachHangService.checkExistSoDienThoai(
+                                    values.soDienThoai,
+                                    values.id
+                                );
+                                if (existPhone) {
+                                    enqueueSnackbar('Số điện thoại đã tồn tại', {
+                                        variant: 'error',
+                                        autoHideDuration: 3000
+                                    });
+                                    return;
+                                }
+                            }
+
                             let fileId = this.state.googleDrive_fileId;
                             const fileSelect = this.state.fileImage;
                             if (!utils.checkNull(this.state.cusImage)) {
@@ -241,14 +256,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 name="soDienThoai"
                                                 size="small"
                                                 type="tel"
-                                                label={
-                                                    <Typography
-                                                        //color="#4C4B4C"
-                                                        variant="body2">
-                                                        Số điện thoại
-                                                        <span className="text-danger">*</span>
-                                                    </Typography>
-                                                }
+                                                label={<Typography variant="body2">Số điện thoại</Typography>}
                                                 fullWidth
                                                 value={values.soDienThoai}
                                                 helperText={
