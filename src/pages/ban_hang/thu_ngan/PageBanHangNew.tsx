@@ -1518,7 +1518,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                             fill: nhomDV.color ?? '#c2c9d6'
                                                         }
                                                     }}>
-                                                    <IconDv />
+                                                    {/* <IconDv /> */}
                                                 </ListItemIcon>
                                                 <ListItemText className="ten-nhom-hang" title={nhomDV.tenNhomHang}>
                                                     {nhomDV.tenNhomHang}
@@ -1549,7 +1549,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                             fill: nhomHH.color ?? '#c2c9d6'
                                                         }
                                                     }}>
-                                                    <IconDv />
+                                                    {/* <IconDv /> */}
                                                 </ListItemIcon>
                                                 <ListItemText className="ten-nhom-hang" title={nhomHH.tenNhomHang}>
                                                     {nhomHH.tenNhomHang}
