@@ -8,7 +8,7 @@ import utils from '../../utils/utils';
 import React from 'react';
 import { ReactComponent as DateIcon } from '../../images/calendarMenu.svg';
 import { viVN } from '@mui/x-date-pickers/locales';
-export default function DatePickerRequireCustom({ defaultVal, handleChangeDate, props }: any) {
+export default function DatePickerRequireCustom({ defaultVal, handleChangeDate, props, maxDate = null }: any) {
     const today = new Date();
     const [open, setOpen] = useState<boolean>(false);
     const [value, setValue] = useState<Date | null>(new Date(format(today, 'yyyy-MM-01')));
@@ -39,6 +39,7 @@ export default function DatePickerRequireCustom({ defaultVal, handleChangeDate, 
                 localeText={viVN.components.MuiLocalizationProvider.defaultProps.localeText}>
                 <DatePicker
                     label={props?.label}
+                    maxDate={maxDate}
                     slotProps={{
                         textField: {
                             size: props?.size,
