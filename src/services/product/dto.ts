@@ -77,16 +77,25 @@ export class ModelNhomHangHoa {
     idParent: string | null = null;
     color = '';
     laNhomHangHoa = false;
+    thuTuHienThi? = 1;
     children?: ModelNhomHangHoa[] = [];
     sLoaiNhomHang?: string;
 
-    constructor({ id = Utils.GuidEmpty, maNhomHang = '', tenNhomHang = '', laNhomHangHoa = false, color = '#D2691E' }) {
+    constructor({
+        id = Utils.GuidEmpty,
+        maNhomHang = '',
+        tenNhomHang = '',
+        laNhomHangHoa = false,
+        color = '#D2691E',
+        thuTuHienThi = 1
+    }) {
         this.id = id;
         if (maNhomHang == '') this.maNhomHang = Utils.getFirstLetter(this.tenNhomHang) ?? '';
         else this.maNhomHang = maNhomHang;
         this.tenNhomHang = tenNhomHang;
         this.laNhomHangHoa = laNhomHangHoa;
         this.color = color;
+        this.thuTuHienThi = thuTuHienThi;
         this.children = [];
         Object.defineProperties(this, {
             sLoaiNhomHang: {

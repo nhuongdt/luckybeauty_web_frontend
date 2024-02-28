@@ -25,6 +25,7 @@ import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
 import Utils from '../../utils/utils';
 import AppConsts from '../../lib/appconst';
 import abpCustom from '../../components/abp-custom';
+import { NumericFormat } from 'react-number-format';
 
 export const GridColor = ({ handleChoseColor }: any) => {
     const [itemColor, setItemColor] = useState({});
@@ -319,6 +320,22 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             </Stack>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12}>
+                            <NumericFormat
+                                size="small"
+                                fullWidth
+                                label="Thứ tự hiển thị"
+                                value={groupProduct.thuTuHienThi}
+                                thousandSeparator={'.'}
+                                decimalSeparator={','}
+                                customInput={TextField}
+                                onChange={(event) =>
+                                    setGroupProduct((olds: any) => {
+                                        return { ...olds, thuTuHienThi: event.target.value };
+                                    })
+                                }
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={12} lg={12} sx={{ display: 'none' }}>
                             <TextField
                                 variant="outlined"
                                 fullWidth
