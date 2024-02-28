@@ -380,3 +380,21 @@ body .font-normal {
     border-bottom-left-radius: unset!important;
     background-color: var(--color-bg)!important;
 }
+
+.MuiTableFooter-root {
+    background-color: var(--color-header-table)!important;
+}
+
+.MuiTableFooter-root .MuiTableCell-root {
+    padding: 10px!important;
+    font-size: var(--font-size-main);
+    font-weight: 600!important;
+}
+
+.MuiTableBody-root .MuiTableCell-root {
+    padding: 8px!important;
+}
+
+.table-empty {
+    background-color: antiquewhite;
+}
