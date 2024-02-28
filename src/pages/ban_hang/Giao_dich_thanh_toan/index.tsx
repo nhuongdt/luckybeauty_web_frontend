@@ -33,6 +33,8 @@ import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCusto
 import AppConsts from '../../../lib/appconst';
 import abpCustom from '../../../components/abp-custom';
 import { IList } from '../../../services/dto/IList';
+import { Guid } from 'guid-typescript';
+import utils from '../../../utils/utils';
 
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
@@ -67,11 +69,33 @@ const GiaoDichThanhToan: React.FC = () => {
 
     const GetListHoaDon = async () => {
         const data = await HoaDonService.GetListHoaDon(paramSearch);
-        setPageDataHoaDon({
-            totalCount: data.totalCount,
-            totalPage: Utils.getTotalPage(data.totalCount, paramSearch.pageSize),
-            items: data.items
-        });
+        if (data?.items.length > 0) {
+            const itFirst = data?.items[0];
+            const footerRow = new PageHoaDonDto({
+                id: Guid.EMPTY,
+                maHoaDon: 'Tổng',
+                ngayLapHoaDon: '',
+                tenKhachHang: '',
+                tongTienHang: itFirst?.sumTongTienHang ?? 0,
+                daThanhToan: itFirst?.sumDaThanhToan ?? 0,
+                maKhachHang: ''
+            });
+            footerRow.tongThanhToan = itFirst?.sumTongThanhToan ?? 0;
+            footerRow.conNo = (itFirst?.sumTongThanhToan ?? 0) - (itFirst?.sumDaThanhToan ?? 0);
+            footerRow.txtTrangThaiHD = '';
+
+            setPageDataHoaDon({
+                totalCount: data.totalCount,
+                totalPage: Utils.getTotalPage(data.totalCount, paramSearch.pageSize),
+                items: [...data.items, footerRow]
+            });
+        } else {
+            setPageDataHoaDon({
+                totalCount: data.totalCount,
+                totalPage: Utils.getTotalPage(data.totalCount, paramSearch.pageSize),
+                items: data.items
+            });
+        }
     };
 
     const GetlstMauIn_byChiNhanh = async () => {
@@ -302,9 +326,11 @@ const GiaoDichThanhToan: React.FC = () => {
             align: 'center',
             minWidth: 130,
             flex: 1,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
-                <Box title={params.value}>{format(new Date(params.value), 'dd/MM/yyyy HH:mm')}</Box>
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+            renderCell: (params) => (
+                <Box title={params.value}>
+                    {utils?.checkNull(params.value) ? '' : format(new Date(params.value), 'dd/MM/yyyy HH:mm')}
+                </Box>
             )
         },
         {
@@ -569,7 +595,7 @@ const GiaoDichThanhToan: React.FC = () => {
                     <DataGrid
                         disableRowSelectionOnClick
                         className={rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'}
-                        rowHeight={46}
+                        rowHeight={40}
                         autoHeight={pageDataHoaDon.items.length === 0}
                         columns={columns}
                         rows={pageDataHoaDon.items}
@@ -581,6 +607,12 @@ const GiaoDichThanhToan: React.FC = () => {
                             setRowSelectionModel(newRowSelectionModel);
                         }}
                         rowSelectionModel={rowSelectionModel}
+                        sx={{
+                            ' & .MuiDataGrid-row--lastVisible': {
+                                fontWeight: 600,
+                                backgroundColor: 'var(--color-header-table)'
+                            }
+                        }}
                     />
                     <CustomTablePagination
                         currentPage={paramSearch.currentPage ?? 1}
