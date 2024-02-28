@@ -102,56 +102,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const [allNhomHangHoa, setAllNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
     const [listProduct, setListProduct] = useState<IHangHoaGroupTheoNhomDto[]>([]);
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
-
     const [dateDefault, setDateDefault] = useState('');
-
-    // let timmer: any;
-
-    // const timer = () => {
-    //     // yyyy-MM-dd HH:mm
-    //     const toDay = new Date();
-    //     const date = toDay.getDate();
-    //     const month = toDay.getMonth() + 1;
-    //     const year = toDay.getFullYear();
-    //     const hours = toDay.getHours();
-    //     const minutes = toDay.getMinutes();
-    //     const seconds = toDay.getSeconds();
-
-    //     let ngaythangnam = `${year}`;
-    //     let giophut = `${hours}`;
-
-    //     if (month < 10) {
-    //         ngaythangnam += `-0${month}`;
-    //     } else {
-    //         ngaythangnam += `-${month}`;
-    //     }
-    //     if (date < 10) {
-    //         ngaythangnam += `-0${date}`;
-    //     } else {
-    //         ngaythangnam += `-${date}`;
-    //     }
-
-    //     if (hours < 10) {
-    //         giophut = `0${hours}`;
-    //     }
-    //     if (minutes < 10) {
-    //         giophut += `:0${minutes}`;
-    //     } else {
-    //         giophut += `:${minutes}`;
-    //     }
-
-    //     timmer = setTimeout(timer, 1000);
-    //     console.log(`${ngaythangnam} ${giophut}`);
-    //     setDateDefault(`${ngaythangnam} ${giophut}`);
-    // };
-    // const OnOff_Timer = () => {
-    //     if (utils.checkNull(hoadon?.ngayLapHoaDon)) {
-    //         clearTimeout(timmer);
-    //         timer();
-    //     } else {
-    //         clearTimeout(timmer);
-    //     }
-    // };
 
     const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
     const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
@@ -231,9 +182,53 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         setLstSearchInvoiceWaiting([...allHD]);
     };
 
-    // useEffect(() => {
-    //     OnOff_Timer();
-    // }, [hoadon?.ngayLapHoaDon]);
+    let timmer: any;
+
+    const timer = () => {
+        // yyyy-MM-dd HH:mm
+        // nếu ngayLapHoaDon muốn hiển thị HH:mm --> chạy tự động hàm này
+        const toDay = new Date();
+        const date = toDay.getDate();
+        const month = toDay.getMonth() + 1;
+        const year = toDay.getFullYear();
+        const hours = toDay.getHours();
+        const minutes = toDay.getMinutes();
+        const seconds = toDay.getSeconds();
+
+        let ngaythangnam = `${year}`;
+        let giophut = `${hours}`;
+
+        if (month < 10) {
+            ngaythangnam += `-0${month}`;
+        } else {
+            ngaythangnam += `-${month}`;
+        }
+        if (date < 10) {
+            ngaythangnam += `-0${date}`;
+        } else {
+            ngaythangnam += `-${date}`;
+        }
+
+        if (hours < 10) {
+            giophut = `0${hours}`;
+        }
+        if (minutes < 10) {
+            giophut += `:0${minutes}`;
+        } else {
+            giophut += `:${minutes}`;
+        }
+
+        timmer = setTimeout(timer, 1000);
+        setDateDefault(`${ngaythangnam} ${giophut}`);
+    };
+    const OnOff_Timer = () => {
+        if (utils.checkNull(hoadon?.ngayLapHoaDon)) {
+            clearTimeout(timmer);
+            timer();
+        } else {
+            clearTimeout(timmer);
+        }
+    };
 
     const PageLoad = async () => {
         await GetTreeNhomHangHoa();
@@ -1000,6 +995,17 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     };
     // end form payment
 
+    const changeNgayLapHoaDon = async (dt: string) => {
+        setHoaDon({
+            ...hoadon,
+            ngayLapHoaDon: dt
+        });
+        await dbDexie.hoaDon.update(hoadon?.id, {
+            ngayLapHoaDon: dt
+        });
+        // update ngaycheckin??
+    };
+
     // click thanh toan---> chon hinh thucthanhtoan--->   luu hoadon + phieuthu
     const saveHoaDon = async () => {
         setShowDetail(false);
@@ -1018,8 +1024,16 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         });
         const hodaDonDB = await HoaDonService.CreateHoaDon(dataSave);
 
-        //checkout + update idHoadon (to checkin_hoadon)
-        await CheckinService.UpdateTrangThaiCheckin(triggerAddCheckIn.id as string, TrangThaiCheckin.COMPLETED);
+        // update again KH_Checkin: vì có thể ngayLapHoaDon bị thay đổi --> cập nhật lại ngày checkin
+        const inputCheckIn: KHCheckInDto = {
+            id: triggerAddCheckIn?.id as string,
+            idKhachHang: hoadon?.idKhachHang as unknown as string,
+            dateTimeCheckIn: hoadon?.ngayLapHoaDon,
+            idChiNhanh: hoadon?.idChiNhanh as unknown as string,
+            trangThai: TrangThaiCheckin.COMPLETED,
+            ghiChu: ''
+        };
+        await CheckinService.UpdateCustomerCheckIn(inputCheckIn);
         await CheckinService.Update_IdHoaDon_toCheckInHoaDon(triggerAddCheckIn.id as string, hodaDonDB.id);
 
         // again again if tra thua tien
@@ -1057,7 +1071,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         });
 
         // print
-        await GetDataPrint(hodaDonDB.maHoaDon, quyHD);
+        await GetDataPrint(hodaDonDB.maHoaDon, hodaDonDB?.ngayLapHoaDon, quyHD);
 
         // reset after save
         ResetState_AfterSave();
@@ -1088,7 +1102,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         } as CreateOrEditKhachHangDto);
     };
 
-    const GetDataPrint = async (mahoadon = '', quyHD: QuyHoaDonDto) => {
+    const GetDataPrint = async (mahoadon = '', ngayLapHD = '', quyHD: QuyHoaDonDto) => {
         const chinhanhPrint = await getInforChiNhanh_byID();
         const tempMauIn = await MauInServices.GetContentMauInMacDinh(1, 1);
         const allCongTy = await cuaHangService.GetAllCongTy({} as PagedRequestDto);
@@ -1100,6 +1114,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         DataMauIn.congty = congty;
         DataMauIn.hoadon = hoadon;
         DataMauIn.hoadon.maHoaDon = mahoadon;
+        DataMauIn.hoadon.ngayLapHoaDon = ngayLapHD; // get ngaylapHD from DB (after add hours/minutes/seconds)
         DataMauIn.hoadon.daThanhToan = quyHD?.tongTienThu;
         DataMauIn.hoadon.conNo = hoadon.tongThanhToan - quyHD?.tongTienThu;
         DataMauIn.hoadonChiTiet = hoaDonChiTiet;
@@ -1781,28 +1796,26 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
 
                                 <Box sx={{ marginLeft: 'auto' }}>
                                     <Stack direction="row" spacing={'10px'}>
-                                        {/* <Stack
-                                            sx={
-                                                {
-                                                    '& .MuiSvgIcon-root': {
-                                                        display: 'none'
-                                                    }
+                                        <Stack
+                                            alignItems={'end'}
+                                            sx={{
+                                                '& fieldset': {
+                                                    border: 'none'
+                                                },
+                                                ' & .MuiInputBase-root': {
+                                                    marginTop: '-5px'
                                                 }
-                                            }>
-                                            <DateTimePickerCustom
+                                            }}>
+                                            <DatePickerRequireCustom
                                                 props={{
-                                                    width: '100%',
+                                                    width: '60%',
                                                     size: 'small'
                                                 }}
-                                                defaultVal={dateDefault}
-                                                handleChangeDate={(dt: string) => {
-                                                    setHoaDon({
-                                                        ...hoadon,
-                                                        ngayLapHoaDon: dt
-                                                    });
-                                                }}
+                                                maxDate={new Date()}
+                                                defaultVal={hoadon?.ngayLapHoaDon}
+                                                handleChangeDate={changeNgayLapHoaDon}
                                             />
-                                        </Stack> */}
+                                        </Stack>
                                         <Add
                                             onClick={() => showModalCheckIn(true)}
                                             sx={{
