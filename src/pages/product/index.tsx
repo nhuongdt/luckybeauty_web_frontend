@@ -792,7 +792,7 @@ export default function PageProduct() {
                                 className={rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'}
                                 autoHeight={pageDataProduct.items.length === 0}
                                 disableRowSelectionOnClick
-                                rowHeight={46}
+                                rowHeight={42}
                                 rows={pageDataProduct.items}
                                 columns={columns}
                                 hideFooter

@@ -905,7 +905,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     }}>
                                     <DataGrid
                                         disableRowSelectionOnClick
-                                        rowHeight={46}
+                                        rowHeight={42}
                                         autoHeight={this.state.totalItems === 0}
                                         className={
                                             this.state.listItemSelectedModel.length > 0
