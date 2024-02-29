@@ -41,7 +41,7 @@ export default function MainPageBaoCaoHoaHong() {
 
     const onApplyFilterDate = async (from: string, to: string, txtShow: string) => {
         setAnchorDateEl(null);
-        setParamSearch({ ...paramSearch, fromDate: from, toDate: to });
+        setParamSearch({ ...paramSearch, currentPage: 1, fromDate: from, toDate: to });
     };
 
     const handleChangeTab = (event: React.SyntheticEvent, newValue: string) => {
@@ -71,7 +71,14 @@ export default function MainPageBaoCaoHoaHong() {
     };
 
     const hanClickIconSearch = () => {
-        setCountClickSearch(() => countClickSearch + 1);
+        if (paramSearch?.currentPage !== 1) {
+            setParamSearch({
+                ...paramSearch,
+                currentPage: 1
+            });
+        } else {
+            setCountClickSearch(() => countClickSearch + 1);
+        }
     };
 
     const exportExcel = async () => {
