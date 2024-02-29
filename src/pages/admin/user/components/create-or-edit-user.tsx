@@ -142,7 +142,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
             phoneNumber: Yup.string().matches(AppConsts.phoneRegex, 'Số điện thoại không hợp lệ').notRequired(),
             password: Yup.string().matches(
                 AppConsts.passwordRegex,
-                'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
+                'Mật khẩu phải chứa ít nhất một chữ cái, một số và ít nhất 6 ký tự'
             ),
             confirmPassword: Yup.string().oneOf([Yup.ref('password'), ''], 'Mật khẩu xác nhận phải trùng khớp')
         });

@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import AppConsts from '../../../../lib/appconst';
 
 const rules = Yup.object().shape({
     name: Yup.string().required('Vui lòng nhập tên'),
@@ -11,10 +12,7 @@ const rules = Yup.object().shape({
         is: false,
         then: (schema) =>
             schema
-                .matches(
-                    /^(?=.*[A-Za-z])(?=.*\d).{8,}$/,
-                    'Mật khẩu phải chứa ít nhất một chữ cái, một số và ít nhất 8 ký tự'
-                )
+                .matches(AppConsts.passwordRegex, 'Mật khẩu phải chứa ít nhất một chữ cái, một số và ít nhất 6 ký tự')
                 .required('Mật khẩu là bắt buộc'),
         otherwise: (schema) => schema.notRequired()
     }),

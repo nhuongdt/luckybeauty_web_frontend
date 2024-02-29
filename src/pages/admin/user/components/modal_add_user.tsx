@@ -134,7 +134,7 @@ export default function ModalAddUser({
                     .required('Vui lòng nhập khẩu hiện mới')
                     .matches(
                         AppConsts.passwordRegex,
-                        'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
+                        'Mật khẩu phải chứa ít nhất một chữ cái, một số và ít nhất 6 ký tự'
                     );
             }
         }),
