@@ -18,17 +18,6 @@ export class PropModal {
     }
 }
 
-export class PropModal2 {
-    isShow = false;
-    isNew = false;
-    id?: string | null = '';
-    constructor({ isShow = false, isNew = false, id = '' }) {
-        this.isNew = isNew;
-        this.isShow = isShow;
-        this.id = id;
-    }
-}
-
 export class PropConfirmOKCancel {
     show = false;
     title = '';
