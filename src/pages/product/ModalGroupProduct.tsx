@@ -1,21 +1,11 @@
-import * as React from 'react';
+import { observer } from 'mobx-react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useEffect, useState } from 'react';
-import {
-    Grid,
-    Box,
-    Autocomplete,
-    InputAdornment,
-    TextField,
-    Typography,
-    Checkbox,
-    FormGroup,
-    Stack
-} from '@mui/material';
+import { Grid, Box, Autocomplete, InputAdornment, TextField, Stack } from '@mui/material';
 import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 
@@ -23,9 +13,11 @@ import GroupProductService from '../../services/product/GroupProductService';
 import { ModelNhomHangHoa } from '../../services/product/dto';
 import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
 import Utils from '../../utils/utils';
-import AppConsts from '../../lib/appconst';
+import AppConsts, { TypeAction } from '../../lib/appconst';
 import abpCustom from '../../components/abp-custom';
 import { NumericFormat } from 'react-number-format';
+import nhomHangHoaStore from '../../stores/nhomHangHoaStore';
+import utils from '../../utils/utils';
 
 export const GridColor = ({ handleChoseColor }: any) => {
     const [itemColor, setItemColor] = useState({});
@@ -79,10 +71,8 @@ export const GridColor = ({ handleChoseColor }: any) => {
     );
 };
 
-export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
+const ModalNhomHangHoa = ({ handleSave, trigger }: any) => {
     const [colorToggle, setColorToggle] = useState(false);
-    const [dataNhomHangFilter, setDataNhomHangFilter] = useState<ModelNhomHangHoa[]>([]);
-
     const [isShow, setIsShow] = useState(false);
     const [isNew, setIsNew] = useState(false);
     const [wasClickSave, setWasClickSave] = useState(false);
@@ -112,7 +102,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             });
 
             // find nhomhang
-            const nhom = dataNhomHang.filter((x: any) => x.id == trigger.item.idParent);
+            const nhom = nhomHangHoaStore?.listAllNhomHang?.filter((x) => x.id == trigger.item.idParent);
             if (nhom.length > 0) {
                 setNhomGoc(nhom[0]);
             } else {
@@ -142,9 +132,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         }
         setIsNew(trigger.isNew);
         setWasClickSave(false);
-        const arr = [...dataNhomHang];
-        setDataNhomHangFilter(arr.filter((x: any) => x.id !== null && x.id !== ''));
-    }, [trigger, dataNhomHang]); // assign again dataNhomHang after save
+    }, [trigger]); // assign again dataNhomHang after save
 
     function changeColor(colorNew: string) {
         setColorToggle(false);
@@ -154,10 +142,11 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     }
 
     const xoaNhomHang = async () => {
-        const str = await GroupProductService.XoaNhomHangHoa(groupProduct?.id ?? '');
+        await GroupProductService.XoaNhomHangHoa(groupProduct?.id ?? '');
         setIsShow(false);
         setInforDeleteProduct({ ...inforDeleteProduct, show: false });
         handleSave(groupProduct, true);
+        nhomHangHoaStore?.changeListNhomHang(groupProduct, TypeAction.DELETE);
     };
 
     const CheckSave = () => {
@@ -179,16 +168,21 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         if (wasClickSave) {
             return;
         }
-        const objNew = { ...groupProduct };
+        const objNew: ModelNhomHangHoa = {
+            ...groupProduct,
+            tenNhomHang_KhongDau: utils.strToEnglish(groupProduct.tenNhomHang ?? '')
+        };
         if (trigger.isNew) {
             GroupProductService.InsertNhomHangHoa(groupProduct).then((data) => {
                 objNew.id = data.id;
                 handleSave(objNew);
             });
+            nhomHangHoaStore.changeListNhomHang(objNew, TypeAction.INSEART);
         } else {
-            GroupProductService.UpdateNhomHangHoa(groupProduct).then((data) => {
+            GroupProductService.UpdateNhomHangHoa(groupProduct).then(() => {
                 handleSave(objNew);
             });
+            nhomHangHoaStore.changeListNhomHang(objNew, TypeAction.UPDATE);
         }
         setIsShow(false);
     };
@@ -290,7 +284,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 onChange={(event: any, newValue: any) => {
                                     handleChangeNhomGoc(newValue);
                                 }}
-                                options={dataNhomHangFilter}
+                                options={nhomHangHoaStore?.listAllNhomHang?.filter((x) => x.id !== null && x.id !== '')}
                                 getOptionLabel={(option: any) => (option.tenNhomHang ? option.tenNhomHang : '')}
                                 renderInput={(params) => <TextField {...params} label="Chọn nhóm" />}
                                 renderOption={(props, item) => (
@@ -392,4 +386,6 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             </Dialog>
         </div>
     );
-}
+};
+
+export default observer(ModalNhomHangHoa);

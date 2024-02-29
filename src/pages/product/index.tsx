@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
+
 import { useState, useEffect } from 'react';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { Grid, Box, Typography, TextField, Stack, Button, Pagination, IconButton } from '@mui/material';
@@ -14,8 +16,8 @@ import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import { OptionPage } from '../../components/Pagination/OptionPage';
 import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
 import ActionViewEditDelete from '../../components/Menu/ActionViewEditDelete';
-import { ModalNhomHangHoa } from './ModalGroupProduct';
-import { ModalHangHoa } from './ModalProduct';
+import ModalNhomHangHoa from './ModalGroupProduct';
+import ModalHangHoa from './ModalProduct';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import ProductService from '../../services/product/ProductService';
 import GroupProductService from '../../services/product/GroupProductService';
@@ -37,8 +39,9 @@ import { IList } from '../../services/dto/IList';
 import { ModalChuyenNhom } from '../../components/Dialog/modal_chuyen_nhom';
 import abpCustom from '../../components/abp-custom';
 import ActionRow2Button from '../../components/DataGrid/ActionRow2Button';
+import nhomHangHoaStore from '../../stores/nhomHangHoaStore';
 
-export default function PageProduct() {
+const PageProduct = () => {
     const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
     const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
         new PropConfirmOKCancel({ show: false })
@@ -48,7 +51,6 @@ export default function PageProduct() {
     const [triggerModalProduct, setTriggerModalProduct] = useState<PropModal>(new PropModal({ isShow: false }));
     const [triggerModalNhomHang, setTriggerModalNhomHang] = useState<PropModal>(new PropModal({ isShow: false }));
     const [isShowImport, setShowImport] = useState<boolean>(false);
-    const [lstProductGroup, setLstProductGroup] = useState<ModelNhomHangHoa[]>([]);
     const [treeNhomHangHoa, setTreeNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
     const [treeSearchNhomHangHoa, setTreeSearchNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
     const [lstErrImport, setLstErrImport] = useState<BangBaoLoiFileimportDto[]>([]);
@@ -80,9 +82,7 @@ export default function PageProduct() {
     };
 
     const GetListNhomHangHoa = async () => {
-        // used to modal hanghoa
-        const list = await GroupProductService.GetDM_NhomHangHoa();
-        setLstProductGroup(list.items);
+        await nhomHangHoaStore.getAllNhomHang();
     };
 
     const GetTreeNhomHangHoa = async () => {
@@ -176,9 +176,6 @@ export default function PageProduct() {
                 type: 1,
                 mes: 'Xóa ' + objNew.sLoaiNhomHang + ' thành công'
             });
-            setLstProductGroup((old: ModelNhomHangHoa[]) => {
-                return old.filter((x: ModelNhomHangHoa) => x.id !== objNew.id);
-            });
         } else {
             if (triggerModalNhomHang.isNew) {
                 setObjAlert({
@@ -186,30 +183,12 @@ export default function PageProduct() {
                     type: 1,
                     mes: 'Thêm ' + objNew.sLoaiNhomHang + ' thành công'
                 });
-                setLstProductGroup([objNew, ...lstProductGroup]);
             } else {
                 setObjAlert({
                     show: true,
                     type: 1,
                     mes: 'Cập nhật ' + objNew.sLoaiNhomHang + ' thành công'
                 });
-                setLstProductGroup(
-                    lstProductGroup.map((item: ModelNhomHangHoa) => {
-                        if (item.id === objNew.id) {
-                            return {
-                                ...item,
-                                color: objNew.color,
-                                tenNhomHang: objNew.tenNhomHang,
-                                tenNhomHang_KhongDau: objNew.tenNhomHang_KhongDau,
-                                laNhomHangHoa: objNew.laNhomHangHoa,
-                                sLoaiNhomHang: objNew.sLoaiNhomHang,
-                                idParent: objNew.idParent
-                            };
-                        } else {
-                            return item;
-                        }
-                    })
-                );
             }
         }
         setTriggerModalNhomHang({ ...triggerModalNhomHang, isShow: false });
@@ -577,14 +556,8 @@ export default function PageProduct() {
 
     return (
         <>
-            <ModalNhomHangHoa
-                dataNhomHang={lstProductGroup}
-                trigger={triggerModalNhomHang}
-                handleSave={saveNhomHang}></ModalNhomHangHoa>
-            <ModalHangHoa
-                dataNhomHang={lstProductGroup}
-                trigger={triggerModalProduct}
-                handleSave={saveProduct}></ModalHangHoa>
+            <ModalNhomHangHoa trigger={triggerModalNhomHang} handleSave={saveNhomHang}></ModalNhomHangHoa>
+            <ModalHangHoa trigger={triggerModalProduct} handleSave={saveProduct}></ModalHangHoa>
             <ConfirmDelete
                 isShow={inforDeleteProduct.show}
                 title={inforDeleteProduct.title}
@@ -841,4 +814,6 @@ export default function PageProduct() {
             </Grid>
         </>
     );
-}
+};
+
+export default observer(PageProduct);

@@ -25,7 +25,7 @@ import { Add } from '@mui/icons-material';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import { ModelNhomHangHoa, ModelHangHoaDto } from '../../services/product/dto';
-import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
+import { PropConfirmOKCancel, PropModal } from '../../utils/PropParentToChild';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 
 import ProductService from '../../services/product/ProductService';
@@ -37,8 +37,13 @@ import { Close } from '@mui/icons-material';
 import Cookies from 'js-cookie';
 import uploadFileService from '../../services/uploadFileService';
 import abpCustom from '../../components/abp-custom';
+import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
+import ModalNhomHangHoa from './ModalGroupProduct';
+import { observer } from 'mobx-react';
+import nhomHangHoaStore from '../../stores/nhomHangHoaStore';
+import { TypeAction } from '../../lib/appconst';
 
-export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
+const ModalHangHoa = ({ handleSave, trigger }: any) => {
     const [open, setOpen] = useState(false);
     const [isNew, setIsNew] = useState(false);
     const [product, setProduct] = useState(new ModelHangHoaDto());
@@ -56,6 +61,8 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
         new PropConfirmOKCancel({ show: false })
     );
+    const [triggerModalNhomHang, setTriggerModalNhomHang] = useState<PropModal>(new PropModal({ isShow: false }));
+    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
     const showModal = async (id: string) => {
         if (id) {
@@ -68,12 +75,11 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     laHangHoa: old.idLoaiHangHoa === 1
                 };
             });
-            // setProductImage(obj.image);
             setProductImage(uploadFileService.GoogleApi_NewLink(obj.image));
             setgoogleDrive_fileId(uploadFileService.GoogleApi_GetFileIdfromLink(obj.image));
 
             // find nhomhang
-            const nhom = dataNhomHang.filter((x: any) => x.id == obj.idNhomHangHoa);
+            const nhom = nhomHangHoaStore.listAllNhomHang?.filter((x: any) => x.id == obj.idNhomHangHoa);
             if (nhom.length > 0) {
                 setNhomChosed(nhom[0]);
             } else {
@@ -85,7 +91,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             setgoogleDrive_fileId('');
 
             if (trigger.item.idNhomHangHoa !== undefined) {
-                const nhom = dataNhomHang.filter((x: any) => x.id == trigger.item.idNhomHangHoa);
+                const nhom = nhomHangHoaStore.listAllNhomHang?.filter((x: any) => x.id == trigger.item.idNhomHangHoa);
                 if (nhom.length > 0) {
                     setNhomChosed(nhom[0]);
                     setProduct((old: any) => {
@@ -267,6 +273,27 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         handleSave(objNew, isNew ? 1 : 2);
         setOpen(false);
     }
+
+    function showModalAddNhomHang(id = '') {
+        setTriggerModalNhomHang({
+            isShow: true,
+            isNew: utils.checkNull(id),
+            id: id
+        });
+    }
+
+    const saveNhomHang = (objNhomHang: ModelNhomHangHoa) => {
+        setTriggerModalNhomHang({ ...triggerModalNhomHang, isShow: false });
+        setNhomChosed(objNhomHang);
+        setProduct({ ...product, idNhomHangHoa: objNhomHang.id, tenNhomHang: objNhomHang.tenNhomHang });
+
+        setObjAlert({
+            show: true,
+            type: 1,
+            mes: 'Thêm nhóm ' + (product?.tenLoaiHangHoa ?? '').toLocaleLowerCase() + ' thành công'
+        });
+        // todgo get again treeNhomHang
+    };
     return (
         <>
             <ConfirmDelete
@@ -275,6 +302,12 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 mes={inforDeleteProduct.mes}
                 onOk={handleClickOKComfirm}
                 onCancel={() => setInforDeleteProduct({ ...inforDeleteProduct, show: false })}></ConfirmDelete>
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
+            <ModalNhomHangHoa trigger={triggerModalNhomHang} handleSave={saveNhomHang} />
             <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
                 <Button
                     onClick={() => setOpen(false)}
@@ -290,7 +323,6 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     <CloseIcon />
                 </Button>
                 <DialogTitle className="modal-title">
-                    {' '}
                     {isNew ? 'Thêm ' : 'Cập nhật '}
                     {product.tenLoaiHangHoa?.toLocaleLowerCase()}
                 </DialogTitle>
@@ -416,7 +448,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                         disablePortal
                                         value={nhomChosed}
                                         isOptionEqualToValue={(option, value) => option.id === value.id}
-                                        options={dataNhomHang.filter((x: any) => x.id !== null && x.id !== '')}
+                                        options={nhomHangHoaStore?.listAllNhomHang?.filter(
+                                            (x) => x.id !== null && x.id !== ''
+                                        )}
                                         onChange={(event, newValue) => handleChangeNhom(newValue)}
                                         getOptionLabel={(option: any) => (option.tenNhomHang ? option.tenNhomHang : '')}
                                         renderInput={(params) => (
@@ -432,14 +466,18 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                         )}
                                     />
                                     <Add
+                                        titleAccess="Thêm nhóm"
                                         sx={{
                                             width: 36,
-                                            display: 'none',
+                                            display: abpCustom.isGrandPermission('Pages.DM_NhomHangHoa.Create')
+                                                ? ''
+                                                : 'none',
                                             height: 36,
                                             padding: 0.5,
                                             border: '1px solid #ccc',
                                             borderRadius: '4px'
                                         }}
+                                        onClick={() => showModalAddNhomHang()}
                                     />
                                 </Stack>
                                 <NumericFormat
@@ -604,4 +642,5 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             </Dialog>
         </>
     );
-}
+};
+export default observer(ModalHangHoa);
