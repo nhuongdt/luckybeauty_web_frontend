@@ -636,7 +636,7 @@ class EmployeeScreen extends React.Component {
                                             // }
                                         }}
                                         onChange={(e: any) => {
-                                            this.setState({ filter: e.target.value });
+                                            this.setState({ filter: e.target.value, currentPage: 1 });
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key == 'Enter') {
