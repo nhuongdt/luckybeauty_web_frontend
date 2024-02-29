@@ -50,8 +50,6 @@ export default function PageBaoCaoHoaHongNhanVienChiTiet({ onChangePage, onChang
             totalCount: data?.totalCount,
             totalPage: Math.ceil(data?.totalCount / (dataFilterContext?.filter?.pageSize ?? 10))
         });
-        const xx = Math.ceil(data?.totalCount) / (dataFilterContext?.filter?.pageSize ?? 10);
-        console.log(44, xx);
     };
 
     const handlePageChange = async (event: any, value: number) => {
