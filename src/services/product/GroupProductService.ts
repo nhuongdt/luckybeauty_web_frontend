@@ -11,7 +11,7 @@ class GroupProductService {
             });
         return xx;
     };
-    GetDM_NhomHangHoa = async () => {
+    GetDM_NhomHangHoa = async (): Promise<PagedResultDto<ModelNhomHangHoa>> => {
         const xx = await http
             .get(`api/services/app/NhomHangHoa/GetNhomDichVu`)
             .then((res: { data: { result: any } }) => {
