@@ -558,7 +558,8 @@ const PageSoQuy = ({ xx }: any) => {
                                     sx={{
                                         '& .MuiInputBase-root': {
                                             height: '40px!important'
-                                        }
+                                        },
+                                        backgroundColor: 'white'
                                     }}
                                     onClick={(event) => setAnchorDateEl(event.currentTarget)}
                                     value={`${format(
@@ -664,7 +665,7 @@ const PageSoQuy = ({ xx }: any) => {
                     </Grid>
                 </Grid>
 
-                <Box marginTop={rowSelectionModel.length > 0 ? 1 : 2}>
+                <Box marginTop={rowSelectionModel.length > 0 ? 1 : 2} className="page-box-right">
                     <DataGrid
                         disableRowSelectionOnClick
                         className={rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'}
