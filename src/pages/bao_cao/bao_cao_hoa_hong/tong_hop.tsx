@@ -2,12 +2,8 @@ import { Grid, Box, Stack, Typography, SelectChangeEvent } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { TextTranslate } from '../../../components/TableLanguage';
-import { useContext, useEffect, useRef, useState } from 'react';
-import utils from '../../../utils/utils';
-import {
-    PageBaoCaoHoaHongTongHop,
-    ParamSearchBaoCaoHoaHong
-} from '../../../services/bao_cao/bao_cao_hoa_hong/BaoCaoHoaHongDto';
+import { useContext, useEffect, useState } from 'react';
+import { PageBaoCaoHoaHongTongHop } from '../../../services/bao_cao/bao_cao_hoa_hong/BaoCaoHoaHongDto';
 import { PagedResultDto } from '../../../services/dto/pagedResultDto';
 import { BaoCaoHoaHongDataContextFilter } from '../../../services/bao_cao/bao_cao_hoa_hong/BaoCaoHoaHongContext';
 import { LoaiBaoCao } from '../../../lib/appconst';
