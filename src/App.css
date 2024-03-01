@@ -398,3 +398,11 @@ body .font-normal {
 .table-empty {
     background-color: antiquewhite;
 }
+
+.table-cell-border {
+    border: 1px solid #ccc;
+}
+
+.table-head-has-colspan tr th {
+    padding: 6px 16px!important;
+}
