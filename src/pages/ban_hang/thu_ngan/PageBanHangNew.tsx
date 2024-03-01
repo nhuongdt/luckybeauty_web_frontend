@@ -1033,8 +1033,14 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             trangThai: TrangThaiCheckin.COMPLETED,
             ghiChu: ''
         };
-        await CheckinService.UpdateCustomerCheckIn(inputCheckIn);
-        await CheckinService.Update_IdHoaDon_toCheckInHoaDon(triggerAddCheckIn.id as string, hodaDonDB.id);
+        if (
+            !utils.checkNull(inputCheckIn?.id) &&
+            !utils.checkNull(inputCheckIn?.idKhachHang) &&
+            inputCheckIn.idKhachHang !== Guid.EMPTY
+        ) {
+            await CheckinService.UpdateCustomerCheckIn(inputCheckIn);
+            await CheckinService.Update_IdHoaDon_toCheckInHoaDon(triggerAddCheckIn.id as string, hodaDonDB.id);
+        }
 
         // again again if tra thua tien
         let lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(lstQuyCT, sumTienKhachTra, hoadon?.tongThanhToan ?? 0);
@@ -1341,7 +1347,6 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                 title="Thêm mới khách hàng"
                 formRef={newCus}
             />
-            {/* <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} idChiNhanh={idChiNhanh} /> */}
             <HoaHongNhanVienDichVu
                 isNew={true}
                 iShow={propNVThucHien.isShow}
@@ -1521,8 +1526,8 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                     bgcolor:
                                                         idNhomHang == (nhomDV?.id as unknown as string)
                                                             ? 'rgba(0,0,0,0.3)'
-                                                            : '#ebe9e9cc'
-                                                    // minWidth: horizontalLayout ? '200px' : 'unset',
+                                                            : '#ebe9e9cc',
+                                                    minWidth: horizontalLayout ? '100px' : 'unset'
                                                     // maxWidth: horizontalLayout ? '200px' : 'unset',
                                                 }}>
                                                 <ListItemIcon
@@ -1551,8 +1556,8 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                     bgcolor:
                                                         idNhomHang == (nhomHH?.id as unknown as string)
                                                             ? 'rgba(0,0,0,0.3)'
-                                                            : '#ebe9e9cc'
-                                                    // minWidth: horizontalLayout ? '200px' : 'unset',
+                                                            : '#ebe9e9cc',
+                                                    minWidth: horizontalLayout ? '100px' : 'unset'
                                                     // maxWidth: horizontalLayout ? '200px' : 'unset',
                                                 }}
                                                 onClick={() => choseNhomDichVu(nhomHH)}>
