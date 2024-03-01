@@ -26,10 +26,7 @@ const ResetPassword = () => {
     }, []);
     const rules = Yup.object().shape({
         password: Yup.string()
-            .matches(
-                AppConsts.passwordRegex,
-                'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
-            )
+            .matches(AppConsts.passwordRegex, 'Mật khẩu phải chứa ít nhất một chữ cái, một số và ít nhất 6 ký tự')
             .required('Mật khẩu không được để trống'),
         confirmPassword: Yup.string()
             .oneOf([Yup.ref('password'), ''], 'Mật khẩu xác nhận phải trùng khớp')

@@ -165,7 +165,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
 
     const changeTrangThai = async (userId: number, nhanSuId: string | null, e: React.ChangeEvent<HTMLInputElement>) => {
         const check = e.target.checked;
-        const roleActive = abpCustom.isGrandPermission(' Pages.Administration.Users.Unlock');
+        const roleActive = abpCustom.isGrandPermission('Pages.Administration.Users.Unlock');
         if (!roleActive) {
             setObjAlert({
                 ...objAlert,
@@ -337,6 +337,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
                 //     {params.value === true ? 'Hoạt động' : 'Ngừng hoạt động'}
                 // </Typography>
                 <IOSSwitch
+                    disabled={params.row.userName === 'admin' || params.row.isAdmin === true ? true : false}
                     value={params.row?.isActive}
                     checked={params.row?.isActive}
                     onChange={(e) => changeTrangThai(params.row.id, params.row.nhanSuId, e)}
@@ -385,7 +386,12 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
                                 id: '2',
                                 text: 'Xóa',
                                 color: '#F1416C',
-                                isShow: abpCustom.isGrandPermission('Pages.Administration.Users.Delete'),
+                                isShow:
+                                    params.row.isAdmin === true ||
+                                    params.row.userName === 'admin' ||
+                                    !abpCustom.isGrandPermission('Pages.Administration.Users.Delete')
+                                        ? false
+                                        : true,
                                 icon: <DeleteForever sx={{ color: '#F1416C' }} />
                             }
                         ] as IList[]

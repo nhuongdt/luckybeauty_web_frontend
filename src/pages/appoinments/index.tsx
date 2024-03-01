@@ -339,6 +339,7 @@ const LichHen: React.FC = () => {
                         minute: '2-digit',
                         omitZeroMinute: false // Set this to true if you want to omit ":00" for minutes
                     }}
+                    nowIndicator={true}
                     events={bookingStore.fullCalendarEvents !== undefined ? bookingStore.fullCalendarEvents : []}
                     weekends={true}
                     select={handleDateSelect}

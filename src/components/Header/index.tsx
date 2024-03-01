@@ -29,6 +29,7 @@ import {
 } from '@mui/material';
 import './header.css';
 import { ReactComponent as LogoNew } from '../../images/Logo_Lucky_Beauty.svg';
+import LuckybeautyLogo from '../../images/luckybeautylogo.png';
 // import { ReactComponent as ToggleIcon } from '../../images/btntoggle.svg';
 //import { ReactComponent as SuportIcon } from '../../images/messageChat.svg';
 import * as React from 'react';
@@ -51,7 +52,6 @@ import NotificationSeverity from '../../enum/NotificationSeverity';
 import UserNotificationState from '../../enum/UserNotificationState';
 import NotificationService from '../../services/notification/NotificationService';
 import utils from '../../utils/utils';
-import { ElectricalServicesSharp } from '@mui/icons-material';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -225,17 +225,17 @@ const Header: React.FC<HeaderProps> = (
                         onClick={() => {
                             navigate('/home');
                         }}>
-                        <LogoNew />
+                        <img style={{ width: '2rem', height: '2rem' }} src={LuckybeautyLogo} />
                         {window.screen.width <= 650 ? null : (
                             <Typography
-                                fontFamily="vinhan"
-                                color="var(--color-main)"
-                                fontSize="18px"
+                                fontFamily="VLAMPLE !important"
+                                color="#319DFF"
+                                fontSize="1.5rem"
+                                fontWeight={400}
                                 sx={{
                                     opacity: collapsed && !isChildHovered ? '0' : '1',
                                     transform: collapsed && !isChildHovered ? 'translateX(-40px)' : 'translateX(0)',
-                                    transition: '.4s',
-                                    marginTop: '6px'
+                                    transition: '.4s'
                                 }}>
                                 Lucky Beauty
                             </Typography>
