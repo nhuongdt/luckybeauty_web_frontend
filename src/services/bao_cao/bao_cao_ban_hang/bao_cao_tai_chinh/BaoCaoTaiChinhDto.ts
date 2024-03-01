@@ -30,28 +30,38 @@ export interface IBaoCaoTaiChinh_ChiTietSoQuy {
     noiDungThu: string;
 }
 
-export interface IBaoCaoCongNoKhachHang {
+export interface IBaoCaoChiTietCongNo {
     maKhachHang: string;
     tenKhachHang: string;
     maHoaDon: string;
     ngayLapHoaDon: string;
-    tongPhaiTra: number;
+    tongThanhToan: number;
     khachDaTra: number;
-    conNo: string;
+    conNo: number;
     ghiChuHD: string;
 
-    sumTongPhaiTra: number;
+    tenHangHoa: string;
+    soLuong: number;
+    donGiaSauVAT: number;
+    thanhTienSauVAT: number;
+
+    sumTongThanhToan: number;
+    sumKhachDaTra: number;
     sumConNo: number;
+    sumSoLuong: number;
+    sumThanhTienSauVAT: number;
 }
 
 export class ParamSearchBaoCaoTaiChinh extends RequestFromToDto {
     idLoaiChungTus?: string[];
+    textSearchDichVu?: string | undefined;
     ngayLapHoaDon_FromDate?: string | null;
     ngayLapHoaDon_ToDate?: string | null;
 
     constructor({
         idChiNhanhs = [''],
         textSearch = '',
+        textSearchDichVu = '',
         currentPage = 0,
         pageSize = 10,
         columnSort = '',
@@ -72,6 +82,7 @@ export class ParamSearchBaoCaoTaiChinh extends RequestFromToDto {
             fromDate: fromDate,
             toDate: toDate
         });
+        this.textSearchDichVu = textSearchDichVu;
         this.idLoaiChungTus = idLoaiChungTus;
         this.ngayLapHoaDon_FromDate = ngayLapHoaDon_FromDate;
         this.ngayLapHoaDon_ToDate = ngayLapHoaDon_ToDate;

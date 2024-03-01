@@ -1,7 +1,7 @@
 import { IFileDto } from '../../../dto/FileDto';
 import { PagedResultDto } from '../../../dto/pagedResultDto';
 import http from '../../../httpService';
-import { IBaoCaoTaiChinh_ChiTietSoQuy, ParamSearchBaoCaoTaiChinh } from './BaoCaoTaiChinhDto';
+import { IBaoCaoChiTietCongNo, IBaoCaoTaiChinh_ChiTietSoQuy, ParamSearchBaoCaoTaiChinh } from './BaoCaoTaiChinhDto';
 
 class BaoCaoTaiChinhService {
     GetBaoCaoTaichinh_ChiTietSoQuy = async (
@@ -10,18 +10,18 @@ class BaoCaoTaiChinhService {
         const response = await http.post('api/services/app/BaoCao/GetBaoCaoTaichinh_ChiTietSoQuy', input);
         return response.data.result;
     };
-    GetBaoCaoHoaHongChiTiet = async (
+    GetBaoCaoChiTietCongNo = async (
         input: ParamSearchBaoCaoTaiChinh
-    ): Promise<PagedResultDto<IBaoCaoTaiChinh_ChiTietSoQuy>> => {
-        const response = await http.post('api/services/app/BaoCao/BaoCaoHoaHongChiTiet', input);
+    ): Promise<PagedResultDto<IBaoCaoChiTietCongNo>> => {
+        const response = await http.post('api/services/app/BaoCao/GetBaoCaoChiTietCongNo', input);
         return response.data.result;
     };
-    ExportToExcel_BaoCaoHoaHongTongHop = async (input: ParamSearchBaoCaoTaiChinh): Promise<IFileDto> => {
-        const response = await http.post('api/services/app/BaoCao/ExportToExcel_BaoCaoHoaHongTongHop', input);
+    ExportToExcel_BaoCaoTaichinh_ChiTietSoQuy = async (input: ParamSearchBaoCaoTaiChinh): Promise<IFileDto> => {
+        const response = await http.post('api/services/app/BaoCao/ExportToExcel_BaoCaoTaichinh_ChiTietSoQuy', input);
         return response.data.result;
     };
-    ExportToExcel_BaoCaoHoaHongChiTiet = async (input: ParamSearchBaoCaoTaiChinh): Promise<IFileDto> => {
-        const response = await http.post('api/services/app/BaoCao/ExportToExcel_BaoCaoHoaHongChiTiet', input);
+    ExportToExcel_BaoCaoChiTietCongNo = async (input: ParamSearchBaoCaoTaiChinh): Promise<IFileDto> => {
+        const response = await http.post('api/services/app/BaoCao/ExportToExcel_BaoCaoChiTietCongNo', input);
         return response.data.result;
     };
 }
