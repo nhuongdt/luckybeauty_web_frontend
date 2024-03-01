@@ -68,18 +68,10 @@ export default function BaoCaoTaiChinhChiTietSoQuy({ onChangePage, onChangePageS
                             <Table>
                                 <TableHead className="table-head-has-colspan">
                                     <TableRow>
-                                        <TableCell rowSpan={2} sx={{ minWidth: 100, maxWidth: 150 }}>
-                                            Mã phiếu
-                                        </TableCell>
-                                        <TableCell rowSpan={2} sx={{ maxWidth: 150 }}>
-                                            Ngày lập
-                                        </TableCell>
-                                        <TableCell rowSpan={2} sx={{ maxWidth: 200 }}>
-                                            Người nhận/nộp
-                                        </TableCell>
-                                        <TableCell rowSpan={2} sx={{ minWidth: 80 }}>
-                                            Mã HĐ
-                                        </TableCell>
+                                        <TableCell rowSpan={2}>Mã phiếu</TableCell>
+                                        <TableCell rowSpan={2}>Ngày lập</TableCell>
+                                        <TableCell rowSpan={2}>Người nhận/nộp</TableCell>
+                                        <TableCell rowSpan={2}>Mã HĐ</TableCell>
                                         <TableCell
                                             colSpan={3}
                                             sx={{ maxWidth: 300, borderTop: 'none!important' }}
@@ -94,18 +86,25 @@ export default function BaoCaoTaiChinhChiTietSoQuy({ onChangePage, onChangePageS
                                             className="table-cell-border">
                                             TIỀN CHI
                                         </TableCell>
-                                        <TableCell rowSpan={2} sx={{ minWidth: 80, maxWidth: 100 }}>
+                                        <TableCell
+                                            rowSpan={2}
+                                            sx={{ minWidth: 80, maxWidth: 100, borderTop: 'none!important' }}
+                                            className="table-cell-border">
                                             Tiền thu
                                         </TableCell>
-                                        <TableCell rowSpan={2} sx={{ minWidth: 90, maxWidth: 100 }}>
+                                        <TableCell
+                                            rowSpan={2}
+                                            sx={{ minWidth: 90, maxWidth: 100, borderTop: 'none!important' }}
+                                            className="table-cell-border">
                                             Tiền chi
                                         </TableCell>
-                                        <TableCell rowSpan={2} sx={{ maxWidth: 100 }}>
+                                        <TableCell
+                                            rowSpan={2}
+                                            sx={{ maxWidth: 100, borderTop: 'none!important' }}
+                                            className="table-cell-border">
                                             Tổng
                                         </TableCell>
-                                        <TableCell rowSpan={2} sx={{ minWidth: 100, maxWidth: 250 }}>
-                                            Nội dung thu/chi
-                                        </TableCell>
+                                        <TableCell rowSpan={2}>Nội dung thu/chi</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="table-cell-border" align="center" sx={{ minWidth: 90 }}>
@@ -129,46 +128,15 @@ export default function BaoCaoTaiChinhChiTietSoQuy({ onChangePage, onChangePageS
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {pageDataBaoCaoTaiChinh_ChiTietSoQuy?.items?.map((row, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell>{row?.maPhieuThuChi}</TableCell>
-                                            <TableCell> {format(new Date(row?.ngayLapPhieu), 'dd/MM/yyyy')}</TableCell>
-                                            <TableCell className="lableOverflow">{row?.tenNguoiNopTien}</TableCell>
-                                            <TableCell>{utils.Remove_LastComma(row?.maHoaDonLienQuans)}</TableCell>
-                                            <TableCell align="right" className="table-cell-border">
-                                                {new Intl.NumberFormat('vi-VN').format(row?.thu_TienMat ?? 0)}
-                                            </TableCell>
-                                            <TableCell align="right" className="table-cell-border">
-                                                {new Intl.NumberFormat('vi-VN').format(row?.thu_TienChuyenKhoan ?? 0)}
-                                            </TableCell>
-                                            <TableCell align="right" className="table-cell-border">
-                                                {new Intl.NumberFormat('vi-VN').format(row?.thu_TienQuyetThe ?? 0)}
-                                            </TableCell>
-                                            <TableCell align="right" className="table-cell-border">
-                                                {new Intl.NumberFormat('vi-VN').format(row?.chi_TienMat ?? 0)}
-                                            </TableCell>
-                                            <TableCell align="right" className="table-cell-border">
-                                                {new Intl.NumberFormat('vi-VN').format(row?.chi_TienChuyenKhoan ?? 0)}
-                                            </TableCell>
-                                            <TableCell align="right" className="table-cell-border">
-                                                {new Intl.NumberFormat('vi-VN').format(row?.chi_TienQuyetThe ?? 0)}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {new Intl.NumberFormat('vi-VN').format(row?.tienThu ?? 0)}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {new Intl.NumberFormat('vi-VN').format(row?.tienChi ?? 0)}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {new Intl.NumberFormat('vi-VN').format(row?.tongThuChi ?? 0)}
-                                            </TableCell>
-                                            <TableCell className="lableOverflow">{row?.noiDungThu}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                                <TableFooter>
                                     {pageDataBaoCaoTaiChinh_ChiTietSoQuy?.totalCount > 0 ? (
-                                        <TableRow>
+                                        <TableRow
+                                            sx={{
+                                                backgroundColor: 'var(--color-bg)',
+                                                fontStyle: 'bold',
+                                                '& td': {
+                                                    fontWeight: 600
+                                                }
+                                            }}>
                                             <TableCell colSpan={4}>Tổng cộng</TableCell>
                                             <TableCell align="right">
                                                 {new Intl.NumberFormat('vi-VN').format(
@@ -220,11 +188,65 @@ export default function BaoCaoTaiChinhChiTietSoQuy({ onChangePage, onChangePageS
                                             <TableCell></TableCell>
                                         </TableRow>
                                     ) : (
-                                        <TableRow>
-                                            <TableCell colSpan={20}>Báo cáo không có dữ liệu</TableCell>
+                                        <TableRow className="table-empty">
+                                            <TableCell colSpan={20} align="center">
+                                                Báo cáo không có dữ liệu
+                                            </TableCell>
                                         </TableRow>
                                     )}
-                                </TableFooter>
+                                    {pageDataBaoCaoTaiChinh_ChiTietSoQuy?.items?.map((row, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell sx={{ minWidth: 100, maxWidth: 150 }}>
+                                                {row?.maPhieuThuChi}
+                                            </TableCell>
+                                            <TableCell sx={{ maxWidth: 150 }}>
+                                                {format(new Date(row?.ngayLapPhieu), 'dd/MM/yyyy')}
+                                            </TableCell>
+                                            <TableCell
+                                                className="lableOverflow"
+                                                sx={{ maxWidth: 200 }}
+                                                title={row?.tenNguoiNopTien}>
+                                                {row?.tenNguoiNopTien}
+                                            </TableCell>
+                                            <TableCell sx={{ minWidth: 80 }}>
+                                                {utils.Remove_LastComma(row?.maHoaDonLienQuans)}
+                                            </TableCell>
+                                            <TableCell align="right" className="table-cell-border">
+                                                {new Intl.NumberFormat('vi-VN').format(row?.thu_TienMat ?? 0)}
+                                            </TableCell>
+                                            <TableCell align="right" className="table-cell-border">
+                                                {new Intl.NumberFormat('vi-VN').format(row?.thu_TienChuyenKhoan ?? 0)}
+                                            </TableCell>
+                                            <TableCell align="right" className="table-cell-border">
+                                                {new Intl.NumberFormat('vi-VN').format(row?.thu_TienQuyetThe ?? 0)}
+                                            </TableCell>
+                                            <TableCell align="right" className="table-cell-border">
+                                                {new Intl.NumberFormat('vi-VN').format(row?.chi_TienMat ?? 0)}
+                                            </TableCell>
+                                            <TableCell align="right" className="table-cell-border">
+                                                {new Intl.NumberFormat('vi-VN').format(row?.chi_TienChuyenKhoan ?? 0)}
+                                            </TableCell>
+                                            <TableCell align="right" className="table-cell-border">
+                                                {new Intl.NumberFormat('vi-VN').format(row?.chi_TienQuyetThe ?? 0)}
+                                            </TableCell>
+                                            <TableCell align="right" className="table-cell-border">
+                                                {new Intl.NumberFormat('vi-VN').format(row?.tienThu ?? 0)}
+                                            </TableCell>
+                                            <TableCell align="right" className="table-cell-border">
+                                                {new Intl.NumberFormat('vi-VN').format(row?.tienChi ?? 0)}
+                                            </TableCell>
+                                            <TableCell align="right" className="table-cell-border">
+                                                {new Intl.NumberFormat('vi-VN').format(row?.tongThuChi ?? 0)}
+                                            </TableCell>
+                                            <TableCell
+                                                className="lableOverflow"
+                                                title={row?.noiDungThu}
+                                                sx={{ minWidth: 100, maxWidth: 250 }}>
+                                                {row?.noiDungThu}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
                             </Table>
                         </TableContainer>
 
