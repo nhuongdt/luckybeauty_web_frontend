@@ -18,7 +18,6 @@ import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { enqueueSnackbar } from 'notistack';
 import abpCustom from '../../../components/abp-custom';
-import { fontWeight } from '@mui/system';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ITenantProps {}
 
@@ -115,6 +114,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     tenancyName: createOrEdit.tenancyName,
                     adminEmailAddress: '',
                     connectionString: createOrEdit.connectionString,
+                    isDefaultPassword: true,
                     editionId: createOrEdit.editionId
                 }
             });

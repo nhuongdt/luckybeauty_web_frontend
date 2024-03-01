@@ -82,6 +82,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
         const { isHostDatabase } = this.state;
         const suggestEditions = this.state.suggestEditions.items ?? [];
         const initialValues = {
+            id: tenantId,
             name: formRef.name,
             tenancyName: formRef.tenancyName,
             adminEmailAddress: formRef.adminEmailAddress,
