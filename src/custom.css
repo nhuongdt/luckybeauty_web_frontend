@@ -330,36 +330,7 @@
     background-color: var(--color-bg);
 }
 
-/* .MuiInputLabel-root{
-    transform-origin: top center !important
-} */
-
-/* .fc-media-screen .fc-timegrid-now-indicator-container {
-    position: unset;
-}
-
-.fc .fc-timegrid-now-indicator-line {
-    border-bottom-width: 1px;
-    border-top-width: 1px;
-    border-color: red;
-    background-color: red;
-}
-
-.fc-resourceTimeGridDay-view .fc-timegrid-now-indicator-arrow {
-    position: absolute;
-    border: none;
-    left: unset;
-    right: -6px;
-    width: 12px;
-    height: 12px;
-    background-color: red;
-    border-radius: 50%;
-}
-
-.fc-timeGridWeek-view .fc-timegrid-now-indicator-arrow {
-    display: none;
-}
-
+/* timegrid-now-indicator week */
 .fc-timeGridWeek-view .fc-timegrid-now-indicator-line::before {
     content: '';
     position: absolute;
@@ -367,41 +338,8 @@
     left: -6px;
     width: 12px;
     height: 12px;
-    background-color: red;
+    background-color: #319dff;
     border-radius: 50%;
-} */
-
-.fc-timegrid-now-indicator-container {
-    overflow: visible !important;
-    .fc-timegrid-now-indicator-line {
-        width: calc(500% + 4px) !important;
-    }
-}
-.fc-direction-ltr .fc-timegrid-now-indicator-arrow {
-    border-bottom-color: transparent;
-    border-top-color: transparent;
-    border-width: 1px 0px 1px 1px;
-    left: 0px;
-}
-.fc-day-tue {
-    .fc-timegrid-now-indicator-line {
-        transform: translateX(-20%);
-    }
-}
-.fc-day-wed {
-    .fc-timegrid-now-indicator-line {
-        transform: translateX(-40%);
-    }
-}
-.fc-day-thu {
-    .fc-timegrid-now-indicator-line {
-        transform: translateX(-60%);
-    }
-}
-.fc-day-fri {
-    .fc-timegrid-now-indicator-line {
-        transform: translateX(-80%);
-    }
 }
 .fc-timeGridWeek-view .fc-timegrid-now-indicator-container {
     overflow: visible !important;
@@ -433,4 +371,27 @@
 
 .fc-timeGridWeek-view .fc-day .fc-timegrid-now-indicator-line {
     transform: translateX(calc(-1 * var(--fc-now-indicator-shift)));
+}
+
+/* timegrid-now-indicator day */
+.fc-resourceTimeGridDay-view .fc-timegrid-now-indicator-line {
+    .fc-timegrid-now-indicator-line {
+        width: calc(700% + 6px) !important;
+        transform: translateX(0%) !important;
+    }
+}
+.fc-resourceTimeGridDay-view .fc-timegrid-now-indicator-container {
+    overflow: visible !important;
+}
+.fc .fc-timegrid-now-indicator-arrow {
+    border-color: var(--fc-now-indicator-color);
+    border-style: solid;
+    margin-top: -5px;
+    position: absolute;
+    background: var(--fc-now-indicator-color);
+    height: 12px;
+    width: 12px;
+    left: 42px !important;
+    z-index: 4;
+    border-radius: 50%;
 }
