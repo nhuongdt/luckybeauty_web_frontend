@@ -426,7 +426,7 @@ export const appRouters: AppRouteProps = {
                 },
                 {
                     path: '/bao-cao',
-                    permission: '',
+                    permission: 'Pages.BaoCao',
                     title: 'Báo cáo',
                     name: 'baocao',
                     icon: <ReportIcon width="20px" />,
@@ -436,7 +436,7 @@ export const appRouters: AppRouteProps = {
                     children: [
                         {
                             path: '/bao-cao/bao-cao-ban-hang',
-                            permission: 'Pages',
+                            permission: 'Pages.BaoCao.BanHang',
                             title: 'Báo cáo bán hàng',
                             name: 'baoCaoBanHang',
                             icon: <BsDot style={{ fontSize: 20 }} />,
@@ -448,7 +448,7 @@ export const appRouters: AppRouteProps = {
                         },
                         {
                             path: '/bao-cao/bao-cao-tai-chinh',
-                            permission: 'Pages',
+                            permission: 'Pages.BaoCao.TaiChinh',
                             title: 'Báo cáo tài chính',
                             name: 'baoCaoBanHang',
                             icon: <BsDot style={{ fontSize: 20 }} />,
@@ -456,7 +456,9 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(() => import('../../pages/bao_cao/bao_cao_tai_chinh'))
+                            component: LoadableComponent(
+                                () => import('../../pages/bao_cao/bao_cao_tai_chinh/main_page')
+                            )
                         },
                         {
                             path: '/bao-cao/bao-cao-dat-lich',
@@ -472,7 +474,7 @@ export const appRouters: AppRouteProps = {
                         },
                         {
                             path: '/bao-cao/hoa-hong',
-                            permission: 'Pages',
+                            permission: 'Pages.BaoCao.HoaHong',
                             title: 'Báo cáo hoa hồng',
                             name: 'baoCaoHoaHong',
                             icon: <BsDot style={{ fontSize: 20 }} />,
