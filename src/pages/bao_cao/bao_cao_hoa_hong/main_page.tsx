@@ -26,7 +26,10 @@ export default function MainPageBaoCaoHoaHong() {
     const [anchorDateEl, setAnchorDateEl] = useState<HTMLDivElement | null>(null);
     const openDateFilter = Boolean(anchorDateEl);
 
-    const [tabActive, setTabActive] = useState(LoaiBaoCao.TONG_HOP);
+    const role_BaoCaoHoaHong_TongHop = abpCustom.isGrandPermission('Pages.BaoCao.HoaHong.TongHop');
+    const role_BaoCaoHoaHong_ChiTiet = abpCustom.isGrandPermission('Pages.BaoCao.HoaHong.ChiTiet');
+
+    const [tabActive, setTabActive] = useState(role_BaoCaoHoaHong_TongHop ? LoaiBaoCao.TONG_HOP : LoaiBaoCao.CHI_TIET);
     const [countClickSearch, setCountClickSearch] = useState(0);
     const [paramSearch, setParamSearch] = useState<ParamSearchBaoCaoHoaHong>(
         new ParamSearchBaoCaoHoaHong({
@@ -103,8 +106,16 @@ export default function MainPageBaoCaoHoaHong() {
                         <TabContext value={tabActive}>
                             <Box>
                                 <TabList onChange={handleChangeTab}>
-                                    <Tab label="Hoa hồng tổng hợp" value={LoaiBaoCao.TONG_HOP} />
-                                    <Tab label="Hoa hồng chi tiết" value={LoaiBaoCao.CHI_TIET} />
+                                    <Tab
+                                        label="Hoa hồng tổng hợp"
+                                        value={LoaiBaoCao.TONG_HOP}
+                                        sx={{ display: role_BaoCaoHoaHong_TongHop ? '' : 'none' }}
+                                    />
+                                    <Tab
+                                        label="Hoa hồng chi tiết"
+                                        value={LoaiBaoCao.CHI_TIET}
+                                        sx={{ display: role_BaoCaoHoaHong_ChiTiet ? '' : 'none' }}
+                                    />
                                 </TabList>
                             </Box>
                         </TabContext>
@@ -168,15 +179,11 @@ export default function MainPageBaoCaoHoaHong() {
                                             className="btnNhapXuat"
                                             sx={{
                                                 display:
-                                                    tabActive == '1'
-                                                        ? abpCustom.isGrandPermission(
-                                                              'Pages.Administration.Users.Create'
-                                                          )
+                                                    tabActive == LoaiBaoCao.TONG_HOP
+                                                        ? abpCustom.isGrandPermission('Pages.BaoCao.HoaHong.TongHop')
                                                             ? ''
                                                             : 'none'
-                                                        : abpCustom.isGrandPermission(
-                                                              'Pages.Brandname.ChuyenTien.Create'
-                                                          )
+                                                        : abpCustom.isGrandPermission('Pages.BaoCao.HoaHong.ChiTiet')
                                                         ? ''
                                                         : 'none'
                                             }}
@@ -206,6 +213,7 @@ export default function MainPageBaoCaoHoaHong() {
                                     onChangePageSize={changePageSize}
                                 />
                             </TabPanel>
+
                             <TabPanel value={LoaiBaoCao.CHI_TIET} sx={{ padding: 0 }}>
                                 <PageBaoCaoHoaHongNhanVienChiTiet
                                     onChangePage={handlePageChange}

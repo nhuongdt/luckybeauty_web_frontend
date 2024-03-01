@@ -9,17 +9,15 @@ import abpCustom from '../../../components/abp-custom';
 import TabPanel from '@mui/lab/TabPanel';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
-import { BaoCaoHoaHongDataContextFilter } from '../../../services/bao_cao/bao_cao_hoa_hong/BaoCaoHoaHongContext';
-import { ParamSearchBaoCaoHoaHong } from '../../../services/bao_cao/bao_cao_hoa_hong/BaoCaoHoaHongDto';
 import AppConsts, { LoaiBaoCao } from '../../../lib/appconst';
 import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
 import { format, lastDayOfMonth, startOfDay } from 'date-fns';
-import BaoCaoHoaHongServices from '../../../services/bao_cao/bao_cao_hoa_hong/BaoCaoHoaHongServices';
 import fileDowloadService from '../../../services/file-dowload.service';
 import { ParamSearchBaoCaoTaiChinh } from '../../../services/bao_cao/bao_cao_ban_hang/bao_cao_tai_chinh/BaoCaoTaiChinhDto';
 import { BaoCaoTaiChinhDatataFilterContext } from '../../../services/bao_cao/bao_cao_ban_hang/dto/BaoCaoDataContext';
-import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import BaoCaoTaiChinhChiTietSoQuy from './chi_tiet_so_quy';
+import BaoCaoChiTietCongNo from './chi_tiet_cong_no';
+import BaoCaoTaiChinhService from '../../../services/bao_cao/bao_cao_ban_hang/bao_cao_tai_chinh/BaoCaoTaiChinhService';
 
 export const BaoCaoTaiChinh_TabActive = {
     TONG_QUY: '1',
@@ -32,6 +30,9 @@ export default function MainPageBaoCaoTaiChinh() {
     const idChiNhanh = chiNhanhCurrent.id;
     const [anchorDateEl, setAnchorDateEl] = useState<HTMLDivElement | null>(null);
     const openDateFilter = Boolean(anchorDateEl);
+
+    const role_BaoCaoTaiChinh_ChiTietQuy = abpCustom.isGrandPermission('Pages.BaoCao.TaiChinh.ChiTietSoQuy');
+    const role_BaoCaoTaiChinh_ChiTietCongNo = abpCustom.isGrandPermission('Pages.BaoCao.TaiChinh.ChiTietCongNo');
 
     const [tabActive, setTabActive] = useState(BaoCaoTaiChinh_TabActive.TONG_QUY);
     const [countClickSearch, setCountClickSearch] = useState(0);
@@ -93,10 +94,10 @@ export default function MainPageBaoCaoTaiChinh() {
         dataFilter.currentPage = 1;
         dataFilter.pageSize = 1000000;
         if (tabActive === BaoCaoTaiChinh_TabActive.TONG_QUY) {
-            const data = await BaoCaoHoaHongServices.ExportToExcel_BaoCaoHoaHongTongHop(dataFilter);
+            const data = await BaoCaoTaiChinhService.ExportToExcel_BaoCaoTaichinh_ChiTietSoQuy(dataFilter);
             fileDowloadService.downloadExportFile(data);
         } else {
-            const data = await BaoCaoHoaHongServices.ExportToExcel_BaoCaoHoaHongChiTiet(dataFilter);
+            const data = await BaoCaoTaiChinhService.ExportToExcel_BaoCaoChiTietCongNo(dataFilter);
             fileDowloadService.downloadExportFile(data);
         }
     };
@@ -110,8 +111,16 @@ export default function MainPageBaoCaoTaiChinh() {
                         <TabContext value={tabActive}>
                             <Box>
                                 <TabList onChange={handleChangeTab}>
-                                    <Tab label="Chi tiết sổ quỹ" value={BaoCaoTaiChinh_TabActive.TONG_QUY} />
-                                    <Tab label="Công nợ khách hàng" value={BaoCaoTaiChinh_TabActive.CONGNO_KHACHHANG} />
+                                    <Tab
+                                        label="Chi tiết sổ quỹ"
+                                        value={BaoCaoTaiChinh_TabActive.TONG_QUY}
+                                        sx={{ display: role_BaoCaoTaiChinh_ChiTietQuy ? '' : 'none' }}
+                                    />
+                                    <Tab
+                                        label="Công nợ khách hàng"
+                                        value={BaoCaoTaiChinh_TabActive.CONGNO_KHACHHANG}
+                                        sx={{ display: role_BaoCaoTaiChinh_ChiTietCongNo ? '' : 'none' }}
+                                    />
                                 </TabList>
                             </Box>
                         </TabContext>
@@ -177,12 +186,12 @@ export default function MainPageBaoCaoTaiChinh() {
                                                 display:
                                                     tabActive == '1'
                                                         ? abpCustom.isGrandPermission(
-                                                              'Pages.Administration.Users.Create'
+                                                              'Pages.BaoCao.TaiChinh.ChiTietSoQuy'
                                                           )
                                                             ? ''
                                                             : 'none'
                                                         : abpCustom.isGrandPermission(
-                                                              'Pages.Brandname.ChuyenTien.Create'
+                                                              'Pages.BaoCao.TaiChinh.ChiTietCongNo'
                                                           )
                                                         ? ''
                                                         : 'none'
@@ -213,7 +222,12 @@ export default function MainPageBaoCaoTaiChinh() {
                                     onChangePageSize={changePageSize}
                                 />
                             </TabPanel>
-                            <TabPanel value={LoaiBaoCao.CHI_TIET} sx={{ padding: 0 }}></TabPanel>
+                            <TabPanel value={LoaiBaoCao.CHI_TIET} sx={{ padding: 0 }}>
+                                <BaoCaoChiTietCongNo
+                                    onChangePage={handlePageChange}
+                                    onChangePageSize={changePageSize}
+                                />
+                            </TabPanel>
                         </TabContext>
                     </Grid>
                 </Grid>
