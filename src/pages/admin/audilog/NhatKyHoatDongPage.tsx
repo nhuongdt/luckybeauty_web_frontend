@@ -82,11 +82,11 @@ const NhatKyHoatDongPage = () => {
         });
         setNhatKyHoatDongData(response.items);
         setTotalCount(response.totalCount);
-        setTotalPage(Math.ceil(response.totalCount / skipCount));
+        setTotalPage(Math.ceil(response.totalCount / maxResultCount));
     };
     useEffect(() => {
         getAll();
-    }, [loaiNhatKys, timeFrom, timeTo, filter, sortBy, sortType]);
+    }, [loaiNhatKys, timeFrom, timeTo, filter, sortBy, sortType, maxResultCount, skipCount]);
     const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
         setMaxResultCount(parseInt(event.target.value.toString(), 10));
         setSkipCount(1);
