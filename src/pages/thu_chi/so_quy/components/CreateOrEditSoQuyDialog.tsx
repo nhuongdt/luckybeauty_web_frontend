@@ -30,7 +30,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import * as yup from 'yup';
 import { useFormik, useFormikContext } from 'formik';
 import { addDays, format, isDate, parse } from 'date-fns';
-import AppConsts, { ISelect } from '../../../../lib/appconst';
+import AppConsts, { HINH_THUC_THANH_TOAN, ISelect, TypeAction } from '../../../../lib/appconst';
 import { Guid } from 'guid-typescript';
 import { AppContext, ChiNhanhContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
 import nhanVienService from '../../../../services/nhan-vien/nhanVienService';
@@ -93,7 +93,7 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
             idLoaiChungTu: 11,
             tongTienThu: 0,
             idDoiTuongNopTien: null,
-            hinhThucThanhToan: 1,
+            hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT,
             hachToanKinhDoanh: true,
             ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm')
         })
@@ -164,7 +164,7 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                 loaiDoiTuong: 1,
                 ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm'),
                 noiDungThu: '',
-                hinhThucThanhToan: 1,
+                hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT,
                 idKhoanThuChi: null,
                 idTaiKhoanNganHang: null,
                 hachToanKinhDoanh: true
@@ -200,7 +200,8 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
             quyHoaDon.id = data.id;
             quyHoaDon.maHoaDon = data.maHoaDon;
             quyHoaDon.txtTrangThai = 'Đã thanh toán';
-            onOk(quyHoaDon, 1);
+            quyHoaDon.quyHoaDon_ChiTiet = myData.quyHoaDon_ChiTiet; // gán để tính gtrị các loại tiền at DS soquy
+            onOk(quyHoaDon, TypeAction.INSEART);
         } else {
             // update
             // assign again ctquy
@@ -224,7 +225,8 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
             quyHoaDon.id = data.id;
             quyHoaDon.maHoaDon = data.maHoaDon;
             quyHoaDon.txtTrangThai = 'Đã thanh toán';
-            onOk(quyHoaDon, 2);
+            quyHoaDon.quyHoaDon_ChiTiet = myData.quyHoaDon_ChiTiet;
+            onOk(quyHoaDon, TypeAction.UPDATE);
         }
     };
 
