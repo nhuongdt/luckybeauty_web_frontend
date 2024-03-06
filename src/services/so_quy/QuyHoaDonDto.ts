@@ -20,6 +20,7 @@ export default class QuyHoaDonDto {
 
     quyHoaDon_ChiTiet?: QuyChiTietDto[];
 
+    idHoaDonLienQuan?: string | null;
     idDoiTuongNopTien?: string | null = null;
     loaiDoiTuong? = 1; // khachhang
     hinhThucThanhToan? = 1; // tienmat
@@ -38,8 +39,17 @@ export default class QuyHoaDonDto {
     tenNganHang? = '';
     tenChuThe? = '';
 
+    maHoaDonLienQuans? = '';
+    tienMat? = 0;
+    tienChuyenKhoan? = 0;
+    tienQuyetThe? = 0;
+
+    sumTienMat? = 0;
+    sumTienChuyenKhoan? = 0;
+    sumTienQuyetThe? = 0;
     sumTongTienThu? = 0;
     sumTongTienChi? = 0;
+    sumTongThuChi? = 0;
 
     constructor({
         id = Guid.create().toString(),

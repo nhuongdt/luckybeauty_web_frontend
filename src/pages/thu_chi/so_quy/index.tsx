@@ -1,6 +1,26 @@
-import { Box, Grid, Stack, TextField, IconButton, Button, SelectChangeEvent, Typography } from '@mui/material';
-import { useContext, useEffect, useRef, useState } from 'react';
+import {
+    Box,
+    Grid,
+    Stack,
+    TextField,
+    IconButton,
+    Button,
+    SelectChangeEvent,
+    Typography,
+    TableBody,
+    TableContainer,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    Checkbox,
+    TableFooter
+} from '@mui/material';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
+import ClearIcon from '@mui/icons-material/Clear';
+import BorderHorizontalOutlinedIcon from '@mui/icons-material/BorderHorizontalOutlined';
+import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
 import CreateOrEditSoQuyDialog from './components/CreateOrEditSoQuyDialog';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { TextTranslate } from '../../../components/TableLanguage';
@@ -30,10 +50,17 @@ import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCusto
 import ModalPhieuThuHoaDon from './components/modal_phieu_thu_hoa_don';
 import { IList } from '../../../services/dto/IList';
 import { Guid } from 'guid-typescript';
+import { ParamSearchSoQuyDto } from '../../../services/so_quy/Dto/ParamSearchSoQuyDto';
+import { HINH_THUC_THANH_TOAN, TypeAction } from '../../../lib/appconst';
+import { IHeaderTable, MyHeaderTable } from '../../../components/Table/MyHeaderTable';
+import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
+import { IPagedResultSoQuyDto } from '../../../services/so_quy/Dto/IPagedResultSoQuyDto';
+import Cookies from 'js-cookie';
 
 const PageSoQuy = ({ xx }: any) => {
     const today = new Date();
     const firstLoad = useRef(true);
+    const firstLoad2 = useRef(true);
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
     const [isShowModal, setisShowModal] = useState(false);
@@ -46,20 +73,22 @@ const PageSoQuy = ({ xx }: any) => {
         mes: ''
     });
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
-    const [paramSearch, setParamSearch] = useState<RequestFromToDto>({
+    const [paramSearch, setParamSearch] = useState<ParamSearchSoQuyDto>({
         textSearch: '',
         currentPage: 1,
         columnSort: 'ngayLapHoaDon',
         typeSort: 'desc',
-        idChiNhanhs: chinhanh.id === '' ? [] : [chinhanh.id],
+        idChiNhanhs: [Cookies.get('IdChiNhanh') ?? ''],
         fromDate: format(today, 'yyyy-MM-01'),
         toDate: format(lastDayOfMonth(today), 'yyyy-MM-dd')
     });
-    const [pageDataSoQuy, setPageDataSoQuy] = useState<PagedResultDto<QuyHoaDonDto>>({
+    console.log('chinhanh.id ', chinhanh.id);
+    const [pageDataSoQuy, setPageDataSoQuy] = useState<IPagedResultSoQuyDto<QuyHoaDonDto>>({
         totalCount: 0,
         totalPage: 0,
         items: []
     });
+    const [quyHDOld, setQuyHDOld] = useState<QuyHoaDonDto>({} as QuyHoaDonDto);
     const [sortModel, setSortModel] = useState<GridSortModel>([
         {
             field: 'ngayLapHoaDon',
@@ -68,34 +97,71 @@ const PageSoQuy = ({ xx }: any) => {
     ]);
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
     const [isShowThanhToanHD, setIsShowThanhToanHD] = useState(false);
-    const [sumTongThu, setSumTongThu] = useState(0);
-    const [sumTongChi, setSumTongChi] = useState(0);
+    const [tonDauKy, setTonDauKy] = useState(0);
+    const [tonCuoiKy, setTonCuoiKy] = useState(0);
+    const [thuTrongKy, setThuTrongKy] = useState(0);
+    const [chiTrongKy, setChiTrongKy] = useState(0);
+
+    const [arrIdChosed, setArrIdChosed] = useState<string[]>([]);
+    const [isCheckAll, setIsCheckAll] = useState(false);
 
     const GetListSoQuy = async () => {
         const data = await SoQuyServices.getAll(paramSearch);
-        if (data?.items.length > 0) {
-            const itFirst = data?.items[0];
-            setSumTongThu(itFirst?.sumTongTienThu ?? 0);
-            setSumTongChi(itFirst?.sumTongTienChi ?? 0);
-        } else {
-            setSumTongThu(0);
-            setSumTongChi(0);
+
+        let sumTienMat = 0,
+            sumCK = 0,
+            sumPos = 0,
+            sumThuChi = 0;
+        if (data?.items?.length > 0) {
+            sumTienMat = data?.items[0].sumTienMat ?? 0;
+            sumCK = data?.items[0].sumTienChuyenKhoan ?? 0;
+            sumPos = data?.items[0].sumTienQuyetThe ?? 0;
+            sumThuChi = data?.items[0].sumTongThuChi ?? 0;
         }
 
         setPageDataSoQuy({
             totalCount: data.totalCount,
             totalPage: utils.getTotalPage(data.totalCount, paramSearch.pageSize),
-            items: data.items
+            items: data.items,
+            sumTienMat: sumTienMat,
+            sumTienChuyenKhoan: sumCK,
+            sumTienQuyetThe: sumPos,
+            sumTongThuChi: sumThuChi
         });
+
+        const arrIdThisPage = data.items?.map((x) => {
+            return x.id;
+        });
+
+        const arrExist = arrIdChosed?.filter((x) => arrIdThisPage.includes(x));
+        if (arrIdThisPage.length == 0) {
+            setIsCheckAll(false);
+            setArrIdChosed([]);
+        } else {
+            setIsCheckAll(arrIdThisPage.length === arrExist.length);
+        }
+    };
+
+    const GetThuChi_DauKyCuoiKy = async () => {
+        const data = await SoQuyServices.GetThuChi_DauKyCuoiKy(paramSearch);
+        setTonDauKy(data?.tonDauKy ?? 0);
+        setTonCuoiKy(data?.tonCuoiKy ?? 0);
+        setThuTrongKy(data?.thuTrongKy ?? 0);
+        setChiTrongKy(data?.chiTrongKy ?? 0);
     };
     const PageLoad = () => {
         GetListSoQuy();
+        GetThuChi_DauKyCuoiKy();
     };
     useEffect(() => {
         PageLoad();
     }, []);
 
     useEffect(() => {
+        if (firstLoad2.current) {
+            firstLoad2.current = false;
+            return;
+        }
         setParamSearch({ ...paramSearch, idChiNhanhs: chinhanh.id === '' ? [] : [chinhanh.id] });
     }, [chinhanh.id]);
 
@@ -105,6 +171,7 @@ const PageSoQuy = ({ xx }: any) => {
             return;
         }
         GetListSoQuy();
+        GetThuChi_DauKyCuoiKy();
     }, [
         paramSearch.currentPage,
         paramSearch.pageSize,
@@ -114,6 +181,14 @@ const PageSoQuy = ({ xx }: any) => {
         paramSearch.columnSort,
         paramSearch.typeSort
     ]);
+
+    // useEffect(() => {
+    //     if (firstLoad.current) {
+    //         firstLoad.current = false;
+    //         return;
+    //     }
+    //     GetThuChi_DauKyCuoiKy();
+    // }, [paramSearch.fromDate, paramSearch.toDate, paramSearch.idChiNhanhs]);
 
     const handleKeyDownTextSearch = (event: any) => {
         if (event.keyCode === 13) {
@@ -152,10 +227,10 @@ const PageSoQuy = ({ xx }: any) => {
         });
     };
 
-    const doActionRow = (action: number, itemSQ: GetAllQuyHoaDonItemDto) => {
+    const doActionRow = (action: number, itemSQ: QuyHoaDonDto) => {
         setSelectedRowId(itemSQ?.id);
-        if (action < 2) {
-            console.log('itemSQ ', itemSQ);
+        setQuyHDOld(itemSQ);
+        if (action < TypeAction.DELETE) {
             if (!utils.checkNull(itemSQ?.idBrandname)) {
                 setIsShowModalNapTienBrannName(true);
             } else {
@@ -177,29 +252,28 @@ const PageSoQuy = ({ xx }: any) => {
     };
 
     const deleteSoQuy = async () => {
-        if (rowSelectionModel.length > 0) {
-            const ok = await SoQuyServices.DeleteMultiple_QuyHoaDon(rowSelectionModel);
+        // todo caculator sum
+        if (arrIdChosed.length > 0) {
+            const ok = await SoQuyServices.DeleteMultiple_QuyHoaDon(arrIdChosed);
             if (ok) {
                 setObjAlert({
                     show: true,
                     type: 1,
-                    mes: `Hủy ${rowSelectionModel.length} sổ quỹ thành công`
+                    mes: `Hủy ${arrIdChosed.length} sổ quỹ thành công`
                 });
                 setPageDataSoQuy({
                     ...pageDataSoQuy,
-                    items: pageDataSoQuy.items.filter((x: any) => !rowSelectionModel.toString().includes(x.id)),
-                    totalCount: pageDataSoQuy.totalCount - rowSelectionModel.length,
-                    totalPage: utils.getTotalPage(
-                        pageDataSoQuy.totalCount - rowSelectionModel.length,
-                        paramSearch.pageSize
-                    )
+                    items: pageDataSoQuy.items.filter((x: any) => !arrIdChosed.toString().includes(x.id)),
+                    totalCount: pageDataSoQuy.totalCount - arrIdChosed.length,
+                    totalPage: utils.getTotalPage(pageDataSoQuy.totalCount - arrIdChosed.length, paramSearch.pageSize)
                 });
                 setRowSelectionModel([]);
+                setArrIdChosed([]);
             } else {
                 setObjAlert({
                     show: true,
                     type: 2,
-                    mes: `Hủy ${rowSelectionModel.length} sổ quỹ thất bại`
+                    mes: `Hủy ${arrIdChosed.length} sổ quỹ thất bại`
                 });
             }
         } else {
@@ -208,7 +282,11 @@ const PageSoQuy = ({ xx }: any) => {
                 ...pageDataSoQuy,
                 items: pageDataSoQuy.items.filter((x: any) => x.id !== selectedRowId),
                 totalCount: pageDataSoQuy.totalCount - 1,
-                totalPage: utils.getTotalPage(pageDataSoQuy.totalCount - 1, paramSearch.pageSize)
+                totalPage: utils.getTotalPage(pageDataSoQuy.totalCount - 1, paramSearch.pageSize),
+                sumTienMat: (pageDataSoQuy?.sumTienMat ?? 0) - (quyHDOld?.tienMat ?? 0),
+                sumTienChuyenKhoan: (pageDataSoQuy?.sumTienMat ?? 0) - (quyHDOld?.tienChuyenKhoan ?? 0),
+                sumTienQuyetThe: (pageDataSoQuy?.sumTienMat ?? 0) - (quyHDOld?.tienQuyetThe ?? 0),
+                sumTongThuChi: (pageDataSoQuy?.sumTienMat ?? 0) - (quyHDOld?.tongTienThu ?? 0)
             });
             setObjAlert({
                 show: true,
@@ -225,19 +303,72 @@ const PageSoQuy = ({ xx }: any) => {
         );
     };
 
-    const saveSoQuy = async (dataSave: any, type: number) => {
+    const saveSoQuy = async (dataSave: QuyHoaDonDto, type: number) => {
         setisShowModal(false);
         setIsShowThanhToanHD(false);
+
+        // get thông tin các hình thức thanh toán để bind lại phần Tổng
+        const quyCT = dataSave?.quyHoaDon_ChiTiet;
+        let tienMat = 0,
+            tienCK = 0,
+            tienPos = 0,
+            tongThu = dataSave?.tongTienThu;
+        if (quyCT != undefined && quyCT.length > 0) {
+            tienMat = quyCT
+                ?.filter((x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.TIEN_MAT)
+                .reduce((currentValue: number, item: QuyChiTietDto) => {
+                    return item.tienThu + currentValue;
+                }, 0);
+            tienCK = quyCT
+                ?.filter((x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN)
+                .reduce((currentValue: number, item: QuyChiTietDto) => {
+                    return item.tienThu + currentValue;
+                }, 0);
+            tienPos = quyCT
+                ?.filter((x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.QUYET_THE)
+                .reduce((currentValue: number, item: QuyChiTietDto) => {
+                    return item.tienThu + currentValue;
+                }, 0);
+        }
+        console.log('dấtve ', dataSave, 'quyHDOld ', quyHDOld);
+        if (dataSave?.idLoaiChungTu == 12) {
+            tienMat = tienMat > 0 ? -tienMat : 0;
+            tienCK = tienCK > 0 ? -tienCK : 0;
+            tienPos = tienPos > 0 ? -tienPos : 0;
+            tongThu = tongThu > 0 ? -tongThu : 0;
+
+            if (type === TypeAction.INSEART) {
+                setChiTrongKy(() => chiTrongKy - tongThu);
+            } else {
+                setChiTrongKy(() => chiTrongKy + (quyHDOld?.tongTienThu ?? 0) - tongThu);
+            }
+        } else {
+            if (type === TypeAction.INSEART) {
+                setThuTrongKy(() => thuTrongKy + tongThu);
+            } else {
+                setChiTrongKy(() => thuTrongKy - (quyHDOld?.tongTienThu ?? 0) + tongThu);
+            }
+        }
+
+        dataSave.tienMat = tienMat;
+        dataSave.tienChuyenKhoan = tienCK;
+        dataSave.tienQuyetThe = tienPos;
+        dataSave.tongTienThu = tongThu;
+
         switch (type) {
-            case 1: // insert
+            case TypeAction.INSEART: // insert
                 {
                     // phải gán lại ngày lập: để chèn dc dòng mới thêm lên trên cùng
-                    dataSave.ngayLapHoaDon = new Date(dataSave.ngayLapHoaDon);
+                    // dataSave.ngayLapHoaDon = new Date(dataSave.ngayLapHoaDon);
                     setPageDataSoQuy({
                         ...pageDataSoQuy,
                         items: [dataSave, ...pageDataSoQuy.items],
                         totalCount: pageDataSoQuy.totalCount + 1,
-                        totalPage: utils.getTotalPage(pageDataSoQuy.totalCount + 1, paramSearch.pageSize)
+                        totalPage: utils.getTotalPage(pageDataSoQuy.totalCount + 1, paramSearch.pageSize),
+                        sumTienMat: (pageDataSoQuy?.sumTienMat ?? 0) + tienMat,
+                        sumTienChuyenKhoan: (pageDataSoQuy?.sumTienChuyenKhoan ?? 0) + tienCK,
+                        sumTienQuyetThe: (pageDataSoQuy?.sumTienQuyetThe ?? 0) + tienPos,
+                        sumTongThuChi: (pageDataSoQuy?.sumTongThuChi ?? 0) + tongThu
                     });
                     setObjAlert({
                         show: true,
@@ -246,10 +377,15 @@ const PageSoQuy = ({ xx }: any) => {
                     });
                 }
                 break;
-            case 2:
+            case TypeAction.UPDATE:
                 setPageDataSoQuy({
                     ...pageDataSoQuy,
-                    items: pageDataSoQuy.items.map((item: any) => {
+                    sumTienMat: (pageDataSoQuy?.sumTienMat ?? 0) + tienMat - (quyHDOld?.tienMat ?? 0),
+                    sumTienChuyenKhoan:
+                        (pageDataSoQuy?.sumTienChuyenKhoan ?? 0) + tienCK - (quyHDOld?.tienChuyenKhoan ?? 0),
+                    sumTienQuyetThe: (pageDataSoQuy?.sumTienQuyetThe ?? 0) + tienPos - (quyHDOld?.tienQuyetThe ?? 0),
+                    sumTongThuChi: (pageDataSoQuy?.sumTongThuChi ?? 0) + tongThu - (quyHDOld?.tongTienThu ?? 0),
+                    items: pageDataSoQuy.items.map((item) => {
                         if (item.id === selectedRowId) {
                             return {
                                 ...item,
@@ -265,7 +401,11 @@ const PageSoQuy = ({ xx }: any) => {
                                 idKhoanThuChi: dataSave.idKhoanThuChi,
                                 tenKhoanThuChi: dataSave.tenKhoanThuChi,
                                 txtTrangThai: dataSave.txtTrangThai,
-                                trangThai: dataSave.trangThai
+                                trangThai: dataSave.trangThai,
+                                noiDungThu: dataSave?.noiDungThu ?? '',
+                                tienMat: dataSave.tienMat,
+                                tienChuyenKhoan: dataSave.tienChuyenKhoan,
+                                tienQuyetThe: dataSave.tienQuyetThe
                             };
                         } else {
                             return item;
@@ -294,14 +434,14 @@ const PageSoQuy = ({ xx }: any) => {
                 setinforDelete({
                     ...inforDelete,
                     show: true,
-                    mes: `Bạn có chắc chắn muốn xóa ${rowSelectionModel.length} sổ quỹ này không?`
+                    mes: `Bạn có chắc chắn muốn xóa ${arrIdChosed.length} sổ quỹ này không?`
                 });
                 break;
             case 2:
                 {
                     let htmlPrint = '';
-                    for (let i = 0; i < rowSelectionModel.length; i++) {
-                        const idSoquy = rowSelectionModel[i].toString();
+                    for (let i = 0; i < arrIdChosed.length; i++) {
+                        const idSoquy = arrIdChosed[i].toString();
                         // select dataQuyHoaDon from page
                         const quyHD = pageDataSoQuy.items.filter((x: any) => x.id === idSoquy);
                         const quyCT = await SoQuyServices.GetQuyChiTiet_byIQuyHoaDon(idSoquy);
@@ -327,7 +467,7 @@ const PageSoQuy = ({ xx }: any) => {
                             }
                             let newHtml = DataMauIn.replaceChiNhanh(tempMauIn);
                             newHtml = await DataMauIn.replacePhieuThuChi(newHtml);
-                            if (i < rowSelectionModel.length - 1) {
+                            if (i < arrIdChosed.length - 1) {
                                 htmlPrint = htmlPrint.concat(newHtml, `<p style="page-break-before:always;"></p>`);
                             } else {
                                 htmlPrint = htmlPrint.concat(newHtml);
@@ -345,7 +485,46 @@ const PageSoQuy = ({ xx }: any) => {
 
     const onApplyFilterDate = async (from: string, to: string, txtShow: string) => {
         setAnchorDateEl(null);
-        setParamSearch({ ...paramSearch, fromDate: from, toDate: to });
+        setParamSearch({ ...paramSearch, fromDate: from, toDate: to, currentPage: 1 });
+        setArrIdChosed([]);
+    };
+
+    const onSortTable = (columnSort: string) => {
+        setParamSearch({
+            ...paramSearch,
+            columnSort: columnSort,
+            typeSort: paramSearch.typeSort == '' ? 'desc' : paramSearch.typeSort == 'asc' ? 'desc' : 'asc'
+        });
+    };
+
+    const onClickCheckAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const isCheck = event.currentTarget.checked;
+        setIsCheckAll(isCheck);
+
+        const arrIdThisPage = pageDataSoQuy?.items?.map((x) => {
+            return x.id;
+        });
+        if (isCheck) {
+            setArrIdChosed([...arrIdChosed, ...arrIdThisPage]);
+        } else {
+            setArrIdChosed(arrIdChosed.filter((x) => !arrIdThisPage.includes(x)));
+        }
+    };
+
+    const onClickCheckOne = (event: React.ChangeEvent<HTMLInputElement>, rowId: string) => {
+        const isCheck = event.currentTarget.checked;
+        if (isCheck) {
+            setArrIdChosed([...arrIdChosed, rowId]);
+
+            const arrIdThisPage = pageDataSoQuy?.items?.map((x) => {
+                return x.id;
+            });
+            const arrExist = arrIdChosed?.filter((x) => arrIdThisPage.includes(x));
+            setIsCheckAll(arrIdThisPage.length === arrExist.length + 1);
+        } else {
+            setArrIdChosed(arrIdChosed.filter((x) => x !== rowId));
+            setIsCheckAll(false);
+        }
     };
 
     const columns: GridColDef[] = [
@@ -470,6 +649,19 @@ const PageSoQuy = ({ xx }: any) => {
             ),
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         }
+    ];
+
+    const listColumnHeader: IHeaderTable[] = [
+        { columnId: 'loaiPhieu', columnText: 'Loại phiếu' },
+        { columnId: 'maHoaDon', columnText: 'Mã phiếu' },
+        { columnId: 'ngayLapHoaDon', columnText: 'Ngày lập' },
+        { columnId: 'tenNguoiNop', columnText: 'Người nhận/nộp' },
+        { columnId: 'maHoaDonLienQuans', columnText: 'Mã HĐ' },
+        { columnId: 'tienMat', columnText: 'Tiền mặt', align: 'right' },
+        { columnId: 'tienChuyenKhoan', columnText: 'Chuyển khoản', align: 'right' },
+        { columnId: 'tienQuetThe', columnText: 'Quyẹt thẻ', align: 'right' },
+        { columnId: 'tongTienThu', columnText: 'Tổng thu/chi', align: 'right' },
+        { columnId: 'noiDungThu', columnText: 'Nội dung thu/chi' }
     ];
 
     return (
@@ -610,7 +802,7 @@ const PageSoQuy = ({ xx }: any) => {
 
                 <Grid container style={{ marginTop: '24px', paddingRight: '8px' }}>
                     <Grid item xs={8}>
-                        {rowSelectionModel.length > 0 && (
+                        {arrIdChosed?.length > 0 && (
                             <ActionRowSelect
                                 lstOption={
                                     [
@@ -626,11 +818,13 @@ const PageSoQuy = ({ xx }: any) => {
                                         }
                                     ] as IList[]
                                 }
-                                countRowSelected={rowSelectionModel.length}
+                                countRowSelected={arrIdChosed.length}
                                 title="sổ quỹ"
                                 choseAction={DataGrid_handleAction}
                                 removeItemChosed={() => {
                                     setRowSelectionModel([]);
+                                    setArrIdChosed([]);
+                                    setIsCheckAll(false);
                                 }}
                             />
                         )}
@@ -647,7 +841,7 @@ const PageSoQuy = ({ xx }: any) => {
                             <Stack spacing={1} flex={10} justifyContent={'end'} direction={'row'}>
                                 <Typography variant="body2">Tổng thu:</Typography>
                                 <Typography variant="body2">
-                                    {new Intl.NumberFormat('vi-VN').format(sumTongThu)}
+                                    {new Intl.NumberFormat('vi-VN').format(thuTrongKy)}
                                 </Typography>
                             </Stack>
                             <Stack
@@ -658,15 +852,15 @@ const PageSoQuy = ({ xx }: any) => {
                                 sx={{ color: 'brown' }}>
                                 <Typography variant="body2">Tổng chi:</Typography>
                                 <Typography variant="body2">
-                                    {new Intl.NumberFormat('vi-VN').format(sumTongChi)}
+                                    {new Intl.NumberFormat('vi-VN').format(chiTrongKy)}
                                 </Typography>
                             </Stack>
                         </Stack>
                     </Grid>
                 </Grid>
 
-                <Box marginTop={rowSelectionModel.length > 0 ? 1 : 2} className="page-box-right">
-                    <DataGrid
+                <Box marginTop={arrIdChosed.length > 0 ? 1 : 2}>
+                    {/* <DataGrid
                         disableRowSelectionOnClick
                         className={rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'}
                         autoHeight={pageDataSoQuy?.totalCount == 0}
@@ -699,7 +893,134 @@ const PageSoQuy = ({ xx }: any) => {
                             setRowSelectionModel(newRowSelectionModel);
                         }}
                         rowSelectionModel={rowSelectionModel}
-                    />
+                    /> */}
+
+                    <Grid container>
+                        <Grid item xs={12}>
+                            <Stack className="page-box-right">
+                                <TableContainer className="data-grid-row">
+                                    <Table>
+                                        <TableHead>
+                                            <MyHeaderTable
+                                                showAction={true}
+                                                isCheckAll={isCheckAll}
+                                                sortBy={paramSearch?.columnSort ?? ''}
+                                                sortType={paramSearch?.typeSort ?? 'desc'}
+                                                onRequestSort={onSortTable}
+                                                onSelectAllClick={onClickCheckAll}
+                                                listColumnHeader={listColumnHeader}
+                                            />
+                                        </TableHead>
+                                        <TableBody>
+                                            {pageDataSoQuy?.items?.map((row, index) => (
+                                                <TableRow
+                                                    key={index}
+                                                    sx={{
+                                                        '& .MuiTableCell-root': {
+                                                            color: row?.idLoaiChungTu == 12 ? 'unset' : 'unset'
+                                                        }
+                                                    }}>
+                                                    <TableCell align="center" className="td-check-box">
+                                                        <Checkbox
+                                                            checked={arrIdChosed.includes(row.id)}
+                                                            onChange={(event) => onClickCheckOne(event, row.id)}
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell sx={{ minWidth: 100, maxWidth: 100 }}>
+                                                        {row?.loaiPhieu}
+                                                    </TableCell>
+                                                    <TableCell sx={{ minWidth: 100, maxWidth: 150 }}>
+                                                        {row?.maHoaDon}
+                                                    </TableCell>
+                                                    <TableCell sx={{ maxWidth: 150 }}>
+                                                        {format(new Date(row?.ngayLapHoaDon), 'dd/MM/yyyy')}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        className="lableOverflow"
+                                                        sx={{ maxWidth: 200 }}
+                                                        title={row?.tenNguoiNop}>
+                                                        {row?.tenNguoiNop}
+                                                    </TableCell>
+                                                    <TableCell sx={{ minWidth: 80 }}>
+                                                        {utils.Remove_LastComma(row?.maHoaDonLienQuans)}
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {new Intl.NumberFormat('vi-VN').format(row?.tienMat ?? 0)}
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                            row?.tienChuyenKhoan ?? 0
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {new Intl.NumberFormat('vi-VN').format(row?.tienQuyetThe ?? 0)}
+                                                    </TableCell>
+
+                                                    <TableCell align="right">
+                                                        {new Intl.NumberFormat('vi-VN').format(row?.tongTienThu ?? 0)}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        className="lableOverflow"
+                                                        title={row?.noiDungThu}
+                                                        sx={{ minWidth: 100, maxWidth: 250 }}>
+                                                        {row?.noiDungThu}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Stack spacing={1} direction={'row'}>
+                                                            <OpenInNewOutlinedIcon
+                                                                titleAccess="Cập nhật"
+                                                                sx={{ width: '16px', color: '#7e7979' }}
+                                                                onClick={() => doActionRow(TypeAction.UPDATE, row)}
+                                                            />
+                                                            <ClearIcon
+                                                                titleAccess="Xóa"
+                                                                style={{ width: '16px', color: 'red' }}
+                                                                onClick={() => doActionRow(TypeAction.DELETE, row)}
+                                                            />
+                                                        </Stack>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                        <TableFooter>
+                                            {pageDataSoQuy?.totalCount > 0 ? (
+                                                <TableRow>
+                                                    <TableCell colSpan={6}>Tổng cộng</TableCell>
+                                                    <TableCell align="right">
+                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                            pageDataSoQuy?.sumTienMat ?? 0
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                            pageDataSoQuy?.sumTienChuyenKhoan ?? 0
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                            pageDataSoQuy?.sumTienQuyetThe ?? 0
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                            pageDataSoQuy?.sumTongThuChi ?? 0
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell colSpan={2}></TableCell>
+                                                </TableRow>
+                                            ) : (
+                                                <TableRow className="table-empty">
+                                                    <TableCell colSpan={20} align="center">
+                                                        Báo cáo không có dữ liệu
+                                                    </TableCell>
+                                                </TableRow>
+                                            )}
+                                        </TableFooter>
+                                    </Table>
+                                </TableContainer>
+                            </Stack>
+                        </Grid>
+                    </Grid>
 
                     <CustomTablePagination
                         currentPage={paramSearch.currentPage ?? 0}

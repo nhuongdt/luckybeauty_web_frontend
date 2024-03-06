@@ -18,7 +18,7 @@ import { NumericFormat } from 'react-number-format';
 import { Guid } from 'guid-typescript';
 import { format } from 'date-fns';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import AppConsts, { ISelect } from '../../../../lib/appconst';
+import AppConsts, { HINH_THUC_THANH_TOAN, ISelect } from '../../../../lib/appconst';
 import utils from '../../../../utils/utils';
 import { AppContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
 import QuyChiTietDto from '../../../../services/so_quy/QuyChiTietDto';
@@ -86,7 +86,6 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
     const getInforQuyHoaDon = async () => {
         if (utils.checkNull(idQuyHD)) return;
         const data = await SoQuyServices.GetInforQuyHoaDon_byId(idQuyHD ?? '');
-        console.log(33, data);
         if (data !== null) {
             const quyCT = data.quyHoaDon_ChiTiet;
             if (quyCT !== undefined && quyCT?.length > 0) {
@@ -301,13 +300,13 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
             let sPThuc = '';
             for (let i = 0; i < lstPTTT.length; i++) {
                 switch (lstPTTT[i]) {
-                    case 1:
+                    case HINH_THUC_THANH_TOAN.TIEN_MAT:
                         sPThuc = 'Tiền mặt, ';
                         break;
-                    case 2:
+                    case HINH_THUC_THANH_TOAN.CHUYEN_KHOAN:
                         sPThuc += 'Chuyển khoản, ';
                         break;
-                    case 3:
+                    case HINH_THUC_THANH_TOAN.QUYET_THE:
                         sPThuc += 'Quẹt thẻ, ';
                         break;
                 }
@@ -536,24 +535,16 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                                 </Grid>
                             )}
                         </Grid>
-                        <Box
-                            sx={{
-                                '& textarea': {
-                                    height: '80px',
-                                    width: '100%',
-                                    borderRadius: '8px',
-                                    borderColor: '#C2C9D6',
-                                    outline: 'none',
-                                    color: '#A3ADC2',
-                                    padding: '8px'
-                                }
-                            }}>
-                            <Typography fontSize="14px" color="#525F7A">
-                                Ghi chú
-                            </Typography>
-                            <textarea
-                                value={quyHoaDon.noiDungThu}
-                                onChange={(e) => setQuyHoaDon({ ...quyHoaDon, noiDungThu: e.target.value })}></textarea>
+                        <Box>
+                            <Typography variant="body2">Ghi chú</Typography>
+                            <TextField
+                                fullWidth
+                                multiline
+                                rows={3}
+                                value={quyHoaDon?.noiDungThu}
+                                onChange={(e) =>
+                                    setQuyHoaDon({ ...quyHoaDon, noiDungThu: e.target.value })
+                                }></TextField>
                         </Box>
                         <Stack>
                             <Button
