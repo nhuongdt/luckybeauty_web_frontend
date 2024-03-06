@@ -256,7 +256,7 @@ export default function DateFilterCustom({
                     vertical: 'bottom',
                     horizontal: 'left'
                 }}>
-                <div style={{ width: '690px' }}>
+                <div style={{ minWidth: '350px' }}>
                     <Grid container spacing={2} padding={'16px'}>
                         <Grid item xs={3}>
                             <Box display={'flex'} flexDirection={'column'} borderRight={'1px solid #EEF0F4'}>
