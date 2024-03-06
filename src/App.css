@@ -406,3 +406,7 @@ body .font-normal {
 .table-head-has-colspan tr th {
     padding: 6px 16px!important;
 }
+
+.td-check-box .MuiButtonBase-root {
+    padding: 0px!important;
+}
