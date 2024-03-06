@@ -1,5 +1,5 @@
 export interface CreateNhatKyThaoTacDto {
-    idChiNhanh: string;
+    idChiNhanh?: string;
     noiDung: string;
     chucNang: string;
     noiDungChiTiet: string;
