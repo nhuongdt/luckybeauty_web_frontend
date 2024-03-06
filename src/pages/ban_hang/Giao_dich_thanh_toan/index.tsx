@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import { Box, Grid, TextField, IconButton, Button, SelectChangeEvent, Stack } from '@mui/material';
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 
 import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
@@ -35,6 +36,8 @@ import abpCustom from '../../../components/abp-custom';
 import { IList } from '../../../services/dto/IList';
 import { Guid } from 'guid-typescript';
 import utils from '../../../utils/utils';
+import PopoverFilterHoaDon from './PopoverFilterHoaDon';
+import Cookies from 'js-cookie';
 
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
@@ -51,7 +54,7 @@ const GiaoDichThanhToan: React.FC = () => {
 
     const [paramSearch, setParamSearch] = useState<HoaDonRequestDto>({
         textSearch: '',
-        idChiNhanhs: [chinhanhCurrent?.id],
+        idChiNhanhs: [Cookies.get('IdChiNhanh') ?? ''],
         currentPage: 1,
         pageSize: AppConsts.pageOption[0].value,
         columnSort: 'NgayLapHoaDon',
@@ -124,9 +127,11 @@ const GiaoDichThanhToan: React.FC = () => {
         PageLoad();
     }, []);
 
-    useEffect(() => {
-        setParamSearch({ ...paramSearch, idChiNhanhs: [chinhanhCurrent.id] });
-    }, [chinhanhCurrent.id]);
+    // avoid call multiple GetListHoaDon
+    const [prevItems, setPrevItems] = useState(paramSearch);
+    if (paramSearch !== prevItems) {
+        setPrevItems(paramSearch);
+    }
 
     useEffect(() => {
         if (firstLoad.current) {
@@ -134,21 +139,20 @@ const GiaoDichThanhToan: React.FC = () => {
             return;
         }
         GetListHoaDon();
-    }, [
-        paramSearch.currentPage,
-        paramSearch.pageSize,
-        paramSearch.fromDate,
-        paramSearch.toDate,
-        paramSearch.idChiNhanhs
-    ]);
+    }, [prevItems]);
 
     const handleKeyDownTextSearch = (event: any) => {
         if (event.keyCode === 13) {
-            hanClickIconSearch();
+            setParamSearch({
+                ...paramSearch,
+                textSearch: event.target.value,
+                currentPage: 1
+            });
         }
     };
 
     const hanClickIconSearch = () => {
+        // todo: get txtSeach new
         if (paramSearch.currentPage !== 1) {
             setParamSearch({
                 ...paramSearch,
@@ -168,6 +172,7 @@ const GiaoDichThanhToan: React.FC = () => {
     const handlePerPageChange = (event: SelectChangeEvent<number>) => {
         setParamSearch({
             ...paramSearch,
+            currentPage: 1,
             pageSize: parseInt(event.target.value.toString(), 10)
         });
     };
@@ -303,7 +308,7 @@ const GiaoDichThanhToan: React.FC = () => {
 
     const onApplyFilterDate = async (from: string, to: string, txtShow: string) => {
         setAnchorDateEl(null);
-        setParamSearch({ ...paramSearch, fromDate: from, toDate: to });
+        setParamSearch({ ...paramSearch, fromDate: from, toDate: to, currentPage: 1 });
     };
 
     const columns: GridColDef[] = [
@@ -439,6 +444,18 @@ const GiaoDichThanhToan: React.FC = () => {
         }
     ];
 
+    const [anchorElFilter, setAnchorElFilter] = useState<SVGSVGElement | null>(null);
+    const ApplyFilter = (paramFilter: HoaDonRequestDto) => {
+        setAnchorElFilter(null);
+        setParamSearch({
+            ...paramSearch,
+            currentPage: 1,
+            trangThaiNos: paramFilter.trangThaiNos,
+            trangThais: paramFilter.trangThais,
+            idChiNhanhs: paramFilter.idChiNhanhs
+        });
+    };
+
     return (
         <>
             <ChiNhanhContextbyUser.Provider value={allChiNhanh}>
@@ -485,16 +502,25 @@ const GiaoDichThanhToan: React.FC = () => {
                                             </IconButton>
                                         )
                                     }}
-                                    onChange={(event) =>
-                                        setParamSearch((itemOlds: any) => {
-                                            return {
-                                                ...itemOlds,
-                                                textSearch: event.target.value
-                                            };
-                                        })
-                                    }
+                                    // onChange={(event) => {
+                                    //     // console.log(44)
+                                    //     if (event.k === 13) {
+                                    //         setParamSearch((itemOlds: any) => {
+                                    //             return {
+                                    //                 ...itemOlds,
+                                    //                 textSearch: event.target.value
+                                    //             };
+                                    //         });
+                                    //     }
+                                    // }}
                                     onKeyDown={(event) => {
                                         handleKeyDownTextSearch(event);
+                                        // setParamSearch((itemOlds: any) => {
+                                        //     return {
+                                        //         ...itemOlds,
+                                        //         textSearch: event.target.value
+                                        //     };
+                                        // });
                                     }}
                                 />
                             </Grid>
@@ -516,7 +542,8 @@ const GiaoDichThanhToan: React.FC = () => {
                                     sx={{
                                         '& .MuiInputBase-root': {
                                             height: '40px!important'
-                                        }
+                                        },
+                                        backgroundColor: 'white'
                                     }}
                                     onClick={(event) => setAnchorDateEl(event.currentTarget)}
                                     value={`${format(
@@ -547,17 +574,24 @@ const GiaoDichThanhToan: React.FC = () => {
                                 className="btn-outline-hover">
                                 Xuất
                             </Button>
-                            <Button
-                                variant="contained"
-                                startIcon={<FilterIcon />}
+                            <FilterAltOutlinedIcon
+                                titleAccess="Lọc nâng cao"
+                                className="btnIcon"
                                 sx={{
-                                    bgcolor: 'var(--color-main)!important',
-                                    color: '#fff',
-                                    fontSize: '14px'
+                                    height: '40px!important',
+                                    padding: '8px!important',
+                                    background: 'white'
                                 }}
-                                className="btn-container-hover">
-                                Bộ lọc
-                            </Button>
+                                onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                            />
+                            <ChiNhanhContextbyUser.Provider value={allChiNhanh}>
+                                <PopoverFilterHoaDon
+                                    anchorEl={anchorElFilter}
+                                    paramFilter={paramSearch}
+                                    handleClose={() => setAnchorElFilter(null)}
+                                    handleApply={ApplyFilter}
+                                />
+                            </ChiNhanhContextbyUser.Provider>
                         </Box>
                     </Grid>
                 </Grid>
