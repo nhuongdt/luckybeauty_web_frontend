@@ -60,6 +60,7 @@ export default function ModalAddUser({
     const [fileImage, setFileImage] = useState<File>({} as File); // file image
     const [showPassword, setShowPassword] = useState<boolean>(false); // file image
     const [showPasswordNew, setShowPasswordNew] = useState<boolean>(false); // file image
+    const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
     const [changePassword, setChangePassword] = useState<boolean>(false); // file image
     const [isActive, setIsActive] = useState<boolean>(true); // file image
     const [chiNhanhRoles, setChiNhanhRoles] = useState<IChiNhanhRoles[]>([]);
@@ -106,10 +107,7 @@ export default function ModalAddUser({
         if (userId === 0) {
             return Yup.string()
                 .required('Vui lòng nhập mật khẩu')
-                .matches(
-                    AppConsts.passwordRegex,
-                    'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
-                );
+                .matches(AppConsts.passwordRegex, 'Mật khẩu phải chứa ít nhất một chữ cái, một số và ít nhất 6 ký tự');
         } else {
             if (changePassword) {
                 return Yup.string().required('Vui lòng nhập khẩu hiện tại');
@@ -218,7 +216,7 @@ export default function ModalAddUser({
 
     const handleClickShowPassword = () => setShowPassword((show: boolean) => !show);
     const handleClickShowPasswordNew = () => setShowPasswordNew((show: boolean) => !show);
-
+    const handleClickShowConfirmPassword = () => setShowConfirmPassword(!showConfirmPassword);
     const choseImage = async (pathFile: string, file: File) => {
         if (!utils.checkNull(googleDrive_fileId)) {
             await uploadFileService.GoogleApi_RemoveFile_byId(googleDrive_fileId);
@@ -560,8 +558,8 @@ export default function ModalAddUser({
                                                     <TextField
                                                         size="small"
                                                         fullWidth
-                                                        type="password"
                                                         name="confirmPassword"
+                                                        type={showConfirmPassword ? 'text' : 'password'}
                                                         onChange={handleChange}
                                                         value={values?.confirmPassword || ''}
                                                         label={
@@ -576,6 +574,21 @@ export default function ModalAddUser({
                                                                 </span>
                                                             </label>
                                                         }
+                                                        InputProps={{
+                                                            endAdornment: (
+                                                                <InputAdornment position="end">
+                                                                    <IconButton
+                                                                        onClick={handleClickShowConfirmPassword}
+                                                                        edge="end">
+                                                                        {showConfirmPassword ? (
+                                                                            <Visibility />
+                                                                        ) : (
+                                                                            <VisibilityOff />
+                                                                        )}
+                                                                    </IconButton>
+                                                                </InputAdornment>
+                                                            )
+                                                        }}
                                                         helperText={
                                                             touched.confirmPassword &&
                                                             errors.confirmPassword && (

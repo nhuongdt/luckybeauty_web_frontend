@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../../images/Logo_Lucky_Beauty.svg';
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import nhatKyHoatDongService from '../../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
 const LoginScreen: React.FC = () => {
     const navigate = useNavigate();
     const loginModel = new LoginModel();
@@ -41,6 +42,12 @@ const LoginScreen: React.FC = () => {
                     const userId = Cookies.get('userId') ?? '0';
                     const remember = Cookies.get('isRememberMe') === 'true' ? true : false;
                     await LoginService.GetPermissionByUserId(parseInt(userId, 0), remember);
+                    await nhatKyHoatDongService.createNhatKyThaoTac({
+                        chucNang: 'Đăng nhập',
+                        loaiNhatKy: 6,
+                        noiDung: 'Đăng nhập hệ thống',
+                        noiDungChiTiet: 'Đăng nhập hệ thống'
+                    });
                     navigate('/home');
                     window.location.reload();
                 } else {

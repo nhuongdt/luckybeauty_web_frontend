@@ -535,6 +535,18 @@ export const appRouters: AppRouteProps = {
                             component: LoadableComponent(() => import('../../pages/admin/tenant/index'))
                         },
                         {
+                            path: '/nhat-ky-thao-tac',
+                            permission: 'Pages.NhatKyThaoTac',
+                            title: 'Nhật ký thao tác',
+                            name: 'Nhật ký thao tác',
+                            iconActive: null,
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            showInMenu: true,
+                            children: [],
+                            isLayout: false,
+                            component: LoadableComponent(() => import('../../pages/admin/audilog/NhatKyHoatDongPage'))
+                        },
+                        {
                             path: '/editions',
                             permission: 'Pages.Editions',
                             title: 'Phiên bản',
