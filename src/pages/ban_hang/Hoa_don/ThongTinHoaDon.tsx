@@ -13,7 +13,7 @@ import HoaDonService from '../../../services/ban_hang/HoaDonService';
 import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import PageHoaDonChiTietDto from '../../../services/ban_hang/PageHoaDonChiTietDto';
 import DateTimePickerCustom from '../../../components/DatetimePicker/DateTimePickerCustom';
-import { AppContext, ChiNhanhContextbyUser } from '../../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 
 import AutocompleteChiNhanh from '../../../components/Autocomplete/ChiNhanh';
 import ModalEditChiTietGioHang from '../thu_ngan/modal_edit_chitiet';
@@ -32,6 +32,11 @@ import { TaiKhoanNganHangDto } from '../../../services/so_quy/Dto/TaiKhoanNganHa
 import HoaHongNhanVienHoaDon from '../../nhan_vien_thuc_hien/hoa_hong_nhan_vien_hoa_don';
 import abpCustom from '../../../components/abp-custom';
 import { SuggestTaiKhoanNganHangQrDto } from '../../../services/suggests/dto/SuggestTaiKhoanNganHangQrDTo';
+import suggestStore from '../../../stores/suggestStore';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
+import { TrangThaiHoaDon } from '../../../services/ban_hang/HoaDonConst';
+import { TypeAction } from '../../../lib/appconst';
 const themOutlineInput = createTheme({
     components: {
         MuiOutlinedInput: {
@@ -46,7 +51,6 @@ const themOutlineInput = createTheme({
 
 const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
     const appContext = useContext(AppContext);
-    const allChiNhanh = useContext(ChiNhanhContextbyUser);
     const [openDialog, setOpenDialog] = useState(false);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [isShowModalThanhToan, setIsShowModalThanhToan] = useState(false);
@@ -57,8 +61,14 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
 
     const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
     const [idCTHDChosing, setIdCTHDChosing] = useState('');
-    const [typeAction, setTypeAction] = useState(0); // 1.update, 2.delete, 0. khong lam gi
+    const [typeAction, setTypeAction] = useState(TypeAction.NOTHING); //  -1. khong lam gi
     const [isShowHoaHongHD, setIsShowHoaHongHD] = useState(false);
+    const [inforConfirm, setinforConfirm] = useState<PropConfirmOKCancel>({
+        show: false,
+        title: '',
+        type: 1,
+        mes: ''
+    });
 
     const [taiKhoanNganHang, setTaiKhoanNganHang] = useState<SuggestTaiKhoanNganHangQrDto>({
         id: null,
@@ -83,7 +93,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
     useEffect(() => {
         GetChiTietHoaDon_byIdHoaDon();
         setHoaDonChosed(hoadon);
-        setTypeAction(0);
+        setTypeAction(TypeAction.NOTHING);
     }, [idHoaDon]);
 
     useEffect(() => {
@@ -130,10 +140,10 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
 
         // update state hoadon
         const objUpdate = { ...hoadonChosed };
-        objUpdate.trangThai = 0;
-        setHoaDonChosed({ ...hoadonChosed, trangThai: 0 });
-        setTypeAction(1);
-        handleGotoBack(objUpdate, 2);
+        objUpdate.trangThai = TrangThaiHoaDon.HUY;
+        setHoaDonChosed({ ...hoadonChosed, trangThai: TrangThaiHoaDon.HUY });
+        setTypeAction(TypeAction.DELETE);
+        handleGotoBack(objUpdate, TypeAction.DELETE);
     };
 
     const showModalEditGioHang = () => {
@@ -142,7 +152,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
     };
 
     const AgreeGioHang = async (lstCTAfter: PageHoaDonChiTietDto[]) => {
-        setTypeAction(1);
+        setTypeAction(TypeAction.UPDATE);
         setIsShowEditGioHang(false);
         setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật chi tiết hóa đơn thành công' });
         setChiTietHoaDon([...lstCTAfter]);
@@ -190,14 +200,14 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
         const data = await HoaDonService.Update_InforHoaDon(hoadonChosed);
         setHoaDonChosed({ ...hoadonChosed, maHoaDon: data?.maHoaDon });
         setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật thông tin hóa đơn thành công' });
-        handleGotoBack(hoadonChosed, 1);
+        handleGotoBack(hoadonChosed, TypeAction.UPDATE);
     };
 
     // thanhtoan congno hoadon
     const savePhieuThuOK = (tongThunew = 0) => {
         setObjAlert({ ...objAlert, show: true, mes: 'Thanh toán hóa đơn thành công' });
         setIsShowModalThanhToan(false);
-        setTypeAction(1);
+        setTypeAction(TypeAction.UPDATE);
         setHoaDonChosed({
             ...hoadonChosed,
             daThanhToan: (hoadonChosed?.daThanhToan ?? 0) + tongThunew,
@@ -208,6 +218,21 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
     // hoahong NV theo hoadon
     const showModalHoaHongHD = async () => {
         setIsShowHoaHongHD(true);
+    };
+
+    const AgreeConfirm = async () => {
+        const data = await HoaDonService.KhoiPhucHoaDon(hoadonChosed?.id ?? '');
+        if (!data) {
+            setObjAlert({ ...objAlert, show: true, type: 2, mes: 'Khôi phục hóa đơn không thành công' });
+            return;
+        }
+        const objUpdate = { ...hoadonChosed };
+        objUpdate.trangThai = TrangThaiHoaDon.HOAN_THANH;
+        setHoaDonChosed({ ...hoadonChosed, trangThai: TrangThaiHoaDon.HOAN_THANH });
+        setTypeAction(TypeAction.RESTORE);
+        handleGotoBack(objUpdate, TypeAction.RESTORE);
+        setObjAlert({ ...objAlert, show: true, mes: 'Khôi phục hóa đơn thành công' });
+        setinforConfirm({ ...inforConfirm, show: false });
     };
 
     const InHoaDon = async () => {
@@ -266,6 +291,12 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
     };
     return (
         <>
+            <ConfirmDelete
+                isShow={inforConfirm.show}
+                title={inforConfirm.title}
+                mes={inforConfirm.mes}
+                onOk={AgreeConfirm}
+                onCancel={() => setinforConfirm({ ...inforConfirm, show: false })}></ConfirmDelete>
             <Dialog open={isShowModalThanhToan} onClose={() => setIsShowModalThanhToan(false)} maxWidth="md">
                 <DetailHoaDon
                     formType={0}
@@ -440,29 +471,6 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                         </Typography>
                                         <ModeEditIcon style={{ color: '#999699', display: 'none' }} />
                                     </Stack>
-
-                                    <Box
-                                        sx={{
-                                            padding: '2px 3px',
-                                            borderRadius: '100px',
-                                            color:
-                                                hoadonChosed?.trangThai === 3
-                                                    ? '#50CD89'
-                                                    : hoadonChosed?.trangThai === 1
-                                                    ? '#FF9900'
-                                                    : '#F1416C',
-                                            bgcolor:
-                                                hoadonChosed?.trangThai === 3
-                                                    ? '#E8FFF3'
-                                                    : hoadonChosed?.trangThai === 1
-                                                    ? '#FFF8DD'
-                                                    : '#FFF5F8',
-                                            width: 'fit-content',
-                                            fontSize: '12px',
-                                            height: 'fit-content'
-                                        }}>
-                                        {hoadonChosed?.txtTrangThaiHD}
-                                    </Box>
                                 </Box>
                                 <Grid
                                     container
@@ -522,22 +530,31 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                         </Typography>
                                         <ThemeProvider theme={themOutlineInput}>
                                             <AutocompleteChiNhanh
-                                                dataChiNhanh={allChiNhanh}
+                                                dataChiNhanh={suggestStore?.suggestChiNhanh_byUserLogin}
                                                 idChosed={hoadonChosed?.idChiNhanh}
                                                 handleChoseItem={changeChiNhanh}
                                             />
                                         </ThemeProvider>
                                     </Grid>
-                                    {/* <Grid item xs={3}>
-                                        <Box sx={{ paddingTop: '18px' }}>
-                                            <Button
-                                                variant="contained"
-                                                color="secondary"
-                                                onClick={InHoaDon}>
-                                                In hóa đơn
-                                            </Button>
-                                        </Box>
-                                    </Grid> */}
+                                    <Grid item xs={3}>
+                                        <Typography
+                                            variant="h5"
+                                            fontSize="12px"
+                                            color="#999699"
+                                            fontWeight="400"
+                                            height={24}>
+                                            Trạng thái
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            className={
+                                                hoadonChosed?.trangThai === 3
+                                                    ? 'data-grid-cell-trangthai-active'
+                                                    : 'data-grid-cell-trangthai-notActive'
+                                            }>
+                                            {hoadonChosed?.txtTrangThaiHD}
+                                        </Typography>
+                                    </Grid>
                                 </Grid>
                             </Grid>
                             <Grid xs={12} item>
@@ -605,13 +622,35 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                         </Box>
                         <Box display="flex" gap="8px">
                             {hoadonChosed?.trangThai === 0 && (
-                                <Button
-                                    variant="outlined"
-                                    sx={{ borderColor: '#3B4758', color: '#4C4B4C' }}
-                                    className="btn-outline-hover"
-                                    onClick={gotoBack}>
-                                    Đóng
-                                </Button>
+                                <>
+                                    <Button
+                                        variant="outlined"
+                                        sx={{ borderColor: '#3B4758', color: '#4C4B4C' }}
+                                        className="btn-outline-hover"
+                                        onClick={gotoBack}>
+                                        Đóng
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        color="error"
+                                        sx={{
+                                            display: abpCustom.isGrandPermission('Pages.HoaDon.Restore') ? '' : 'none'
+                                        }}
+                                        onClick={() => {
+                                            // setAction(TypeAction.RESTORE);
+                                            setinforConfirm(
+                                                new PropConfirmOKCancel({
+                                                    show: true,
+                                                    title: 'Xác nhận khôi phục',
+                                                    mes: `Bạn có chắc chắn muốn khôi phục hóa đơn ${
+                                                        hoadonChosed?.maHoaDon ?? ' '
+                                                    } không?`
+                                                })
+                                            );
+                                        }}>
+                                        Khôi phục
+                                    </Button>
+                                </>
                             )}
                             {hoadonChosed?.trangThai !== 0 && (
                                 <>
@@ -643,7 +682,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                         sx={{
                                             borderColor: '#3B4758',
                                             color: 'var(--color-main)',
-                                            display: abpCustom.isGrandPermission('Pages.QuyHoaDon.Edit') ? '' : 'none'
+                                            display: abpCustom.isGrandPermission('Pages.HoaDon.Edit') ? '' : 'none'
                                         }}
                                         className="btn-outline-hover"
                                         onClick={showModalEditGioHang}>
@@ -653,7 +692,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                         variant="contained"
                                         sx={{
                                             color: '#fff',
-                                            display: abpCustom.isGrandPermission('Pages.QuyHoaDon.Edit') ? '' : 'none'
+                                            display: abpCustom.isGrandPermission('Pages.HoaDon.Edit') ? '' : 'none'
                                         }}
                                         className="btn-container-hover"
                                         onClick={updateHoaDon}>
@@ -670,7 +709,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                             '&:hover': {
                                                 bgcolor: 'red!important'
                                             },
-                                            display: abpCustom.isGrandPermission('Pages.QuyHoaDon.Delete') ? '' : 'none'
+                                            display: abpCustom.isGrandPermission('Pages.HoaDon.Delete') ? '' : 'none'
                                         }}>
                                         Xóa
                                     </Button>
