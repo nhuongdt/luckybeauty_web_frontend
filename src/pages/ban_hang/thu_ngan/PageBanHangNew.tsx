@@ -60,7 +60,13 @@ import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/Creat
 import CreateOrEditCustomerDialog from '../../customer/components/create-or-edit-customer-modal';
 import { KHCheckInDto, PageKhachHangCheckInDto } from '../../../services/check_in/CheckinDto';
 import ModalAddCustomerCheckIn from '../../check_in/modal_add_cus_checkin';
-import AppConsts, { HINH_THUC_THANH_TOAN, ISelect, TrangThaiCheckin, TypeAction } from '../../../lib/appconst';
+import AppConsts, {
+    HINH_THUC_THANH_TOAN,
+    ISelect,
+    LoaiChungTu,
+    TrangThaiCheckin,
+    TypeAction
+} from '../../../lib/appconst';
 import { NumericFormat } from 'react-number-format';
 import khachHangService from '../../../services/khach-hang/khachHangService';
 import { ListNhanVienDataContext } from '../../../services/nhan-vien/dto/NhanVienDataContext';
@@ -132,7 +138,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         })
     );
     const [lstQuyCT, setLstQuyCT] = useState<QuyChiTietDto[]>([
-        new QuyChiTietDto({ hinhThucThanhToan: 1 }) // !! important: luôn set ít nhất 1 giá trị cho mảng quỹ chi tiết
+        new QuyChiTietDto({ hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT }) // !! important: luôn set ít nhất 1 giá trị cho mảng quỹ chi tiết
     ]);
 
     // used to check update infor cthd
@@ -1042,7 +1048,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             await CheckinService.Update_IdHoaDon_toCheckInHoaDon(triggerAddCheckIn.id as string, hodaDonDB.id);
         }
 
-        // again again if tra thua tien
+        // assign again qct if tra thua tien
         let lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(lstQuyCT, sumTienKhachTra, hoadon?.tongThanhToan ?? 0);
 
         // save soquy (Mat, POS, ChuyenKhoan)
@@ -1053,9 +1059,10 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         if (tongThu > 0) {
             quyHD = new QuyHoaDonDto({
                 idChiNhanh: utils.checkNull(chiNhanhCurrent?.id) ? idChiNhanh : chiNhanhCurrent?.id,
-                idLoaiChungTu: 11,
+                idLoaiChungTu: LoaiChungTu.PHIEU_THU,
                 ngayLapHoaDon: hodaDonDB.ngayLapHoaDon,
-                tongTienThu: tongThu
+                tongTienThu: tongThu,
+                noiDungThu: hoadon?.ghiChuHD
             });
             lstQCT_After = lstQCT_After.filter((x: QuyChiTietDto) => x.tienThu > 0);
             // assign idHoadonLienQuan, idKhachHang for quyCT
@@ -1088,7 +1095,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         setClickSave(false);
 
         setHoaDonChiTiet([]);
-        setLstQuyCT([new QuyChiTietDto({ hinhThucThanhToan: 1 })]);
+        setLstQuyCT([new QuyChiTietDto({ hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT })]);
         setHoaDon(
             new PageHoaDonDto({
                 id: Guid.create().toString(),
@@ -2404,7 +2411,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                             {new Intl.NumberFormat('vi-VN').format(Math.abs(tienThuaTraKhach))}
                                         </Typography>
                                     </Box>
-                                    {lstQuyCT[0].hinhThucThanhToan !== 1 && (
+                                    {lstQuyCT[0].hinhThucThanhToan !== HINH_THUC_THANH_TOAN.TIEN_MAT && (
                                         <Stack>
                                             <AutocompleteAccountBank
                                                 handleChoseItem={changeTaiKhoanNganHang}
