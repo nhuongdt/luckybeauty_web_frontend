@@ -12,7 +12,8 @@ import {
     Radio,
     TextField,
     Stack,
-    debounce
+    debounce,
+    Typography
 } from '@mui/material';
 
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
@@ -30,7 +31,14 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import * as yup from 'yup';
 import { useFormik, useFormikContext } from 'formik';
 import { addDays, format, isDate, parse } from 'date-fns';
-import AppConsts, { HINH_THUC_THANH_TOAN, ISelect, TypeAction } from '../../../../lib/appconst';
+import AppConsts, {
+    HINH_THUC_THANH_TOAN,
+    ISelect,
+    LoaiChungTu,
+    LoaiDoiTuong,
+    TrangThaiActive,
+    TypeAction
+} from '../../../../lib/appconst';
 import { Guid } from 'guid-typescript';
 import { AppContext, ChiNhanhContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
 import nhanVienService from '../../../../services/nhan-vien/nhanVienService';
@@ -38,12 +46,12 @@ import NhanSuItemDto from '../../../../services/nhan-vien/dto/nhanSuItemDto';
 import AutocompleteNhanVien from '../../../../components/Autocomplete/NhanVien';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
-import { TrendingUpTwoTone } from '@mui/icons-material';
 import { PagedNhanSuRequestDto } from '../../../../services/nhan-vien/dto/PagedNhanSuRequestDto';
 import ModalTaiKhoanNganHang from './modal_tai_khoan_ngan_hang';
 import AutocompleteAccountBank from '../../../../components/Autocomplete/AccountBank';
-import TaiKhoanNganHangServices from '../../../../services/so_quy/TaiKhoanNganHangServices';
-import { NganHangDto, TaiKhoanNganHangDto } from '../../../../services/so_quy/Dto/TaiKhoanNganHangDto';
+import suggestStore from '../../../../stores/suggestStore';
+import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
+import abpCustom from '../../../../components/abp-custom';
 
 interface SoQuyDialogProps {
     visiable: boolean;
@@ -75,7 +83,6 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
     const chinhanh = appContext.chinhanhCurrent;
     const [errMaHoadon, setErrMaHoaDon] = useState('');
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
-    const [bankAccount, setBankAccount] = useState<TaiKhoanNganHangDto[]>([]);
     const [inforDelete, setinforDelete] = useState<PropConfirmOKCancel>({
         show: false,
         title: '',
@@ -85,12 +92,13 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
     const [isShowModalAccountBank, setIsShowModalAccountBank] = useState(false);
+    const [action, setAction] = useState(TypeAction.INSEART);
 
     const [quyHoaDon, setQuyHoaDon] = useState<QuyHoaDonDto>(
         new QuyHoaDonDto({
             id: Guid.create().toString(),
             idChiNhanh: chinhanh.id,
-            idLoaiChungTu: 11,
+            idLoaiChungTu: LoaiChungTu.PHIEU_THU,
             tongTienThu: 0,
             idDoiTuongNopTien: null,
             hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT,
@@ -98,7 +106,7 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
             ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm')
         })
     );
-    const sLoai = quyHoaDon?.idLoaiChungTu === 11 ? 'thu' : 'chi';
+    const sLoai = quyHoaDon?.idLoaiChungTu === LoaiChungTu.PHIEU_THU ? 'thu' : 'chi';
 
     const getInforQuyHoaDon = async () => {
         if (utils.checkNull(idQuyHD)) return;
@@ -117,12 +125,13 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                     noiDungThu: data.noiDungThu,
                     tongTienThu: data.tongTienThu,
                     hachToanKinhDoanh: data.hachToanKinhDoanh,
-                    loaiDoiTuong: quyCT[0]?.idNhanVien != null ? 3 : 1,
+                    loaiDoiTuong: quyCT[0]?.idNhanVien != null ? LoaiDoiTuong.NHAN_VIEN : LoaiDoiTuong.KHACH_HANG,
                     idDoiTuongNopTien: quyCT[0]?.idNhanVien != null ? quyCT[0]?.idNhanVien : quyCT[0]?.idKhachHang,
                     hinhThucThanhToan: quyCT[0].hinhThucThanhToan,
                     idKhoanThuChi: quyCT[0].idKhoanThuChi,
                     idTaiKhoanNganHang: quyCT[0].idTaiKhoanNganHang,
-                    quyHoaDon_ChiTiet: quyCT
+                    quyHoaDon_ChiTiet: quyCT,
+                    trangThai: data?.trangThai
                 });
             }
         }
@@ -135,16 +144,8 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
         setAllNhanVien(data.items);
     };
 
-    const GetAllBankAcount = async () => {
-        const data = await TaiKhoanNganHangServices.GetAllBankAccount();
-        if (data != null) {
-            setBankAccount(data);
-        }
-    };
-
     const PageLoad = () => {
         GetListNhanVien();
-        GetAllBankAcount();
     };
 
     useEffect(() => {
@@ -157,11 +158,11 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                 ...quyHoaDon,
                 id: Guid.create().toString(),
                 idChiNhanh: chinhanh.id,
-                idLoaiChungTu: 11,
+                idLoaiChungTu: LoaiChungTu.PHIEU_THU,
                 tongTienThu: 0,
                 idDoiTuongNopTien: null,
                 maHoaDon: '',
-                loaiDoiTuong: 1,
+                loaiDoiTuong: LoaiDoiTuong.KHACH_HANG,
                 ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm'),
                 noiDungThu: '',
                 hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT,
@@ -175,15 +176,34 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
         }
     }, [visiable]);
 
-    const deleteSoQuy = () => {
+    const deleteSoQuy = async () => {
         setinforDelete({ ...inforDelete, show: false });
-        onOk(quyHoaDon, 3);
+        switch (action) {
+            case TypeAction.RESTORE:
+                {
+                    if (utils.checkNull(idQuyHD)) {
+                        return;
+                    }
+                    await SoQuyServices.KhoiPhucSoQuy(idQuyHD as string);
+                    setObjAlert({
+                        show: true,
+                        type: 1,
+                        mes: 'Khôi phục sổ quỹ thành công'
+                    });
+                }
+                break;
+        }
+        onOk(quyHoaDon, action);
     };
 
     const saveSoQuy = async () => {
         const myData = { ...quyHoaDon };
-        const idKhachHang = (quyHoaDon.loaiDoiTuong == 3 ? null : quyHoaDon.idDoiTuongNopTien) as null;
-        const idNhanVien = (quyHoaDon.loaiDoiTuong == 3 ? quyHoaDon.idDoiTuongNopTien : null) as null;
+        const idKhachHang = (
+            quyHoaDon.loaiDoiTuong == LoaiDoiTuong.NHAN_VIEN ? null : quyHoaDon.idDoiTuongNopTien
+        ) as null;
+        const idNhanVien = (
+            quyHoaDon.loaiDoiTuong == LoaiDoiTuong.NHAN_VIEN ? quyHoaDon.idDoiTuongNopTien : null
+        ) as null;
 
         if (utils.checkNull(idQuyHD)) {
             // insert
@@ -233,7 +253,7 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
     useEffect(() => {
         setQuyHoaDon({
             ...quyHoaDon,
-            loaiPhieu: quyHoaDon.idLoaiChungTu === 11 ? 'Phiếu thu' : 'Phiếu chi'
+            loaiPhieu: quyHoaDon.idLoaiChungTu === LoaiChungTu.PHIEU_THU ? 'Phiếu thu' : 'Phiếu chi'
         });
     }, [quyHoaDon.idLoaiChungTu]);
 
@@ -283,7 +303,7 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
         });
         setIsShowModalAccountBank(false);
 
-        setBankAccount([dataSave, ...bankAccount]);
+        // setBankAccount([dataSave, ...bankAccount]);
 
         setObjAlert({
             show: true,
@@ -307,6 +327,11 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                 }}
                 onOk={saveOKAccountBank}
             />
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Dialog open={visiable} fullWidth maxWidth={'sm'} onClose={onClose}>
                 <DialogTitle>
                     <Box className="modal-title" sx={{ float: 'left' }}>
@@ -344,12 +369,12 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                 control={
                                                     <Radio
                                                         color="secondary"
-                                                        value={11}
-                                                        checked={quyHoaDon.idLoaiChungTu === 11}
+                                                        value={LoaiChungTu.PHIEU_THU}
+                                                        checked={quyHoaDon.idLoaiChungTu === LoaiChungTu.PHIEU_THU}
                                                         onChange={() =>
                                                             setQuyHoaDon({
                                                                 ...quyHoaDon,
-                                                                idLoaiChungTu: 11
+                                                                idLoaiChungTu: LoaiChungTu.PHIEU_THU
                                                             })
                                                         }
                                                     />
@@ -362,12 +387,12 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                     <Radio
                                                         color="secondary"
                                                         name="idLoaiChungTu"
-                                                        value={12}
-                                                        checked={quyHoaDon.idLoaiChungTu === 12}
+                                                        value={LoaiChungTu.PHIEU_CHI}
+                                                        checked={quyHoaDon.idLoaiChungTu === LoaiChungTu.PHIEU_CHI}
                                                         onChange={() =>
                                                             setQuyHoaDon({
                                                                 ...quyHoaDon,
-                                                                idLoaiChungTu: 12
+                                                                idLoaiChungTu: LoaiChungTu.PHIEU_CHI
                                                             })
                                                         }
                                                     />
@@ -416,12 +441,52 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                 label="Hình thức"
                                                 data={AppConsts.hinhThucThanhToan}
                                                 idChosed={quyHoaDon?.hinhThucThanhToan}
-                                                handleChange={(item: ISelect) =>
-                                                    setQuyHoaDon({
-                                                        ...quyHoaDon,
-                                                        hinhThucThanhToan: item.value as number
-                                                    })
-                                                }
+                                                handleChange={(item: ISelect) => {
+                                                    {
+                                                        switch (item.value) {
+                                                            case HINH_THUC_THANH_TOAN.TIEN_MAT:
+                                                                {
+                                                                    setQuyHoaDon({
+                                                                        ...quyHoaDon,
+                                                                        hinhThucThanhToan: item.value as number,
+                                                                        idTaiKhoanNganHang: null
+                                                                    });
+                                                                }
+                                                                break;
+                                                            case HINH_THUC_THANH_TOAN.CHUYEN_KHOAN:
+                                                            case HINH_THUC_THANH_TOAN.QUYET_THE:
+                                                                {
+                                                                    // set default tk nganhang
+                                                                    let idTaiKhoanNganHang = null;
+                                                                    const tkNganHangDefault =
+                                                                        suggestStore?.suggestTaiKhoanNganHangQr?.filter(
+                                                                            (x) => x.isDefault
+                                                                        );
+                                                                    if (
+                                                                        tkNganHangDefault !== undefined &&
+                                                                        tkNganHangDefault.length > 0
+                                                                    ) {
+                                                                        idTaiKhoanNganHang = tkNganHangDefault[0].id;
+                                                                    } else {
+                                                                        if (
+                                                                            suggestStore?.suggestTaiKhoanNganHangQr
+                                                                                ?.length > 0
+                                                                        ) {
+                                                                            idTaiKhoanNganHang =
+                                                                                suggestStore
+                                                                                    ?.suggestTaiKhoanNganHangQr[0].id;
+                                                                        }
+                                                                    }
+                                                                    setQuyHoaDon({
+                                                                        ...quyHoaDon,
+                                                                        hinhThucThanhToan: item.value as number,
+                                                                        idTaiKhoanNganHang: idTaiKhoanNganHang
+                                                                    });
+                                                                }
+                                                                break;
+                                                        }
+                                                    }
+                                                }}
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
@@ -438,7 +503,7 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
-                                            {quyHoaDon.loaiDoiTuong !== 3 && (
+                                            {quyHoaDon.loaiDoiTuong !== LoaiDoiTuong.NHAN_VIEN && (
                                                 <>
                                                     <AutocompleteCustomer
                                                         idChosed={quyHoaDon?.idDoiTuongNopTien}
@@ -467,7 +532,7 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                     />
                                                 </>
                                             )}
-                                            {quyHoaDon.loaiDoiTuong === 3 && (
+                                            {quyHoaDon.loaiDoiTuong === LoaiDoiTuong.NHAN_VIEN && (
                                                 <>
                                                     <AutocompleteNhanVien
                                                         idChosed={quyHoaDon?.idDoiTuongNopTien}
@@ -522,14 +587,11 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                             />
                                         </Grid>
                                         {/*  không cần chọn tài khoản ngân hàng*/}
-                                        {quyHoaDon?.hinhThucThanhToan === 0 && (
+                                        {quyHoaDon?.hinhThucThanhToan !== HINH_THUC_THANH_TOAN.TIEN_MAT && (
                                             <>
                                                 <Grid item xs={12} sm={12}>
-                                                    <span className="modal-lable">Tài khoản {sLoai} </span>
-                                                </Grid>
-                                                <Grid item xs={12} sm={12}>
                                                     <AutocompleteAccountBank
-                                                        listOption={bankAccount}
+                                                        listOption={suggestStore?.suggestTaiKhoanNganHangQr}
                                                         idChosed={quyHoaDon.idTaiKhoanNganHang}
                                                         handleClickBtnAdd={() => setIsShowModalAccountBank(true)}
                                                         handleChoseItem={(item: any) => {
@@ -541,8 +603,8 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                                 setQuyHoaDon({
                                                                     ...quyHoaDon,
                                                                     idTaiKhoanNganHang: item?.id,
-                                                                    tenNganHang: item.tenNganHang,
-                                                                    tenChuThe: item.tenChuThe
+                                                                    tenNganHang: item?.tenNganHang,
+                                                                    tenChuThe: item?.tenChuThe
                                                                 });
                                                             }
                                                         }}
@@ -608,7 +670,8 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                     onClick={onClose}>
                                                     Hủy
                                                 </Button>
-                                                {!formik.isSubmitting ? (
+                                                {!formik.isSubmitting &&
+                                                quyHoaDon?.trangThai == TrangThaiActive.ACTIVE ? (
                                                     <Button
                                                         variant="contained"
                                                         sx={{ bgcolor: '#7C3367' }}
@@ -628,27 +691,63 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                     )
                                                 )}
 
-                                                {!utils.checkNull(idQuyHD) && (
-                                                    <>
-                                                        <Button
-                                                            variant="contained"
-                                                            sx={{ bgcolor: 'red' }}
-                                                            className="btn-container-hover"
-                                                            onClick={() => {
-                                                                setinforDelete(
-                                                                    new PropConfirmOKCancel({
-                                                                        show: true,
-                                                                        title: 'Xác nhận xóa',
-                                                                        mes: `Bạn có chắc chắn muốn xóa ${
-                                                                            quyHoaDon?.loaiPhieu ?? ' '
-                                                                        }  ${quyHoaDon?.maHoaDon ?? ' '} không?`
-                                                                    })
-                                                                );
-                                                            }}>
-                                                            Xóa
-                                                        </Button>
-                                                    </>
-                                                )}
+                                                {!utils.checkNull(idQuyHD) ? (
+                                                    quyHoaDon?.trangThai == TrangThaiActive.ACTIVE ? (
+                                                        <>
+                                                            <Button
+                                                                color="error"
+                                                                variant="outlined"
+                                                                sx={{
+                                                                    display: abpCustom.isGrandPermission(
+                                                                        'Pages.QuyHoaDon.Delete'
+                                                                    )
+                                                                        ? ''
+                                                                        : 'none'
+                                                                }}
+                                                                onClick={() => {
+                                                                    setAction(TypeAction.DELETE);
+                                                                    setinforDelete(
+                                                                        new PropConfirmOKCancel({
+                                                                            show: true,
+                                                                            title: 'Xác nhận xóa',
+                                                                            mes: `Bạn có chắc chắn muốn xóa ${
+                                                                                quyHoaDon?.loaiPhieu ?? ' '
+                                                                            }  ${quyHoaDon?.maHoaDon ?? ' '} không?`
+                                                                        })
+                                                                    );
+                                                                }}>
+                                                                Xóa
+                                                            </Button>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Button
+                                                                color="error"
+                                                                variant="outlined"
+                                                                sx={{
+                                                                    display: abpCustom.isGrandPermission(
+                                                                        'Pages.QuyHoaDon.Restore'
+                                                                    )
+                                                                        ? ''
+                                                                        : 'none'
+                                                                }}
+                                                                onClick={() => {
+                                                                    setAction(TypeAction.RESTORE);
+                                                                    setinforDelete(
+                                                                        new PropConfirmOKCancel({
+                                                                            show: true,
+                                                                            title: 'Xác nhận khôi phục',
+                                                                            mes: `Bạn có chắc chắn muốn khôi phục ${
+                                                                                quyHoaDon?.loaiPhieu ?? ' '
+                                                                            }  ${quyHoaDon?.maHoaDon ?? ' '} không?`
+                                                                        })
+                                                                    );
+                                                                }}>
+                                                                Khôi phục
+                                                            </Button>
+                                                        </>
+                                                    )
+                                                ) : null}
                                             </Stack>
                                         </Grid>
                                     </Grid>
