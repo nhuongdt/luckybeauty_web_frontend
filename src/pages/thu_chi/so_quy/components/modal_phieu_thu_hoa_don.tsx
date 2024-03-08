@@ -18,7 +18,13 @@ import { NumericFormat } from 'react-number-format';
 import { Guid } from 'guid-typescript';
 import { format } from 'date-fns';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import AppConsts, { HINH_THUC_THANH_TOAN, ISelect } from '../../../../lib/appconst';
+import AppConsts, {
+    HINH_THUC_THANH_TOAN,
+    ISelect,
+    LoaiChungTu,
+    LoaiDoiTuong,
+    TrangThaiActive
+} from '../../../../lib/appconst';
 import utils from '../../../../utils/utils';
 import { AppContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
 import QuyChiTietDto from '../../../../services/so_quy/QuyChiTietDto';
@@ -28,6 +34,9 @@ import DateTimePickerCustom from '../../../../components/DatetimePicker/DateTime
 import DialogButtonClose from '../../../../components/Dialog/ButtonClose';
 import HoaDonService from '../../../../services/ban_hang/HoaDonService';
 import PageHoaDonDto from '../../../../services/ban_hang/PageHoaDonDto';
+import BankAccount from '../../../../components/Switch/BankAccount';
+import suggestStore from '../../../../stores/suggestStore';
+import { TaiKhoanNganHangDto } from '../../../../services/so_quy/Dto/TaiKhoanNganHangDto';
 
 const themeDate = createTheme({
     components: {
@@ -54,17 +63,18 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
     const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
     const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
     const [tienKhachTraMax, setTienKhachTraMax] = useState(0);
+    const [idTaiKhoanNganHang, setIdTaiKhoanNganHang] = React.useState('');
 
-    const [idHinhThucTT, setIdHinhThucTT] = React.useState(1);
+    const [idHinhThucTT, setIdHinhThucTT] = React.useState(HINH_THUC_THANH_TOAN.TIEN_MAT);
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(new PageHoaDonDto({ tenKhachHang: '' }));
     const [quyHDOld, setQuyHDOld] = useState(
         new QuyHoaDonDto({
             id: Guid.create().toString(),
             idChiNhanh: idChiNhanh,
-            idLoaiChungTu: 11,
+            idLoaiChungTu: LoaiChungTu.PHIEU_THU,
             tongTienThu: 0,
             idDoiTuongNopTien: null,
-            hinhThucThanhToan: 1,
+            hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT,
             hachToanKinhDoanh: true,
             ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm')
         })
@@ -74,10 +84,10 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
         new QuyHoaDonDto({
             id: Guid.create().toString(),
             idChiNhanh: idChiNhanh,
-            idLoaiChungTu: 11,
+            idLoaiChungTu: LoaiChungTu.PHIEU_THU,
             tongTienThu: 0,
             idDoiTuongNopTien: null,
-            hinhThucThanhToan: 1,
+            hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT,
             hachToanKinhDoanh: true,
             ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm')
         })
@@ -89,32 +99,56 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
         if (data !== null) {
             const quyCT = data.quyHoaDon_ChiTiet;
             if (quyCT !== undefined && quyCT?.length > 0) {
-                let nguoiNopTien = 'Khách lẻ';
+                let nguoiNopTien = 'Khách lẻ',
+                    noHD = 0;
                 const dataHoaDon = await HoaDonService.GetInforHoaDon_byId(quyCT[0].idHoaDonLienQuan ?? '');
                 if (dataHoaDon.length > 0) {
                     setHoaDon(dataHoaDon[0]);
                     nguoiNopTien = dataHoaDon[0].tenKhachHang;
+                    noHD = dataHoaDon[0]?.conNo ?? 0;
                 }
 
                 setQuyHDOld(data);
-                setIdHinhThucTT(quyCT?.length > 1 ? 0 : quyCT[0].hinhThucThanhToan);
+                const hinhThucTT = quyCT?.length > 1 ? HINH_THUC_THANH_TOAN.KET_HOP : quyCT[0].hinhThucThanhToan;
+                setIdHinhThucTT(hinhThucTT);
 
                 if (quyCT?.length > 1) {
+                    const exPOS = quyCT.filter(
+                        (x: QuyChiTietDto) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN
+                    );
+                    if (exPOS.length === 0) {
+                        quyCT.push(
+                            new QuyChiTietDto({ hinhThucThanhToan: HINH_THUC_THANH_TOAN.CHUYEN_KHOAN, tienThu: 0 })
+                        );
+                    }
+                    const exCK = quyCT.filter(
+                        (x: QuyChiTietDto) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.QUYET_THE
+                    );
+                    if (exCK.length === 0) {
+                        quyCT.push(
+                            new QuyChiTietDto({ hinhThucThanhToan: HINH_THUC_THANH_TOAN.QUYET_THE, tienThu: 0 })
+                        );
+                    }
                     // nếu thanh toán kết hợp: push hình thức thanh toán còn thiếu (gtrị tienthu = 0)
                     const exMat = quyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 1);
                     if (exMat.length === 0) {
                         // tiemmat: luôn nằm ở vị trí đầu tiên
-                        quyCT.unshift(new QuyChiTietDto({ hinhThucThanhToan: 1, tienThu: 0 }));
-                    }
-                    const exPOS = quyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 2);
-                    if (exPOS.length === 0) {
-                        quyCT.push(new QuyChiTietDto({ hinhThucThanhToan: 2, tienThu: 0 }));
-                    }
-                    const exCK = quyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 3);
-                    if (exCK.length === 0) {
-                        quyCT.push(new QuyChiTietDto({ hinhThucThanhToan: 3, tienThu: 0 }));
+                        quyCT.unshift(
+                            new QuyChiTietDto({ hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT, tienThu: 0 })
+                        );
                     }
                 }
+                let idTaiKhoanNganHang = '';
+                const itemPos_Ck = quyCT.filter(
+                    (x: QuyChiTietDto) =>
+                        x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN ||
+                        x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.QUYET_THE
+                );
+                if (itemPos_Ck.length > 0) {
+                    idTaiKhoanNganHang = itemPos_Ck[0].idTaiKhoanNganHang as string;
+                }
+                setIdTaiKhoanNganHang(idTaiKhoanNganHang);
+
                 setQuyHoaDon({
                     ...quyHoaDon,
                     id: data.id,
@@ -125,17 +159,19 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                     noiDungThu: data.noiDungThu,
                     tongTienThu: data.tongTienThu,
                     hachToanKinhDoanh: data.hachToanKinhDoanh,
-                    loaiDoiTuong: quyCT[0]?.idNhanVien != null ? 3 : 1,
+                    loaiDoiTuong: quyCT[0]?.idNhanVien != null ? LoaiDoiTuong.NHAN_VIEN : LoaiDoiTuong.KHACH_HANG,
                     idDoiTuongNopTien: quyCT[0]?.idNhanVien != null ? quyCT[0]?.idNhanVien : quyCT[0]?.idKhachHang,
-                    hinhThucThanhToan: quyCT[0].hinhThucThanhToan,
+                    hinhThucThanhToan: hinhThucTT,
                     idKhoanThuChi: quyCT[0].idKhoanThuChi,
-                    idTaiKhoanNganHang: quyCT[0].idTaiKhoanNganHang,
+                    idTaiKhoanNganHang: idTaiKhoanNganHang,
                     quyHoaDon_ChiTiet: quyCT,
-                    tenNguoiNop: nguoiNopTien
+                    tenNguoiNop: nguoiNopTien,
+                    trangThai: data?.trangThai
                 });
 
                 setSumTienKhachTra(data.tongTienThu);
-                setTienKhachTraMax(data.tongTienThu + (hoadon?.conNo ?? 0));
+                setTienKhachTraMax(data.tongTienThu + noHD);
+                setTienThuaTraKhach(0);
             }
         }
     };
@@ -146,10 +182,10 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
 
     const onChangeTienKhachTra = (gtri: string, loai: number) => {
         const gtriNhapNew = utils.formatNumberToFloat(gtri);
-        if (idHinhThucTT === 0) {
+        if (idHinhThucTT === HINH_THUC_THANH_TOAN.KET_HOP) {
             // tinh lai  tien
             switch (loai) {
-                case 1: // tinhtien chuyenkhoan
+                case HINH_THUC_THANH_TOAN.TIEN_MAT: // tinhtien chuyenkhoan
                     {
                         const conLai = tienKhachTraMax - gtriNhapNew;
                         setQuyHoaDon({
@@ -171,7 +207,7 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                     }
 
                     break;
-                case 2: // tinhtien pos
+                case HINH_THUC_THANH_TOAN.CHUYEN_KHOAN: // tinhtien pos
                     {
                         const sumTienMat = quyHoaDon?.quyHoaDon_ChiTiet
                             ?.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 1)
@@ -198,7 +234,7 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                         setSumTienKhachTra(tienKhachTraMax);
                     }
                     break;
-                case 3:
+                case HINH_THUC_THANH_TOAN.QUYET_THE:
                     {
                         const sumMatCK = quyHoaDon?.quyHoaDon_ChiTiet
                             ?.filter((x: QuyChiTietDto) => x.hinhThucThanhToan !== 3)
@@ -243,14 +279,16 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
     };
 
     const choseHinhThucThanhToan = (item: ISelect) => {
-        setIdHinhThucTT(item.value as unknown as number);
-        if (item.value !== 0) {
+        const newHTThanhToan = item.value as unknown as number;
+        setIdHinhThucTT(newHTThanhToan);
+
+        if (newHTThanhToan !== HINH_THUC_THANH_TOAN.KET_HOP) {
             setQuyHoaDon({
                 ...quyHoaDon,
                 quyHoaDon_ChiTiet: [
                     new QuyChiTietDto({
                         tienThu: quyHDOld.tongTienThu,
-                        hinhThucThanhToan: item.value as number
+                        hinhThucThanhToan: newHTThanhToan
                     })
                 ]
             });
@@ -260,19 +298,44 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                 quyHoaDon_ChiTiet: [
                     new QuyChiTietDto({
                         tienThu: quyHDOld.tongTienThu,
-                        hinhThucThanhToan: 1
+                        hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT
                     }),
                     new QuyChiTietDto({
                         tienThu: 0,
-                        hinhThucThanhToan: 2
+                        hinhThucThanhToan: HINH_THUC_THANH_TOAN.CHUYEN_KHOAN
                     }),
                     new QuyChiTietDto({
                         tienThu: 0,
-                        hinhThucThanhToan: 3
+                        hinhThucThanhToan: HINH_THUC_THANH_TOAN.QUYET_THE
                     })
                 ]
             });
         }
+    };
+
+    const changeTaiKhoanNganHang = (item: TaiKhoanNganHangDto) => {
+        setIdTaiKhoanNganHang(item?.id);
+
+        setQuyHoaDon({
+            ...quyHoaDon,
+            quyHoaDon_ChiTiet: quyHoaDon?.quyHoaDon_ChiTiet?.map((itemCT: QuyChiTietDto) => {
+                if (
+                    itemCT.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN ||
+                    itemCT.hinhThucThanhToan === HINH_THUC_THANH_TOAN.QUYET_THE
+                ) {
+                    return {
+                        ...itemCT,
+                        idTaiKhoanNganHang: item?.id,
+                        tenNganHang: item?.tenNganHang,
+                        tenChuThe: item?.tenChuThe,
+                        soTaiKhoan: item?.soTaiKhoan,
+                        maPinNganHang: item?.maPinNganHang
+                    };
+                } else {
+                    return { ...itemCT };
+                }
+            })
+        });
     };
 
     const savePhieuThu = async () => {
@@ -467,6 +530,7 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                                     onChange={(event) => onChangeTienKhachTra(event.target.value, idHinhThucTT)}
                                 />
                             </Grid>
+
                             {quyHoaDon?.quyHoaDon_ChiTiet !== undefined && quyHoaDon?.quyHoaDon_ChiTiet?.length > 1 ? (
                                 <Grid container spacing="16px">
                                     {quyHoaDon?.quyHoaDon_ChiTiet?.map((item, index) => (
@@ -520,6 +584,20 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                                     ))}
                                 </Grid>
                             ) : undefined}
+                            <Grid item xs={12}>
+                                {idHinhThucTT !== HINH_THUC_THANH_TOAN.TIEN_MAT && (
+                                    <Stack>
+                                        <Stack style={{ marginTop: '16px' }}>
+                                            <BankAccount
+                                                lstBankAccount={suggestStore?.suggestTaiKhoanNganHangQr}
+                                                idChosed={idTaiKhoanNganHang}
+                                                handleChoseItem={changeTaiKhoanNganHang}
+                                            />
+                                        </Stack>
+                                    </Stack>
+                                )}
+                            </Grid>
+
                             {tienThuaTraKhach !== 0 && (
                                 <Grid container justifyContent="space-between">
                                     <Grid item xs="auto">
@@ -547,19 +625,36 @@ const ModalPhieuThuHoaDon = ({ isShow, idQuyHD = null, onClose, onOk }: any) => 
                                 }></TextField>
                         </Box>
                         <Stack>
-                            <Button
-                                variant="contained"
-                                sx={{
-                                    width: '158px',
-                                    marginX: 'auto',
-                                    mt: 'auto',
-                                    mb: '5px',
-                                    paddingY: '14px',
-                                    fontSize: '16px'
-                                }}
-                                onClick={savePhieuThu}>
-                                Cập nhật
-                            </Button>
+                            {quyHoaDon?.trangThai == TrangThaiActive.ACTIVE ? (
+                                <Button
+                                    variant="contained"
+                                    sx={{
+                                        width: '158px',
+                                        marginX: 'auto',
+                                        mt: 'auto',
+                                        mb: '5px',
+                                        paddingY: '14px',
+                                        fontSize: '16px'
+                                    }}
+                                    onClick={savePhieuThu}>
+                                    Cập nhật
+                                </Button>
+                            ) : (
+                                <Button
+                                    variant="outlined"
+                                    color="error"
+                                    onClick={onClose}
+                                    sx={{
+                                        width: '158px',
+                                        marginX: 'auto',
+                                        mt: 'auto',
+                                        mb: '5px',
+                                        paddingY: '14px',
+                                        fontSize: '16px'
+                                    }}>
+                                    Đóng
+                                </Button>
+                            )}
                         </Stack>
                     </Stack>
                 </DialogContent>
