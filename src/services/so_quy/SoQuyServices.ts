@@ -27,6 +27,10 @@ class SoQuyServices {
         const result = await http.get('api/services/app/QuyHoaDon/Delete?id=' + id);
         return result.data.result;
     };
+    KhoiPhucSoQuy = async (id: string): Promise<QuyHoaDonDto> => {
+        const result = await http.get('api/services/app/QuyHoaDon/KhoiPhucSoQuy?idQuyHoaDon=' + id);
+        return result.data.result;
+    };
     DeleteMultiple_QuyHoaDon = async (lstId: any) => {
         const result = await http.post('api/services/app/QuyHoaDon/DeleteMultiple_QuyHoaDon', lstId);
         return result.data.success;

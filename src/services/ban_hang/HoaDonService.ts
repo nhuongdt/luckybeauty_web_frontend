@@ -59,7 +59,14 @@ class HoaDonService {
         if (utils.checkNull(idHoaDon)) {
             return [];
         }
-        const result = await http.post(`api/services/app/HoaDon/DeleteHoaDon?id=${idHoaDon}`);
+        const result = await http.get(`api/services/app/HoaDon/DeleteHoaDon?id=${idHoaDon}`);
+        return result.data.result;
+    };
+    KhoiPhucHoaDon = async (idHoaDon: string): Promise<boolean> => {
+        if (utils.checkNull(idHoaDon)) {
+            return false;
+        }
+        const result = await http.get(`api/services/app/HoaDon/KhoiPhucHoaDon?idHoaDon=${idHoaDon}`);
         return result.data.result;
     };
     Delete_MultipleHoaDon = async (lstId: any) => {
