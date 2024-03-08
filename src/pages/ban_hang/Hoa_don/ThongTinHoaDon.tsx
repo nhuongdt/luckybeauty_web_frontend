@@ -55,7 +55,6 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [isShowModalThanhToan, setIsShowModalThanhToan] = useState(false);
 
-    const [allAccountBank, setAllAccountBank] = useState<TaiKhoanNganHangDto[]>([]);
     const [hoadonChosed, setHoaDonChosed] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
     const [chitietHoaDon, setChiTietHoaDon] = useState<PageHoaDonChiTietDto[]>([]);
 
@@ -85,20 +84,11 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
         }
     };
 
-    const GetAllTaiKhoanNganHang = async () => {
-        const data = await TaiKhoanNganHangServices.GetAllBankAccount(hoadon?.idChiNhanh);
-        setAllAccountBank(data?.filter((x) => x.trangThai === 1));
-    };
-
     useEffect(() => {
         GetChiTietHoaDon_byIdHoaDon();
         setHoaDonChosed(hoadon);
         setTypeAction(TypeAction.NOTHING);
     }, [idHoaDon]);
-
-    useEffect(() => {
-        GetAllTaiKhoanNganHang();
-    }, []);
 
     const changeTaiKhoanNganHang = async (item: TaiKhoanNganHangDto) => {
         setTaiKhoanNganHang({
@@ -300,7 +290,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
             <Dialog open={isShowModalThanhToan} onClose={() => setIsShowModalThanhToan(false)} maxWidth="md">
                 <DetailHoaDon
                     formType={0}
-                    listAccountBank={allAccountBank}
+                    listAccountBank={suggestStore?.suggestTaiKhoanNganHangQr}
                     idAccounBank={taiKhoanNganHang?.id ?? ''}
                     toggleDetail={() => setIsShowModalThanhToan(false)}
                     tongTienHang={hoadonChosed?.tongTienHang}

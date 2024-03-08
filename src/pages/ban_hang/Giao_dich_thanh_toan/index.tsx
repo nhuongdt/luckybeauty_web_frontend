@@ -36,6 +36,7 @@ import utils from '../../../utils/utils';
 import PopoverFilterHoaDon from './PopoverFilterHoaDon';
 import Cookies from 'js-cookie';
 import { TrangThaiHoaDon } from '../../../services/ban_hang/HoaDonConst';
+import suggestStore from '../../../stores/suggestStore';
 
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
@@ -102,8 +103,16 @@ const GiaoDichThanhToan: React.FC = () => {
         }
     };
 
-    const PageLoad = () => {
+    const PageLoad = async () => {
         GetListHoaDon();
+        GetAllBacnkAccount();
+    };
+
+    const GetAllBacnkAccount = async (idChiNhanh?: string) => {
+        if (utils.checkNull(idChiNhanh)) {
+            idChiNhanh = idChiNhanhCookies;
+        }
+        await suggestStore.GetAllBankAccount(idChiNhanh ?? '');
     };
 
     useEffect(() => {
@@ -125,6 +134,7 @@ const GiaoDichThanhToan: React.FC = () => {
             ...paramSearch,
             idChiNhanhs: chinhanhCurrent?.id === '' ? [idChiNhanhCookies] : [chinhanhCurrent?.id]
         });
+        GetAllBacnkAccount(chinhanhCurrent?.id);
     }, [chinhanhCurrent?.id]);
 
     useEffect(() => {
