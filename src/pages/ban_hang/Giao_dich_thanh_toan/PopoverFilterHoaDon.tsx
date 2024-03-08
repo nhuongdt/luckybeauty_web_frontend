@@ -5,25 +5,26 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { ISelect } from '../../../lib/appconst';
 import ListRadio from '../../../components/Radio/ListRadio';
 import ListCheckbox from '../../../components/Checkbox/ListCheckbox';
-import { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { HoaDonRequestDto } from '../../../services/dto/ParamSearchDto';
 import { TrangThaiNo, TrangThaiHoaDon } from '../../../services/ban_hang/HoaDonConst';
-import { ChiNhanhContextbyUser } from '../../../services/chi_nhanh/ChiNhanhContext';
 import { IPropsPopoverFilter } from '../../../services/dto/IPropsComponent';
+import suggestStore from '../../../stores/suggestStore';
 
 export default function PopoverFilterHoaDon(props: IPropsPopoverFilter<HoaDonRequestDto>) {
     const { id, anchorEl, handleClose, handleApply, paramFilter } = props;
-    const allChiNhanh_byUser = useContext(ChiNhanhContextbyUser);
     const [paramFilterThis, setParamFilterThis] = useState<HoaDonRequestDto>({} as HoaDonRequestDto);
 
     useEffect(() => {
+        // set again idChiNhanh if change at header
         setParamFilterThis({
             ...paramFilterThis,
             idChiNhanhs: paramFilter?.idChiNhanhs,
             trangThaiNos: paramFilter?.trangThaiNos,
             trangThais: paramFilter?.trangThais ?? [TrangThaiHoaDon.HOAN_THANH]
         });
-    }, []);
+    }, [paramFilter?.idChiNhanhs]);
+
     const choseChiNhanh = (lstChosed: IList[]) => {
         setParamFilterThis({
             ...paramFilterThis,
@@ -55,7 +56,7 @@ export default function PopoverFilterHoaDon(props: IPropsPopoverFilter<HoaDonReq
                                 <MultipleAutocompleteWithData
                                     labelInput="Chi nhánh"
                                     arrIdDefault={paramFilterThis?.idChiNhanhs}
-                                    lstOption={allChiNhanh_byUser?.map((x) => {
+                                    lstOption={suggestStore?.suggestChiNhanh_byUserLogin?.map((x) => {
                                         return {
                                             id: x.id,
                                             text: x.tenChiNhanh
