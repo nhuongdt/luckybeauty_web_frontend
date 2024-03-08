@@ -1,3 +1,4 @@
+import { LoaiMauIn } from '../../lib/appconst';
 import utils from '../../utils/utils';
 import http from '../httpService';
 import { MauInDto } from './MauInDto';
@@ -11,7 +12,7 @@ class MauInServices {
             });
         return xx;
     };
-    GetContentMauInMacDinh = async (type = 1, idLoaiChungTu = 1) => {
+    GetContentMauInMacDinh = async (type = LoaiMauIn.K80, idLoaiChungTu = 1) => {
         const xx = await http
             .get(`api/services/app/MauIn/GetContentMauInMacDinh?type=${type}&idLoaiChungTu=${idLoaiChungTu}`)
             .then((res: { data: { result: any } }) => {
