@@ -4,6 +4,8 @@ export class ParamSearchSoQuyDto extends RequestFromToDto {
     hinhThucThanhToans?: number[];
     idTaiKhoanNganHang?: string | null;
     idKhoanThuChi?: string | null;
+    idLoaiChungTus?: number[]; //11.thu, 12.chi
+    idLoaiChungTuLienQuan?: number; // 1.banhang, 2.nhaphang, -1. thu/chi từ nhân viên,0 .all
 
     constructor({
         idChiNhanhs = [],

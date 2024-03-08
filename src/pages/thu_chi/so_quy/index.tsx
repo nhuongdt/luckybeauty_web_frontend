@@ -19,10 +19,11 @@ import {
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import ClearIcon from '@mui/icons-material/Clear';
-import BorderHorizontalOutlinedIcon from '@mui/icons-material/BorderHorizontalOutlined';
 import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
 import CreateOrEditSoQuyDialog from './components/CreateOrEditSoQuyDialog';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+
 import { TextTranslate } from '../../../components/TableLanguage';
 import { RequestFromToDto } from '../../../services/dto/ParamSearchDto';
 import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
@@ -51,18 +52,21 @@ import ModalPhieuThuHoaDon from './components/modal_phieu_thu_hoa_don';
 import { IList } from '../../../services/dto/IList';
 import { Guid } from 'guid-typescript';
 import { ParamSearchSoQuyDto } from '../../../services/so_quy/Dto/ParamSearchSoQuyDto';
-import { HINH_THUC_THANH_TOAN, TypeAction } from '../../../lib/appconst';
+import { HINH_THUC_THANH_TOAN, LoaiChungTu, LoaiMauIn, TrangThaiActive, TypeAction } from '../../../lib/appconst';
 import { IHeaderTable, MyHeaderTable } from '../../../components/Table/MyHeaderTable';
 import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
 import { IPagedResultSoQuyDto } from '../../../services/so_quy/Dto/IPagedResultSoQuyDto';
 import Cookies from 'js-cookie';
+import PopoverFilterSoQuy from './components/PopoverFilterSoQuy';
+import suggestStore from '../../../stores/suggestStore';
 
-const PageSoQuy = ({ xx }: any) => {
+const PageSoQuy = () => {
     const today = new Date();
     const firstLoad = useRef(true);
     const firstLoad2 = useRef(true);
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
+    const idChiNhanhCookies = Cookies.get('IdChiNhanh') ?? '';
     const [isShowModal, setisShowModal] = useState(false);
     const [isShowModalNapTienBrannName, setIsShowModalNapTienBrannName] = useState(false);
     const [selectedRowId, setSelectedRowId] = useState('');
@@ -73,16 +77,24 @@ const PageSoQuy = ({ xx }: any) => {
         mes: ''
     });
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+    // khai báo txtSearch này, để gán lại paramSearch.textSearch khi enter/click search
+    const [txtSearch, setTxtSearch] = useState('');
     const [paramSearch, setParamSearch] = useState<ParamSearchSoQuyDto>({
         textSearch: '',
         currentPage: 1,
         columnSort: 'ngayLapHoaDon',
         typeSort: 'desc',
-        idChiNhanhs: [Cookies.get('IdChiNhanh') ?? ''],
+        idChiNhanhs: [idChiNhanhCookies],
         fromDate: format(today, 'yyyy-MM-01'),
-        toDate: format(lastDayOfMonth(today), 'yyyy-MM-dd')
+        toDate: format(lastDayOfMonth(today), 'yyyy-MM-dd'),
+        idLoaiChungTus: [LoaiChungTu.PHIEU_THU, LoaiChungTu.PHIEU_CHI],
+        idLoaiChungTuLienQuan: LoaiChungTu.ALL,
+        trangThais: [TrangThaiActive.ACTIVE]
     });
-    console.log('chinhanh.id ', chinhanh.id);
+    const [prevParamSearch, setPrevParamSearch] = useState<ParamSearchSoQuyDto>(paramSearch);
+    if (paramSearch !== prevParamSearch) {
+        setPrevParamSearch(paramSearch);
+    }
     const [pageDataSoQuy, setPageDataSoQuy] = useState<IPagedResultSoQuyDto<QuyHoaDonDto>>({
         totalCount: 0,
         totalPage: 0,
@@ -149,9 +161,10 @@ const PageSoQuy = ({ xx }: any) => {
         setThuTrongKy(data?.thuTrongKy ?? 0);
         setChiTrongKy(data?.chiTrongKy ?? 0);
     };
-    const PageLoad = () => {
-        GetListSoQuy();
-        GetThuChi_DauKyCuoiKy();
+    const PageLoad = async () => {
+        await GetListSoQuy();
+        await GetThuChi_DauKyCuoiKy();
+        await suggestStore.GetAllBankAccount(idChiNhanhCookies);
     };
     useEffect(() => {
         PageLoad();
@@ -162,7 +175,11 @@ const PageSoQuy = ({ xx }: any) => {
             firstLoad2.current = false;
             return;
         }
-        setParamSearch({ ...paramSearch, idChiNhanhs: chinhanh.id === '' ? [] : [chinhanh.id] });
+        setParamSearch({
+            ...paramSearch,
+            currentPage: 1,
+            idChiNhanhs: chinhanh?.id === '' ? [idChiNhanhCookies] : [chinhanh.id]
+        });
     }, [chinhanh.id]);
 
     useEffect(() => {
@@ -172,23 +189,7 @@ const PageSoQuy = ({ xx }: any) => {
         }
         GetListSoQuy();
         GetThuChi_DauKyCuoiKy();
-    }, [
-        paramSearch.currentPage,
-        paramSearch.pageSize,
-        paramSearch.fromDate,
-        paramSearch.toDate,
-        paramSearch.idChiNhanhs,
-        paramSearch.columnSort,
-        paramSearch.typeSort
-    ]);
-
-    // useEffect(() => {
-    //     if (firstLoad.current) {
-    //         firstLoad.current = false;
-    //         return;
-    //     }
-    //     GetThuChi_DauKyCuoiKy();
-    // }, [paramSearch.fromDate, paramSearch.toDate, paramSearch.idChiNhanhs]);
+    }, [prevParamSearch]);
 
     const handleKeyDownTextSearch = (event: any) => {
         if (event.keyCode === 13) {
@@ -197,14 +198,11 @@ const PageSoQuy = ({ xx }: any) => {
     };
 
     const hanClickIconSearch = () => {
-        if (paramSearch.currentPage !== 1) {
-            setParamSearch({
-                ...paramSearch,
-                currentPage: 1
-            });
-        } else {
-            GetListSoQuy();
-        }
+        setParamSearch({
+            ...paramSearch,
+            currentPage: 1,
+            textSearch: txtSearch
+        });
     };
     const exportToExcel = async () => {
         const param = { ...paramSearch };
@@ -330,8 +328,7 @@ const PageSoQuy = ({ xx }: any) => {
                     return item.tienThu + currentValue;
                 }, 0);
         }
-        console.log('dấtve ', dataSave, 'quyHDOld ', quyHDOld);
-        if (dataSave?.idLoaiChungTu == 12) {
+        if (dataSave?.idLoaiChungTu == LoaiChungTu.PHIEU_CHI) {
             tienMat = tienMat > 0 ? -tienMat : 0;
             tienCK = tienCK > 0 ? -tienCK : 0;
             tienPos = tienPos > 0 ? -tienPos : 0;
@@ -418,8 +415,30 @@ const PageSoQuy = ({ xx }: any) => {
                     mes: 'Cập nhật ' + dataSave.loaiPhieu + ' thành công'
                 });
                 break;
-            case 3:
+            case TypeAction.DELETE:
                 await deleteSoQuy();
+                break;
+            case TypeAction.RESTORE:
+                {
+                    setPageDataSoQuy({
+                        ...pageDataSoQuy,
+                        sumTienMat: (pageDataSoQuy?.sumTienMat ?? 0) + tienMat,
+                        sumTienChuyenKhoan: (pageDataSoQuy?.sumTienChuyenKhoan ?? 0) + tienCK,
+                        sumTienQuyetThe: (pageDataSoQuy?.sumTienQuyetThe ?? 0) + tienPos,
+                        sumTongThuChi: (pageDataSoQuy?.sumTongThuChi ?? 0) + tongThu,
+                        items: pageDataSoQuy.items.map((item) => {
+                            if (item.id === selectedRowId) {
+                                return {
+                                    ...item,
+                                    txtTrangThai: dataSave.txtTrangThai,
+                                    trangThai: dataSave.trangThai
+                                };
+                            } else {
+                                return item;
+                            }
+                        })
+                    });
+                }
                 break;
         }
     };
@@ -447,7 +466,6 @@ const PageSoQuy = ({ xx }: any) => {
                         const quyCT = await SoQuyServices.GetQuyChiTiet_byIQuyHoaDon(idSoquy);
 
                         if (quyHD.length > 0) {
-                            console.log('quyHD ', quyHD);
                             DataMauIn.congty = appContext.congty;
                             const chinhanhPrint = await await chiNhanhService.GetDetail(quyHD[0]?.idChiNhanh ?? '');
                             DataMauIn.chinhanh = chinhanhPrint;
@@ -459,12 +477,10 @@ const PageSoQuy = ({ xx }: any) => {
                             DataMauIn.phieuthu = quyHD[0];
                             DataMauIn.phieuthu.quyHoaDon_ChiTiet = quyCT;
 
-                            let tempMauIn = '';
-                            if (quyHD[0].idLoaiChungTu === 11) {
-                                tempMauIn = await MauInServices.GetFileMauIn('K80_PhieuThu.txt');
-                            } else {
-                                tempMauIn = await MauInServices.GetFileMauIn('K80_PhieuChi.txt');
-                            }
+                            const tempMauIn = await MauInServices.GetContentMauInMacDinh(
+                                LoaiMauIn.K80,
+                                quyHD[0].idLoaiChungTu
+                            );
                             let newHtml = DataMauIn.replaceChiNhanh(tempMauIn);
                             newHtml = await DataMauIn.replacePhieuThuChi(newHtml);
                             if (i < arrIdChosed.length - 1) {
@@ -525,6 +541,19 @@ const PageSoQuy = ({ xx }: any) => {
             setArrIdChosed(arrIdChosed.filter((x) => x !== rowId));
             setIsCheckAll(false);
         }
+    };
+    const [anchorElFilter, setAnchorElFilter] = useState<SVGSVGElement | null>(null);
+    const ApplyFilter = (paramFilter: ParamSearchSoQuyDto) => {
+        setAnchorElFilter(null);
+        setParamSearch({
+            ...paramSearch,
+            currentPage: 1,
+            idTaiKhoanNganHang: paramFilter?.idTaiKhoanNganHang,
+            idLoaiChungTus: paramFilter?.idLoaiChungTus,
+            idLoaiChungTuLienQuan: paramFilter?.idLoaiChungTuLienQuan,
+            trangThais: paramFilter?.trangThais,
+            idChiNhanhs: paramFilter?.idChiNhanhs
+        });
     };
 
     const columns: GridColDef[] = [
@@ -708,11 +737,8 @@ const PageSoQuy = ({ xx }: any) => {
                                 <TextField
                                     fullWidth
                                     size="small"
-                                    onChange={(e: any) => {
-                                        setParamSearch({
-                                            ...paramSearch,
-                                            textSearch: e.target.value
-                                        });
+                                    onChange={(e) => {
+                                        setTxtSearch(e.target.value);
                                     }}
                                     onKeyDown={handleKeyDownTextSearch}
                                     className="text-search"
@@ -721,7 +747,7 @@ const PageSoQuy = ({ xx }: any) => {
                                     placeholder="Tìm kiếm"
                                     InputProps={{
                                         startAdornment: (
-                                            <IconButton>
+                                            <IconButton onClick={hanClickIconSearch}>
                                                 <Search />
                                             </IconButton>
                                         )
@@ -779,7 +805,7 @@ const PageSoQuy = ({ xx }: any) => {
                                     display: abpCustom.isGrandPermission('Pages.QuyHoaDon.Export') ? '' : 'none'
                                 }}
                                 className="btn-outline-hover">
-                                Xuất{' '}
+                                Xuất
                             </Button>
                             <Button
                                 variant="contained"
@@ -796,6 +822,22 @@ const PageSoQuy = ({ xx }: any) => {
                                 }}>
                                 Lập phiếu
                             </Button>
+                            <FilterAltOutlinedIcon
+                                titleAccess="Lọc nâng cao"
+                                className="btnIcon"
+                                sx={{
+                                    height: '40px!important',
+                                    padding: '8px!important',
+                                    background: 'white'
+                                }}
+                                onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                            />
+                            <PopoverFilterSoQuy
+                                anchorEl={anchorElFilter}
+                                paramFilter={paramSearch}
+                                handleClose={() => setAnchorElFilter(null)}
+                                handleApply={ApplyFilter}
+                            />
                         </Stack>
                     </Grid>
                 </Grid>
@@ -917,7 +959,10 @@ const PageSoQuy = ({ xx }: any) => {
                                                     key={index}
                                                     sx={{
                                                         '& .MuiTableCell-root': {
-                                                            color: row?.idLoaiChungTu == 12 ? 'unset' : 'unset'
+                                                            color:
+                                                                row?.idLoaiChungTu == LoaiChungTu.PHIEU_CHI
+                                                                    ? 'unset'
+                                                                    : 'unset'
                                                         }
                                                     }}>
                                                     <TableCell align="center" className="td-check-box">
