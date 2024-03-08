@@ -20,7 +20,7 @@ export default function MultipleAutocompleteWithData(props: IPropsMultipleAutoco
     }, []);
 
     const choseItem = (event: any, lstNew: IList[]) => {
-        setItemDefault(lstNew);
+        setItemDefault([...lstNew]);
         handleChosedItem(lstNew);
     };
     return (
@@ -35,6 +35,7 @@ export default function MultipleAutocompleteWithData(props: IPropsMultipleAutoco
                 value={itemDefault}
                 onChange={choseItem}
                 options={lstOption}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
                 getOptionLabel={(option: IList) => (option?.text ? option.text : '')}
                 renderInput={(params) => <TextField {...params} label={labelInput} />}
                 renderOption={(props, option) => {
