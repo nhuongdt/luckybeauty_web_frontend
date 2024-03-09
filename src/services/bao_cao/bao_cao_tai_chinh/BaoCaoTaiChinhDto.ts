@@ -1,4 +1,4 @@
-import { RequestFromToDto } from '../../../dto/ParamSearchDto';
+import { RequestFromToDto } from '../../dto/ParamSearchDto';
 
 export interface IBaoCaoTaiChinh_ChiTietSoQuy {
     id: string;
