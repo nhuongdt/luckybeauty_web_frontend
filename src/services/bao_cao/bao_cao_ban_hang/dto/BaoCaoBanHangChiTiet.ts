@@ -1,12 +1,16 @@
-export interface BaoCaoBanHangChiTietDto {
+import { IBaoCaoBanHang_SumFooterDto } from './BaoCaoBanHangTongHopDto';
+
+export interface BaoCaoBanHangChiTietDto extends IBaoCaoBanHang_SumFooterDto {
     maHoaDon: string;
     ngayLapHoaDon: string;
     tenKhachHang: string;
     soDienThoai: string;
-    nhomHangHoa: string;
+    tenNhomHang: string;
+    maHangHoa: string;
     tenHangHoa: string;
-    giaBan: number;
     soLuong: number;
-    thanhTien: number;
-    creationTime: string;
+    donGiaTruocCK?: number;
+    thanhTienTruocCK?: number;
+    tienChietKhau?: number;
+    thanhTienSauCK: number;
 }
