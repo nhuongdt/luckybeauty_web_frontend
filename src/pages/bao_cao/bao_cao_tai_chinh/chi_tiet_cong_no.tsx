@@ -10,12 +10,12 @@ import {
     TableRow
 } from '@mui/material';
 import { Stack } from '@mui/system';
-import { IBaoCaoChiTietCongNo } from '../../../services/bao_cao/bao_cao_ban_hang/bao_cao_tai_chinh/BaoCaoTaiChinhDto';
+import { IBaoCaoChiTietCongNo } from '../../../services/bao_cao/bao_cao_tai_chinh/BaoCaoTaiChinhDto';
 import { BaoCaoTaiChinhDatataFilterContext } from '../../../services/bao_cao/bao_cao_ban_hang/dto/BaoCaoDataContext';
 import { useContext, useEffect, useState } from 'react';
 import { BaoCaoTaiChinh_TabActive } from './main_page';
 import { PagedResultDto } from '../../../services/dto/pagedResultDto';
-import BaoCaoTaiChinhService from '../../../services/bao_cao/bao_cao_ban_hang/bao_cao_tai_chinh/BaoCaoTaiChinhService';
+import BaoCaoTaiChinhService from '../../../services/bao_cao/bao_cao_tai_chinh/BaoCaoTaiChinhService';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { format } from 'date-fns';
 import utils from '../../../utils/utils';
