@@ -14,6 +14,8 @@ import { SuggestDonViQuiDoiDto } from '../services/suggests/dto/SuggestDonViQuiD
 import chiNhanhService from '../services/chi_nhanh/chiNhanhService';
 import { SuggestNganHangDto } from '../services/suggests/dto/SuggestNganHangDto';
 import { SuggestTaiKhoanNganHangQrDto } from '../services/suggests/dto/SuggestTaiKhoanNganHangQrDTo';
+import TaiKhoanNganHangServices from '../services/so_quy/TaiKhoanNganHangServices';
+import { TaiKhoanNganHangDto } from '../services/so_quy/Dto/TaiKhoanNganHangDto';
 
 class SuggestStore {
     suggestKyThuatVien!: SuggestNhanVienDichVuDto[];
@@ -25,11 +27,12 @@ class SuggestStore {
     suggestNhanVien!: SuggestNhanSuDto[];
     suggestKhachHang!: SuggestKhachHangDto[];
     suggestLoaiChungTu!: SuggestLoaiChungTu[];
-    suggestChiNhanh!: SuggestChiNhanhDto[];
+    suggestChiNhanh!: SuggestChiNhanhDto[]; // all chinhanh
+    suggestChiNhanh_byUserLogin!: SuggestChiNhanhDto[];
     suggestChiNhanhByUser!: SuggestChiNhanhDto[];
     suggestDonViQuiDoi!: SuggestDonViQuiDoiDto[];
     suggestNganHang!: SuggestNganHangDto[];
-    suggestTaiKhoanNganHangQr!: SuggestTaiKhoanNganHangQrDto[];
+    suggestTaiKhoanNganHangQr!: TaiKhoanNganHangDto[];
     constructor() {
         makeAutoObservable(this);
     }
@@ -89,9 +92,14 @@ class SuggestStore {
         const data = await SuggestService.SuggestNganHang();
         this.suggestNganHang = data;
     }
-    async getSuggestTaiKhoanNganHangQr(idChiNhanh: string) {
-        const data = await SuggestService.SuggestTaiKhoanNganHangQr(idChiNhanh);
+    async GetAllBankAccount(idChiNhanh: string) {
+        const data = await TaiKhoanNganHangServices.GetAllBankAccount(idChiNhanh);
+        console.log('GetAllBankAccount ', data);
         this.suggestTaiKhoanNganHangQr = data;
     }
+    GetChiNhanhByUser = async () => {
+        const data = await chiNhanhService.GetChiNhanhByUser();
+        this.suggestChiNhanh_byUserLogin = data;
+    };
 }
 export default new SuggestStore();

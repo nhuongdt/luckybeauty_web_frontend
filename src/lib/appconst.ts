@@ -15,6 +15,26 @@ export const LoaiBaoCao = {
     CHI_TIET: '2'
 };
 
+export const LoaiChungTu = {
+    ALL: 0,
+    KHAC: -1, // Chứng từ không liên quan đến hóa đơn
+    HOA_DON_BAN_LE: 1,
+    GOI_DICH_VU: 2,
+    NHAP_HANG: 4,
+    THE_GIA_TRI: 8,
+    PHIEU_THU: 11,
+    PHIEU_CHI: 12
+};
+export const LoaiDoiTuong = {
+    KHACH_HANG: 1,
+    NHA_CUNG_CAP: 2,
+    NHAN_VIEN: 3
+};
+export const LoaiMauIn = {
+    K80: 1,
+    A4: 2
+};
+
 export const DateType = {
     HOM_NAY: 'HOM_NAY',
     HOM_QUA: 'HOM_QUA',
@@ -50,7 +70,9 @@ export const TrangThaiSMS = {
 export const TypeAction = {
     INSEART: 1,
     UPDATE: 2,
-    DELETE: 3
+    DELETE: 3,
+    RESTORE: 4,
+    NOTHING: 0 // khong lam gi
 };
 
 export const TimeType = {

@@ -13,11 +13,11 @@ import AppConsts, { LoaiBaoCao } from '../../../lib/appconst';
 import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
 import { format, lastDayOfMonth, startOfDay } from 'date-fns';
 import fileDowloadService from '../../../services/file-dowload.service';
-import { ParamSearchBaoCaoTaiChinh } from '../../../services/bao_cao/bao_cao_ban_hang/bao_cao_tai_chinh/BaoCaoTaiChinhDto';
+import { ParamSearchBaoCaoTaiChinh } from '../../../services/bao_cao/bao_cao_tai_chinh/BaoCaoTaiChinhDto';
 import { BaoCaoTaiChinhDatataFilterContext } from '../../../services/bao_cao/bao_cao_ban_hang/dto/BaoCaoDataContext';
 import BaoCaoTaiChinhChiTietSoQuy from './chi_tiet_so_quy';
 import BaoCaoChiTietCongNo from './chi_tiet_cong_no';
-import BaoCaoTaiChinhService from '../../../services/bao_cao/bao_cao_ban_hang/bao_cao_tai_chinh/BaoCaoTaiChinhService';
+import BaoCaoTaiChinhService from '../../../services/bao_cao/bao_cao_tai_chinh/BaoCaoTaiChinhService';
 
 export const BaoCaoTaiChinh_TabActive = {
     TONG_QUY: '1',

@@ -6,6 +6,9 @@ import utils from '../../utils/utils';
 import { Guid } from 'guid-typescript';
 import { IFileDto } from '../dto/FileDto';
 import QuyChiTietDto from './QuyChiTietDto';
+import { ParamSearchSoQuyDto } from './Dto/ParamSearchSoQuyDto';
+import { IThuChiDauKyCuoiKyDto } from './Dto/IThuChiDauKyCuoiKyDto';
+import { HINH_THUC_THANH_TOAN } from '../../lib/appconst';
 
 class SoQuyServices {
     CreateQuyHoaDon = async (input: any) => {
@@ -22,6 +25,10 @@ class SoQuyServices {
     };
     DeleteSoQuy = async (id: string) => {
         const result = await http.get('api/services/app/QuyHoaDon/Delete?id=' + id);
+        return result.data.result;
+    };
+    KhoiPhucSoQuy = async (id: string): Promise<QuyHoaDonDto> => {
+        const result = await http.get('api/services/app/QuyHoaDon/KhoiPhucSoQuy?idQuyHoaDon=' + id);
         return result.data.result;
     };
     DeleteMultiple_QuyHoaDon = async (lstId: any) => {
@@ -41,8 +48,14 @@ class SoQuyServices {
         );
         return result.data.result;
     };
-    async getAll(input: RequestFromToDto): Promise<PagedResultDto<QuyHoaDonDto>> {
+    async getAll(input: ParamSearchSoQuyDto): Promise<PagedResultDto<QuyHoaDonDto>> {
         const response = await http.get('api/services/app/QuyHoaDon/GetAll', {
+            params: input
+        });
+        return response.data.result;
+    }
+    async GetThuChi_DauKyCuoiKy(input: ParamSearchSoQuyDto): Promise<IThuChiDauKyCuoiKyDto> {
+        const response = await http.get('api/services/app/QuyHoaDon/GetThuChi_DauKyCuoiKy', {
             params: input
         });
         return response.data.result;
@@ -171,8 +184,8 @@ class SoQuyServices {
             tienCK = 0;
         let idTaiKhoanPos = null,
             idTaiKhoanCK = null;
-        const itemPos = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 2);
-        const itemCK = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 3);
+        const itemPos = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.QUYET_THE);
+        const itemCK = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN);
         if (itemPos.length > 0) {
             idTaiKhoanPos = itemPos[0].idTaiKhoanNganHang;
         }
@@ -183,13 +196,13 @@ class SoQuyServices {
         for (let i = 0; i < lstQuyCT.length; i++) {
             const itFor = lstQuyCT[i];
             switch (itFor.hinhThucThanhToan) {
-                case 1:
+                case HINH_THUC_THANH_TOAN.TIEN_MAT:
                     tienMat += itFor.tienThu;
                     break;
-                case 2:
-                    tienPos += itFor.tienThu; // tienPos = tienCK (DB)
+                case HINH_THUC_THANH_TOAN.QUYET_THE:
+                    tienPos += itFor.tienThu;
                     break;
-                case 3:
+                case HINH_THUC_THANH_TOAN.CHUYEN_KHOAN:
                     tienCK += itFor.tienThu;
                     break;
             }
@@ -201,12 +214,15 @@ class SoQuyServices {
                 tienCKNew = shareMoney.TienChuyenKhoan;
 
             if (tienMatNew > 0) {
-                const newQCT = new QuyChiTietDto({ hinhThucThanhToan: 1, tienThu: tienMatNew });
+                const newQCT = new QuyChiTietDto({
+                    hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT,
+                    tienThu: tienMatNew
+                });
                 lstQuyCT_After.push(newQCT);
             }
             if (tienPosNew > 0) {
                 const newQCT = new QuyChiTietDto({
-                    hinhThucThanhToan: 2,
+                    hinhThucThanhToan: HINH_THUC_THANH_TOAN.QUYET_THE,
                     tienThu: tienPosNew,
                     idTaiKhoanNganHang: idTaiKhoanPos as null
                 });
@@ -214,7 +230,7 @@ class SoQuyServices {
             }
             if (tienCKNew > 0) {
                 const newQCT = new QuyChiTietDto({
-                    hinhThucThanhToan: 3,
+                    hinhThucThanhToan: HINH_THUC_THANH_TOAN.CHUYEN_KHOAN,
                     tienThu: tienCKNew,
                     idTaiKhoanNganHang: idTaiKhoanCK as null
                 });

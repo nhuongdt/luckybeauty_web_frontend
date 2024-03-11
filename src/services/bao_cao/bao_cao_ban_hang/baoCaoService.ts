@@ -1,15 +1,18 @@
 import { IFileDto } from '../../dto/FileDto';
+import { PagedResultDto } from '../../dto/pagedResultDto';
 import http from '../../httpService';
+import { BaoCaoBanHangTongHopDto } from './dto/BaoCaoBanHangTongHopDto';
 import { PagedBaoCaoBanHangRequestDto } from './dto/PagedBaoCaoBanHangRequestDto';
 import { PagedBaoCaoLichHenRequestDto } from './dto/PagedBaoCaoLichHenRequestDto';
 import { PagedBaoCaoTaiChinhDto } from './dto/PagedBaoCaoTaiChinhDto';
+import { ParamSearchBaoCaoBanHang } from './dto/ParamSearchBaoCaoBanHang';
 
 class BaoCaoSevice {
-    async getBaoCaoBanHangTongHop(input: PagedBaoCaoBanHangRequestDto) {
+    async getBaoCaoBanHangTongHop(input: ParamSearchBaoCaoBanHang): Promise<PagedResultDto<BaoCaoBanHangTongHopDto>> {
         const response = await http.post('api/services/app/BaoCao/GetBaoCaoBanHangTongHop', input);
         return response.data.result;
     }
-    async getBaoCaoBanHangChiTiet(input: PagedBaoCaoBanHangRequestDto) {
+    async getBaoCaoBanHangChiTiet(input: ParamSearchBaoCaoBanHang) {
         const response = await http.post('api/services/app/BaoCao/GetBaoCaoBanHangChiTiet', input);
         return response.data.result;
     }
@@ -25,11 +28,11 @@ class BaoCaoSevice {
         const response = await http.post('api/services/app/BaoCao/GetBaoCaoSoQuy_NganHang', input);
         return response.data.result;
     }
-    public async exportBaoCaoBanHangTongHop(input: PagedBaoCaoBanHangRequestDto): Promise<IFileDto> {
+    public async exportBaoCaoBanHangTongHop(input: ParamSearchBaoCaoBanHang): Promise<IFileDto> {
         const response = await http.post(`api/services/app/BaoCao/ExportBaoCaoBanHangTongHop`, input);
         return response.data.result;
     }
-    public async exportBaoCaoBanHangChiTiet(input: PagedBaoCaoBanHangRequestDto): Promise<IFileDto> {
+    public async exportBaoCaoBanHangChiTiet(input: ParamSearchBaoCaoBanHang): Promise<IFileDto> {
         const response = await http.post(`api/services/app/BaoCao/ExportBaoCaoBanHangChiTiet`, input);
         return response.data.result;
     }

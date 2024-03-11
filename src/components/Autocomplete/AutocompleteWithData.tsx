@@ -42,27 +42,33 @@ export default function AutocompleteWithData({
                 renderOption={(props, option) => {
                     return (
                         <li {...props} style={{ borderBottom: '1px dashed var(--border-color)' }}>
-                            <Grid container alignItems="center" spacing={1}>
-                                <Grid
-                                    item
-                                    sx={{
-                                        width: 'calc(100% - 44px)',
-                                        wordWrap: 'break-word'
-                                    }}>
-                                    <Stack direction={'row'} spacing={0.5}>
-                                        <Typography style={{ fontSize: '13px' }} color={'#acaca5'}>
-                                            {optionLabel?.label1}
-                                        </Typography>
-                                        <Typography style={{ fontSize: '13px' }}>{option.text1}</Typography>
-                                    </Stack>
+                            <Grid container alignItems="center">
+                                <Grid item xs={12}>
                                     <Stack
                                         direction={'row'}
-                                        spacing={0.5}
-                                        style={{
-                                            fontSize: '13px'
-                                        }}>
-                                        <span style={{ color: '#acaca5' }}>{optionLabel?.label2}</span>
-                                        <span style={{ fontWeight: 500 }}> {option.text2}</span>
+                                        justifyContent={'space-between'}
+                                        paddingLeft={0}
+                                        marginLeft={0}>
+                                        <Stack direction={'row'} spacing={1}>
+                                            <Typography style={{ fontSize: '13px' }} color={'#acaca5'}>
+                                                {optionLabel?.label1}
+                                            </Typography>
+                                            <Typography style={{ fontSize: '13px', fontWeight: 500 }}>
+                                                {option.text1}
+                                            </Typography>
+                                        </Stack>
+                                        {/* chỉ hiển thị nếu text2!='' */}
+                                        {option.text2 && (
+                                            <Stack
+                                                direction={'row'}
+                                                spacing={1}
+                                                style={{
+                                                    fontSize: '13px'
+                                                }}>
+                                                <span style={{ color: '#acaca5' }}>{optionLabel?.label2}</span>
+                                                <span> {option.text2}</span>
+                                            </Stack>
+                                        )}
                                     </Stack>
                                 </Grid>
                             </Grid>

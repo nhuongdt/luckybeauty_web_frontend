@@ -16,7 +16,7 @@ import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import utils from '../../../utils/utils';
 import { NumericFormat } from 'react-number-format';
-import AppConsts, { HINH_THUC_THANH_TOAN, ISelect } from '../../../lib/appconst';
+import AppConsts, { HINH_THUC_THANH_TOAN, ISelect, LoaiChungTu } from '../../../lib/appconst';
 import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
@@ -520,7 +520,7 @@ const DetailHoaDon = ({
         }, 0);
         const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
             idChiNhanh: utils.checkNull(dataHoaDonAfterSave.idChiNhanh) ? idChiNhanh : dataHoaDonAfterSave?.idChiNhanh,
-            idLoaiChungTu: 11,
+            idLoaiChungTu: LoaiChungTu.PHIEU_THU,
             ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
             tongTienThu: tongThu,
             noiDungThu: ghichuHD
@@ -732,24 +732,7 @@ const DetailHoaDon = ({
                             />
                         )}
                     </Grid>
-                    <Grid item xs={12}>
-                        {idHinhThucTT !== HINH_THUC_THANH_TOAN.TIEN_MAT && (
-                            <Stack>
-                                {/* <AutocompleteAccountBank
-                                    handleChoseItem={changeTaiKhoanNganHang}
-                                    idChosed={idTaiKhoanNganHang}
-                                    listOption={listAccountBank}
-                                /> */}
-                                <Stack style={{ marginTop: '16px' }}>
-                                    <BankAccount
-                                        lstBankAccount={listAccountBank}
-                                        idChosed={idTaiKhoanNganHang}
-                                        handleChoseItem={changeTaiKhoanNganHang}
-                                    />
-                                </Stack>
-                            </Stack>
-                        )}
-                    </Grid>
+
                     {idHinhThucTT === 0 ? (
                         <Grid container spacing="16px">
                             {lstQuyCT.map((item, index) => (
@@ -803,6 +786,19 @@ const DetailHoaDon = ({
                             ))}
                         </Grid>
                     ) : undefined}
+                    <Grid item xs={12}>
+                        {idHinhThucTT !== HINH_THUC_THANH_TOAN.TIEN_MAT && (
+                            <Stack>
+                                <Stack style={{ marginTop: '16px' }}>
+                                    <BankAccount
+                                        lstBankAccount={listAccountBank}
+                                        idChosed={idTaiKhoanNganHang}
+                                        handleChoseItem={changeTaiKhoanNganHang}
+                                    />
+                                </Stack>
+                            </Stack>
+                        )}
+                    </Grid>
                     {tienThuaTraKhach !== 0 && (
                         <Grid container justifyContent="space-between">
                             <Grid item xs="auto">

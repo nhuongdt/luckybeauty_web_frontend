@@ -1,6 +1,6 @@
-import { IFileDto } from '../../../dto/FileDto';
-import { PagedResultDto } from '../../../dto/pagedResultDto';
-import http from '../../../httpService';
+import { IFileDto } from '../../dto/FileDto';
+import { PagedResultDto } from '../../dto/pagedResultDto';
+import http from '../../httpService';
 import { IBaoCaoChiTietCongNo, IBaoCaoTaiChinh_ChiTietSoQuy, ParamSearchBaoCaoTaiChinh } from './BaoCaoTaiChinhDto';
 
 class BaoCaoTaiChinhService {

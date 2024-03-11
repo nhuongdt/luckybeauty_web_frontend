@@ -1,5 +1,6 @@
 import { createContext } from 'react';
-import { ParamSearchBaoCaoTaiChinh } from '../bao_cao_tai_chinh/BaoCaoTaiChinhDto';
+import { ParamSearchBaoCaoTaiChinh } from '../../bao_cao_tai_chinh/BaoCaoTaiChinhDto';
+import { ParamSearchBaoCaoBanHang } from './ParamSearchBaoCaoBanHang';
 
 export interface IBaoCaoDatataFilterContext<T> {
     loaiBaoCao: string;
@@ -11,4 +12,9 @@ export const BaoCaoTaiChinhDatataFilterContext = createContext<IBaoCaoDatataFilt
     countClick: 0,
     loaiBaoCao: '1',
     filter: {} as ParamSearchBaoCaoTaiChinh
+});
+export const BaoCaoBanHangDatataFilterContext = createContext<IBaoCaoDatataFilterContext<ParamSearchBaoCaoBanHang>>({
+    countClick: 0,
+    loaiBaoCao: '1',
+    filter: {} as ParamSearchBaoCaoBanHang
 });

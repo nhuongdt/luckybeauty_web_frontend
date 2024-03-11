@@ -55,6 +55,7 @@ export class RequestFromToDto extends ParamSearchDto {
 
 export class HoaDonRequestDto extends RequestFromToDto {
     idLoaiChungTus?: string[];
+    trangThaiNos?: number[]; // 0.hetno, 1.conno
 
     constructor({
         idChiNhanhs = [],
@@ -65,7 +66,8 @@ export class HoaDonRequestDto extends RequestFromToDto {
         typeSort = 'DESC',
         fromDate = null,
         toDate = null,
-        idLoaiChungTus = []
+        idLoaiChungTus = [],
+        trangThaiNos = []
     }) {
         super({
             idChiNhanhs: idChiNhanhs,
@@ -78,5 +80,6 @@ export class HoaDonRequestDto extends RequestFromToDto {
             toDate: toDate
         });
         this.idLoaiChungTus = idLoaiChungTus;
+        this.trangThaiNos = trangThaiNos;
     }
 }

@@ -1,8 +1,16 @@
-export interface BaoCaoBanHangTongHopDto {
+export interface BaoCaoBanHangTongHopDto extends IBaoCaoBanHang_SumFooterDto {
     tenHangHoa: string;
     maHangHoa: string;
-    nhomHangHoa: string;
-    giaBan: number;
+    tenNhomHang: string;
     soLuong: number;
-    doanhThu: number;
+    tienChietKhau?: number;
+    thanhTienTruocCK?: number;
+    thanhTienSauCK: number; // sau ck, truoc VAT
+}
+
+export interface IBaoCaoBanHang_SumFooterDto {
+    sumSoLuong?: number;
+    sumTienChietKhau?: number;
+    sumThanhTienTruocCK?: number;
+    sumThanhTienSauCK?: number;
 }

@@ -22,7 +22,7 @@ import utils from '../../../utils/utils';
 import DateTimePickerCustom from '../../../components/DatetimePicker/DateTimePickerCustom';
 import * as yup from 'yup';
 import { format } from 'date-fns';
-import AppConsts, { ISelect } from '../../../lib/appconst';
+import AppConsts, { ISelect, LoaiChungTu } from '../../../lib/appconst';
 import { Guid } from 'guid-typescript';
 import { AppContext, ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
@@ -59,7 +59,7 @@ const NapTienBrandname = ({ visiable = false, idQuyHD = null, onClose, onOk }: a
         new QuyHoaDonDto({
             id: Guid.create().toString(),
             idChiNhanh: chinhanh.id,
-            idLoaiChungTu: 11,
+            idLoaiChungTu: LoaiChungTu.PHIEU_THU,
             tongTienThu: 0,
             idDoiTuongNopTien: null,
             hinhThucThanhToan: 1,
@@ -67,7 +67,7 @@ const NapTienBrandname = ({ visiable = false, idQuyHD = null, onClose, onOk }: a
             ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm')
         })
     );
-    const sLoai = quyHoaDon?.idLoaiChungTu === 11 ? 'thu' : 'chi';
+    const sLoai = quyHoaDon?.idLoaiChungTu === LoaiChungTu.PHIEU_THU ? 'thu' : 'chi';
 
     const getInforQuyHoaDon = async () => {
         if (utils.checkNull(idQuyHD)) return;
@@ -112,7 +112,7 @@ const NapTienBrandname = ({ visiable = false, idQuyHD = null, onClose, onOk }: a
                 ...quyHoaDon,
                 id: Guid.create().toString(),
                 idChiNhanh: chinhanh.id,
-                idLoaiChungTu: 11,
+                idLoaiChungTu: LoaiChungTu.PHIEU_THU,
                 tongTienThu: 0,
                 idDoiTuongNopTien: null,
                 maHoaDon: '',

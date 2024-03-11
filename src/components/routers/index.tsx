@@ -144,7 +144,7 @@ export const appRouters: AppRouteProps = {
             routes: [
                 {
                     path: '/ban-hang',
-                    permission: '',
+                    permission: 'Pages.HoaDon.Create',
                     title: 'Thu ngân',
                     name: 'thungan',
                     icon: null,
@@ -199,14 +199,14 @@ export const appRouters: AppRouteProps = {
                 {
                     path: '/ban-hangs',
                     name: 'banhang',
-                    permission: '',
+                    permission: 'Pages.HoaDon',
                     title: 'Bán hàng',
                     iconActive: <ShopActive width="20px" />,
                     icon: <ShopIcon width="20px" />,
                     children: [
                         {
                             path: '/page-ban-hang',
-                            permission: '',
+                            permission: 'Pages.HoaDon.Create',
                             title: 'Thu ngân',
                             name: 'thungan',
                             icon: <BsDot style={{ fontSize: 20 }} />,
@@ -219,7 +219,7 @@ export const appRouters: AppRouteProps = {
                         },
                         {
                             path: '/giao-dich-thanh-toan',
-                            permission: 'Pages.QuyHoaDon',
+                            permission: 'Pages.HoaDon',
                             title: 'Danh sách hóa đơn',
                             name: 'giaoDichThanhToan',
                             icon: <BsDot style={{ fontSize: 20 }} />,

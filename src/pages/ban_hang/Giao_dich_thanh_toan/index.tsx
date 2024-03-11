@@ -1,17 +1,16 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import { Box, Grid, TextField, IconButton, Button, SelectChangeEvent, Stack } from '@mui/material';
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 
 import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
 import { Search } from '@mui/icons-material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
-import { ReactComponent as FilterIcon } from '../../../images/filter-icon.svg';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import ThongTinHoaDon from '../Hoa_don/ThongTinHoaDon';
-import { AppContext, ChiNhanhContextbyUser } from '../../../services/chi_nhanh/ChiNhanhContext';
-import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
+import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
 
 import Utils from '../../../utils/utils'; // func common.
@@ -22,7 +21,6 @@ import HoaDonService from '../../../services/ban_hang/HoaDonService';
 import { PagedResultDto } from '../../../services/dto/pagedResultDto';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import fileDowloadService from '../../../services/file-dowload.service';
-import { MauInDto } from '../../../services/mau_in/MauInDto';
 import MauInServices from '../../../services/mau_in/MauInServices';
 import ActionRowSelect from '../../../components/DataGrid/ActionRowSelect';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
@@ -30,34 +28,41 @@ import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
 import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
 import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
-import AppConsts from '../../../lib/appconst';
+import AppConsts, { TypeAction } from '../../../lib/appconst';
 import abpCustom from '../../../components/abp-custom';
 import { IList } from '../../../services/dto/IList';
 import { Guid } from 'guid-typescript';
 import utils from '../../../utils/utils';
+import PopoverFilterHoaDon from './PopoverFilterHoaDon';
+import Cookies from 'js-cookie';
+import { TrangThaiHoaDon } from '../../../services/ban_hang/HoaDonConst';
+import suggestStore from '../../../stores/suggestStore';
 
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
     const firstLoad = useRef(true);
+    const firstLoad2 = useRef(true);
     const appContext = useContext(AppContext);
     const chinhanhCurrent = appContext.chinhanhCurrent;
+    const idChiNhanhCookies = Cookies.get('IdChiNhanh') ?? '';
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
+    // khai báo txtSearch này, để gán lại paramSearch.textSearch khi enter/click search
+    const [txtSearch, setTxtSearch] = useState('');
     const [idHoadonChosing, setIdHoadonChosing] = useState('');
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
-    const [allChiNhanh, setAllChiNhanh] = useState<ChiNhanhDto[]>([]);
-    const [lstMauIn, setLstMauIn] = useState<MauInDto[]>([]);
     const [inforDelete, setInforDelete] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
 
     const [paramSearch, setParamSearch] = useState<HoaDonRequestDto>({
         textSearch: '',
-        idChiNhanhs: [chinhanhCurrent?.id],
+        idChiNhanhs: [idChiNhanhCookies],
         currentPage: 1,
         pageSize: AppConsts.pageOption[0].value,
         columnSort: 'NgayLapHoaDon',
         typeSort: 'DESC',
         fromDate: format(today, 'yyyy-MM-01'),
-        toDate: format(lastDayOfMonth(today), 'yyyy-MM-dd')
+        toDate: format(lastDayOfMonth(today), 'yyyy-MM-dd'),
+        trangThais: [TrangThaiHoaDon.HOAN_THANH]
     });
 
     const [pageDataHoaDon, setPageDataHoaDon] = useState<PagedResultDto<PageHoaDonDto>>({
@@ -98,35 +103,39 @@ const GiaoDichThanhToan: React.FC = () => {
         }
     };
 
-    const GetlstMauIn_byChiNhanh = async () => {
-        const data = await MauInServices.GetAllMauIn_byChiNhanh(chinhanhCurrent?.id, 1);
-        setLstMauIn(data);
-    };
-
-    const GetAllChiNhanh = async () => {
-        const data = await chiNhanhService.GetAll({
-            keyword: '',
-            maxResultCount: 10,
-            skipCount: 1
-        });
-        if (data != null) {
-            setAllChiNhanh(data.items);
-        }
-    };
-
-    const PageLoad = () => {
+    const PageLoad = async () => {
         GetListHoaDon();
-        GetAllChiNhanh();
-        GetlstMauIn_byChiNhanh();
+        GetAllBacnkAccount();
+    };
+
+    const GetAllBacnkAccount = async (idChiNhanh?: string) => {
+        if (utils.checkNull(idChiNhanh)) {
+            idChiNhanh = idChiNhanhCookies;
+        }
+        await suggestStore.GetAllBankAccount(idChiNhanh ?? '');
     };
 
     useEffect(() => {
         PageLoad();
     }, []);
 
+    // avoid call multiple GetListHoaDon
+    const [prevItems, setPrevItems] = useState(paramSearch);
+    if (paramSearch !== prevItems) {
+        setPrevItems(paramSearch);
+    }
+
     useEffect(() => {
-        setParamSearch({ ...paramSearch, idChiNhanhs: [chinhanhCurrent.id] });
-    }, [chinhanhCurrent.id]);
+        if (firstLoad2.current) {
+            firstLoad2.current = false;
+            return;
+        }
+        setParamSearch({
+            ...paramSearch,
+            idChiNhanhs: chinhanhCurrent?.id === '' ? [idChiNhanhCookies] : [chinhanhCurrent?.id]
+        });
+        GetAllBacnkAccount(chinhanhCurrent?.id);
+    }, [chinhanhCurrent?.id]);
 
     useEffect(() => {
         if (firstLoad.current) {
@@ -134,13 +143,7 @@ const GiaoDichThanhToan: React.FC = () => {
             return;
         }
         GetListHoaDon();
-    }, [
-        paramSearch.currentPage,
-        paramSearch.pageSize,
-        paramSearch.fromDate,
-        paramSearch.toDate,
-        paramSearch.idChiNhanhs
-    ]);
+    }, [prevItems]);
 
     const handleKeyDownTextSearch = (event: any) => {
         if (event.keyCode === 13) {
@@ -149,14 +152,11 @@ const GiaoDichThanhToan: React.FC = () => {
     };
 
     const hanClickIconSearch = () => {
-        if (paramSearch.currentPage !== 1) {
-            setParamSearch({
-                ...paramSearch,
-                currentPage: 1
-            });
-        } else {
-            GetListHoaDon();
-        }
+        setParamSearch({
+            ...paramSearch,
+            textSearch: txtSearch,
+            currentPage: 1
+        });
     };
 
     const handleChangePage = (event: any, value: number) => {
@@ -168,6 +168,7 @@ const GiaoDichThanhToan: React.FC = () => {
     const handlePerPageChange = (event: SelectChangeEvent<number>) => {
         setParamSearch({
             ...paramSearch,
+            currentPage: 1,
             pageSize: parseInt(event.target.value.toString(), 10)
         });
     };
@@ -175,7 +176,6 @@ const GiaoDichThanhToan: React.FC = () => {
     const [openDetail, setOpenDetail] = useState(false);
 
     const choseRow = (param: any) => {
-        console.log('into');
         setIdHoadonChosing(param.id);
         setHoaDon(param.row);
         setOpenDetail(true);
@@ -186,7 +186,7 @@ const GiaoDichThanhToan: React.FC = () => {
         setIdHoadonChosing('');
 
         switch (typeAction) {
-            case 1: // update
+            case TypeAction.UPDATE:
                 if (hoadonAfterChange.idChiNhanh !== hoadon?.idChiNhanh) {
                     // remove if huyhoadon or change chinhanh
                     setPageDataHoaDon({
@@ -206,7 +206,7 @@ const GiaoDichThanhToan: React.FC = () => {
                     });
                 }
                 break;
-            case 2: // delete
+            case TypeAction.DELETE:
                 setPageDataHoaDon({
                     ...pageDataHoaDon,
                     items: pageDataHoaDon.items.map((itemHD: PageHoaDonDto) => {
@@ -258,12 +258,6 @@ const GiaoDichThanhToan: React.FC = () => {
                             } as ChiNhanhDto;
                             DataMauIn.congty = appContext.congty;
                             const tempMauIn = await MauInServices.GetContentMauInMacDinh(1, 1);
-                            // const mauInMacDinh = lstMauIn.filter((x: MauInDto) => x.laMacDinh);
-                            // if (mauInMacDinh.length > 0) {
-                            //     tempMauIn = mauInMacDinh[0].noiDungMauIn;
-                            // } else {
-                            //     tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
-                            // }
                             let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
                             newHtml = DataMauIn.replaceChiNhanh(newHtml);
                             newHtml = DataMauIn.replaceHoaDon(newHtml);
@@ -303,7 +297,7 @@ const GiaoDichThanhToan: React.FC = () => {
 
     const onApplyFilterDate = async (from: string, to: string, txtShow: string) => {
         setAnchorDateEl(null);
-        setParamSearch({ ...paramSearch, fromDate: from, toDate: to });
+        setParamSearch({ ...paramSearch, fromDate: from, toDate: to, currentPage: 1 });
     };
 
     const columns: GridColDef[] = [
@@ -348,7 +342,7 @@ const GiaoDichThanhToan: React.FC = () => {
         {
             field: 'tongTienHang',
             headerName: 'Tổng tiền hàng',
-            headerAlign: 'center',
+            headerAlign: 'right',
             align: 'right',
             minWidth: 118,
             flex: 1,
@@ -380,7 +374,7 @@ const GiaoDichThanhToan: React.FC = () => {
         {
             field: 'tongThanhToan',
             headerName: 'Tổng phải trả',
-            headerAlign: 'center',
+            headerAlign: 'right',
             align: 'right',
             minWidth: 118,
             flex: 1,
@@ -392,15 +386,13 @@ const GiaoDichThanhToan: React.FC = () => {
         {
             field: 'daThanhToan',
             headerName: 'Khách đã trả',
-            headerAlign: 'center',
+            headerAlign: 'right',
             align: 'right',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
-                <Box title={params.value} textAlign="center" width="100%">
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
+                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
             )
         },
         {
@@ -439,16 +431,26 @@ const GiaoDichThanhToan: React.FC = () => {
         }
     ];
 
+    const [anchorElFilter, setAnchorElFilter] = useState<SVGSVGElement | null>(null);
+    const ApplyFilter = (paramFilter: HoaDonRequestDto) => {
+        setAnchorElFilter(null);
+        setParamSearch({
+            ...paramSearch,
+            currentPage: 1,
+            trangThaiNos: paramFilter.trangThaiNos,
+            trangThais: paramFilter.trangThais,
+            idChiNhanhs: paramFilter.idChiNhanhs
+        });
+    };
+
     return (
         <>
-            <ChiNhanhContextbyUser.Provider value={allChiNhanh}>
-                <ThongTinHoaDon
-                    idHoaDon={idHoadonChosing}
-                    hoadon={hoadon}
-                    open={openDetail}
-                    handleGotoBack={childGotoBack}
-                />
-            </ChiNhanhContextbyUser.Provider>
+            <ThongTinHoaDon
+                idHoaDon={idHoadonChosing}
+                hoadon={hoadon}
+                open={openDetail}
+                handleGotoBack={childGotoBack}
+            />
 
             <SnackbarAlert
                 showAlert={objAlert.show}
@@ -480,19 +482,14 @@ const GiaoDichThanhToan: React.FC = () => {
                                     placeholder="Tìm kiếm"
                                     InputProps={{
                                         startAdornment: (
-                                            <IconButton type="button">
+                                            <IconButton type="button" onClick={hanClickIconSearch}>
                                                 <Search />
                                             </IconButton>
                                         )
                                     }}
-                                    onChange={(event) =>
-                                        setParamSearch((itemOlds: any) => {
-                                            return {
-                                                ...itemOlds,
-                                                textSearch: event.target.value
-                                            };
-                                        })
-                                    }
+                                    onChange={(event) => {
+                                        setTxtSearch(event.target.value);
+                                    }}
                                     onKeyDown={(event) => {
                                         handleKeyDownTextSearch(event);
                                     }}
@@ -516,7 +513,8 @@ const GiaoDichThanhToan: React.FC = () => {
                                     sx={{
                                         '& .MuiInputBase-root': {
                                             height: '40px!important'
-                                        }
+                                        },
+                                        backgroundColor: 'white'
                                     }}
                                     onClick={(event) => setAnchorDateEl(event.currentTarget)}
                                     value={`${format(
@@ -547,17 +545,22 @@ const GiaoDichThanhToan: React.FC = () => {
                                 className="btn-outline-hover">
                                 Xuất
                             </Button>
-                            <Button
-                                variant="contained"
-                                startIcon={<FilterIcon />}
+                            <FilterAltOutlinedIcon
+                                titleAccess="Lọc nâng cao"
+                                className="btnIcon"
                                 sx={{
-                                    bgcolor: 'var(--color-main)!important',
-                                    color: '#fff',
-                                    fontSize: '14px'
+                                    height: '40px!important',
+                                    padding: '8px!important',
+                                    background: 'white'
                                 }}
-                                className="btn-container-hover">
-                                Bộ lọc
-                            </Button>
+                                onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                            />
+                            <PopoverFilterHoaDon
+                                anchorEl={anchorElFilter}
+                                paramFilter={paramSearch}
+                                handleClose={() => setAnchorElFilter(null)}
+                                handleApply={ApplyFilter}
+                            />
                         </Box>
                     </Grid>
                 </Grid>

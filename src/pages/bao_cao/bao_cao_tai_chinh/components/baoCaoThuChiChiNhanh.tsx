@@ -44,20 +44,20 @@ const BaoCaoSoQuyChiNhanh = ({ handleChangeTab }: any) => {
     const [anchorDateEl, setAnchorDateEl] = useState<HTMLButtonElement | null>(null);
     const [disableSelectDate, setDisableSelectDate] = useState(true);
     const getData = async () => {
-        const result = await baoCaoService.getBaoCaoBanHangTongHop({
-            filter: filter,
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined,
-            idDichVu: idDichVu === '' ? undefined : idDichVu,
-            maxResultCount: maxResultCount,
-            skipCount: currentPage,
-            timeFrom: formatDate(timeFrom, 'yyyy/MM/dd HH:mm:ss'),
-            timeTo: formatDate(timeTo, 'yyyy/MM/dd HH:mm:ss'),
-            sortBy: sortBy,
-            sortType: sortType
-        });
-        setDataRow(result.items);
-        setTotalDataRow(result.totalCount);
-        setTotalPage(Math.ceil(result.totalCount / maxResultCount));
+        // const result = await baoCaoService.getBaoCaoBanHangTongHop({
+        //     filter: filter,
+        //     idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined,
+        //     idDichVu: idDichVu === '' ? undefined : idDichVu,
+        //     maxResultCount: maxResultCount,
+        //     skipCount: currentPage,
+        //     timeFrom: formatDate(timeFrom, 'yyyy/MM/dd HH:mm:ss'),
+        //     timeTo: formatDate(timeTo, 'yyyy/MM/dd HH:mm:ss'),
+        //     sortBy: sortBy,
+        //     sortType: sortType
+        // });
+        // setDataRow(result.items);
+        // setTotalDataRow(result.totalCount);
+        // setTotalPage(Math.ceil(result.totalCount / maxResultCount));
     };
     useEffect(() => {
         getData();
@@ -80,18 +80,18 @@ const BaoCaoSoQuyChiNhanh = ({ handleChangeTab }: any) => {
         setSortType(sortType);
     };
     const exportToExcel = async () => {
-        const result = await baoCaoService.exportBaoCaoBanHangTongHop({
-            filter: filter,
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined,
-            idDichVu: idDichVu === '' ? undefined : idDichVu,
-            maxResultCount: maxResultCount,
-            skipCount: currentPage,
-            timeFrom: formatDate(timeFrom, 'yyyy/MM/dd HH:mm:ss'),
-            timeTo: formatDate(timeTo, 'yyyy/MM/dd HH:mm:ss'),
-            sortBy: sortBy,
-            sortType: sortType
-        });
-        fileDowloadService.downloadExportFile(result);
+        // const result = await baoCaoService.exportBaoCaoBanHangTongHop({
+        //     filter: filter,
+        //     idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined,
+        //     idDichVu: idDichVu === '' ? undefined : idDichVu,
+        //     maxResultCount: maxResultCount,
+        //     skipCount: currentPage,
+        //     timeFrom: formatDate(timeFrom, 'yyyy/MM/dd HH:mm:ss'),
+        //     timeTo: formatDate(timeTo, 'yyyy/MM/dd HH:mm:ss'),
+        //     sortBy: sortBy,
+        //     sortType: sortType
+        // });
+        // fileDowloadService.downloadExportFile(result);
     };
     const openDateSelect = Boolean(anchorDateEl);
     const idDateSelect = openDateSelect ? 'simple-popover' : undefined;

@@ -52,6 +52,7 @@ import NotificationSeverity from '../../enum/NotificationSeverity';
 import UserNotificationState from '../../enum/UserNotificationState';
 import NotificationService from '../../services/notification/NotificationService';
 import utils from '../../utils/utils';
+import suggestStore from '../../stores/suggestStore';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -109,8 +110,9 @@ const Header: React.FC<HeaderProps> = (
 
         const getChiNhanhs = async () => {
             if (Cookies.get('accessToken') !== null && Cookies.get('accessToken') !== undefined) {
-                const listChiNhanh = await chiNhanhService.GetChiNhanhByUser();
-                if (listChiNhanh != null && listChiNhanh.length > 0) {
+                await suggestStore.GetChiNhanhByUser();
+                const listChiNhanh = suggestStore?.suggestChiNhanh_byUserLogin;
+                if (listChiNhanh !== undefined && listChiNhanh != null && listChiNhanh.length > 0) {
                     setListChiNhanh(listChiNhanh);
 
                     const idChiNhanhMacDinh = Cookies.get('idChiNhanhMacDinh');

@@ -1,13 +1,14 @@
 import { Guid } from 'guid-typescript';
 import QuyChiTietDto from './QuyChiTietDto';
 import { format, add, addDays } from 'date-fns';
+import { LoaiChungTu, TrangThaiActive } from '../../lib/appconst';
 
 export default class QuyHoaDonDto {
     id = Guid.create().toString();
     idChiNhanh?: string;
     idBrandname?: string;
     idNhanVien?: string | null = null;
-    idLoaiChungTu = 11;
+    idLoaiChungTu = LoaiChungTu.PHIEU_THU;
     maHoaDon? = '';
     tongTienThu = 0;
     ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS');
@@ -20,6 +21,7 @@ export default class QuyHoaDonDto {
 
     quyHoaDon_ChiTiet?: QuyChiTietDto[];
 
+    idHoaDonLienQuan?: string | null;
     idDoiTuongNopTien?: string | null = null;
     loaiDoiTuong? = 1; // khachhang
     hinhThucThanhToan? = 1; // tienmat
@@ -38,12 +40,22 @@ export default class QuyHoaDonDto {
     tenNganHang? = '';
     tenChuThe? = '';
 
+    maHoaDonLienQuans? = '';
+    tienMat? = 0;
+    tienChuyenKhoan? = 0;
+    tienQuyetThe? = 0;
+
+    sumTienMat? = 0;
+    sumTienChuyenKhoan? = 0;
+    sumTienQuyetThe? = 0;
     sumTongTienThu? = 0;
     sumTongTienChi? = 0;
+    sumTongThuChi? = 0;
 
     constructor({
         id = Guid.create().toString(),
-        idLoaiChungTu = 11,
+        idLoaiChungTu = LoaiChungTu.PHIEU_THU,
+        trangThai = TrangThaiActive.ACTIVE,
         idChiNhanh = '',
         idBrandname = '',
         maHoaDon = '',
@@ -60,6 +72,7 @@ export default class QuyHoaDonDto {
     }) {
         this.id = id;
         this.idLoaiChungTu = idLoaiChungTu;
+        this.trangThai = trangThai;
         this.idChiNhanh = idChiNhanh;
         this.idBrandname = idBrandname;
         this.maHoaDon = maHoaDon;

@@ -8,4 +8,5 @@ export interface IList {
     isShow?: boolean;
     color?: string;
     icon?: ReactComponentElement<SvgIconComponent>;
+    children?: IList[];
 }
