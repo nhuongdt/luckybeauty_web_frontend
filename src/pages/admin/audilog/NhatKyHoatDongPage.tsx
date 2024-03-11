@@ -87,11 +87,11 @@ const NhatKyHoatDongPage = () => {
     useEffect(() => {
         getAll();
     }, [loaiNhatKys, timeFrom, timeTo, filter, sortBy, sortType, maxResultCount, skipCount]);
-    const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+    const handlePerPageChange = (event: SelectChangeEvent<number>) => {
         setMaxResultCount(parseInt(event.target.value.toString(), 10));
         setSkipCount(1);
     };
-    const handlePageChange = async (event: any, value: number) => {
+    const handlePageChange = (event: any, value: number) => {
         setSkipCount(value);
     };
     const chonLoaiThaoTac = (event: React.ChangeEvent<any>, checked: boolean) => {
