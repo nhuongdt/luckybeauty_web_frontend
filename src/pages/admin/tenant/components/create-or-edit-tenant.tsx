@@ -14,17 +14,17 @@ import {
     TextField,
     Typography
 } from '@mui/material';
-
+import { format as formatDate } from 'date-fns';
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
 import { Form, Formik, FormikHelpers } from 'formik';
 import CreateTenantInput from '../../../../services/tenant/dto/createTenantInput';
 import tenantService from '../../../../services/tenant/tenantService';
 import rules from './createOrUpdateTenant.validation';
 import { enqueueSnackbar } from 'notistack';
-import http from '../../../../services/httpService';
 import { EditionListDto } from '../../../../services/editions/dto/EditionListDto';
 import editionService from '../../../../services/editions/editionService';
 import { PagedResultDto } from '../../../../services/dto/pagedResultDto';
+import DatePickerRequiredCustom from '../../../../components/DatetimePicker/DatePickerRequiredCustom';
 export interface ICreateOrEditTenantProps {
     visible: boolean;
     onCancel: () => void;
@@ -60,7 +60,9 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                     isActive: values.isActive,
                     name: values.name,
                     tenancyName: values.tenancyName,
-                    editionId: values.editionId
+                    editionId: values.editionId,
+                    isTrial: values.isTrial,
+                    subscriptionEndDate: values.subscriptionEndDate
                 });
                 enqueueSnackbar('Cập nhật thông tin thành công!', {
                     variant: 'success',
@@ -90,7 +92,9 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
             isDefaultPassword: formRef.isDefaultPassword,
             password: formRef.password,
             isActive: formRef.isActive,
-            editionId: formRef.editionId
+            editionId: formRef.editionId,
+            isTrial: formRef.isTrial,
+            subscriptionEndDate: formRef.subscriptionEndDate
         };
         return (
             <>
@@ -349,13 +353,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                             value={values.isDefaultPassword}
                                                             onChange={handleChange}
                                                             checked={values.isDefaultPassword}
-                                                            control={
-                                                                <Checkbox
-                                                                // sx={{
-                                                                //     color: 'var(--color-main)!important'
-                                                                // }}
-                                                                />
-                                                            }
+                                                            control={<Checkbox />}
                                                             label="Mật khẩu mặc định"
                                                         />
                                                     </FormGroup>
@@ -405,18 +403,61 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                             value={values.isActive}
                                                             onChange={handleChange}
                                                             checked={values.isActive}
-                                                            control={
-                                                                <Checkbox
-                                                                // sx={{
-                                                                //     color: 'var(--color-main)!important'
-                                                                // }}
-                                                                />
-                                                            }
+                                                            control={<Checkbox />}
                                                             label="IsActive"
                                                         />
                                                     </FormGroup>
                                                 </Box>
                                             )}
+                                            <Box display={'flex'} flexDirection={'column'} gap={'16px'} mt={'-16px'}>
+                                                <FormGroup>
+                                                    <FormControlLabel
+                                                        sx={{
+                                                            '& .MuiTypography-root': {
+                                                                fontSize: '14px'
+                                                            }
+                                                        }}
+                                                        name="isTrial"
+                                                        value={values.isTrial}
+                                                        onChange={handleChange}
+                                                        checked={values.isTrial}
+                                                        control={<Checkbox />}
+                                                        label="Là dùng thử"
+                                                    />
+                                                </FormGroup>
+
+                                                {values.isTrial === false ? (
+                                                    <FormGroup>
+                                                        <DatePickerRequiredCustom
+                                                            props={{
+                                                                width: '100%',
+                                                                label: 'Ngày hết hạn',
+                                                                size: 'small',
+                                                                error:
+                                                                    touched.subscriptionEndDate &&
+                                                                    errors.subscriptionEndDate
+                                                                        ? true
+                                                                        : false,
+                                                                helperText: touched.subscriptionEndDate &&
+                                                                    errors.subscriptionEndDate && (
+                                                                        <span>{errors.subscriptionEndDate}</span>
+                                                                    )
+                                                            }}
+                                                            defaultVal={
+                                                                values.subscriptionEndDate
+                                                                    ? formatDate(
+                                                                          new Date(values.subscriptionEndDate),
+                                                                          'yyyy-MM-dd'
+                                                                      )
+                                                                    : formatDate(new Date(), 'yyyy-MM-dd')
+                                                            }
+                                                            handleChangeDate={(dt: string) => {
+                                                                values.subscriptionEndDate = new Date(dt);
+                                                            }}
+                                                        />
+                                                    </FormGroup>
+                                                ) : null}
+                                            </Box>
                                         </Box>
                                         <DialogActions sx={{ paddingRight: '0!important' }}>
                                             <Button

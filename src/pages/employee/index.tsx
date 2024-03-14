@@ -8,7 +8,6 @@ import React from 'react';
 import { SuggestChucVuDto } from '../../services/suggests/dto/SuggestChucVuDto';
 import { CreateOrUpdateNhanSuDto } from '../../services/nhan-vien/dto/createOrUpdateNhanVienDto';
 import Cookies from 'js-cookie';
-import ClearIcon from '@mui/icons-material/Clear';
 import { Add, ExpandMoreOutlined } from '@mui/icons-material';
 import {
     DataGrid,

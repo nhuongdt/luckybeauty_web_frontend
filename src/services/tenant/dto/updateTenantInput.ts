@@ -4,4 +4,6 @@ export default interface UpdateTenantInput {
     isActive: boolean;
     id: number;
     editionId: number;
+    isTrial: boolean;
+    subscriptionEndDate?: Date;
 }

@@ -3,4 +3,6 @@ export default interface CreateTenantOutput {
     name: string;
     isActive: boolean;
     id: number;
+    isTrial: boolean;
+    subscriptionEndDate?: Date;
 }

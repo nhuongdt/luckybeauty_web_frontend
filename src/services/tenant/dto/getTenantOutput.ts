@@ -7,4 +7,6 @@ export default class GetTenantOutput {
 
     id!: number;
     editionId!: number;
+    isTrial!: boolean;
+    subscriptionEndDate?: Date;
 }

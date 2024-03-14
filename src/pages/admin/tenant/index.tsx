@@ -1,10 +1,10 @@
 import React, { ChangeEventHandler } from 'react';
 import { GetAllTenantOutput } from '../../../services/tenant/dto/getAllTenantOutput';
 import { Box, Grid, Typography, TextField, Button, IconButton, SelectChangeEvent } from '@mui/material';
-import { DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import AppComponentBase from '../../../components/AppComponentBase';
 import tenantService from '../../../services/tenant/tenantService';
-
+import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
 import '../../../custom.css';
 import AddIcon from '../../../images/add.svg';
 import CreateOrEditTenant from './components/create-or-edit-tenant';
@@ -18,6 +18,7 @@ import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { enqueueSnackbar } from 'notistack';
 import abpCustom from '../../../components/abp-custom';
+import { format as formatDateFns } from 'date-fns';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ITenantProps {}
 
@@ -41,7 +42,8 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
             tenancyName: '',
             isDefaultPassword: false,
             password: '',
-            editionId: 0
+            editionId: 0,
+            isTrial: false
         } as CreateTenantInput,
         isShowConfirmDelete: false,
         anchorEl: null,
@@ -49,8 +51,8 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
         rowSelectedModel: [] as GridRowSelectionModel
     };
 
-    async componentDidMount() {
-        await this.getAll();
+    componentDidMount() {
+        this.getAll();
     }
 
     async getAll() {
@@ -67,7 +69,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
     }
 
     handlePageChange = async (event: any, value: any) => {
-        this.setState({
+        await this.setState({
             currentPage: value,
             skipCount: value
         });
@@ -102,7 +104,8 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     tenancyName: '',
                     isDefaultPassword: false,
                     password: '',
-                    editionId: 0
+                    editionId: 0,
+                    isTrial: false
                 }
             });
         } else {
@@ -115,7 +118,9 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     adminEmailAddress: '',
                     connectionString: createOrEdit.connectionString,
                     isDefaultPassword: true,
-                    editionId: createOrEdit.editionId
+                    editionId: createOrEdit.editionId,
+                    isTrial: createOrEdit.isTrial,
+                    subscriptionEndDate: createOrEdit.subscriptionEndDate
                 }
             });
         }
@@ -168,18 +173,14 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
         this.handleCloseMenu();
     };
     render(): React.ReactNode {
-        const columns = [
+        const columns: GridColDef[] = [
             {
                 field: 'name',
                 headerName: 'Tên cửa hàng',
                 minWidth: 125,
                 flex: 1,
-                renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }} title={params.value}>
-                        {params.colDef.headerName}
-                    </Box>
-                ),
-                renderCell: (params: any) => (
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
+                renderCell: (params) => (
                     <Box
                         sx={{
                             fontSize: '13px',
@@ -200,12 +201,12 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                 headerName: 'Tenant Id',
                 minWidth: 125,
                 flex: 1,
-                renderHeader: (params: any) => (
+                renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
                         {params.colDef.headerName}
                     </Box>
                 ),
-                renderCell: (params: any) => (
+                renderCell: (params) => (
                     <Box
                         sx={{
                             fontSize: '13px',
@@ -226,12 +227,12 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                 headerName: 'Trạng thái',
                 minWidth: 100,
                 flex: 1,
-                renderHeader: (params: any) => (
+                renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
                         {params.colDef.headerName}
                     </Box>
                 ),
-                renderCell: (params: any) => (
+                renderCell: (params) => (
                     <Box
                         sx={{
                             padding: '4px 8px',
@@ -248,6 +249,33 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                         {params.value == true ? 'Hoạt động' : 'Ngừng hoạt động'}
                     </Box>
                 )
+            },
+            {
+                field: 'subscriptionEndDate',
+                headerName: 'Ngày hết hạn',
+                headerAlign: 'center',
+                align: 'center',
+                minWidth: 112,
+                flex: 0.8,
+                renderCell: (params) => (
+                    <Box
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '100%'
+                        }}>
+                        {params.value != null ? (
+                            <>
+                                <DateIcon style={{ marginRight: 4 }} />
+                                <Typography variant="body2" fontSize="var(--font-size-main)">
+                                    {formatDateFns(new Date(params.value), 'dd/MM/yyyy HH:mm')}
+                                </Typography>
+                            </>
+                        ) : null}
+                    </Box>
+                ),
+                renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
             },
             {
                 field: 'action',

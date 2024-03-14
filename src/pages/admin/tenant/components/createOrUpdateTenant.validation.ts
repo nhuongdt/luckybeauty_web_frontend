@@ -10,6 +10,7 @@ const rules = Yup.object().shape({
         then: (schema) => schema.email().required('Vui lòng nhập địa chỉ email'),
         otherwise: (schema) => schema.notRequired()
     }),
+    isTrial: Yup.boolean(),
     //connectionString: Yup.string().required('Vui lòng nhập chuỗi kết nối'),
     isActive: Yup.boolean().required(),
     isDefaultPassword: Yup.boolean().required(),
@@ -21,7 +22,11 @@ const rules = Yup.object().shape({
                 .required('Mật khẩu là bắt buộc'),
         otherwise: (schema) => schema.notRequired()
     }),
-    editionId: Yup.number().min(1, 'Vui lòng chọn phiên bản').required('Vui lòng chọn phiên bản')
+    editionId: Yup.number().min(1, 'Vui lòng chọn phiên bản').required('Vui lòng chọn phiên bản'),
+    subscriptionEndDate: Yup.date().when(['isTrial'], {
+        is: (isTrial: boolean) => isTrial === false,
+        then: (schema) => schema.required('Ngày hết hạn không được bỏ trống')
+    })
 });
 
 export default rules;

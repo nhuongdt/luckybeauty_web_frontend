@@ -3,4 +3,5 @@ export interface GetAllTenantOutput {
     name: string;
     isActive: boolean;
     id: number;
+    subscriptionEndDate?: Date;
 }

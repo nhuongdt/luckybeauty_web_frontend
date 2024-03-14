@@ -14,4 +14,8 @@ export default class CreateTenantInput {
     password!: string;
 
     editionId!: number;
+
+    isTrial!: boolean;
+
+    subscriptionEndDate?: Date;
 }
