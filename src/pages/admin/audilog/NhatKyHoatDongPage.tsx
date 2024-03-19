@@ -225,10 +225,10 @@ const NhatKyHoatDongPage = () => {
                 paddingTop: '16px'
             }}>
             <Grid container columnSpacing={1.5}>
-                <Grid item sm={0} md={3} lg={2.5} display={window.screen.width <= 600 ? 'none' : ''}>
+                <Grid item sm={3} md={3} lg={2.5} display={window.screen.width <= 600 ? 'none' : ''}>
                     {filterContent}
                 </Grid>
-                <Grid item sm={12} md={9} lg={9.5}>
+                <Grid item sm={9} md={9} lg={9.5}>
                     <Grid container columnSpacing={1} justifyItems={'center'}>
                         <Grid item xs={6} md={7} display={'flex'} alignItems={'center'}>
                             <Typography variant="h1" fontWeight="700" fontSize="16px" color="#333233">
