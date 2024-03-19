@@ -180,7 +180,7 @@ const index = () => {
             sx={{
                 paddingTop: '16px'
             }}>
-            <Box display={'flex'} flexDirection={'row'} justifyContent={'space-between'}>
+            <Box display={'flex'} flexDirection={'row'} gap={0.5} justifyContent={'space-between'}>
                 <Typography variant="h1" fontWeight="700" fontSize="16px" color="#333233">
                     Phiên bản
                 </Typography>

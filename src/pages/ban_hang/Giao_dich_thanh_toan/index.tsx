@@ -468,7 +468,7 @@ const GiaoDichThanhToan: React.FC = () => {
             <Box paddingTop={2}>
                 <Grid container spacing={1}>
                     <Grid item xs={12} sm={12} md={12} lg={6} alignItems="center" gap="10px">
-                        <Grid container alignItems="center">
+                        <Grid container spacing={1} alignItems="center">
                             <Grid item xs={12} sm={6} md={4}>
                                 <span className="page-title"> Giao dịch thanh toán</span>
                             </Grid>

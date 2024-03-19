@@ -248,7 +248,7 @@ const LichHen: React.FC = () => {
                         sx={{ bgcolor: '#fff!important', paddingX: '8px' }}>
                         <SettingIcon />
                     </Button>
-                    <Button
+                    {/* <Button
                         startIcon={<AddIcon />}
                         variant="outlined"
                         className="btn-outline-hover"
@@ -262,18 +262,19 @@ const LichHen: React.FC = () => {
                             }
                         }}>
                         Thêm thời gian chặn
-                    </Button>
+                    </Button> */}
                     <Button
                         hidden={!abpCustom.isGrandPermission('Pages.Booking.Create')}
-                        startIcon={<AddIcon />}
+                        startIcon={window.screen.width > 768 ? <AddIcon /> : null}
                         variant="contained"
+                        title="Thêm cuộc hẹn"
                         onClick={async () => {
                             bookingStore.createNewBookingDto();
                             handleCreateUpdateShow('');
                         }}
                         className="btn-container-hover"
                         sx={{ bgcolor: 'var(--color-main)', fontSize: '14px', fontWeight: '400' }}>
-                        Thêm cuộc hẹn
+                        {window.screen.width > 767 ? 'Thêm cuộc hẹn' : <AddIcon />}
                     </Button>
                 </Box>
             </Box>

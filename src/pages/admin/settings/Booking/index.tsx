@@ -35,7 +35,7 @@ const Booking: React.FC = () => {
     };
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column' }} paddingTop={'16px'}>
-            <Grid container paddingRight={'16px'}>
+            <Grid container paddingRight={'16px'} spacing={1}>
                 <Grid item xs={12} sm={4} md={4} lg={4}>
                     <Typography variant="h4" fontSize="18px" fontWeight="700">
                         Cài đặt booking

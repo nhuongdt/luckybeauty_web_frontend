@@ -790,9 +790,9 @@ const TinNhanPage = () => {
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Grid container paddingTop={2} spacing={4}>
                 <Grid item xs={12}>
-                    <Grid container>
-                        <Grid item xs={5}>
-                            <Grid container alignItems="center">
+                    <Grid container spacing={1}>
+                        <Grid item xs={12} md={5}>
+                            <Grid container spacing={1} alignItems="center">
                                 <Grid item xs={4}>
                                     <span className="page-title"> Tin nhắn SMS</span>
                                 </Grid>
@@ -827,33 +827,34 @@ const TinNhanPage = () => {
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid item xs={7} gap={1} display="flex" justifyContent="end">
-                            <Stack>
-                                <TextField
-                                    label="Thời gian"
-                                    size="small"
-                                    fullWidth
-                                    variant="outlined"
-                                    sx={{
-                                        '& .MuiInputBase-root': {
-                                            height: '40px!important'
-                                        }
-                                    }}
-                                    onClick={(event) => setAnchorDateEl(event.currentTarget)}
-                                    value={`${format(
-                                        new Date(paramSearch.fromDate as string),
-                                        'dd/MM/yyyy'
-                                    )} - ${format(new Date(paramSearch.toDate as string), 'dd/MM/yyyy')}`}
-                                />
-                                <DateFilterCustom
-                                    id="popover-date-filter"
-                                    open={openDateFilter}
-                                    anchorEl={anchorDateEl}
-                                    onClose={() => setAnchorDateEl(null)}
-                                    onApplyDate={onApplyFilterDate}
-                                />
-                            </Stack>
-
+                        <Grid container item xs={12} md={7} gap={1} display="flex" justifyContent="end">
+                            <Grid item xs={12} md={4}>
+                                <Stack>
+                                    <TextField
+                                        label="Thời gian"
+                                        size="small"
+                                        fullWidth
+                                        variant="outlined"
+                                        sx={{
+                                            '& .MuiInputBase-root': {
+                                                height: '40px!important'
+                                            }
+                                        }}
+                                        onClick={(event) => setAnchorDateEl(event.currentTarget)}
+                                        value={`${format(
+                                            new Date(paramSearch.fromDate as string),
+                                            'dd/MM/yyyy'
+                                        )} - ${format(new Date(paramSearch.toDate as string), 'dd/MM/yyyy')}`}
+                                    />
+                                    <DateFilterCustom
+                                        id="popover-date-filter"
+                                        open={openDateFilter}
+                                        anchorEl={anchorDateEl}
+                                        onClose={() => setAnchorDateEl(null)}
+                                        onApplyDate={onApplyFilterDate}
+                                    />
+                                </Stack>
+                            </Grid>
                             <Button
                                 size="small"
                                 onClick={exportToExcel}

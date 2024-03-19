@@ -594,10 +594,10 @@ const PageProduct = () => {
                 onClose={() => setIsShowModalChuyenNhom(false)}
                 agreeChuyenNhom={chuyenNhomHang}
             />
-            <Grid container className="dich-vu-page" gap={4} paddingTop={2}>
-                <Grid item container alignItems="center" justifyContent="space-between">
-                    <Grid container item xs={12} md={6} lg={6} alignItems="center">
-                        <Grid container item alignItems="center">
+            <Grid container className="dich-vu-page" spacing={1} gap={4} paddingTop={2}>
+                <Grid item container alignItems="center" spacing={1} justifyContent="space-between">
+                    <Grid container item xs={12} spacing={1} md={6} lg={6} alignItems="center">
+                        <Grid container spacing={1} item alignItems="center">
                             <Grid item xs={6} sm={6} lg={4} md={4}>
                                 <span className="page-title"> Danh mục dịch vụ</span>
                             </Grid>

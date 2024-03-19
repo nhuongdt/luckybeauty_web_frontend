@@ -435,7 +435,7 @@ class CaLamViecScreen extends Component {
         ];
         return (
             <Box paddingTop="16px" className="thoi-gian-nghi-page">
-                <Grid container alignItems="center" justifyContent="space-between">
+                <Grid container spacing={1} alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md="auto" display="flex" gap="10px" alignItems="center">
                         <Typography
                             //color="#333233"

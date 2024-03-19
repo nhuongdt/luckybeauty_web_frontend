@@ -523,7 +523,9 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             {
                 field: 'tenKhachHang',
                 headerName: 'Tên khách hàng',
-                flex: 2,
+                minWidth: 170,
+                maxWidth: 200,
+                flex: 1.5,
                 renderCell: (params) => (
                     <Box
                         style={{
@@ -554,12 +556,14 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             {
                 field: 'soDienThoai',
                 headerName: 'Số điện thoại',
+                minWidth: 120,
                 flex: 1,
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             },
             {
                 field: 'ngaySinh',
                 headerName: 'Ngày sinh',
+                minWidth: 120,
                 flex: 1,
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
                 renderCell: (params) => (
@@ -568,29 +572,16 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     </Typography>
                 )
             },
-
-            // {
-            //     field: 'gioiTinh',
-            //     headerName: 'Giới tính',
-            //     minWidth: 100,
-            //     flex: 0.8,
-            //     renderHeader: (params) => (
-            //         <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-            //     ),
-            //     renderCell: (params) => (
-            //         <Box textAlign="left" width="100%" fontSize="13px">
-            //             {params.value}
-            //         </Box>
-            //     )
-            // },
             {
                 field: 'tenNhomKhach',
+                minWidth: 150,
                 headerName: 'Nhóm khách',
                 flex: 1,
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             },
             {
                 field: 'tongChiTieu',
+                minWidth: 150,
                 headerName: 'Tổng mua',
                 headerAlign: 'right',
                 align: 'right',
@@ -606,6 +597,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 field: 'conNo',
                 headerName: 'Còn nợ',
                 headerAlign: 'right',
+                minWidth: 150,
                 align: 'right',
                 flex: 1,
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
@@ -615,38 +607,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     </Box>
                 )
             },
-            // {
-            //     field: 'cuocHenGanNhat',
-            //     headerName: 'Cuộc hẹn gần nhất',
-            //     renderCell: (params) => (
-            //         <Box
-            //             sx={{
-            //                 display: 'flex',
-            //                 alignItems: 'center',
-            //                 fontSize: 'var(--font-size-main)',
-            //                 justifyContent: 'center',
-            //                 width: '100%'
-            //             }}>
-            //             {new Date(params.value).toLocaleDateString('en-GB')}
-            //         </Box>
-            //     ),
-            //     minWidth: 160,
-            //     flex: 1,
-            //     renderHeader: (params) => (
-            //         <Box
-            //             sx={{
-            //                 fontWeight: '700',
-            //                 width: '100%',
-            //                 textAlign: 'left',
-            //                 '& svg': {
-            //                     width: '16px',
-            //                     height: '16px'
-            //                 }
-            //             }}>
-            //             {params.colDef.headerName}
-            //         </Box>
-            //     )
-            // }
+
             {
                 field: 'action',
                 headerName: '#',

@@ -328,7 +328,7 @@ const KhuyenMaiPage: React.FC = () => {
     ] as GridColDef[];
     return (
         <Box paddingTop={2}>
-            <Grid container alignItems="center" justifyContent="space-between">
+            <Grid container alignItems="center" spacing={1} justifyContent="space-between">
                 <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
                     <Typography variant="h1" fontSize="16px" fontWeight="700" color="#333233">
                         Voucher
@@ -369,31 +369,59 @@ const KhuyenMaiPage: React.FC = () => {
                             }}
                         />
                     </Box>
-                </Grid>
-
-                <Grid item xs={12} md="auto" display="flex" gap="8px" justifyContent="end">
-                    <ButtonGroup variant="contained" sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
-                        <Button
-                            size="small"
-                            hidden={!abpCustom.isGrandPermission('Pages.KhuyenMai.Create')}
-                            onClick={() => {
-                                onCreateOrEditVoucherModal('');
-                            }}
+                    {window.screen.width < 767 ? (
+                        <ButtonGroup
                             variant="contained"
-                            startIcon={<img src={AddIcon} />}
-                            sx={{
-                                textTransform: 'capitalize',
-                                fontWeight: '400',
-                                minWidth: '173px',
-                                fontSize: '14px',
-                                borderRadius: '4px!important',
-                                backgroundColor: 'var(--color-main)!important'
-                            }}
-                            className="btn-container-hover">
-                            Thêm voucher
-                        </Button>
-                    </ButtonGroup>
+                            sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
+                            <Button
+                                size="small"
+                                hidden={!abpCustom.isGrandPermission('Pages.KhuyenMai.Create')}
+                                onClick={() => {
+                                    onCreateOrEditVoucherModal('');
+                                }}
+                                title="Thêm voucher"
+                                variant="contained"
+                                sx={{
+                                    textTransform: 'capitalize',
+                                    fontWeight: '400',
+                                    minWidth: '173px',
+                                    fontSize: '14px',
+                                    borderRadius: '4px!important',
+                                    backgroundColor: 'var(--color-main)!important'
+                                }}
+                                className="btn-container-hover">
+                                <img src={AddIcon} />
+                            </Button>
+                        </ButtonGroup>
+                    ) : null}
                 </Grid>
+                {window.screen.width > 768 ? (
+                    <Grid item xs={12} md="auto" display="flex" gap="8px" justifyContent="end">
+                        <ButtonGroup
+                            variant="contained"
+                            sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
+                            <Button
+                                size="small"
+                                hidden={!abpCustom.isGrandPermission('Pages.KhuyenMai.Create')}
+                                onClick={() => {
+                                    onCreateOrEditVoucherModal('');
+                                }}
+                                variant="contained"
+                                startIcon={<img src={AddIcon} />}
+                                sx={{
+                                    textTransform: 'capitalize',
+                                    fontWeight: '400',
+                                    minWidth: '173px',
+                                    fontSize: '14px',
+                                    borderRadius: '4px!important',
+                                    backgroundColor: 'var(--color-main)!important'
+                                }}
+                                className="btn-container-hover">
+                                Thêm voucher
+                            </Button>
+                        </ButtonGroup>
+                    </Grid>
+                ) : null}
             </Grid>
             <Box padding={'16px 0px'}>
                 <DataGrid

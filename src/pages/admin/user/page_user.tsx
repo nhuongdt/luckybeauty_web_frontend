@@ -270,6 +270,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
         {
             field: 'userName',
             headerName: 'Tên đăng nhập',
+            minWidth: 120,
             flex: 0.8,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
@@ -289,6 +290,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
         },
         {
             field: 'tenNhanVien',
+            minWidth: 170,
             headerName: 'Tên nhân viên',
             flex: 1,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
@@ -297,6 +299,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
         {
             field: 'roleNames',
             headerName: 'Vai trò',
+            minWidth: 100,
             flex: 0.8,
             renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => <Box>{utils.Remove_LastComma(params.value)}</Box>
@@ -304,6 +307,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
         {
             field: 'emailAddress',
             headerName: 'Địa chỉ email',
+            minWidth: 150,
             flex: 1,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => <Box>{params.value}</Box>
@@ -311,6 +315,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
         {
             field: 'tenChiNhanh',
             headerName: 'Chi nhánh mặc định',
+            minWidth: 120,
             flex: 1,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => <Box>{params.value}</Box>
@@ -321,21 +326,8 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
             headerAlign: 'center',
             align: 'center',
             flex: 0.8,
+            minWidth: 80,
             renderCell: (params) => (
-                // <Typography
-                //     variant="body2"
-                //     alignItems={'center'}
-                //     borderRadius="12px"
-                //     padding={'4px 8px'}
-                //     sx={{
-                //         margin: 'auto',
-                //         backgroundColor: params.row.isActive === true ? '#E8FFF3' : '#FFF8DD',
-                //         color: params.row.isActive === true ? '#50CD89' : '#FF9900'
-                //     }}
-                //     fontSize="13px"
-                //     fontWeight="400">
-                //     {params.value === true ? 'Hoạt động' : 'Ngừng hoạt động'}
-                // </Typography>
                 <IOSSwitch
                     disabled={params.row.userName === 'admin' || params.row.isAdmin === true ? true : false}
                     value={params.row?.isActive}
@@ -349,6 +341,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
             field: 'creationTime',
             headerName: 'Ngày tạo',
             headerAlign: 'center',
+            minWidth: 120,
             flex: 0.6,
             renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
@@ -438,7 +431,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
                 allRoles={allRole}
                 onOk={saveUserOK}
             />
-            <Grid container paddingTop={2}>
+            <Grid container paddingTop={2} spacing={1}>
                 <Grid item xs={12} sm={12} md={12} lg={12}>
                     <Box className="page-box-right">
                         <Box>
