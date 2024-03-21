@@ -181,7 +181,7 @@ export default function DateFilterCustom({
                 break;
             case DateType.THANG_TOI:
                 {
-                    const nextMonth = addDays(startOfMonth(today), 1);
+                    const nextMonth = addDays(endOfMonth(today), 1);
                     setDateFrom(startOfMonth(nextMonth));
                     setDateTo(endOfMonth(nextMonth));
                 }
