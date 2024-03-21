@@ -66,6 +66,10 @@ export const TrangThaiSMS = {
     MESSAGE_NOT_VALID: 118,
     ERROR_UNDEFINED: 99
 };
+export const TrangThaiGuiTinZalo = {
+    SUCCESS: 200,
+    FAIL: -1
+};
 
 export const TypeAction = {
     INSEART: 1,
