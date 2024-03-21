@@ -1,9 +1,16 @@
 import axios from 'axios';
 import qs from 'qs';
-import { IInforUserZOA, IMemberZOA, InforZOA, ZaloAuthorizationDto } from './zalo_dto';
+import { IInforUserZOA, IMemberZOA, ITemplateZNS, IZalo_InforHoaDon, InforZOA, ZaloAuthorizationDto } from './zalo_dto';
 import http from '../../httpService';
+import { LoaiTin } from '../../../lib/appconst';
+import { AnyKindOfDictionary } from 'lodash';
 
 class ZaloService {
+    Zalo_GetInforHoaDon = async (arr: string[]): Promise<IZalo_InforHoaDon[] | null> => {
+        if (arr.length == 0) return null;
+        const result = await http.post('api/services/app/HoaDon/Zalo_GetInforHoaDon?arrIdHoaDon=', arr);
+        return result.data.result;
+    };
     CreateCodeVerifier_andCodeChallenge = async (): Promise<ZaloAuthorizationDto> => {
         // use c#
         const result = await http.get(`api/services/app/ZaloAuthorization/CreateCodeVerifier_andCodeChallenge`);
@@ -40,6 +47,14 @@ class ZaloService {
         const b64 = btoa(str);
         const encoded = b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
         return encoded;
+    };
+    sha256 = async (input: string): Promise<string> => {
+        const encodedInput = new TextEncoder().encode(input);
+        const hashedArrayBuffer = await globalThis.crypto.subtle.digest('SHA-256', encodedInput);
+        const hashedString = Array.prototype.map
+            .call(new Uint8Array(hashedArrayBuffer), (x) => ('00' + x.toString(16)).slice(-2))
+            .join('');
+        return hashedString;
     };
     GenerateCodeChallenge = async (code_verifier: string) => {
         // hàm này chỉ áp dụng cho https
@@ -111,18 +126,117 @@ class ZaloService {
             refresh_token: xx.data.refresh_token,
             expires_in: xx.data.expires_in
         };
-        return null;
     };
-    GuiTinNhanTruyenThuong = async (params: any) => {
+    // danh sách các mẫu template
+    GetList_TempFromZNS = async (access_token: string): Promise<ITemplateZNS[]> => {
+        const result = await axios.get(`https://business.openapi.zalo.me/template/all?offset=0&limit=100&status=2`, {
+            headers: {
+                access_token: access_token,
+                'Content-Type': 'application/json'
+            }
+        });
+        return result.data.data;
+    };
+    GetZNSTemplate_byId = async (access_token: string, zns_template_id = '320131') => {
+        const result = await axios.get(
+            `https://business.openapi.zalo.me/template/info?template_id=${zns_template_id}`,
+            {
+                headers: {
+                    access_token: access_token,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        console.log('GetZNSTemplate_byId', result.data);
+        return result.data.data;
+    };
+    AssignData_toZNSTemplete = async (access_token: string, zns_template_id = '320131', dataSend: any = null) => {
+        const dataTemp = await this.GetZNSTemplate_byId(access_token, zns_template_id);
+        const tempdata: any = {};
+        for (let i = 0; i < dataTemp?.listParams?.length; i++) {
+            const key = dataTemp?.listParams[i]?.name;
+            tempdata[key] = '';
+
+            switch (key) {
+                case 'TenKhachHang':
+                    tempdata[key] = dataSend?.TenKhachHang ?? 'nhuongdt';
+                    break;
+                case 'MaHoaDon':
+                    tempdata[key] = dataSend?.MaHoaDon ?? 'HD001';
+                    break;
+                case 'NgayLapHoaDon':
+                    tempdata[key] = dataSend?.NgayLapHoaDon ?? '15:00 20/03/2024';
+                    break;
+                case 'TongTienHang':
+                    tempdata[key] = dataSend?.TongTienHang ?? '5000000';
+                    break;
+                case 'BookingDate':
+                    tempdata[key] = dataSend?.BookingDate ?? '15:45 19/03/2024';
+                    break;
+                case 'TenDichVu':
+                    tempdata[key] = dataSend?.TenDichVu ?? 'Nhuộm + gội test';
+                    break;
+                case 'DiaChiCuaHang':
+                    tempdata[key] = dataSend?.DiaChiCuaHang ?? '31 Lê Văn Lương';
+                    break;
+            }
+        }
+        return tempdata;
+    };
+    DevMode_GuiTinNhanGiaoDich_ByTempId = async (
+        access_token: string,
+        zns_template_id = '320131',
+        dataSend: any = null
+    ) => {
+        // lấy mẫu zns
+        const tempdata = await this.AssignData_toZNSTemplete(access_token, zns_template_id, dataSend);
+        const param = {
+            // mode: 'development',
+            phone: dataSend?.soDienThoai,
+            template_id: zns_template_id,
+            template_data: tempdata
+        };
+        const result = await axios.post(`https://business.openapi.zalo.me/message/template`, param, {
+            headers: {
+                access_token: access_token,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('DevMode_GuiTinNhan_ByTempId', result.data);
+        return {
+            msg_id: result.data.msg_id,
+            sent_time: result.data.sent_time,
+            error: result.data.error
+        };
+    };
+    GuiTinNhan_HasPhone = async (access_token: string, zns_template_id = '320131') => {
+        const tempdata = await this.AssignData_toZNSTemplete(access_token, zns_template_id);
+        const hasPhone = await this.sha256('+84355599770');
+        console.log('hasphobne ', hasPhone);
+        const param = {
+            phone: hasPhone,
+            template_id: zns_template_id,
+            template_data: tempdata
+        };
+        const result = await axios.post(`https://business.openapi.zalo.me/message/template/hashphone`, param, {
+            headers: {
+                access_token: access_token,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('GuiTinNhan_HasPhone', result.data);
+    };
+
+    GuiTinNhanGiaoDich_WithMyTemp = async (access_token: string, user_id: string) => {
         const dataPost = `{
             "recipient": {
-                "user_id": "4356639876691778517"
+                "user_id": ${user_id}
             },
             "message": {
                 "attachment": {
                     "type": "template",
                     "payload": {
-                        "template_type": "promotion",
+                        "template_type": "transaction_transaction",
                         "elements": [
                             {
                                 "attachment_id":"aERC3A0iYGgQxim8fYIK6fxzsXkaFfq7ZFRB3RCyZH6RyziRis3RNydebK3iSPCJX_cJ3k1nW1EQufjN_pUL1f6Ypq3rTef5nxp6H_HnXKFDiyD5y762HS-baqRpQe5FdA376lTfq1sRyPr8ypd74ecbaLyA-tGmuJ-97W",
@@ -181,12 +295,13 @@ class ZaloService {
         const param = qs.stringify(dataPost);
         console.log('Zalo_GuiTinNhanTruyenThuong ', param);
 
-        // const result = await axios.post('https://openapi.zalo.me/v3.0/oa/message/promotion', param, {
-        //     headers: {
-        //         access_token: process.env.REACT_APP_ZALO_ACCESS_TOKEN,
-        //         'Content-Type': 'application/json'
-        //     }
-        // });
+        const result = await axios.post('https://openapi.zalo.me/v3.0/oa/message/transaction', param, {
+            headers: {
+                access_token: access_token,
+                'Content-Type': 'application/json'
+            }
+        });
+        return result.data;
         // console.log('zalo test ', result);
     };
     GetDanhSach_KhachHang_QuanTamOA = async (access_token: string) => {
@@ -234,7 +349,7 @@ class ZaloService {
                 'Content-Type': 'application/json'
             }
         });
-        console.log('GuiTinTuVan ', result);
+        return result.data;
     };
     NguoiDung_ChiaSeThongTin_ChoOA = async (
         accountZOA: InforZOA,
