@@ -176,7 +176,7 @@ export default function BaoCaoBanHangChiTiet({ onChangePage, onChangePageSize }:
                                             <TableCell align="center" className="table-cell-border">
                                                 {new Intl.NumberFormat('vi-VN').format(row?.soLuong ?? 0)}
                                             </TableCell>
-                                            <TableCell align="center" className="table-cell-border">
+                                            <TableCell align="right" className="table-cell-border">
                                                 {new Intl.NumberFormat('vi-VN').format(row?.donGiaTruocCK ?? 0)}
                                             </TableCell>
                                             <TableCell align="right" className="table-cell-border">
