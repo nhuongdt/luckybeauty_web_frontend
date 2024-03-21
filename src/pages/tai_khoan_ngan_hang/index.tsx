@@ -315,7 +315,7 @@ const TaiKhoanNganHangPage = () => {
     ];
     return (
         <Box paddingTop={2}>
-            <Grid container>
+            <Grid container spacing={1}>
                 <Grid item xs={12} md={5} sm={6} lg={6}>
                     <Typography fontSize={'18px'} fontWeight={700} fontFamily={'Roboto'}>
                         Tài khoản ngân hàng

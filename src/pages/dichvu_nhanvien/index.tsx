@@ -5,16 +5,11 @@ import {
     Box,
     Button,
     Chip,
-    FormControlLabel,
     Grid,
     InputAdornment,
-    List,
     ListItem,
     ListItemAvatar,
     ListItemText,
-    Radio,
-    RadioGroup,
-    Rating,
     Table,
     TableBody,
     TableCell,
@@ -30,7 +25,6 @@ import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { observer } from 'mobx-react';
 import dichVuNhanVienStore from '../../stores/dichVuNhanVienStore';
 import AppConsts from '../../lib/appconst';
-import { maxHeight } from '@mui/system';
 import { AppContext, IAppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import Cookies from 'js-cookie';
 
@@ -202,7 +196,7 @@ class SettingDichVuNhanVien extends Component {
                             </Grid>
                         )}
 
-                        <Grid item xs={12} md={8}>
+                        <Grid item xs={12} sm={8} md={8}>
                             <Box
                                 className="page-box-right"
                                 sx={{

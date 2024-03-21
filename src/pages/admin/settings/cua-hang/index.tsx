@@ -222,10 +222,13 @@ class StoreDetail extends Component {
                 <Box className="page-full">
                     <Grid container>
                         <Grid item xs={12} md={12} sm={12}>
-                            <Stack marginBottom={'16px'} direction={'row'} justifyContent={'space-between'}>
-                                <Typography variant="h2" fontSize="24px" fontWeight="700" mb="32px" pl={2}>
-                                    Chi tiết cửa hàng
-                                </Typography>
+                            <Stack
+                                marginBottom={'16px'}
+                                direction={'row'}
+                                justifyContent={'space-between'}
+                                paddingLeft={2}
+                                alignItems={'center'}>
+                                <span className="page-title">Chi tiết cửa hàng</span>
                                 <Stack pr={2}>
                                     {abpCustom.isGrandPermission('Pages.ChietKhauHoaDon.Create') ? (
                                         this.state.isSaving ? (
@@ -245,7 +248,11 @@ class StoreDetail extends Component {
                                             </Button>
                                         ) : (
                                             <Stack direction={'row'} spacing={1}>
-                                                <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
+                                                <ButtonNavigate
+                                                    navigateTo="/settings"
+                                                    title="Trở về trang cài đặt"
+                                                    btnText={window.screen.width > 768 ? 'Trở về trang cài đặt' : ''}
+                                                />
                                                 <Button
                                                     variant="contained"
                                                     onClick={this.handSubmit}

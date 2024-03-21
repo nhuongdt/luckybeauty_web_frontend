@@ -225,7 +225,7 @@ class UserScreen extends AppComponentBase {
             {
                 field: 'fullName',
                 headerName: 'Họ và tên',
-                minWidth: 125,
+                minWidth: 170,
                 flex: 1,
                 renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
                 renderCell: (params: any) => (
@@ -263,7 +263,7 @@ class UserScreen extends AppComponentBase {
             {
                 field: 'emailAddress',
                 headerName: 'Địa chỉ email',
-                minWidth: 125,
+                minWidth: 150,
                 flex: 1,
                 renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
                 renderCell: (params: any) => (
@@ -283,7 +283,7 @@ class UserScreen extends AppComponentBase {
                 field: 'isActive',
                 headerName: 'Trạng thái',
                 headerAlign: 'center',
-                minWidth: 116,
+                minWidth: 120,
                 flex: 0.8,
                 renderCell: (params) => (
                     <Typography

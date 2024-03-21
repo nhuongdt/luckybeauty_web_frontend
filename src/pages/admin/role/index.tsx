@@ -248,7 +248,7 @@ class RoleScreen extends React.Component<IRoleProps> {
         return (
             <Box>
                 <Box>
-                    <Grid container justifyContent="space-between" paddingTop="16px">
+                    <Grid container spacing={1} justifyContent="space-between" paddingTop="16px">
                         <Grid item>
                             <div>
                                 <Box display="flex" alignItems="center" gap="10px">

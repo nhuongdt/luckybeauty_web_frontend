@@ -6,6 +6,7 @@ import qs from 'qs';
 import { RolePermission } from './dto/RolePermission';
 import http from '../httpService';
 import { waitForDebugger } from 'inspector';
+import { number } from 'yup';
 class LoginService {
     public async CheckTenant(tenantName: string, isRemember?: boolean) {
         const tenancy = tenantName || 'default';
@@ -77,6 +78,10 @@ class LoginService {
                         loginModel.rememberMe
                             ? Cookies.set('isRememberMe', 'true', { expires: tokenExpireDate })
                             : Cookies.set('isRememberMe', 'false');
+                        await this.GetPermissionByUserId(
+                            Number.parseInt(apiResult.data.result['userId'], 0),
+                            loginModel.rememberMe
+                        );
                     }
                 }
             }
@@ -93,9 +98,6 @@ class LoginService {
             Cookies.get('isRememberMe') !== undefined && Cookies.get('isRememberMe')?.toString() == 'true'
                 ? new Date(new Date().getTime() + 1000 * 86400)
                 : undefined;
-        // Cookies.set('permissions', response.data.result['permissions'], {
-        //     expires: tokenExpireDate
-        // });
         const item = {
             value: response.data.result['permissions'],
             expiry: tokenExpireDate

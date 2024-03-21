@@ -6,8 +6,9 @@ import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 export type ButtonNavigateMyType = {
     navigateTo: string;
     btnText: string;
+    title?: string;
 };
-export function ButtonNavigate({ navigateTo = '', btnText = '' }: ButtonNavigateMyType) {
+export function ButtonNavigate({ navigateTo = '', btnText = '', title = '' }: ButtonNavigateMyType) {
     const navigate = useNavigate(); // Sử dụng hook useNavigate
 
     const handleClick = () => {
@@ -17,6 +18,7 @@ export function ButtonNavigate({ navigateTo = '', btnText = '' }: ButtonNavigate
         <>
             <Button
                 variant="outlined"
+                title={title}
                 sx={{ color: '#525f7a' }}
                 startIcon={<ArrowBackOutlinedIcon />}
                 onClick={handleClick}>

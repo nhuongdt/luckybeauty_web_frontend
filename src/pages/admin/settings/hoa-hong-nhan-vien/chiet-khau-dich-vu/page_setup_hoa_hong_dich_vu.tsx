@@ -929,8 +929,8 @@ export default function PageSetupHoaHongDichVu() {
             />
 
             <Grid container className="dich-vu-page" gap={4} paddingTop={2}>
-                <Grid item container alignItems="center" justifyContent="space-between">
-                    <Grid container item xs={12} md={6} lg={6} alignItems="center">
+                <Grid item container alignItems="center" spacing={1} justifyContent="space-between">
+                    <Grid container item xs={12} md={6} spacing={1} lg={6} alignItems="center">
                         <Grid container item alignItems="center">
                             <Grid item xs={6} sm={6} lg={4} md={4}>
                                 <span className="page-title"> Hoa hồng theo dịch vụ</span>

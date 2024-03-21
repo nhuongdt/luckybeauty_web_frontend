@@ -278,6 +278,7 @@ class ChiNhanhScreen extends Component {
             {
                 field: 'maChiNhanh',
                 headerName: 'Mã chi nhánh',
+                minWidth: 120,
                 flex: 0.5,
                 renderCell: (params) => (
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -291,6 +292,7 @@ class ChiNhanhScreen extends Component {
             {
                 field: 'tenChiNhanh',
                 headerName: 'Tên chi nhánh',
+                minWidth: 150,
                 flex: 1,
                 renderCell: (params) => (
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -304,6 +306,7 @@ class ChiNhanhScreen extends Component {
             {
                 field: 'soDienThoai',
                 headerName: 'Số điện thoại',
+                minWidth: 120,
                 flex: 0.5,
                 renderCell: (params) => (
                     <Typography variant="body2" title={params.value}>
@@ -315,6 +318,7 @@ class ChiNhanhScreen extends Component {
             {
                 field: 'diaChi',
                 headerName: 'Địa chỉ',
+                minWidth: 200,
                 flex: 1.2,
                 renderCell: (params) => (
                     <Typography variant="body2" title={params.value}>
@@ -328,6 +332,7 @@ class ChiNhanhScreen extends Component {
                 field: 'ngayApDung',
                 headerName: 'Ngày áp dụng',
                 headerAlign: 'center',
+                minWidth: 120,
                 align: 'center',
                 flex: 0.6,
                 renderCell: (params) => (
@@ -339,6 +344,7 @@ class ChiNhanhScreen extends Component {
                 field: 'ngayHetHan',
                 headerName: 'Ngày hết hạn',
                 headerAlign: 'center',
+                minWidth: 120,
                 align: 'center',
                 flex: 0.6,
                 renderCell: (params) => (
@@ -351,6 +357,7 @@ class ChiNhanhScreen extends Component {
                 headerName: 'Trạng thái',
                 headerAlign: 'center',
                 align: 'center',
+                minWidth: 100,
                 flex: 0.8,
                 renderCell: (params) => (
                     <Typography
@@ -430,7 +437,11 @@ class ChiNhanhScreen extends Component {
                         </Grid>
                     </Grid>
                     <Grid xs={12} md={6} item display="flex" gap="8px" justifyContent="end">
-                        <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
+                        <ButtonNavigate
+                            navigateTo="/settings"
+                            title="Trở về trang cài đặt"
+                            btnText={window.screen.width > 768 ? 'Trở về trang cài đặt' : ''}
+                        />
                         <Button
                             className="border-color btn-outline-hover"
                             variant="outlined"

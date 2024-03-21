@@ -3,9 +3,9 @@ import { observer } from 'mobx-react';
 
 import { useState, useEffect } from 'react';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
-import { Grid, Box, Typography, TextField, Stack, Button, Pagination, IconButton } from '@mui/material';
-import { Add, DeleteForever, Edit, Info, LocalOfferOutlined, Search } from '@mui/icons-material';
-
+import { Grid, Box, Typography, TextField, Stack, Button, Pagination, IconButton, Popover } from '@mui/material';
+import { Add, LocalOfferOutlined, Search } from '@mui/icons-material';
+import { ReactComponent as FilterIcon } from '../../images/icons/i-filter.svg';
 // prop for send data from parent to child
 import { PropModal, PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import { TextTranslate } from '../../components/TableLanguage';
@@ -15,7 +15,6 @@ import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import { OptionPage } from '../../components/Pagination/OptionPage';
 import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
-import ActionViewEditDelete from '../../components/Menu/ActionViewEditDelete';
 import ModalNhomHangHoa from './ModalGroupProduct';
 import ModalHangHoa from './ModalProduct';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
@@ -56,7 +55,7 @@ const PageProduct = () => {
     const [lstErrImport, setLstErrImport] = useState<BangBaoLoiFileimportDto[]>([]);
     const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
     const [isShowModalChuyenNhom, setIsShowModalChuyenNhom] = useState(false);
-
+    const [anchorElFilter, setAnchorElFilter] = useState<any>(null);
     const [pageDataProduct, setPageDataProduct] = useState<PagedResultDto<ModelHangHoaDto>>({
         totalCount: 0,
         totalPage: 0,
@@ -553,7 +552,62 @@ const PageProduct = () => {
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         }
     ];
+    const filterContent = (
+        <Box className="page-box-left">
+            <Box
+                display="flex"
+                justifyContent="space-between"
+                borderBottom="1px solid #E6E1E6"
+                padding="12px"
+                borderRadius={'4px'}
+                sx={{ backgroundColor: 'var(--color-header-table)' }}>
+                <Typography fontSize="14px" fontWeight="700">
+                    Nhóm dịch vụ
+                </Typography>
 
+                <Add
+                    sx={{
+                        transition: '.4s',
+                        height: '32px',
+                        cursor: 'pointer',
+                        width: '32px',
+                        borderRadius: '4px',
+                        padding: '4px 0px',
+                        border: '1px solid #cccc',
+                        display: abpCustom.isGrandPermission('Pages.DM_NhomHangHoa.Create') ? '' : 'none'
+                    }}
+                    onClick={() => showModalAddNhomHang()}
+                />
+            </Box>
+            <Box
+                sx={{
+                    overflow: 'auto',
+                    maxHeight: '66vh',
+                    // padding: '0px 24px',
+                    '&::-webkit-scrollbar': {
+                        width: '7px'
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                        bgcolor: 'rgba(0,0,0,0.1)',
+                        borderRadius: '4px'
+                    },
+                    '&::-webkit-scrollbar-track': {
+                        bgcolor: 'var(--color-bg)'
+                    }
+                }}>
+                <Stack spacing={1} paddingTop={1}>
+                    <TextField
+                        variant="standard"
+                        fullWidth
+                        placeholder="Tìm kiếm nhóm"
+                        InputProps={{ startAdornment: <Search /> }}
+                        onChange={(e) => searchNhomHang(e.target.value)}
+                    />
+                    <AccordionNhomHangHoa dataNhomHang={treeSearchNhomHangHoa} clickTreeItem={editNhomHangHoa} />
+                </Stack>
+            </Box>
+        </Box>
+    );
     return (
         <>
             <ModalNhomHangHoa trigger={triggerModalNhomHang} handleSave={saveNhomHang}></ModalNhomHangHoa>
@@ -594,10 +648,10 @@ const PageProduct = () => {
                 onClose={() => setIsShowModalChuyenNhom(false)}
                 agreeChuyenNhom={chuyenNhomHang}
             />
-            <Grid container className="dich-vu-page" gap={4} paddingTop={2}>
-                <Grid item container alignItems="center" justifyContent="space-between">
-                    <Grid container item xs={12} md={6} lg={6} alignItems="center">
-                        <Grid container item alignItems="center">
+            <Grid container className="dich-vu-page" spacing={1} gap={4} paddingTop={2}>
+                <Grid item container alignItems="center" spacing={1} justifyContent="space-between">
+                    <Grid container item xs={12} spacing={1} md={6} lg={6} alignItems="center">
+                        <Grid container spacing={1} item alignItems="center">
                             <Grid item xs={6} sm={6} lg={4} md={4}>
                                 <span className="page-title"> Danh mục dịch vụ</span>
                             </Grid>
@@ -633,6 +687,26 @@ const PageProduct = () => {
                         </Grid>
                     </Grid>
                     <Grid item xs={12} md={6} lg={6} display="flex" gap="8px" justifyContent="end">
+                        {window.screen.width < 768 ? (
+                            <Button
+                                className="btnNhapXuat btn-outline-hover"
+                                aria-describedby="popover-filter"
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                    textTransform: 'capitalize',
+                                    fontWeight: '400',
+                                    color: '#666466',
+                                    borderColor: '#E6E1E6',
+                                    bgcolor: '#fff!important',
+                                    display: window.screen.width > 500 ? 'none' : 'inherit'
+                                }}
+                                onClick={(e) => {
+                                    setAnchorElFilter(e.currentTarget);
+                                }}>
+                                <FilterIcon />
+                            </Button>
+                        ) : null}
                         <Button
                             size="small"
                             onClick={onImportShow}
@@ -675,66 +749,8 @@ const PageProduct = () => {
                     </Grid>
                 </Grid>
                 <Grid container item spacing={2} paddingTop={1} columns={13}>
-                    <Grid item lg={3} md={3} sm={4} xs={13}>
-                        <Box className="page-box-left">
-                            <Box
-                                display="flex"
-                                justifyContent="space-between"
-                                borderBottom="1px solid #E6E1E6"
-                                padding="12px"
-                                borderRadius={'4px'}
-                                sx={{ backgroundColor: 'var(--color-header-table)' }}>
-                                <Typography fontSize="14px" fontWeight="700">
-                                    Nhóm dịch vụ
-                                </Typography>
-
-                                <Add
-                                    sx={{
-                                        transition: '.4s',
-                                        height: '32px',
-                                        cursor: 'pointer',
-                                        width: '32px',
-                                        borderRadius: '4px',
-                                        padding: '4px 0px',
-                                        border: '1px solid #cccc',
-                                        display: abpCustom.isGrandPermission('Pages.DM_NhomHangHoa.Create')
-                                            ? ''
-                                            : 'none'
-                                    }}
-                                    onClick={() => showModalAddNhomHang()}
-                                />
-                            </Box>
-                            <Box
-                                sx={{
-                                    overflow: 'auto',
-                                    maxHeight: '66vh',
-                                    // padding: '0px 24px',
-                                    '&::-webkit-scrollbar': {
-                                        width: '7px'
-                                    },
-                                    '&::-webkit-scrollbar-thumb': {
-                                        bgcolor: 'rgba(0,0,0,0.1)',
-                                        borderRadius: '4px'
-                                    },
-                                    '&::-webkit-scrollbar-track': {
-                                        bgcolor: 'var(--color-bg)'
-                                    }
-                                }}>
-                                <Stack spacing={1} paddingTop={1}>
-                                    <TextField
-                                        variant="standard"
-                                        fullWidth
-                                        placeholder="Tìm kiếm nhóm"
-                                        InputProps={{ startAdornment: <Search /> }}
-                                        onChange={(e) => searchNhomHang(e.target.value)}
-                                    />
-                                    <AccordionNhomHangHoa
-                                        dataNhomHang={treeSearchNhomHangHoa}
-                                        clickTreeItem={editNhomHangHoa}
-                                    />
-                                </Stack>
-                            </Box>
-                        </Box>
+                    <Grid item lg={3} md={3} sm={4} xs={13} display={window.screen.width <= 600 ? 'none' : ''}>
+                        {filterContent}
                     </Grid>
                     <Grid item lg={10} md={10} sm={9} xs={13}>
                         {rowSelectionModel.length > 0 && (
@@ -809,6 +825,20 @@ const PageProduct = () => {
                                 </Grid>
                             </Grid>
                         </Box>
+                        <Popover
+                            id={'popover-filter'}
+                            open={Boolean(anchorElFilter)}
+                            anchorEl={anchorElFilter}
+                            onClose={() => {
+                                setAnchorElFilter(null);
+                            }}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'center'
+                            }}
+                            sx={{ marginTop: 1 }}>
+                            {filterContent}
+                        </Popover>
                     </Grid>
                 </Grid>
             </Grid>

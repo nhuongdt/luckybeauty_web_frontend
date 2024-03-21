@@ -302,7 +302,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
         return (
             <Box sx={{ paddingTop: '16px' }}>
                 <div>
-                    <Grid container justifyContent="space-between" alignItems="center">
+                    <Grid container justifyContent="space-between" spacing={1} alignItems="center">
                         <Grid item>
                             <div>
                                 <Box display="flex" gap="8px" alignItems="center">

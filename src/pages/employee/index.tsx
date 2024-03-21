@@ -2,21 +2,14 @@ import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { ReactComponent as FilterIcon } from '../../images/icons/i-filter.svg';
 import SearchIcon from '@mui/icons-material/Search';
 import React from 'react';
 import { SuggestChucVuDto } from '../../services/suggests/dto/SuggestChucVuDto';
 import { CreateOrUpdateNhanSuDto } from '../../services/nhan-vien/dto/createOrUpdateNhanVienDto';
 import Cookies from 'js-cookie';
-import { Add, ExpandMoreOutlined } from '@mui/icons-material';
-import {
-    DataGrid,
-    GridColDef,
-    GridInputRowSelectionModel,
-    GridRenderCellParams,
-    GridRowId,
-    GridRowSelectionModel
-} from '@mui/x-data-grid';
+import { Add } from '@mui/icons-material';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import {
     Avatar,
     Box,
@@ -29,14 +22,13 @@ import {
     Checkbox,
     Typography,
     Stack,
-    Divider
+    Popover
 } from '@mui/material';
 import CreateOrEditNhanVienDialog from './components/createOrEditNhanVienDialog';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import { observer } from 'mobx-react';
 import NhanVienStore from '../../stores/nhanVienStore';
 import { TextTranslate } from '../../components/TableLanguage';
-import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 import './employee.css';
 import { enqueueSnackbar } from 'notistack';
@@ -52,11 +44,9 @@ import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhD
 import suggestStore from '../../stores/suggestStore';
 import AppConsts, { TypeAction } from '../../lib/appconst';
 import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
-import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import AccordionWithData from '../../components/Accordion/AccordionWithData';
 import { IList } from '../../services/dto/IList';
 import CreateOrEditChucVuModal from './chuc-vu/components/create-or-edit-chuc-vu-modal';
-import { CreateOrEditChucVuDto } from '../../services/nhan-vien/chuc_vu/dto/CreateOrEditChucVuDto';
 import { Guid } from 'guid-typescript';
 import ActionRow2Button from '../../components/DataGrid/ActionRow2Button';
 class EmployeeScreen extends React.Component {
@@ -85,7 +75,8 @@ class EmployeeScreen extends React.Component {
         isShowConfirmDelete: false,
         idChiNhanh: Cookies.get('IdChiNhanh'),
         idChucVu: null,
-        chucVuVisiable: false
+        chucVuVisiable: false,
+        anchorElFilter: null
     };
     async componentDidMount() {
         await this.getData();
@@ -602,8 +593,45 @@ class EmployeeScreen extends React.Component {
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         }
     ];
+
     public render() {
         const { listNhanVien } = NhanVienStore;
+        const filterContent = (
+            <Box className="page-box-left">
+                <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    borderBottom="1px solid #E6E1E6"
+                    borderRadius={'4px'}
+                    sx={{ backgroundColor: 'var(--color-header-table)' }}
+                    padding="12px">
+                    <Typography fontSize="14px" fontWeight="700">
+                        Chức vụ
+                    </Typography>
+
+                    <Add
+                        sx={{
+                            // color: '#fff',
+                            transition: '.4s',
+                            height: '32px',
+                            cursor: 'pointer',
+                            width: '32px',
+                            borderRadius: '4px',
+                            padding: '4px 0px',
+                            border: '1px solid #cccc'
+                        }}
+                        onClick={this.onModalChucVu}
+                    />
+                </Box>
+                <AccordionWithData
+                    roleEdit={abpCustom.isGrandPermission('Pages.ChucVu.Edit')}
+                    lstData={this.state.suggestChucVu?.map((x) => {
+                        return { id: x.idChucVu, text: x.tenChucVu } as IList;
+                    })}
+                    clickTreeItem={this.onEditChucVu}
+                />
+            </Box>
+        );
         return (
             <>
                 <CreateOrEditChucVuModal
@@ -630,9 +658,6 @@ class EmployeeScreen extends React.Component {
                                             backgroundColor: '#fff',
                                             borderColor: '#CDC9CD',
                                             height: '40px'
-                                            // '& .MuiInputBase-root': {
-                                            //     pl: '0'
-                                            // }
                                         }}
                                         onChange={(e: any) => {
                                             this.setState({ filter: e.target.value, currentPage: 1 });
@@ -664,6 +689,26 @@ class EmployeeScreen extends React.Component {
 
                         <Grid item md={6} xs={12}>
                             <Stack spacing={1} direction={'row'} justifyContent="end">
+                                {window.screen.width < 768 ? (
+                                    <Button
+                                        className="border-color btn-outline-hover"
+                                        aria-describedby="popover-filter"
+                                        variant="outlined"
+                                        sx={{
+                                            textTransform: 'capitalize',
+                                            fontWeight: '400',
+                                            color: '#666466',
+                                            padding: '10px 16px',
+                                            borderColor: '#E6E1E6',
+                                            bgcolor: '#fff!important',
+                                            display: window.screen.width > 500 ? 'none' : 'inherit'
+                                        }}
+                                        onClick={(e) => {
+                                            this.setState({ anchorElFilter: e.currentTarget });
+                                        }}>
+                                        <FilterIcon />
+                                    </Button>
+                                ) : null}
                                 <Button
                                     variant="outlined"
                                     size="small"
@@ -728,43 +773,10 @@ class EmployeeScreen extends React.Component {
                     </Grid>
 
                     <Grid container spacing={2} marginTop={3}>
-                        <Grid item xs={12} md={3}>
-                            <Box className="page-box-left">
-                                <Box
-                                    display="flex"
-                                    justifyContent="space-between"
-                                    borderBottom="1px solid #E6E1E6"
-                                    borderRadius={'4px'}
-                                    sx={{ backgroundColor: 'var(--color-header-table)' }}
-                                    padding="12px">
-                                    <Typography fontSize="14px" fontWeight="700">
-                                        Chức vụ
-                                    </Typography>
-
-                                    <Add
-                                        sx={{
-                                            // color: '#fff',
-                                            transition: '.4s',
-                                            height: '32px',
-                                            cursor: 'pointer',
-                                            width: '32px',
-                                            borderRadius: '4px',
-                                            padding: '4px 0px',
-                                            border: '1px solid #cccc'
-                                        }}
-                                        onClick={this.onModalChucVu}
-                                    />
-                                </Box>
-                                <AccordionWithData
-                                    roleEdit={abpCustom.isGrandPermission('Pages.ChucVu.Edit')}
-                                    lstData={this.state.suggestChucVu?.map((x) => {
-                                        return { id: x.idChucVu, text: x.tenChucVu } as IList;
-                                    })}
-                                    clickTreeItem={this.onEditChucVu}
-                                />
-                            </Box>
+                        <Grid item xs={12} sm={3} md={3} display={window.screen.width <= 600 ? 'none' : ''}>
+                            {filterContent}
                         </Grid>
-                        <Grid item xs={12} md={9}>
+                        <Grid item xs={12} sm={9} md={9}>
                             <Box>
                                 {this.state.listItemSelectedModel.length > 0 && (
                                     <ActionRowSelect
@@ -877,6 +889,20 @@ class EmployeeScreen extends React.Component {
                                 : 'Cập nhật thông tin nhân viên'
                         }
                         formRef={nhanVienStore.createEditNhanVien}></CreateOrEditNhanVienDialog>
+                    <Popover
+                        id={'popover-filter'}
+                        open={Boolean(this.state.anchorElFilter)}
+                        anchorEl={this.state.anchorElFilter}
+                        onClose={() => {
+                            this.setState({ anchorElFilter: null });
+                        }}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'center'
+                        }}
+                        sx={{ marginTop: 1 }}>
+                        {filterContent}
+                    </Popover>
                 </Box>
             </>
         );
