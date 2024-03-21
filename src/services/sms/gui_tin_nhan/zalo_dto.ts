@@ -1,4 +1,13 @@
 import { Guid } from 'guid-typescript';
+import { ICustomerBasic } from '../../khach-hang/dto/CustomerBasicDto';
+
+// dto lien quan den DB --
+export interface IZalo_InforHoaDon {
+    id: string;
+    maHoaDon: string;
+    ngayLapHoaDon: string;
+    tongTienHang: number;
+}
 
 export class PageResultCustomerCareOA {
     total!: number;
@@ -17,14 +26,16 @@ export interface InforZOA {
     package_auto_renew_date: string;
     linked_ZCA: string;
 }
-export interface IInforUserZOA {
+export interface IInforUserZOA extends ICustomerBasic {
     avatar: string;
     display_name: string;
     birth_date: number;
     user_gender: number;
     user_id: string;
     user_id_by_app: string;
-    idKhachHang?: string;
+
+    idBooking?: string;
+    idHoaDon?: string;
 }
 
 export interface IMemberZOA {
@@ -32,6 +43,12 @@ export interface IMemberZOA {
     memberName: string;
     memberPhone: string;
     zoaUserId: string;
+}
+
+export interface ITemplateZNS {
+    templateId: number;
+    templateName: string;
+    status: string;
 }
 
 export class ZaloAuthorizationDto {

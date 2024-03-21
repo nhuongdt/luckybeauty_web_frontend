@@ -38,7 +38,7 @@ import ModalGuiTinNhan from './components/modal_gui_tin_nhan';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import { Add, Search, SvgIconComponent } from '@mui/icons-material';
-import AppConsts, { ISelect, LoaiTin, TrangThaiSMS, TypeAction } from '../../lib/appconst';
+import AppConsts, { ISelect, LoaiTin, TrangThaiGuiTinZalo, TrangThaiSMS, TypeAction } from '../../lib/appconst';
 import DateFilterCustom from '../../components/DatetimePicker/DateFilterCustom';
 import he_thong_sms_services from '../../services/sms/gui_tin_nhan/he_thong_sms_services';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
@@ -204,7 +204,7 @@ const TinNhanPage = () => {
     } as PagedResultDto<CustomerSMSDto>);
     const [paramSearch, setParamSearch] = useState<RequestFromToDto>({
         textSearch: '',
-        trangThais: [TrangThaiSMS.SUCCESS],
+        trangThais: [TrangThaiSMS.SUCCESS, TrangThaiGuiTinZalo.SUCCESS],
         fromDate: format(startOfMonth(new Date()), 'yyyy-MM-dd'),
         toDate: format(endOfMonth(new Date()), 'yyyy-MM-dd')
     } as RequestFromToDto);
@@ -221,6 +221,12 @@ const TinNhanPage = () => {
         GetAllMauTinSMS();
         GetZaloTokenfromDB();
     }, []);
+
+    const TestGuiTinZalo = async () => {
+        await ZaloService.DevMode_GuiTinNhanGiaoDich_ByTempId(zaloToken.accessToken, '320547', {
+            soDienThoai: '+84973474985'
+        });
+    };
 
     const GetZaloTokenfromDB = async () => {
         const objAuthen = await ZaloService.GetTokenfromDB();

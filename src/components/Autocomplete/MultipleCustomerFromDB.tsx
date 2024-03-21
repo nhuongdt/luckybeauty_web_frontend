@@ -97,7 +97,7 @@ export default function AutocompleteMultipleCustomerFromDB({
 
     React.useEffect(() => {
         debounceDropDown(paramFilter, textSearch);
-    }, [paramFilter?.fromDate, paramFilter?.toDate, paramFilter?.idChiNhanhs, textSearch]);
+    }, [paramFilter?.fromDate, paramFilter?.toDate, paramFilter?.idChiNhanhs, textSearch, paramFilter?.idLoaiTin]);
 
     React.useEffect(() => {
         getInforCustomerFromDB();
