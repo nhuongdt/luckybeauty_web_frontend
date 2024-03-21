@@ -3,6 +3,7 @@ import { PagedResultDto } from '../../dto/pagedResultDto';
 import { CustomerBasicDto } from '../../khach-hang/dto/CustomerBasicDto';
 import { IDataAutocomplete } from '../../dto/IDataAutocomplete';
 import { format } from 'date-fns';
+import { SMS_HinhThucGuiTin } from '../../../lib/appconst';
 
 export class CreateOrEditSMSDto {
     id = Guid.EMPTY;
@@ -16,6 +17,7 @@ export class CreateOrEditSMSDto {
     idHoaDon?: string | null;
     trangThai = 100;
     giaTienMoiTinNhan = 950; // hiện tại, đang mặc định giá này cho all nhà mạng (nếu sau cần thì thêm data)
+    hinhThucGui?: number = SMS_HinhThucGuiTin.SMS;
 
     idLoaiTin = 1;
     idNguoiGui?: string | null = null;
@@ -35,6 +37,7 @@ export class CreateOrEditSMSDto {
         noiDungTin = '',
         soTinGui = 1,
         soDienThoai = '',
+        hinhThucGui = SMS_HinhThucGuiTin.SMS,
         lstCustomer = []
     }) {
         this.idLoaiTin = idLoaiTin;
@@ -43,6 +46,7 @@ export class CreateOrEditSMSDto {
         this.noiDungTin = noiDungTin;
         this.soTinGui = soTinGui;
         this.soDienThoai = soDienThoai;
+        this.hinhThucGui = hinhThucGui;
         this.lstCustomer = lstCustomer;
     }
 }
@@ -113,6 +117,8 @@ export class CustomerSMSDto extends CustomerBasicDto {
 
 export class CustomerZaloDto extends CustomerBasicDto {
     zoaUserId: string;
+    idHoaDon?: string;
+    idBooking?: string;
 
     constructor({ idKhachHang = '', maKhachHang = '', tenKhachHang = '', soDienThoai = '', zoaUserId = '' }) {
         super({

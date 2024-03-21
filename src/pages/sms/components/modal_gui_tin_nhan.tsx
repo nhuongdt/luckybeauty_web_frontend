@@ -32,8 +32,6 @@ import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import HeThongSMSServices from '../../../services/sms/gui_tin_nhan/he_thong_sms_services';
 import { MauTinSMSDto } from '../../../services/sms/mau_tin_sms/mau_tin_dto';
 import LichSuNap_ChuyenTienService from '../../../services/sms/lich_su_nap_tien/LichSuNap_ChuyenTienService';
-import CaiDatNhacNhoService from '../../../services/sms/cai_dat_nhac_nho/CaiDatNhacNhoService';
-import { Guid } from 'guid-typescript';
 
 export default function ModalGuiTinNhan({
     lstBrandname,
@@ -117,6 +115,8 @@ export default function ModalGuiTinNhan({
                 break;
         }
     }, [newSMS?.idLoaiTin]);
+
+    const isDateFuture = newSMS?.idLoaiTin === LoaiTin.TIN_LICH_HEN || newSMS?.idLoaiTin === LoaiTin.TIN_SINH_NHAT;
 
     const onApplyFilterDate = (fromDate: string, toDate: string, dateType: string, dateTypeText = '') => {
         setAnchorDateEl(null);
@@ -451,7 +451,7 @@ export default function ModalGuiTinNhan({
                                                 />
                                                 <DateFilterCustom
                                                     id="popover-date-filter"
-                                                    isFuture={1}
+                                                    isFuture={isDateFuture}
                                                     dateTypeDefault={DateType.HOM_NAY}
                                                     open={openDateFilter}
                                                     anchorEl={anchorDateEl}

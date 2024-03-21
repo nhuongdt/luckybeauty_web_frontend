@@ -12,4 +12,5 @@ export interface PagedKhachHangResultRequestDto extends PagedFilterAndSortedRequ
     tongChiTieuTu?: number;
     tongChiTieuDen?: number;
     gioiTinh?: boolean;
+    isUserZalo?: number;
 }

@@ -11,3 +11,10 @@ export class CustomerBasicDto {
         this.soDienThoai = soDienThoai;
     }
 }
+
+export interface ICustomerBasic {
+    idKhachHang?: string;
+    maKhachHang?: string;
+    tenKhachHang?: string;
+    soDienThoai?: string;
+}

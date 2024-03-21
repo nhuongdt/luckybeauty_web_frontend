@@ -12,12 +12,19 @@ import utils from '../../../../utils/utils';
 import { Guid } from 'guid-typescript';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
 import { ButtonNavigate } from '../../../../components/Button/ButtonNavigate';
+import { useNavigate } from 'react-router-dom';
 
 export default function ThietLapKetNoiZaloGmail({ xx }: any) {
     const [tabActive, setTabActive] = useState('2');
     const [inforZOA, setInforZOA] = useState<InforZOA>({} as InforZOA);
     const [zaloToken, setZaloToken] = useState<ZaloAuthorizationDto>(new ZaloAuthorizationDto({ id: Guid.EMPTY }));
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+
+    const navigate = useNavigate(); // Sử dụng hook useNavigate
+
+    const handleClick = () => {
+        navigate('');
+    };
 
     useEffect(() => {
         GetTokenfromDB();
@@ -44,8 +51,10 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
         // await ZaloService.InsertCodeVerifier(objnew);
         await ZaloService.CreateCodeVerifier_andCodeChallenge();
 
+        // const urlPermission = `https://oauth.zaloapp.com/v4/oa/permission?app_id=${process.env.REACT_APP_ZALO_APP_ID}&redirect_uri=${process.env.REACT_APP_APP_BASE_URL}/settings/ket-noi-zalo-gmail`;
+        // navigate(urlPermission);
         const iframe = document.createElement('iframe');
-        iframe.src = `https://oauth.zaloapp.com/v4/oa/permission?app_id=${process.env.REACT_APP_ZALO_APP_ID}&redirect_uri=${process.env.REACT_APP_APP_BASE_URL}/settings/ket-noi-zalo-gmail`;
+        iframe.src = `https://oauth.zaloapp.com/v4/oa/permission?app_id=${process.env.REACT_APP_ZALO_APP_ID}&redirect_uri=${process.env.REACT_APP_APP_WEBSITE_URL}/settings/ket-noi-zalo-gmail`;
         console.log('iframe.src ', iframe.src);
         iframe.id = 'iframe';
         iframe.style.position = 'absolute';
