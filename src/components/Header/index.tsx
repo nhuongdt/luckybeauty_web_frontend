@@ -224,9 +224,10 @@ const Header: React.FC<HeaderProps> = (
                         display="flex"
                         gap="8px"
                         marginLeft="16px"
-                        onClick={() => {
-                            navigate('/home');
-                        }}>
+                        // onClick={() => {
+                        //     navigate('/home');
+                        // }}
+                    >
                         <img style={{ width: '2rem', height: '2rem' }} src={LuckybeautyLogo} />
                         {window.screen.width <= 650 ? null : (
                             <Typography

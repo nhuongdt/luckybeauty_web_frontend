@@ -6,6 +6,9 @@
     margin-top: 24px;
     margin-bottom: 24px;
     border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .text-login {

@@ -1,7 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Grid, TextField, FormControlLabel, Checkbox, InputAdornment, IconButton, Typography } from '@mui/material';
+import {
+    Grid,
+    TextField,
+    FormControlLabel,
+    Checkbox,
+    InputAdornment,
+    IconButton,
+    Typography,
+    CircularProgress
+} from '@mui/material';
 import './login.css';
 import LoginModel from '../../../models/Login/loginModel';
 import LoginService from '../../../services/login/loginService';
@@ -11,9 +20,11 @@ import logo from '../../../images/Logo_Lucky_Beauty.svg';
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import nhatKyHoatDongService from '../../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
+import { enqueueSnackbar } from 'notistack';
 const LoginScreen: React.FC = () => {
     const navigate = useNavigate();
     const loginModel = new LoginModel();
+    const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const formik = useFormik({
         initialValues: {
@@ -28,6 +39,7 @@ const LoginScreen: React.FC = () => {
             password: Yup.string().required('Mật khẩu không được để trống.')
         }),
         onSubmit: async (values) => {
+            setIsLoading(true);
             loginModel.tenancyName = values.tenant;
             loginModel.userNameOrEmailAddress = values.userNameOrEmail;
             loginModel.password = values.password;
@@ -35,24 +47,34 @@ const LoginScreen: React.FC = () => {
 
             const checkTenant = await LoginService.CheckTenant(loginModel.tenancyName);
             if (checkTenant.state !== 1) {
-                formik.setFieldError('tenant', 'Id cửa hàng không tồn tại hoặc hết hạn.');
+                enqueueSnackbar('Id cửa hàng không tồn tại hoặc hết hạn.', {
+                    variant: 'error',
+                    autoHideDuration: 3000
+                });
+                setIsLoading(false);
             } else {
                 const login = await LoginService.Login(loginModel);
                 if (login === true) {
-                    const userId = Cookies.get('userId') ?? '0';
-                    const remember = Cookies.get('isRememberMe') === 'true' ? true : false;
-                    await LoginService.GetPermissionByUserId(parseInt(userId, 0), remember);
                     await nhatKyHoatDongService.createNhatKyThaoTac({
                         chucNang: 'Đăng nhập',
                         loaiNhatKy: 6,
                         noiDung: 'Đăng nhập hệ thống',
                         noiDungChiTiet: 'Đăng nhập hệ thống'
                     });
-                    navigate('/home');
+                    navigate('/');
                     window.location.reload();
                 } else {
-                    formik.setFieldError('userNameOrEmail', 'Tài khoản hoặc mật khẩu không đúng');
-                    formik.setFieldError('password', 'Tài khoản hoặc mật khẩu không đúng');
+                    await nhatKyHoatDongService.createNhatKyThaoTac({
+                        chucNang: 'Đăng nhập',
+                        loaiNhatKy: 6,
+                        noiDung: 'Đăng nhập hệ thống thất bại',
+                        noiDungChiTiet: 'Đăng nhập hệ thống thất bại'
+                    });
+                    enqueueSnackbar('Tài khoản hoặc mật khẩu không đúng!', {
+                        variant: 'error',
+                        autoHideDuration: 3000
+                    });
+                    setIsLoading(false);
                 }
             }
         }
@@ -71,7 +93,7 @@ const LoginScreen: React.FC = () => {
     return (
         <div className="login-page">
             <Grid container className="align-items-center justify-content-center mt-2 h-100">
-                <Grid xs={12}>
+                <Grid xs={12} item>
                     <div className="login-page-inner">
                         <div className="logo-login" style={{ padding: '12px 0px' }}>
                             <div className="logo-image">
@@ -198,7 +220,15 @@ const LoginScreen: React.FC = () => {
 
                                 <Grid xs={12} item>
                                     <button type="submit" className="btn-login">
-                                        <span className="text-login">Đăng nhập</span>
+                                        {isLoading ? (
+                                            <CircularProgress
+                                                className="text-login"
+                                                sx={{ color: 'white' }}
+                                                size={'32px'}
+                                            />
+                                        ) : (
+                                            <span className="text-login">Đăng nhập</span>
+                                        )}
                                     </button>
                                 </Grid>
                                 <Grid xs={12} item>
