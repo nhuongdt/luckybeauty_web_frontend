@@ -54,7 +54,7 @@ class LoginService {
                         Cookies.set('accessToken', apiResult.data.result['accessToken'], {
                             expires: tokenExpireDate
                         });
-                        Cookies.set('encryptedAccessToken', apiResult.data.result['encryptedAccessToken'], {
+                        Cookies.set('refreshToken', apiResult.data.result['refreshToken'], {
                             expires: tokenExpireDate
                         });
                         Cookies.set('userId', apiResult.data.result['userId'], {
