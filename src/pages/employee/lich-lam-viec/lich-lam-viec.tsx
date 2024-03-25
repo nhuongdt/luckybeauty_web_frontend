@@ -245,45 +245,105 @@ const LichLamViec: React.FC = () => {
             <ConfirmDelete isShow={openDelete} onOk={handleDelete} onCancel={handleCloseDelete}></ConfirmDelete>
             {/* <ThemLich open={openDialog} onClose={handleCloseDialog} /> */}
             <CreateOrEditLichLamViecModal idNhanVien={idNhanVien} open={openDialog} onClose={handleSubmit} />
-            <Grid container mb="16px" display="flex" justifyContent="space-between" spacing={1}>
-                <Grid item xs={12} md={4}>
-                    <Autocomplete
-                        fullWidth
-                        onChange={(event, value) => {
-                            setEmploy(value?.id ?? '');
-                            lichLamViecStore.updateIdNhanVien(value?.id ?? AppConsts.guidEmpty);
-                            getData();
-                        }}
-                        value={suggestNhanVien[0] ?? null}
-                        options={[
-                            { id: '', tenNhanVien: 'Tất cả nhân viên' }, // Option for all employees
-                            ...suggestNhanVien
-                        ]}
-                        getOptionLabel={(item) => item.tenNhanVien}
-                        size="small"
-                        sx={{
-                            '& .MuiAutocomplete-root': {
-                                backgroundColor: '#fff',
-                                '& .MuiSvgIcon-root': {
-                                    position: 'relative',
-                                    left: '-10px'
+            <Grid container mb="16px" spacing={1}>
+                <Grid item xs={12} sm={12} md={3}>
+                    <Box display={'flex'} justifyContent={'space-between'} gap={0.5}>
+                        <Autocomplete
+                            fullWidth
+                            onChange={(event, value) => {
+                                setEmploy(value?.id ?? '');
+                                lichLamViecStore.updateIdNhanVien(value?.id ?? AppConsts.guidEmpty);
+                                getData();
+                            }}
+                            value={suggestNhanVien[0] ?? null}
+                            options={[
+                                { id: '', tenNhanVien: 'Tất cả nhân viên' }, // Option for all employees
+                                ...suggestNhanVien
+                            ]}
+                            getOptionLabel={(item) => item.tenNhanVien}
+                            size="small"
+                            sx={{
+                                '& .MuiAutocomplete-root': {
+                                    backgroundColor: '#fff',
+                                    '& .MuiSvgIcon-root': {
+                                        position: 'relative',
+                                        left: '-10px'
+                                    },
+                                    '&[aria-expanded="true"] .MuiSvgIcon-root': {
+                                        transform: 'rotate(180deg)'
+                                    }
                                 },
-                                '&[aria-expanded="true"] .MuiSvgIcon-root': {
-                                    transform: 'rotate(180deg)'
-                                }
-                            },
-                            maxWidth: window.screen.width <= 650 ? '100%' : '55%'
-                        }}
-                        renderInput={(params: any) => (
-                            <TextField fullWidth {...params} label="Nhân viên" variant="outlined" />
-                        )}
-                    />
+                                maxWidth: '90%'
+                            }}
+                            renderInput={(params: any) => (
+                                <TextField fullWidth {...params} label="Nhân viên" variant="outlined" />
+                            )}
+                        />
+                        {window.screen.width < 900 ? (
+                            <Box
+                                display="flex"
+                                sx={{ width: '100%' }}
+                                alignItems="center"
+                                justifyContent={'end'}
+                                gap="8px">
+                                <ButtonGroup
+                                    variant="outlined"
+                                    sx={{
+                                        '& button': {
+                                            minWidth: 'unset!important',
+                                            paddingX: '6px!important',
+                                            height: '32px',
+                                            borderColor: '#E6E1E6!important'
+                                        }
+                                    }}>
+                                    <Button className="btn-outline-hover" sx={{ mr: '1px' }}>
+                                        <CalendarIcon />
+                                    </Button>
+                                    <Button className="btn-outline-hover">
+                                        <ListIcon />
+                                    </Button>
+                                </ButtonGroup>
+                                <Select
+                                    onChange={changeValue}
+                                    value={value}
+                                    IconComponent={() => <ArrowDown />}
+                                    displayEmpty
+                                    size="small"
+                                    sx={{
+                                        '& .MuiSelect-select': {
+                                            lineHeight: '32px',
+                                            p: '0',
+                                            height: '32px',
+                                            pl: '10px'
+                                        },
+                                        bgcolor: '#fff',
+                                        '& svg': {
+                                            position: 'relative',
+                                            left: '-10px',
+                                            width: '20px',
+                                            height: '20px'
+                                        },
+                                        '[aria-expanded="true"] ~ svg': {
+                                            transform: 'rotate(180deg)'
+                                        }
+                                    }}>
+                                    <MenuItem value="">Tuần</MenuItem>
+                                    {/* <MenuItem value="Tháng">Tháng</MenuItem>
+                            <MenuItem value="Năm">Năm</MenuItem> */}
+                                </Select>
+                            </Box>
+                        ) : null}
+                    </Box>
                 </Grid>
                 <Grid
                     item
                     xs={12}
-                    md={'auto'}
+                    sm={12}
+                    md={6}
                     display="flex"
+                    alignItems={'center'}
+                    gap={'8px'}
+                    justifyContent={'center'}
                     sx={{
                         '& button:not(.btn-to-day)': {
                             minWidth: 'unset',
@@ -298,7 +358,6 @@ const LichLamViec: React.FC = () => {
                     }}>
                     <Button
                         variant="outlined"
-                        sx={{ mr: '16px' }}
                         onClick={() => {
                             prevWeek();
                             getData();
@@ -320,8 +379,7 @@ const LichLamViec: React.FC = () => {
                             bgcolor: 'transparent!important',
                             fontWeight: '400',
                             paddingX: '0',
-                            pb: '10px',
-                            mr: '20px'
+                            pb: '10px'
                         }}>
                         Hôm nay
                     </Button>
@@ -330,7 +388,6 @@ const LichLamViec: React.FC = () => {
                     </Typography>
                     <Button
                         variant="outlined"
-                        sx={{ ml: '16px' }}
                         className="btn-outline-hover"
                         onClick={() => {
                             nextWeek();
@@ -339,59 +396,57 @@ const LichLamViec: React.FC = () => {
                         <ChevronRightIcon />
                     </Button>
                 </Grid>
-                <Grid item xs={12} md={4}>
-                    <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent={window.screen.width <= 650 ? 'start' : 'end'}
-                        gap="8px">
-                        <ButtonGroup
-                            variant="outlined"
-                            sx={{
-                                '& button': {
-                                    minWidth: 'unset!important',
-                                    paddingX: '6px!important',
-                                    height: '32px',
-                                    borderColor: '#E6E1E6!important'
-                                }
-                            }}>
-                            <Button className="btn-outline-hover" sx={{ mr: '1px' }}>
-                                <CalendarIcon />
-                            </Button>
-                            <Button className="btn-outline-hover">
-                                <ListIcon />
-                            </Button>
-                        </ButtonGroup>
-                        <Select
-                            onChange={changeValue}
-                            value={value}
-                            IconComponent={() => <ArrowDown />}
-                            displayEmpty
-                            size="small"
-                            sx={{
-                                '& .MuiSelect-select': {
-                                    lineHeight: '32px',
-                                    p: '0',
-                                    height: '32px',
-                                    pl: '10px'
-                                },
-                                bgcolor: '#fff',
-                                '& svg': {
-                                    position: 'relative',
-                                    left: '-10px',
-                                    width: '20px',
-                                    height: '20px'
-                                },
-                                '[aria-expanded="true"] ~ svg': {
-                                    transform: 'rotate(180deg)'
-                                }
-                            }}>
-                            <MenuItem value="">Tuần</MenuItem>
-                            {/* <MenuItem value="Tháng">Tháng</MenuItem>
+                {window.screen.width >= 900 ? (
+                    <Grid item xs={12} sm={12} md={3}>
+                        <Box display="flex" alignItems="center" justifyContent={'end'} gap="8px">
+                            <ButtonGroup
+                                variant="outlined"
+                                sx={{
+                                    '& button': {
+                                        minWidth: 'unset!important',
+                                        paddingX: '6px!important',
+                                        height: '32px',
+                                        borderColor: '#E6E1E6!important'
+                                    }
+                                }}>
+                                <Button className="btn-outline-hover" sx={{ mr: '1px' }}>
+                                    <CalendarIcon />
+                                </Button>
+                                <Button className="btn-outline-hover">
+                                    <ListIcon />
+                                </Button>
+                            </ButtonGroup>
+                            <Select
+                                onChange={changeValue}
+                                value={value}
+                                IconComponent={() => <ArrowDown />}
+                                displayEmpty
+                                size="small"
+                                sx={{
+                                    '& .MuiSelect-select': {
+                                        lineHeight: '32px',
+                                        p: '0',
+                                        height: '32px',
+                                        pl: '10px'
+                                    },
+                                    bgcolor: '#fff',
+                                    '& svg': {
+                                        position: 'relative',
+                                        left: '-10px',
+                                        width: '20px',
+                                        height: '20px'
+                                    },
+                                    '[aria-expanded="true"] ~ svg': {
+                                        transform: 'rotate(180deg)'
+                                    }
+                                }}>
+                                <MenuItem value="">Tuần</MenuItem>
+                                {/* <MenuItem value="Tháng">Tháng</MenuItem>
                             <MenuItem value="Năm">Năm</MenuItem> */}
-                        </Select>
-                    </Box>
-                </Grid>
+                            </Select>
+                        </Box>
+                    </Grid>
+                ) : null}
             </Grid>
             <TableContainer component={Paper} sx={{ boxShadow: 'none' }}>
                 <Table size="small">
