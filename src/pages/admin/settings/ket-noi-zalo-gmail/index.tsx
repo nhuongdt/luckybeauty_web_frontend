@@ -12,26 +12,19 @@ import utils from '../../../../utils/utils';
 import { Guid } from 'guid-typescript';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
 import { ButtonNavigate } from '../../../../components/Button/ButtonNavigate';
-import { useNavigate } from 'react-router-dom';
 
-export default function ThietLapKetNoiZaloGmail({ xx }: any) {
+export default function ThietLapKetNoiZaloGmail() {
     const [tabActive, setTabActive] = useState('2');
     const [inforZOA, setInforZOA] = useState<InforZOA>({} as InforZOA);
     const [zaloToken, setZaloToken] = useState<ZaloAuthorizationDto>(new ZaloAuthorizationDto({ id: Guid.EMPTY }));
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
-
-    const navigate = useNavigate(); // Sử dụng hook useNavigate
-
-    const handleClick = () => {
-        navigate('');
-    };
 
     useEffect(() => {
         GetTokenfromDB();
     }, []);
 
     const GetTokenfromDB = async () => {
-        const objAuthen = await ZaloService.GetTokenfromDB();
+        const objAuthen = await ZaloService.Innit_orGetToken();
         if (objAuthen !== null) {
             setZaloToken(objAuthen);
             if (utils.checkNull(objAuthen?.accessToken)) {
@@ -43,47 +36,16 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
         }
     };
 
-    const CreateConnectZOA = async () => {
-        // const objnew = { ...zaloToken };
-        // objnew.codeVerifier = ZaloService.CreateCodeVerifier();
-        // objnew.codeChallenge = await ZaloService.GenerateCodeChallenge(objnew.codeVerifier);
-        // setZaloToken({ ...zaloToken, codeVerifier: objnew.codeVerifier, codeChallenge: objnew.codeChallenge });
-        // await ZaloService.InsertCodeVerifier(objnew);
-        await ZaloService.CreateCodeVerifier_andCodeChallenge();
-
-        // const urlPermission = `https://oauth.zaloapp.com/v4/oa/permission?app_id=${process.env.REACT_APP_ZALO_APP_ID}&redirect_uri=${process.env.REACT_APP_APP_BASE_URL}/settings/ket-noi-zalo-gmail`;
-        // navigate(urlPermission);
-        const iframe = document.createElement('iframe');
-        iframe.src = `https://oauth.zaloapp.com/v4/oa/permission?app_id=${process.env.REACT_APP_ZALO_APP_ID}&redirect_uri=${process.env.REACT_APP_APP_WEBSITE_URL}/settings/ket-noi-zalo-gmail`;
-        console.log('iframe.src ', iframe.src);
-        iframe.id = 'iframe';
-        iframe.style.position = 'absolute';
-        iframe.style.zIndex = '999';
-        iframe.style.height = '100%';
-        iframe.style.width = '100%';
-        iframe.style.top = '0';
-        iframe.style.backgroundColor = 'white';
-        iframe.style.border = 'none';
-        document.body.prepend(iframe);
-        document.body.style.overflow = 'hidden';
-    };
-
-    // useEffect(() => {
-    //     window.addEventListener('close-iframe', function (event) {
-    //         const frameToRemove = document.getElementById('iframe');
-    //         if (frameToRemove != null) {
-    //             frameToRemove?.parentNode?.removeChild(frameToRemove);
-    //             document.body.style.overflow = 'inherit';
-    //             console.log('frameToRemove33 ', frameToRemove);
-    //         }
-    //     });
-    // }, []);
+    const urltes = `https://oauth.zaloapp.com/v4/oa/permission?app_id=1575833233908225704&redirect_uri=https%3A%2F%2Flogin.luckybeauty.vn%2Fsettings%2Fket-noi-zalo-gmail`;
+    const urlPermissionOA = `https://oauth.zaloapp.com/v4/oa/permission?app_id=${process.env.REACT_APP_ZALO_APP_ID}&redirect_uri=${process.env.REACT_APP_APP_WEBSITE_URL}/settings/ket-noi-zalo-gmail`;
 
     const GetAuthenCode = async (codeVerifier: string, zaloToken: ZaloAuthorizationDto) => {
         // check exist db or create new
         const params = new URLSearchParams(window.location.search);
         if (params.size > 0) {
             const authenCode = params.get('code');
+            const oa_id = params.get('oa_id');
+            console.log('oa_id ', oa_id);
             if (authenCode !== null) {
                 if (!utils.checkNull(codeVerifier)) {
                     const dataAccessToken = await ZaloService.GetAccessToken_fromAuthorizationCode(
@@ -168,14 +130,15 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
                                     <Grid item xs={5}></Grid>
                                     <Grid item xs={2}>
                                         <Box alignItems={'center'}>
-                                            <Button
-                                                startIcon={<ZaloIcon style={{ height: '30px' }} />}
-                                                variant="contained"
-                                                fullWidth
-                                                sx={{ height: 50, fontSize: '18px', borderRadius: '20px' }}
-                                                onClick={CreateConnectZOA}>
-                                                Thêm kết nối
-                                            </Button>
+                                            <Link underline="none" variant="body2" href={urlPermissionOA}>
+                                                <Button
+                                                    startIcon={<ZaloIcon style={{ height: '30px' }} />}
+                                                    variant="contained"
+                                                    fullWidth
+                                                    sx={{ height: 50, fontSize: '18px', borderRadius: '20px' }}>
+                                                    Thêm kết nối
+                                                </Button>
+                                            </Link>
                                         </Box>
                                     </Grid>
                                     <Grid item xs={5}></Grid>
