@@ -285,7 +285,7 @@ class StoreDetail extends Component {
                                 <Box position="relative" sx={{ textAlign: 'center', mt: '20px' }}>
                                     {editCuaHang.fileLogo ? (
                                         <img
-                                            src={editCuaHang.fileLogo}
+                                            src={editCuaHang?.fileLogo}
                                             style={{
                                                 width: '100px',
                                                 height: '100px',
