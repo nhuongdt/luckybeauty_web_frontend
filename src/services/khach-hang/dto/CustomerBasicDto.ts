@@ -3,12 +3,14 @@ export class CustomerBasicDto {
     maKhachHang: string;
     tenKhachHang: string;
     soDienThoai: string;
+    ngaySinh?: string;
 
-    constructor({ idKhachHang = '', maKhachHang = '', tenKhachHang = '', soDienThoai = '' }) {
+    constructor({ idKhachHang = '', maKhachHang = '', tenKhachHang = '', soDienThoai = '', ngaySinh = '' }) {
         this.idKhachHang = idKhachHang;
         this.maKhachHang = maKhachHang;
         this.tenKhachHang = tenKhachHang;
         this.soDienThoai = soDienThoai;
+        this.ngaySinh = ngaySinh;
     }
 }
 

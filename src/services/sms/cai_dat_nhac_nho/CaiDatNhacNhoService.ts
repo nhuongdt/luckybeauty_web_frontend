@@ -9,7 +9,7 @@ const objSMS = {
     maKhachHang: 'KH001',
     tenKhachHang: 'Chị Mai Hương',
     soDienThoai: '0978005006',
-    ngaySinh: new Date('1990-11-11'),
+    ngaySinh: '1990-11-11',
     bookingDate: new Date(),
     thoiGianHen: '14:00 - 16:00',
     tenDichVu: 'Cắt tóc',
@@ -23,7 +23,7 @@ class CaiDatNhacNhoService {
         let txt = input;
         txt = txt.replace('{TenKhachHang}', this.objSMS?.tenKhachHang);
         if (!utils.checkNull(this.objSMS?.ngaySinh as unknown as string)) {
-            txt = txt.replace('{NgaySinh}', format(this.objSMS?.ngaySinh as Date, 'dd/MM/yyyy'));
+            txt = txt.replace('{NgaySinh}', format(new Date(this.objSMS?.ngaySinh ?? new Date()), 'dd/MM/yyyy'));
         } else {
             txt = txt.replace('{NgaySinh}', '');
         }
