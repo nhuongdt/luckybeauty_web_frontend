@@ -31,10 +31,17 @@ class BookingServices {
         const response = await http.get(`api/services/app/Booking/GetForEdit?id=${id}`);
         return response.data.result;
     }
-    GetInforBooking_byID = async (idBooking: string): Promise<BookingDetail_ofCustomerDto[]> => {
+    GetListBooking_byId = async (arrIdBooking: string[] = []): Promise<BookingDetail_ofCustomerDto[] | []> => {
+        if (arrIdBooking.length > 0) {
+            const xx = await http.post(`api/services/app/Booking/GetInforBooking_byID?arrIdBooking=`, arrIdBooking);
+            return xx.data.result;
+        }
+        return [];
+    };
+    GetInforBooking_byID = async (idBooking: string): Promise<BookingDetail_ofCustomerDto[] | []> => {
         if (utils.checkNull(idBooking) || idBooking == Guid.EMPTY) return [];
-        const xx = await http.get(`api/services/app/Booking/GetInforBooking_byID?idBooking=${idBooking}`);
-        return xx.data.result;
+        const lst = await this.GetListBooking_byId([idBooking]);
+        return lst;
     };
     GetInforBooking = async (idBooking: string): Promise<BookingInfoDto> => {
         const response = await http.get(`api/services/app/Booking/GetBookingInfo?id=${idBooking}`);
