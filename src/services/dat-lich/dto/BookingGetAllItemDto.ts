@@ -33,5 +33,9 @@ export class BookingDetail_ofCustomerDto {
     soDienThoai = '';
     txtTrangThaiBook = '';
 
+    tenChiNhanh = '';
+    soDienThoaiChiNhanh = '';
+    diaChiChiNhanh = '';
+
     details: BookingDetailDto[] = [];
 }
