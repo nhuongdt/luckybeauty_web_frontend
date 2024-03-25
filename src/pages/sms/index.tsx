@@ -26,7 +26,7 @@ import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { TextTranslate } from '../../components/TableLanguage';
-import { useState, useEffect, ReactComponentElement } from 'react';
+import { useState, useEffect, ReactComponentElement, useContext } from 'react';
 import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import { BrandnameDto, IParamSearchBrandname } from '../../services/sms/brandname/BrandnameDto';
 import { CustomerSMSDto, PagedResultSMSDto } from '../../services/sms/gui_tin_nhan/gui_tin_nhan_dto';
@@ -49,9 +49,11 @@ import fileDowloadService from '../../services/file-dowload.service';
 import { IFileDto } from '../../services/dto/FileDto';
 import ModalGuiTinNhanZalo from './components/modal_gui_tin_zalo';
 import ZaloService from '../../services/sms/gui_tin_nhan/ZaloService';
-import { InforZOA, ZaloAuthorizationDto } from '../../services/sms/gui_tin_nhan/zalo_dto';
+import { IZaloDataSend, InforZOA, ZaloAuthorizationDto } from '../../services/sms/gui_tin_nhan/zalo_dto';
 import { Guid } from 'guid-typescript';
 import abpCustom from '../../components/abp-custom';
+import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import utils from '../../utils/utils';
 
 const styleListItem = createTheme({
     components: {
@@ -179,11 +181,21 @@ const TinNhanPage = () => {
             field: 'noiDungTin',
             headerName: 'Nội dung',
             minWidth: 350,
+            maxWidth: 350,
             flex: 2,
-            renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>
+            renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
+            renderCell: (params) => (
+                <Typography
+                    variant="body2"
+                    title={params.value}
+                    dangerouslySetInnerHTML={{ __html: utils.SubString_toChar(params?.value, '<br/>') }}
+                    className="lableOverflow"></Typography>
+            )
         }
     ];
 
+    const appContext = useContext(AppContext);
+    const congty = appContext.congty;
     const [isShowModalAdd, setIsShowModalAdd] = useState(false);
     const [isShowModalAddMauTin, setIsShowModalAddMauTin] = useState(false);
     const [isShowModalGuiTinZalo, setIsShowModalGuiTinZalo] = useState(false);
@@ -223,13 +235,17 @@ const TinNhanPage = () => {
     }, []);
 
     const TestGuiTinZalo = async () => {
-        await ZaloService.DevMode_GuiTinNhanGiaoDich_ByTempId(zaloToken.accessToken, '320547', {
-            soDienThoai: '+84973474985'
-        });
+        await ZaloService.GuiTinNhanGiaoDich_WithMyTemp(zaloToken.accessToken, '6441788310775550433', {
+            tenKhachHang: 'Nhuong dt',
+            maHoaDon: 'HDTest001',
+            ngayLapHoaDon: '11:43 21/03/2024',
+            tongTienHang: 100000,
+            logoChiNhanh: congty?.logo
+        } as IZaloDataSend);
     };
 
     const GetZaloTokenfromDB = async () => {
-        const objAuthen = await ZaloService.GetTokenfromDB();
+        const objAuthen = await ZaloService.Innit_orGetToken();
         if (objAuthen !== null) {
             // await Always_CreateAccessToken(objAuthen);
             if (objAuthen.isExpiresAccessToken) {
@@ -559,7 +575,7 @@ const TinNhanPage = () => {
             case 0: // gui thanh cong
                 setParamSearch({
                     ...paramSearch,
-                    trangThais: [TrangThaiSMS.SUCCESS]
+                    trangThais: [TrangThaiSMS.SUCCESS, TrangThaiGuiTinZalo.SUCCESS]
                 });
                 break;
             case 3:

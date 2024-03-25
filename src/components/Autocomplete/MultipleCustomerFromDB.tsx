@@ -7,7 +7,7 @@ import { Guid } from 'guid-typescript';
 import { IDataAutocomplete } from '../../services/dto/IDataAutocomplete';
 import { RequestFromToDto } from '../../services/dto/ParamSearchDto';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
-import { LoaiTin } from '../../lib/appconst';
+import { LoaiTin, TrangThaiSMS } from '../../lib/appconst';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import HeThongSMSServices from '../../services/sms/gui_tin_nhan/he_thong_sms_services';
 import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
@@ -74,6 +74,8 @@ export default function AutocompleteMultipleCustomerFromDB({
                 case LoaiTin.TIN_LICH_HEN:
                 case LoaiTin.TIN_GIAO_DICH:
                     {
+                        paramFilter.isFilterCustomer = true;
+                        paramFilter.trangThais = [TrangThaiSMS.DRAFT, TrangThaiSMS.CHUA_GUI];
                         const data = await HeThongSMSServices.JqAutoCustomer_byIdLoaiTin(
                             paramFilter,
                             paramFilter?.idLoaiTin

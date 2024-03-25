@@ -1,14 +1,22 @@
 import axios from 'axios';
-import qs from 'qs';
-import { IInforUserZOA, IMemberZOA, ITemplateZNS, IZalo_InforHoaDon, InforZOA, ZaloAuthorizationDto } from './zalo_dto';
+import {
+    IInforUserZOA,
+    IMemberZOA,
+    ITemplateZNS,
+    IZaloDataSend,
+    IZalo_InforHoaDon,
+    InforZOA,
+    ZaloAuthorizationDto
+} from './zalo_dto';
 import http from '../../httpService';
-import { LoaiTin } from '../../../lib/appconst';
-import { AnyKindOfDictionary } from 'lodash';
+import { format } from 'date-fns';
+import utils from '../../../utils/utils';
+import { Dataset } from '@mui/icons-material';
 
 class ZaloService {
-    Zalo_GetInforHoaDon = async (arr: string[]): Promise<IZalo_InforHoaDon[] | null> => {
-        if (arr.length == 0) return null;
-        const result = await http.post('api/services/app/HoaDon/Zalo_GetInforHoaDon?arrIdHoaDon=', arr);
+    Zalo_GetInforHoaDon = async (arrIdHoaDon: string[]): Promise<IZalo_InforHoaDon[] | null> => {
+        if (arrIdHoaDon.length == 0) return null;
+        const result = await http.post('api/services/app/HoaDon/Zalo_GetInforHoaDon?arrIdHoaDon=', arrIdHoaDon);
         return result.data.result;
     };
     CreateCodeVerifier_andCodeChallenge = async (): Promise<ZaloAuthorizationDto> => {
@@ -147,10 +155,13 @@ class ZaloService {
                 }
             }
         );
-        console.log('GetZNSTemplate_byId', result.data);
         return result.data.data;
     };
-    AssignData_toZNSTemplete = async (access_token: string, zns_template_id = '320131', dataSend: any = null) => {
+    AssignData_toZNSTemplete = async (
+        access_token: string,
+        zns_template_id = '320131',
+        dataSend: IZaloDataSend = {} as IZaloDataSend
+    ) => {
         const dataTemp = await this.GetZNSTemplate_byId(access_token, zns_template_id);
         const tempdata: any = {};
         for (let i = 0; i < dataTemp?.listParams?.length; i++) {
@@ -159,25 +170,31 @@ class ZaloService {
 
             switch (key) {
                 case 'TenKhachHang':
-                    tempdata[key] = dataSend?.TenKhachHang ?? 'nhuongdt';
+                    tempdata[key] = dataSend?.tenKhachHang ?? 'nhuongdt';
+                    break;
+                case 'SoDienThoai':
+                    tempdata[key] = dataSend?.soDienThoai ?? 'nhuongdt';
                     break;
                 case 'MaHoaDon':
-                    tempdata[key] = dataSend?.MaHoaDon ?? 'HD001';
+                    tempdata[key] = dataSend?.maHoaDon ?? 'HD001';
                     break;
                 case 'NgayLapHoaDon':
-                    tempdata[key] = dataSend?.NgayLapHoaDon ?? '15:00 20/03/2024';
+                    tempdata[key] = dataSend?.ngayLapHoaDon ?? '15:00 20/03/2024';
                     break;
                 case 'TongTienHang':
-                    tempdata[key] = dataSend?.TongTienHang ?? '5000000';
+                    tempdata[key] = new Intl.NumberFormat('vi-VN').format(dataSend?.tongTienHang ?? 0) ?? '5.000.000';
                     break;
                 case 'BookingDate':
-                    tempdata[key] = dataSend?.BookingDate ?? '15:45 19/03/2024';
+                    tempdata[key] = dataSend?.bookingDate ?? '15:45 19/03/2024';
                     break;
                 case 'TenDichVu':
-                    tempdata[key] = dataSend?.TenDichVu ?? 'Nhuộm + gội test';
+                    tempdata[key] = dataSend?.tenDichVu ?? 'Nhuộm + gội test';
+                    break;
+                case 'TenChiNhanh':
+                    tempdata[key] = dataSend?.tenChiNhanh ?? '31 Lê Văn Lương';
                     break;
                 case 'DiaChiCuaHang':
-                    tempdata[key] = dataSend?.DiaChiCuaHang ?? '31 Lê Văn Lương';
+                    tempdata[key] = dataSend?.diaChiChiNhanh ?? '31 Lê Văn Lương';
                     break;
             }
         }
@@ -186,7 +203,7 @@ class ZaloService {
     DevMode_GuiTinNhanGiaoDich_ByTempId = async (
         access_token: string,
         zns_template_id = '320131',
-        dataSend: any = null
+        dataSend: IZaloDataSend = {} as IZaloDataSend
     ) => {
         // lấy mẫu zns
         const tempdata = await this.AssignData_toZNSTemplete(access_token, zns_template_id, dataSend);
@@ -209,6 +226,7 @@ class ZaloService {
             error: result.data.error
         };
     };
+    // TODO HASHPHONE
     GuiTinNhan_HasPhone = async (access_token: string, zns_template_id = '320131') => {
         const tempdata = await this.AssignData_toZNSTemplete(access_token, zns_template_id);
         const hasPhone = await this.sha256('+84355599770');
@@ -227,73 +245,62 @@ class ZaloService {
         console.log('GuiTinNhan_HasPhone', result.data);
     };
 
-    GuiTinNhanGiaoDich_WithMyTemp = async (access_token: string, user_id: string) => {
-        const dataPost = `{
-            "recipient": {
-                "user_id": ${user_id}
+    GuiTinNhanGiaoDich_WithMyTemp = async (
+        access_token: string,
+        user_id: string,
+        dataSend: IZaloDataSend = {} as IZaloDataSend
+    ) => {
+        const param = {
+            recipient: {
+                user_id: user_id
             },
-            "message": {
-                "attachment": {
-                    "type": "template",
-                    "payload": {
-                        "template_type": "transaction_transaction",
-                        "elements": [
+            message: {
+                attachment: {
+                    type: 'template',
+                    payload: {
+                        template_type: 'transaction_transaction',
+                        language: 'VI',
+                        elements: [
+                            { type: 'banner', image_url: dataSend?.logoChiNhanh },
+                            { type: 'header', content: 'Thông báo giao dịch' },
                             {
-                                "attachment_id":"aERC3A0iYGgQxim8fYIK6fxzsXkaFfq7ZFRB3RCyZH6RyziRis3RNydebK3iSPCJX_cJ3k1nW1EQufjN_pUL1f6Ypq3rTef5nxp6H_HnXKFDiyD5y762HS-baqRpQe5FdA376lTfq1sRyPr8ypd74ecbaLyA-tGmuJ-97W",
-                                "type": "banner"
+                                type: 'text',
+                                content: `Xin chào ${dataSend?.tenKhachHang}, cảm ơn bạn đã mua hàng tại cửa hàng. Chúng tôi đã ghi nhận thanh toán của bạn với chi tiết như sau:`
                             },
                             {
-                                "type": "header",
-                                "content": "💥💥Ưu đãi thành viên Platinum💥💥"
-                            },
-                            {
-                                "type": "text",
-                                "align": "left",
-                                "content": "Ưu đãi dành riêng cho khách hàng Nguyen Van A hạng thẻ Platinum<br>Voucher trị giá 150$"
-                            },
-                            {
-                                "type": "table",
-                                "content": [
+                                type: 'table',
+                                content: [
+                                    { key: 'Mã đơn', value: dataSend?.maHoaDon },
                                     {
-                                        "value": "VC09279222",
-                                        "key": "Voucher"
+                                        key: 'Ngày mua hàng',
+                                        value: format(
+                                            new Date(dataSend?.ngayLapHoaDon ?? new Date()),
+                                            'HH:mm dd/MM/yyyy'
+                                        )
                                     },
                                     {
-                                        "value": "30/12/2023",
-                                        "key": "Hạn sử dụng"
+                                        key: 'Tổng tiền',
+                                        value: new Intl.NumberFormat('vi-VN').format(dataSend?.tongTienHang ?? 0)
                                     }
                                 ]
-                            },
-                            {
-                                "type": "text",
-                                "align": "center",
-                                "content": "Áp dụng tất cả cửa hàng trên toàn quốc"
                             }
                         ],
-                        "buttons": [
+                        buttons: [
                             {
-                                "title": "Tham khảo chương trình",
-                                "image_icon": "",
-                                "type": "oa.open.url", 
-                                "payload": { 
-                                   "url": "https://oa.zalo.me/home" 
-                                           }
-                                },
-                                {
-                                "title": "Liên hệ chăm sóc viên",
-                                "image_icon": "aeqg9SYn3nIUYYeWohGI1fYRF3V9f0GHceig8Ckq4WQVcpmWb-9SL8JLPt-6gX0QbTCfSuQv40UEst1imAm53CwFPsQ1jq9MsOnlQe6rIrZOYcrlWBTAKy_UQsV9vnfGozCuOvFfIbN5rcXddFKM4sSYVM0D50I9eWy3",
-                                "type": "oa.query.hide",
-                                "payload": "#tuvan"
-                                
+                                type: 'oa.open.url',
+                                // type: 'oa.query.show',
+                                title: 'Xem chi tiết đơn hàng',
+                                // payload: 'ABC'
+                                payload: {
+                                    url: `${process.env.REACT_APP_APP_BASE_URL}/giao-dich-thanh-toan`
+                                }
                             }
                         ]
                     }
-                    }
                 }
             }
-        }`;
-        const param = qs.stringify(dataPost);
-        console.log('Zalo_GuiTinNhanTruyenThuong ', param);
+        };
+        console.log('GuiTinNhanGiaoDich_WithMyTemp ', param);
 
         const result = await axios.post('https://openapi.zalo.me/v3.0/oa/message/transaction', param, {
             headers: {
@@ -301,8 +308,109 @@ class ZaloService {
                 'Content-Type': 'application/json'
             }
         });
+        console.log('zalo test ', result.data);
         return result.data;
-        // console.log('zalo test ', result);
+    };
+    GuiTinNhanXacNhanLichHen_WithMyTemp = async (
+        access_token: string,
+        user_id: string,
+        dataSend: IZaloDataSend = {} as IZaloDataSend
+    ) => {
+        let tableContent = [
+            { key: 'Mã đặt lịch', value: dataSend?.soDienThoai },
+            { key: 'Tên khách hàng', value: dataSend?.tenKhachHang },
+            {
+                key: 'Ngày đặt',
+                value: format(new Date(dataSend?.bookingDate ?? new Date()), 'HH:mm dd/MM/yyyy')
+            },
+            { key: 'Tên dịch vụ', value: dataSend?.tenDichVu },
+            { key: 'Địa chỉ cơ sở', value: dataSend?.diaChiChiNhanh }
+        ];
+        // chỉ lấy nếu có giá trị
+        tableContent = tableContent?.filter((x) => !utils.checkNull(x.value));
+
+        const param = {
+            recipient: {
+                user_id: user_id
+            },
+            message: {
+                attachment: {
+                    type: 'template',
+                    payload: {
+                        template_type: 'transaction_booking',
+                        language: 'VI',
+                        elements: [
+                            { type: 'banner', image_url: dataSend?.logoChiNhanh },
+                            { type: 'header', content: 'Xác nhận lịch hẹn' },
+                            {
+                                type: 'text',
+                                content: `Cảm ơn quý khách đã đặt lịch sử dụng dịch vụ của chúng tôi. Lịch hẹn của bạn đã được xác nhận với chi tiết như sau`
+                            },
+                            {
+                                type: 'table',
+                                content: tableContent
+                            }
+                        ],
+                        buttons: [
+                            {
+                                type: 'oa.open.phone',
+                                title: 'Liên hệ CSKH',
+                                payload: {
+                                    phone_code: dataSend?.sdtChiNhanh
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        };
+        console.log('GuiTinNhanXacNhanLichHen_WithMyTemp ', param);
+
+        const result = await axios.post('https://openapi.zalo.me/v3.0/oa/message/transaction', param, {
+            headers: {
+                access_token: access_token,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('zalo test ', result.data);
+        return result.data;
+    };
+    GuiTinNhanChucMungSinhNhat_WithMyTemp = async (
+        access_token: string,
+        user_id: string,
+        dataSend: IZaloDataSend = {} as IZaloDataSend
+    ) => {
+        const param = {
+            recipient: {
+                user_id: user_id
+            },
+            message: {
+                attachment: {
+                    type: 'template',
+                    payload: {
+                        template_type: 'promotion',
+                        language: 'VI',
+                        elements: [
+                            { type: 'header', content: '💥💥Happy Birthday💥💥' },
+                            {
+                                type: 'text',
+                                content: ` ${dataSend?.tenChiNhanh} kính chúc ${dataSend?.tenKhachHang} có một ngày sinh nhật ý nghĩa bên người thân và gia đình`
+                            }
+                        ]
+                    }
+                }
+            }
+        };
+        console.log('GuiTinNhanChucMungSinhNhat_WithMyTemp ', param);
+
+        const result = await axios.post('https://openapi.zalo.me/v3.0/oa/message/promotion', param, {
+            headers: {
+                access_token: access_token,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('zalo test ', result.data);
+        return result.data;
     };
     GetDanhSach_KhachHang_QuanTamOA = async (access_token: string) => {
         const xx = await axios.get(`https://openapi.zalo.me/v2.0/oa/getfollowers?data={"offset":0,"count":50}`, {
@@ -386,8 +494,8 @@ class ZaloService {
     };
 
     /// Db
-    GetTokenfromDB = async (): Promise<ZaloAuthorizationDto> => {
-        const xx = await http.get(`api/services/app/ZaloAuthorization/GetForEdit`);
+    Innit_orGetToken = async (): Promise<ZaloAuthorizationDto> => {
+        const xx = await http.get(`api/services/app/ZaloAuthorization/Innit_orGetToken`);
         return xx.data.result;
     };
     InsertCodeVerifier = async (input: ZaloAuthorizationDto): Promise<ZaloAuthorizationDto> => {
