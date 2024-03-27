@@ -75,6 +75,15 @@ class Utils {
         return target;
     }
 
+    SubString_toChar = (input = '', charSplit = ''): string => {
+        if (this.checkNull(input)) return '';
+        const split = input.split(charSplit);
+        if (split.length == 0) {
+            return input;
+        }
+        return split[0];
+    };
+
     getPageTitle = (pathname: string) => {
         const route = flatRoutes.filter((route: { path: string }) => route.path === pathname);
         const localizedAppName = 'AppName';

@@ -4,6 +4,7 @@ import { ICustomerBasic } from '../../khach-hang/dto/CustomerBasicDto';
 // dto lien quan den DB --
 export interface IZalo_InforHoaDon {
     id: string;
+    idKhachHang: string;
     maHoaDon: string;
     ngayLapHoaDon: string;
     tongTienHang: number;
@@ -29,13 +30,13 @@ export interface InforZOA {
 export interface IInforUserZOA extends ICustomerBasic {
     avatar: string;
     display_name: string;
-    birth_date: number;
     user_gender: number;
     user_id: string;
     user_id_by_app: string;
 
-    idBooking?: string;
-    idHoaDon?: string;
+    idHoaDons?: string[]; // 1 khachhang - N hoaddon
+    idBookings?: string[];
+    ngaySinh?: string;
 }
 
 export interface IMemberZOA {
@@ -49,6 +50,20 @@ export interface ITemplateZNS {
     templateId: number;
     templateName: string;
     status: string;
+}
+
+export interface IZaloDataSend {
+    soDienThoai: string;
+    tenKhachHang: string;
+    maHoaDon?: string;
+    ngayLapHoaDon?: string;
+    tongTienHang?: number;
+    bookingDate?: string;
+    tenDichVu?: string;
+    tenChiNhanh?: string;
+    diaChiChiNhanh?: string;
+    logoChiNhanh?: string;
+    sdtChiNhanh?: string;
 }
 
 export class ZaloAuthorizationDto {

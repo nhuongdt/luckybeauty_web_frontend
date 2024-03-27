@@ -4,6 +4,13 @@ import { CustomerBasicDto } from '../../khach-hang/dto/CustomerBasicDto';
 import { IDataAutocomplete } from '../../dto/IDataAutocomplete';
 import { format } from 'date-fns';
 import { SMS_HinhThucGuiTin } from '../../../lib/appconst';
+import { RequestFromToDto } from '../../dto/ParamSearchDto';
+
+export class ParamSearchSMS extends RequestFromToDto {
+    hinhThucGuiTins?: string[] = [];
+    isFilterCustomer?: boolean = false;
+    loaiUser_CoTheGuiTin?: number = 0;
+}
 
 export class CreateOrEditSMSDto {
     id = Guid.EMPTY;
@@ -15,6 +22,7 @@ export class CreateOrEditSMSDto {
     idKhachHang = Guid.EMPTY;
     soDienThoai = '';
     idHoaDon?: string | null;
+    idBooking?: string | null;
     trangThai = 100;
     giaTienMoiTinNhan = 950; // hiện tại, đang mặc định giá này cho all nhà mạng (nếu sau cần thì thêm data)
     hinhThucGui?: number = SMS_HinhThucGuiTin.SMS;
@@ -94,8 +102,6 @@ export interface IResultESMS_CountSuccess {
 
 export class CustomerSMSDto extends CustomerBasicDto {
     id = '';
-    ngaySinh?: Date | null;
-
     maHoaDon?: string | null;
     ngayLapHoaDon?: Date | null;
 
@@ -105,12 +111,13 @@ export class CustomerSMSDto extends CustomerBasicDto {
 
     sTrangThaiGuiTinNhan? = '';
 
-    constructor({ idKhachHang = '', maKhachHang = '', tenKhachHang = '', soDienThoai = '' }) {
+    constructor({ idKhachHang = '', maKhachHang = '', tenKhachHang = '', soDienThoai = '', ngaySinh = '' }) {
         super({
             idKhachHang: idKhachHang,
             maKhachHang: maKhachHang,
             tenKhachHang: tenKhachHang,
-            soDienThoai: soDienThoai
+            soDienThoai: soDienThoai,
+            ngaySinh: ngaySinh
         });
     }
 }

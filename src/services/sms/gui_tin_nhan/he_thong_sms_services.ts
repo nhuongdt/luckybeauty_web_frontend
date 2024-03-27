@@ -7,13 +7,14 @@ import {
     ESMSDto,
     NhatKyGuiTinSMSDto,
     ResultESMSDto,
-    IResultESMS_CountSuccess
+    IResultESMS_CountSuccess,
+    ParamSearchSMS
 } from './gui_tin_nhan_dto';
 import http from '../../httpService';
 import { IFileDto } from '../../dto/FileDto';
 
 class HeThongSMSServices {
-    JqAutoCustomer_byIdLoaiTin = async (input: RequestFromToDto, idLoaiTin: number): Promise<CustomerZaloDto[]> => {
+    JqAutoCustomer_byIdLoaiTin = async (input: ParamSearchSMS, idLoaiTin: number): Promise<CustomerZaloDto[]> => {
         // get ds khachhang co: sinhnhat, lichhen, giaodich
         const result = await http.post(
             `api/services/app/HeThongSMS/JqAutoCustomer_byIdLoaiTin?idLoaiTin=${idLoaiTin}`,
@@ -22,7 +23,7 @@ class HeThongSMSServices {
         return result.data.result;
     };
     GetListCustomer_byIdLoaiTin = async (
-        input: RequestFromToDto,
+        input: ParamSearchSMS,
         idLoaiTin: number
     ): Promise<PagedResultDto<CustomerSMSDto>> => {
         const result = await http.post(

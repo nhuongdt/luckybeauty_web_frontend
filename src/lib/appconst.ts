@@ -56,9 +56,13 @@ export const LoaiTin = {
     TIN_THUONG: 1,
     TIN_SINH_NHAT: 2,
     TIN_LICH_HEN: 3,
+    XAC_NHAN_LICH_HEN: 31,
+    NHAC_LICH_HEN: 32,
+    THAY_DOI_LICH_HEN: 32,
     TIN_GIAO_DICH: 4
 };
 export const TrangThaiSMS = {
+    CHUA_GUI: 0,
     DRAFT: 1,
     SUCCESS: 100,
     NOT_BALANCE: 103,
@@ -68,7 +72,8 @@ export const TrangThaiSMS = {
 };
 export const TrangThaiGuiTinZalo = {
     SUCCESS: 200,
-    FAIL: -1
+    FAIL: -1,
+    CHUA_GUI: 0
 };
 
 export const TypeAction = {
