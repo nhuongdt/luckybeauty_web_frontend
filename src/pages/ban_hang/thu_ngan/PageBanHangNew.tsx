@@ -1398,14 +1398,18 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                         item
                         container
                         md={7}
+                        sm={7}
+                        xs={12}
                         spacing={2}
+                        width={'100%'}
                         height="fit-content"
-                        marginTop={horizontalLayout ? '-83px' : '-24px'}
+                        marginTop={window.screen.width >= 900 ? (horizontalLayout ? '-95px' : '-24px') : '0px'}
                         paddingBottom="0"
                         bgcolor="#F8F8F8">
                         <Grid
                             item
                             md={horizontalLayout ? 12 : 4}
+                            width={'100%'}
                             sx={{
                                 // paddingLeft: '0!important',
                                 display: 'flex',
@@ -1417,8 +1421,10 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                     sx={{
                                         borderColor: '#CFD3D4!important',
                                         borderWidth: '1px!important',
-                                        maxWidth: { lg: '55%', md: '40%' },
+                                        maxWidth: { lg: '50%', md: '40%' },
                                         mr: '24px',
+                                        pl: 2,
+                                        bgcolor: 'transparent',
                                         boxShadow: ' 0px 20px 100px 0px #0000000D',
                                         maxHeight: '37px',
                                         marginLeft: 'auto',
@@ -1486,20 +1492,22 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                         ref={containerRef}
                                         onWheel={handleWheel}
                                         sx={{
-                                            height: 60,
-                                            display: horizontalLayout ? 'flex' : 'block',
                                             columnGap: '12px',
-                                            flexWrap: horizontalLayout ? 'nowrap' : 'wrap',
-                                            overflowX: horizontalLayout ? 'auto' : 'none',
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            whiteSpace: 'nowrap',
+                                            overflowX: 'auto',
                                             scrollBehavior: 'smooth',
                                             '&::-webkit-scrollbar': {
                                                 width: '7px',
                                                 height: '7px'
                                             },
-                                            '&::-webkit-scrollbar-thumb:horizontal': {
+                                            '&::-webkit-scrollbar-thumb': {
                                                 bgcolor: 'rgba(0,0,0,0.1)',
                                                 borderRadius: '8px'
-                                            }
+                                            },
+                                            scrollbarWidth: 'thin',
+                                            scrollbarColor: 'rgba(0,0,0,0.1)'
                                         }}>
                                         <ListItem
                                             component="a"
@@ -1587,7 +1595,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                 </Box>
                             </Box>
                         </Grid>
-                        <Grid item md={horizontalLayout ? 12 : 8} sx={{ marginTop: '-58px' }}>
+                        <Grid item md={horizontalLayout ? 12 : 8} sx={{ marginTop: '-58px' }} width={'100%'}>
                             <Box display="flex" flexDirection="column">
                                 {!horizontalLayout && (
                                     <TextField
@@ -1664,7 +1672,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                                 {nhom.tenNhomHang}
                                             </Typography>
 
-                                            <Grid container spacing={1.5}>
+                                            <Grid container item spacing={1.5} width={'100%'}>
                                                 {nhom.hangHoas.map((item) => (
                                                     <Grid
                                                         item
@@ -1732,6 +1740,8 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                     <Grid
                         item
                         md={7}
+                        sm={7}
+                        xs={12}
                         className="normal"
                         sx={{
                             pt: '0!important',
@@ -1754,15 +1764,13 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                     </Grid>
                 )}
 
-                <Grid item md={5} sx={{ paddingRight: '0' }}>
+                <Grid item xs={12} sm={5} md={5} sx={{ paddingRight: '0' }}>
                     <Stack
                         sx={{
-                            width: 'calc(100% + 16px)',
-                            mt: showDetail ? '-21px' : '-79px',
+                            mt: window.screen.width >= 768 ? (showDetail ? '-21px' : '-95px') : '0px',
                             backgroundColor: '#fff',
-                            height: 'calc(100vh - 16px)',
+                            height: window.screen.width >= 768 ? '100vh' : 'auto',
                             padding: '16px',
-                            paddingBottom: 0,
                             display: 'flex',
                             flexDirection: 'column',
                             justifyContent: 'space-between',

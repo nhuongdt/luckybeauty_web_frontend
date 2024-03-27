@@ -120,14 +120,14 @@ export default function MainPageBanHang() {
             <DataCustomerContext.Provider value={{ listNguonKhach: nguonKhachs, listNhomkhach: nhomKhachs }}>
                 <Grid
                     container
-                    padding={2}
+                    //padding={2}
                     columnSpacing={2}
                     rowSpacing={2}
                     bgcolor="#f8f8f8"
                     // pr={activeTab === 1 ? '16px' : '0'}
                 >
                     <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
-                        <Box display="flex" gap="12px">
+                        <Box display="flex" gap="12px" padding={2}>
                             <ButtonGroup
                                 sx={{
                                     '& button': {
