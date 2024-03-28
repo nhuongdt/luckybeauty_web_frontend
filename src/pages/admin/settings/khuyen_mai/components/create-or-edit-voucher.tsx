@@ -215,7 +215,7 @@ const CreateOrEditVoucher: React.FC<{
                                         }}
                                     />
                                 </Grid>
-                                <Grid item xs={12} md={6}>
+                                <Grid item xs={12} sm={6} md={6}>
                                     <TextField
                                         size="small"
                                         type="text"
@@ -226,7 +226,7 @@ const CreateOrEditVoucher: React.FC<{
                                         fullWidth
                                         sx={{ fontSize: '16px' }}></TextField>
                                 </Grid>
-                                <Grid item xs={6}>
+                                <Grid item xs={12} sm={6} md={6}>
                                     <TextField
                                         size="small"
                                         type="text"
@@ -248,9 +248,9 @@ const CreateOrEditVoucher: React.FC<{
                                         fullWidth
                                         sx={{ fontSize: '16px' }}></TextField>
                                 </Grid>
-                                <Grid item xs={3}>
+                                <Grid item xs={12} sm={6} md={3}>
                                     <Tabs
-                                        orientation="vertical"
+                                        orientation={'vertical'}
                                         variant="scrollable"
                                         value={tabIndex}
                                         onChange={handleTabChange}
@@ -277,7 +277,7 @@ const CreateOrEditVoucher: React.FC<{
                                     </Tabs>
                                 </Grid>
 
-                                <Grid item xs={9}>
+                                <Grid item xs={12} sm={6} md={9}>
                                     <TabPanel value={tabIndex} index={0}>
                                         <Grid container spacing={2}>
                                             <Grid item xs={12} md={6}>
