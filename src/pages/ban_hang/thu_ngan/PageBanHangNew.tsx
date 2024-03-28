@@ -1413,7 +1413,9 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                             sx={{
                                 // paddingLeft: '0!important',
                                 display: 'flex',
-                                flexDirection: 'column'
+                                flexDirection: 'column',
+                                maxWidth: '100vh',
+                                paddingRight: '16px'
                             }}>
                             {horizontalLayout && (
                                 <TextField
@@ -1828,7 +1830,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                             }}>
                                             <DatePickerRequireCustom
                                                 props={{
-                                                    width: '60%',
+                                                    width: window.screen.width > 900 ? '85%' : '100%',
                                                     size: 'small'
                                                 }}
                                                 maxDate={new Date()}
