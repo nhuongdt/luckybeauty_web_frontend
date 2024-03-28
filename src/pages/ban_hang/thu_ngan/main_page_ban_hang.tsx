@@ -20,12 +20,14 @@ import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBullet
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import { IList } from '../../../services/dto/IList';
 import { handleClickOutside } from '../../../utils/customReactHook';
+import { useNavigate } from 'react-router-dom';
+import { isBrowser } from 'react-device-detect';
 
 export default function MainPageBanHang() {
     const [activeTab, setActiveTab] = useState(1);
     const [expandAction, setExpandAction] = useState(false);
     const ref = handleClickOutside(() => setExpandAction(false));
-
+    const navigation = useNavigate();
     const lstOption: IList[] = [
         { id: '1', text: 'Trang chủ', icon: <HomeOutlinedIcon /> },
         { id: '2', text: 'Danh sách hóa đơn', icon: <FormatListBulletedOutlinedIcon /> },
@@ -44,13 +46,13 @@ export default function MainPageBanHang() {
 
         switch (item.id) {
             case '1':
-                window.open('/home');
+                isBrowser ? window.open('/home') : navigation('/home');
                 break;
             case '2':
-                window.open('/giao-dich-thanh-toan');
+                isBrowser ? window.open('/giao-dich-thanh-toan') : navigation('/giao-dich-thanh-toan');
                 break;
             case '3':
-                window.open('/lich-hens');
+                isBrowser ? window.open('/lich-hens') : navigation('/lich-hens');
                 break;
         }
     };
