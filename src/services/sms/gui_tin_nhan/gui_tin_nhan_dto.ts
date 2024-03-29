@@ -102,12 +102,17 @@ export interface IResultESMS_CountSuccess {
 
 export class CustomerSMSDto extends CustomerBasicDto {
     id = '';
+    zoaUserId = '';
     maHoaDon?: string | null;
     ngayLapHoaDon?: Date | null;
 
     tenDichVu?: string | null;
     bookingDate?: Date | null;
     thoiGianHen?: string;
+
+    tenChiNhanh?: string;
+    diaChiChiNhanh?: string;
+    soDienThoaiChiNhanh?: string;
 
     sTrangThaiGuiTinNhan? = '';
 
