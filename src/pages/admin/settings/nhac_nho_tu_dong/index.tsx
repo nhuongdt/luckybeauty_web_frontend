@@ -11,7 +11,7 @@ import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
 import { LoaiTin, TypeAction } from '../../../../lib/appconst';
 import ModalCaiDatNhacNho from './modal_cai_dat_nhac_nho';
 import { MauTinSMSDto } from '../../../../services/sms/mau_tin_sms/mau_tin_dto';
-import MauTinSMService from '../../../../services/sms/mau_tin_sms/MauTinSMService';
+import MauTinSMService from '../../../../services/sms/mau_tin_sms/MauTinSMSService';
 import { Guid } from 'guid-typescript';
 import {
     CaiDatNhacNhoChiTietDto,
