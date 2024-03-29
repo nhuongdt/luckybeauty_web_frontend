@@ -415,3 +415,14 @@ body .font-normal {
 .td-check-box .MuiButtonBase-root {
     padding: 0px!important;
 }
+.zalo-template-default:hover{
+    background-color: var(--color-bg);
+    cursor: pointer;
+}
+
+.zalo-template .zoa-element-lable {
+font-weight: 600;
+}
+.zalo-template .MuiDivider-root::before, .zalo-template .MuiDivider-root::after{
+border-color: red;
+}
