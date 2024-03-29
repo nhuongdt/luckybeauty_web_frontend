@@ -37,7 +37,7 @@ export default function ThietLapKetNoiZaloGmail() {
     };
 
     const urltes = `https://oauth.zaloapp.com/v4/oa/permission?app_id=1575833233908225704&redirect_uri=https%3A%2F%2Flogin.luckybeauty.vn%2Fsettings%2Fket-noi-zalo-gmail`;
-    const urlPermissionOA = `https://oauth.zaloapp.com/v4/oa/permission?app_id=${process.env.REACT_APP_ZALO_APP_ID}&redirect_uri=${process.env.REACT_APP_APP_WEBSITE_URL}/settings/ket-noi-zalo-gmail`;
+    const urlPermissionOA = `https://oauth.zaloapp.com/v4/oa/permission?app_id=${process.env.REACT_APP_ZALO_APP_ID}&redirect_uri=${process.env.REACT_APP_APP_BASE_URL}/settings/ket-noi-zalo-gmail`;
 
     const GetAuthenCode = async (codeVerifier: string, zaloToken: ZaloAuthorizationDto) => {
         // check exist db or create new

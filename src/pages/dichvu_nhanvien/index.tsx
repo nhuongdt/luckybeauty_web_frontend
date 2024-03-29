@@ -301,14 +301,18 @@ class SettingDichVuNhanVien extends Component {
                                                         )
                                                     )
                                                 ) : (
-                                                    <Box
-                                                        display={'flex'}
-                                                        alignItems="center"
-                                                        justifyContent={'center'}
-                                                        textAlign={'center'}
-                                                        padding={'32px'}>
-                                                        Không có bản ghi nào được hiển thị
-                                                    </Box>
+                                                    <TableRow>
+                                                        <TableCell>
+                                                            <Box
+                                                                display={'flex'}
+                                                                alignItems="center"
+                                                                justifyContent={'center'}
+                                                                textAlign={'center'}
+                                                                padding={'32px'}>
+                                                                Không có bản ghi nào được hiển thị
+                                                            </Box>
+                                                        </TableCell>
+                                                    </TableRow>
                                                 )}
                                             </TableBody>
                                         </Table>
