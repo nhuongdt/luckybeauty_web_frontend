@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
+import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import {
     CreateOrEditSMSDto,
     NhatKyGuiTinSMSDto,
     ParamSearchSMS
-} from '../../../services/sms/gui_tin_nhan/gui_tin_nhan_dto';
-import utils from '../../../utils/utils';
+} from '../../services/sms/gui_tin_nhan/gui_tin_nhan_dto';
+import utils from '../../utils/utils';
 import {
     Dialog,
     DialogTitle,
@@ -20,11 +20,11 @@ import {
 } from '@mui/material';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 
-import DialogButtonClose from '../../../components/Dialog/ButtonClose';
+import DialogButtonClose from '../../components/Dialog/ButtonClose';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import { Form, Formik } from 'formik';
 import * as yup from 'yup';
-import SelectWithData from '../../../components/Select/SelectWithData';
+import SelectWithData from '../../components/Select/SelectWithData';
 import AppConsts, {
     DateType,
     ISelect,
@@ -32,22 +32,22 @@ import AppConsts, {
     SMS_HinhThucGuiTin,
     TrangThaiGuiTinZalo,
     TrangThaiSMS
-} from '../../../lib/appconst';
-import AutocompleteWithData from '../../../components/Autocomplete/AutocompleteWithData';
-import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
+} from '../../lib/appconst';
+import AutocompleteWithData from '../../components/Autocomplete/AutocompleteWithData';
+import DateFilterCustom from '../../components/DatetimePicker/DateFilterCustom';
 import { format } from 'date-fns';
-import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
-import HeThongSMSServices from '../../../services/sms/gui_tin_nhan/he_thong_sms_services';
-import { IInforUserZOA, ITemplateZNS, IZaloDataSend } from '../../../services/sms/gui_tin_nhan/zalo_dto';
-import ZaloService from '../../../services/sms/gui_tin_nhan/ZaloService';
-import { IDataAutocomplete } from '../../../services/dto/IDataAutocomplete';
-import { RequestFromToDto } from '../../../services/dto/ParamSearchDto';
-import { PagedKhachHangResultRequestDto } from '../../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
-import khachHangService from '../../../services/khach-hang/khachHangService';
+import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import HeThongSMSServices from '../../services/sms/gui_tin_nhan/he_thong_sms_services';
+import { IInforUserZOA, ITemplateZNS, IZaloDataSend } from '../../services/zalo/zalo_dto';
+import ZaloService from '../../services/zalo/ZaloService';
+import { IDataAutocomplete } from '../../services/dto/IDataAutocomplete';
+import { RequestFromToDto } from '../../services/dto/ParamSearchDto';
+import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
+import khachHangService from '../../services/khach-hang/khachHangService';
 import { Guid } from 'guid-typescript';
-import { ZaloTemplateData } from '../../../services/sms/gui_tin_nhan/ZaloTemplateData';
-import uploadFileService from '../../../services/uploadFileService';
-import datLichService from '../../../services/dat-lich/datLichService';
+import { ZaloTemplateData } from '../../services/zalo/ZaloTemplateData';
+import uploadFileService from '../../services/uploadFileService';
+import datLichService from '../../services/dat-lich/datLichService';
 
 export function AutocompleteCustomerZalo({ handleChoseItem, lstOption, helperText, err }: any) {
     const [lstChosed, setLstChosed] = useState<IInforUserZOA[]>([]);
@@ -94,9 +94,7 @@ export function AutocompleteCustomerZalo({ handleChoseItem, lstOption, helperTex
 
 export const Zalo_Template: React.FC<{ idMauTinZalo: string }> = ({ idMauTinZalo }) => {
     const dataTemp = ZaloTemplateData.filter((x) => x.id === idMauTinZalo)[0];
-    const zalo_logoBanner = uploadFileService.GoogleApi_NewLink(
-        'https://drive.google.com/uc?export=view&id=1TDXeqE458lvu9DJXFg85FtBEuC_1OHUw'
-    );
+    const zalo_logoBanner = `https://lh3.googleusercontent.com/d/1TDXeqE458lvu9DJXFg85FtBEuC_1OHUw`;
     return (
         <>
             <Stack spacing={1} padding={2}>
@@ -133,9 +131,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
     const idChiNhanh = chinhanh.id;
-    const zalo_logoBanner = uploadFileService.GoogleApi_NewLink(
-        'https://drive.google.com/uc?export=view&id=1TDXeqE458lvu9DJXFg85FtBEuC_1OHUw'
-    );
+    const zalo_logoBanner = `https://lh3.googleusercontent.com/d/1TDXeqE458lvu9DJXFg85FtBEuC_1OHUw`;
 
     const [newSMS, setNewSMS] = useState<CreateOrEditSMSDto>(new CreateOrEditSMSDto({}) as CreateOrEditSMSDto);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
@@ -219,10 +215,12 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                     itFor.zoaUserId
                                 );
                                 if (user != null) {
-                                    user.idKhachHang = itFor.id;
-                                    user.soDienThoai = itFor?.soDienThoai;
-                                    arr.push(user);
-                                    userZalo_IsCustomer.push(itFor.zoaUserId);
+                                    if (!userZalo_IsCustomer.includes(itFor.zoaUserId)) {
+                                        user.idKhachHang = itFor.id;
+                                        user.soDienThoai = itFor?.soDienThoai;
+                                        arr.push(user);
+                                        userZalo_IsCustomer.push(itFor.zoaUserId);
+                                    }
                                 }
                             }
                         }
@@ -293,8 +291,8 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
         setLstMauTinZNS(data);
     };
 
-    const getMauTinZaLo = async (item: IDataAutocomplete) => {
-        switch (item.id) {
+    const getMauTinZaLo = async (item: IDataAutocomplete | null) => {
+        switch (item?.id) {
             case LoaiTin.TIN_GIAO_DICH.toString():
             case LoaiTin.TIN_LICH_HEN.toString():
             case LoaiTin.TIN_SINH_NHAT.toString():
@@ -312,7 +310,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                     // get from ZNS temp
                     const data = await ZaloService.GetZNSTemplate_byId(zaloToken?.accessToken, item?.id);
                     setItemMauTinZaloChosed(data);
-                    setIdMauTinZalo(item?.id);
+                    setIdMauTinZalo(item?.id ?? '');
                 }
                 break;
         }
@@ -772,7 +770,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                                 ).map((x) => {
                                                     return { id: x?.id, text1: x?.tieuDe, text2: x?.noiDung };
                                                 })}
-                                                handleChoseItem={(item: IDataAutocomplete) => {
+                                                handleChoseItem={(item: IDataAutocomplete | null) => {
                                                     getMauTinZaLo(item);
                                                     setFieldValue('idMauTin', item?.id);
                                                 }}

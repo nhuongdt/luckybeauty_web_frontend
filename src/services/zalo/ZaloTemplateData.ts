@@ -1,4 +1,4 @@
-import { LoaiTin } from '../../../lib/appconst';
+import { LoaiTin } from '../../lib/appconst';
 
 export const ZaloTemplateData = [
     {

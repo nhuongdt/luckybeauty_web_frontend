@@ -1,7 +1,7 @@
 import http from '../../httpService';
 import { MauTinSMSDto, GroupMauTinSMSDto } from './mau_tin_dto';
 
-class MauTinSMService {
+class MauTinSMSService {
     GetAllMauTinSMS = async (): Promise<MauTinSMSDto[]> => {
         const xx = await http.get(`api/services/app/MauTinSMS/GetAllMauTinSMS`);
         return xx.data.result;
@@ -19,4 +19,4 @@ class MauTinSMService {
         return xx.data.result;
     };
 }
-export default new MauTinSMService();
+export default new MauTinSMSService();

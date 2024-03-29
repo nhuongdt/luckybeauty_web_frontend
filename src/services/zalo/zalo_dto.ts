@@ -1,5 +1,5 @@
 import { Guid } from 'guid-typescript';
-import { ICustomerBasic } from '../../khach-hang/dto/CustomerBasicDto';
+import { ICustomerBasic } from '../khach-hang/dto/CustomerBasicDto';
 
 // dto lien quan den DB --
 export interface IZalo_InforHoaDon {
@@ -33,6 +33,7 @@ export interface IInforUserZOA extends ICustomerBasic {
     user_gender: number;
     user_id: string;
     user_id_by_app: string;
+    user_is_follower?: boolean;
 
     idHoaDons?: string[]; // 1 khachhang - N hoaddon
     idBookings?: string[];
@@ -40,10 +41,18 @@ export interface IInforUserZOA extends ICustomerBasic {
 }
 
 export interface IMemberZOA {
-    idKhachHang: string;
-    memberName: string;
-    memberPhone: string;
-    zoaUserId: string;
+    id?: string;
+    user_id: string;
+    user_id_by_app: string;
+    display_name: string;
+    user_is_follower?: boolean;
+    avatar?: string;
+
+    tenDangKy?: string;
+    soDienThoaiDK?: string;
+    diaChi?: string;
+    tenTinhThanh?: string;
+    tenQuanHuyen?: string;
 }
 
 export interface ITemplateZNS {
