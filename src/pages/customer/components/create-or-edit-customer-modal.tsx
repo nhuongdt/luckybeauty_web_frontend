@@ -32,6 +32,13 @@ import { NumericFormat } from 'react-number-format';
 import { format as formatDate } from 'date-fns';
 import bookingStore from '../../../stores/bookingStore';
 import DatePickerRequiredCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
+import MultipleAutocompleteWithData from '../../../components/Autocomplete/MultipleAutocompleteWithData';
+import ZaloService from '../../../services/zalo/ZaloService';
+import { IInforUserZOA, IMemberZOA, ZaloAuthorizationDto } from '../../../services/zalo/zalo_dto';
+import { IList } from '../../../services/dto/IList';
+import AutocompleteWithData from '../../../components/Autocomplete/AutocompleteWithData';
+import { IDataAutocomplete } from '../../../services/dto/IDataAutocomplete';
+import { util } from 'prettier';
 
 export interface ICreateOrEditCustomerProps {
     visible: boolean;
@@ -46,11 +53,36 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
         errorTenKhach: false,
         cusImage: '',
         googleDrive_fileId: '',
-        fileImage: {} as File
+        fileImage: {} as File,
+        ZOA_allUser: [] as IInforUserZOA[],
+        ZOA_userChosed: {} as IInforUserZOA,
+        zaloToken: {} as ZaloAuthorizationDto
     };
     async getSuggest() {
         await suggestStore.getSuggestNguonKhach();
         await suggestStore.getSuggestNhomKhach();
+        await this.GetDanhSach_KhachHang_QuanTamOA();
+    }
+    async GetDanhSach_KhachHang_QuanTamOA() {
+        const zaloToken = await ZaloService.Innit_orGetToken();
+        if (zaloToken != null && zaloToken.accessToken !== null) {
+            this.setState({ zaloToken: zaloToken });
+            const data = await ZaloService.GetDanhSach_KhachHang_QuanTamOA(zaloToken.accessToken);
+
+            if ((data?.total ?? 0) > 0) {
+                const arr: IInforUserZOA[] = [];
+                for (let index = 0; index < data?.followers?.length; index++) {
+                    const itFor = data?.followers[index];
+                    const user = await ZaloService.GetInforUser_ofOA(zaloToken?.accessToken, itFor.user_id);
+                    if (user != null) {
+                        user.idKhachHang = itFor.id;
+                        user.soDienThoai = itFor?.soDienThoai;
+                        arr.push(user);
+                    }
+                }
+                this.setState({ ZOA_allUser: arr });
+            }
+        }
     }
     componentDidMount(): void {
         this.getSuggest();
@@ -64,6 +96,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
             });
         }
     }
+
     choseImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         await this.closeImage();
         if (e.target.files && e.target.files[0]) {
@@ -144,9 +177,32 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                     );
                                 }
                             }
+
+                            // check exists zaoauserid
+                            let idKhachHangZalo = await ZaloService.GetId_fromZOAUserId(values?.zoaUserId ?? '');
+                            if (idKhachHangZalo == null) {
+                                // get user zalo
+                                const user = await ZaloService.GetInforUser_ofOA(
+                                    this.state.zaloToken?.accessToken,
+                                    values?.zoaUserId ?? ''
+                                );
+                                if (user !== null) {
+                                    const input: IMemberZOA = {
+                                        user_id: user.user_id,
+                                        display_name: user.display_name,
+                                        user_id_by_app: user.user_id_by_app,
+                                        user_is_follower: user.user_is_follower,
+                                        avatar: user.avatar
+                                    };
+                                    const zoaUserNew = await ZaloService.DangKyThanhVienZOA(input);
+                                    idKhachHangZalo = zoaUserNew.id as unknown as string;
+                                }
+                            }
                             // gán lại image theo id mới
                             values.avatar = fileId !== '' ? `https://drive.google.com/uc?export=view&id=${fileId}` : '';
                             values.tenKhachHang_KhongDau = utils.strToEnglish(values.tenKhachHang);
+                            values.idKhachHangZOA = idKhachHangZalo as unknown as undefined;
+
                             const createOrEdit = await khachHangService.createOrEdit(values);
                             bookingStore.createOrEditBookingDto.idKhachHang = createOrEdit.id.toString();
                             createOrEdit != null
@@ -383,6 +439,25 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             </Stack>
                                         </Grid>
                                         <Grid item xs={12}>
+                                            <AutocompleteWithData
+                                                label={'Tài khoản zalo'}
+                                                idChosed={
+                                                    utils.checkNull(values?.zoaUserId ?? '') ||
+                                                    values?.zoaUserId === undefined
+                                                        ? ''
+                                                        : values?.zoaUserId
+                                                }
+                                                lstData={this.state.ZOA_allUser?.map((x) => {
+                                                    return {
+                                                        id: x?.user_id,
+                                                        text1: x?.display_name,
+                                                        imgUrl: x?.avatar
+                                                    } as IDataAutocomplete;
+                                                })}
+                                                handleChoseItem={(item) => setFieldValue('zoaUserId', item?.id ?? '')}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} style={{ display: 'none' }}>
                                             <TextField
                                                 fullWidth
                                                 name="moTa"

@@ -21,4 +21,6 @@ export interface CreateOrEditKhachHangDto {
     idNguonKhach?: string;
     idTinhThanh?: string;
     idQuanHuyen?: string;
+    idKhachHangZOA?: string;
+    zoaUserId?: string;
 }
