@@ -9,6 +9,7 @@ class SessionStore {
     async getCurrentLoginInformations() {
         const result = await sessionService.getCurrentLoginInformations();
         this.currentLogin = result;
+        return result;
     }
     constructor() {
         makeAutoObservable(this);

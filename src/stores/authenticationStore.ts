@@ -6,6 +6,7 @@ import tokenAuthService from '../services/tokenAuth/tokenAuthService';
 import Cookies from 'js-cookie';
 import { AuthenticationResultModel } from '../services/tokenAuth/dto/authenticationResultModel';
 import loginService from '../services/login/loginService';
+import http from '../services/httpService';
 
 //declare let abp: any
 
@@ -47,16 +48,30 @@ class AuthenticationStore {
             : Cookies.set('isRememberMe', 'false');
     }
 
-    logout() {
-        localStorage.clear();
-        sessionStorage.clear();
-        // get an array of all cookie names
-        Object.keys(Cookies.get()).forEach((cookieName) => {
-            if (cookieName !== 'TenantName') {
-                Cookies.remove(cookieName);
-            }
-        });
-        window.location.href = '/login';
+    async logout(reload?: boolean, returnUrl?: string) {
+        await http
+            .get('api/TokenAuth/LogOut', {
+                headers: {
+                    'Abp.TenantId': Cookies.get('Abp.TenantId'),
+                    Authorization: 'Bearer ' + Cookies.get('accessToken')
+                }
+            })
+            .then((result) => {
+                localStorage.clear();
+                sessionStorage.clear();
+                // get an array of all cookie names
+                Object.keys(Cookies.get()).forEach((cookieName) => {
+                    Cookies.remove(cookieName);
+                });
+                if (reload !== false) {
+                    if (returnUrl) {
+                        location.href = returnUrl;
+                    } else {
+                        location.href = '';
+                    }
+                }
+            })
+            .catch((ex) => console.error(ex));
     }
 
     constructor() {

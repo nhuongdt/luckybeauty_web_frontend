@@ -1,26 +1,27 @@
 import '../../lib/abp.js';
-import axios from 'axios';
 import Cookies from 'js-cookie';
 import LoginModel from '../../models/Login/loginModel';
-import qs from 'qs';
-import { RolePermission } from './dto/RolePermission';
 import http from '../httpService';
-import { waitForDebugger } from 'inspector';
-import { number } from 'yup';
+import sessionStore from '../../stores/sessionStore';
+import IsTenantAvaibleOutput from '../account/dto/isTenantAvailableOutput';
+import TenantAvailabilityState from '../account/dto/tenantAvailabilityState';
+import { LoginResult } from './dto/LoginResult.js';
 class LoginService {
-    public async CheckTenant(tenantName: string, isRemember?: boolean) {
-        const tenancy = tenantName || 'default';
+    public async CheckTenant(tenantName: string): Promise<IsTenantAvaibleOutput> {
+        //const tenancy = tenantName || 'default';
+        if (tenantName === '') {
+            return {
+                state: TenantAvailabilityState.Available,
+                tenantId: 0
+            };
+        }
 
         const result = await http.post('api/services/app/Account/IsTenantAvailable', {
-            tenancyName: tenancy
+            tenancyName: tenantName
         });
 
-        const tenantId = result.data.result['tenantId'] || 0;
         if (result.data.result['state'] === 1) {
             Cookies.set('TenantName', tenantName, {
-                expires: 365
-            });
-            Cookies.set('Abp.TenantId', tenantName ? tenantId : 'null', {
                 expires: 365
             });
         }
@@ -28,76 +29,81 @@ class LoginService {
         return result.data.result;
     }
 
-    async Login(loginModel: LoginModel): Promise<boolean> {
-        try {
-            //this.CheckTenant(loginModel.tenancyName, loginModel.rememberMe);
-            const requestBody = {
-                userNameOrEmailAddress: loginModel.userNameOrEmailAddress,
-                password: loginModel.password,
-                rememberClient: loginModel.rememberMe
+    async Login(loginModel: LoginModel): Promise<LoginResult> {
+        const checkTenant = await this.CheckTenant(loginModel.tenancyName);
+        if (checkTenant.state !== 1) {
+            return {
+                success: false,
+                message: 'Tenant không tồn tại hoặc đã hết hạn!'
             };
-            let result = false;
-            const tenantId = Cookies.get('Abp.TenantId');
-            if (tenantId?.toString() !== '0') {
-                const apiResult = await http.post('/api/TokenAuth/Authenticate', requestBody, {
-                    headers: {
-                        'Abp.TenantId': tenantId,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if (apiResult.status === 200) {
-                    if (apiResult.data.success === true) {
-                        const tokenExpireDate = loginModel.rememberMe
-                            ? new Date(new Date().getTime() + 1000 * apiResult.data.result.expireInSeconds)
-                            : undefined;
-                        result = apiResult.data.success;
-                        Cookies.set('accessToken', apiResult.data.result['accessToken'], {
-                            expires: tokenExpireDate
-                        });
-                        Cookies.set('refreshToken', apiResult.data.result['refreshToken'], {
-                            expires: tokenExpireDate
-                        });
-                        Cookies.set('userId', apiResult.data.result['userId'], {
-                            expires: tokenExpireDate
-                        });
-                        Cookies.set('IdNhanVien', apiResult.data.result['idNhanVien'], {
-                            expires: tokenExpireDate
-                        });
-                        Cookies.set('fullname', apiResult.data.result['fullName'], {
-                            expires: tokenExpireDate
-                        });
-                        Cookies.set('email', apiResult.data.result['email'], {
-                            expires: tokenExpireDate
-                        });
-                        Cookies.set('avatar', apiResult.data.result['avatar'], {
-                            expires: tokenExpireDate
-                        });
-                        Cookies.set('idChiNhanhMacDinh', apiResult.data.result['idChiNhanhMacDinh'], {
-                            expires: tokenExpireDate
-                        });
-                        loginModel.rememberMe
-                            ? Cookies.set('isRememberMe', 'true', { expires: tokenExpireDate })
-                            : Cookies.set('isRememberMe', 'false');
-                        await this.GetPermissionByUserId(
-                            Number.parseInt(apiResult.data.result['userId'], 0),
-                            loginModel.rememberMe
-                        );
-                    }
-                }
-            }
-            return result;
-        } catch (error) {
-            // Handle the error here
-            console.error('An error occurred during login:', error);
-            return false;
         }
+        const requestBody = {
+            userNameOrEmailAddress: loginModel.userNameOrEmailAddress,
+            password: loginModel.password,
+            rememberClient: loginModel.rememberMe
+        };
+
+        const apiResult = await http.post('/api/TokenAuth/Authenticate', requestBody, {
+            headers: {
+                'Abp.TenantId':
+                    checkTenant.tenantId === 0 || checkTenant.tenantId === null ? 'null' : checkTenant.tenantId,
+                'Content-Type': 'application/json'
+            }
+        });
+        const tokenExpireDate = loginModel.rememberMe
+            ? new Date(new Date().getTime() + 1000 * apiResult.data.result.expireInSeconds)
+            : undefined;
+        if (checkTenant.tenantId !== 0) {
+            loginModel.rememberMe
+                ? Cookies.set('Abp.TenantId', checkTenant.tenantId.toString(), { expires: tokenExpireDate })
+                : Cookies.set('Abp.TenantId', checkTenant.tenantId.toString());
+        }
+        loginModel.rememberMe
+            ? Cookies.set('isRememberMe', 'true', { expires: tokenExpireDate })
+            : Cookies.set('isRememberMe', 'false');
+        Cookies.set('accessToken', apiResult.data.result['accessToken'], {
+            expires: tokenExpireDate
+        });
+        Cookies.set('refreshToken', apiResult.data.result['refreshToken'], {
+            expires: tokenExpireDate
+        });
+        const sessionResult = await sessionStore.getCurrentLoginInformations();
+        Cookies.set('userId', sessionResult.user.id.toString(), {
+            expires: tokenExpireDate
+        });
+        if (sessionResult.user.nhanSuId) {
+            Cookies.set('IdNhanVien', sessionResult.user.nhanSuId, {
+                expires: tokenExpireDate
+            });
+        }
+
+        Cookies.set('fullname', sessionResult.user.fullName, {
+            expires: tokenExpireDate
+        });
+        Cookies.set('email', sessionResult.user.emailAddress, {
+            expires: tokenExpireDate
+        });
+        if (sessionResult.user.avatar) {
+            Cookies.set('avatar', sessionResult.user.avatar, {
+                expires: tokenExpireDate
+            });
+        }
+        if (sessionResult.user.idChiNhanhMacDinh) {
+            Cookies.set('idChiNhanhMacDinh', apiResult.data.result['idChiNhanhMacDinh'], {
+                expires: tokenExpireDate
+            });
+        }
+
+        await this.GetPermissionByUserId(sessionResult.user.id, loginModel.rememberMe);
+
+        return {
+            success: apiResult.data.success,
+            message: 'Đăng nhập thành công!'
+        };
     }
     async GetPermissionByUserId(userId: number, isRemember: boolean) {
         const response = await http.post(`api/services/app/Permission/GetAllPermissionByRole?UserId=${userId}`);
-        const tokenExpireDate =
-            Cookies.get('isRememberMe') !== undefined && Cookies.get('isRememberMe')?.toString() == 'true'
-                ? new Date(new Date().getTime() + 1000 * 86400)
-                : undefined;
+        const tokenExpireDate = isRemember === true ? new Date(new Date().getTime() + 1000 * 86400) : undefined;
         const item = {
             value: response.data.result['permissions'],
             expiry: tokenExpireDate

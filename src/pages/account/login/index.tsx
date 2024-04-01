@@ -24,7 +24,6 @@ import { enqueueSnackbar } from 'notistack';
 const LoginScreen: React.FC = () => {
     const navigate = useNavigate();
     const loginModel = new LoginModel();
-    const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const formik = useFormik({
         initialValues: {
@@ -39,43 +38,31 @@ const LoginScreen: React.FC = () => {
             password: Yup.string().required('Mật khẩu không được để trống.')
         }),
         onSubmit: async (values) => {
-            setIsLoading(true);
             loginModel.tenancyName = values.tenant;
             loginModel.userNameOrEmailAddress = values.userNameOrEmail;
             loginModel.password = values.password;
             loginModel.rememberMe = values.remember;
-
-            const checkTenant = await LoginService.CheckTenant(loginModel.tenancyName);
-            if (checkTenant.state !== 1) {
-                enqueueSnackbar('Id cửa hàng không tồn tại hoặc hết hạn.', {
+            const loginResult = await LoginService.Login(loginModel);
+            if (loginResult.success === true) {
+                await nhatKyHoatDongService.createNhatKyThaoTac({
+                    chucNang: 'Đăng nhập',
+                    loaiNhatKy: 6,
+                    noiDung: 'Đăng nhập hệ thống',
+                    noiDungChiTiet: 'Đăng nhập hệ thống'
+                });
+                navigate('/');
+                window.location.reload();
+            } else {
+                await nhatKyHoatDongService.createNhatKyThaoTac({
+                    chucNang: 'Đăng nhập',
+                    loaiNhatKy: 6,
+                    noiDung: 'Đăng nhập hệ thống thất bại',
+                    noiDungChiTiet: 'Đăng nhập hệ thống thất bại'
+                });
+                enqueueSnackbar(loginResult.message, {
                     variant: 'error',
                     autoHideDuration: 3000
                 });
-                setIsLoading(false);
-            } else {
-                const login = await LoginService.Login(loginModel);
-                if (login === true) {
-                    await nhatKyHoatDongService.createNhatKyThaoTac({
-                        chucNang: 'Đăng nhập',
-                        loaiNhatKy: 6,
-                        noiDung: 'Đăng nhập hệ thống',
-                        noiDungChiTiet: 'Đăng nhập hệ thống'
-                    });
-                    navigate('/');
-                    window.location.reload();
-                } else {
-                    await nhatKyHoatDongService.createNhatKyThaoTac({
-                        chucNang: 'Đăng nhập',
-                        loaiNhatKy: 6,
-                        noiDung: 'Đăng nhập hệ thống thất bại',
-                        noiDungChiTiet: 'Đăng nhập hệ thống thất bại'
-                    });
-                    enqueueSnackbar('Tài khoản hoặc mật khẩu không đúng!', {
-                        variant: 'error',
-                        autoHideDuration: 3000
-                    });
-                    setIsLoading(false);
-                }
             }
         }
     });
@@ -220,7 +207,7 @@ const LoginScreen: React.FC = () => {
 
                                 <Grid xs={12} item>
                                     <button type="submit" className="btn-login">
-                                        {isLoading ? (
+                                        {formik.isSubmitting ? (
                                             <CircularProgress
                                                 className="text-login"
                                                 sx={{ color: 'white' }}

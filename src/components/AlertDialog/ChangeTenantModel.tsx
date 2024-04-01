@@ -111,7 +111,7 @@ const ChangeTenantModal = ({ isShow, handleClose }: any) => {
                     variant="contained"
                     color="primary"
                     onClick={async () => {
-                        const result = await loginService.CheckTenant(tenantName, true);
+                        const result = await loginService.CheckTenant(tenantName);
                         if (result.state === 1) {
                             await handleClose();
                             window.location.reload();
