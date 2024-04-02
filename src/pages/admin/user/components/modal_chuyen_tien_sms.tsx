@@ -165,7 +165,11 @@ const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose,
                                             optionLabel={{ label1: 'Tài khoản:', label2: 'Tên nhân viên:' }}
                                             idChosed={values?.idNguoiChuyenTien}
                                             lstData={allUser.map((x: IUserProfileDto) => {
-                                                return { id: x.id, text1: x.userName, text2: x.tenNhanVien };
+                                                return {
+                                                    id: x.id.toString(),
+                                                    text1: x.userName,
+                                                    text2: x.tenNhanVien
+                                                } as IDataAutocomplete;
                                             })}
                                             handleChoseItem={(item: IDataAutocomplete) => {
                                                 setFieldValue('idNguoiChuyenTien', item?.id);
@@ -178,7 +182,7 @@ const ModalChuyenTienSMS = ({ visiable = false, idNhatKyNapTien = null, onClose,
                                             optionLabel={{ label1: 'Tài khoản:', label2: 'Tên nhân viên:' }}
                                             idChosed={values?.idNguoiNhanTien}
                                             lstData={allUser.map((x: IUserProfileDto) => {
-                                                return { id: x.id, text1: x.userName, text2: x.tenNhanVien };
+                                                return { id: x.id.toString(), text1: x.userName, text2: x.tenNhanVien };
                                             })}
                                             handleChoseItem={(item: IDataAutocomplete) => {
                                                 setFieldValue('idNguoiNhanTien', item?.id);
