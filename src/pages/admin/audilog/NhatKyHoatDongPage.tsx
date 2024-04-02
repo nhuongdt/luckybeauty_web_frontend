@@ -235,14 +235,7 @@ const NhatKyHoatDongPage = () => {
                                 Lịch sử thao tác
                             </Typography>
                         </Grid>
-                        <Grid
-                            item
-                            xs={6}
-                            md={5}
-                            display={'flex'}
-                            alignItems={'center'}
-                            justifyContent={'end'}
-                            spacing={1}>
+                        <Grid item xs={6} md={5} display={'flex'} alignItems={'center'} justifyContent={'end'}>
                             <Button
                                 className="border-color btn-outline-hover"
                                 aria-describedby="popover-filter"

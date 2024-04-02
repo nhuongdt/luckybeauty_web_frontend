@@ -5,7 +5,15 @@ export default class UserLoginInfoDto extends EntityDto {
 
     surname!: string;
 
+    fullName!: string;
+
     userName!: string;
 
     emailAddress!: string;
+
+    nhanSuId!: string | null;
+
+    avatar!: string | null;
+
+    idChiNhanhMacDinh!: string | null;
 }

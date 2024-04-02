@@ -5,6 +5,8 @@ import { RegisterOutput } from './dto/registerOutput';
 import http from '../httpService';
 import { resetPasswordInput } from './dto/resetPasswordInput';
 import { ResetPasswordOutput } from './dto/resetPasswordOutput';
+import { ImpersonateInput } from './dto/impersonateInput';
+import { ImpersonateOutput } from './dto/impersonateOutput';
 
 class AccountService {
     public async isTenantAvailable(isTenantAvaibleInput: IsTenantAvaibleInput): Promise<IsTenantAvaibleOutput> {
@@ -22,11 +24,19 @@ class AccountService {
         return result.data.result;
     }
     public async SendPasswordResetCode(emailAddress: string, tenantId?: number) {
-        const responsive = await http.post('api/services/app/Account/SendPasswordResetCode', {
+        const response = await http.post('api/services/app/Account/SendPasswordResetCode', {
             emailAddress: emailAddress,
             tenantId: tenantId
         });
-        return responsive.data.result;
+        return response.data.result;
+    }
+    public async impersonate(body: ImpersonateInput): Promise<ImpersonateOutput> {
+        const response = await http.post('api/services/app/Account/Impersonate', body);
+        return response.data.result;
+    }
+    public async backToImpersonator(): Promise<ImpersonateOutput> {
+        const response = await http.post('api/services/app/Account/BackToImpersonator');
+        return response.data.result;
     }
 }
 

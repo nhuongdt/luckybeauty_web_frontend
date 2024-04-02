@@ -329,7 +329,7 @@ const KhuyenMaiPage: React.FC = () => {
     return (
         <Box paddingTop={2}>
             <Grid container alignItems="center" spacing={1} justifyContent="space-between">
-                <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
+                <Grid item xs={12} sm={6} md="auto" display="flex" alignItems="center" gap="10px">
                     <Typography variant="h1" fontSize="16px" fontWeight="700" color="#333233">
                         Voucher
                     </Typography>
@@ -369,7 +369,7 @@ const KhuyenMaiPage: React.FC = () => {
                             }}
                         />
                     </Box>
-                    {window.screen.width < 767 ? (
+                    {window.screen.width < 768 ? (
                         <ButtonGroup
                             variant="contained"
                             sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
@@ -395,8 +395,8 @@ const KhuyenMaiPage: React.FC = () => {
                         </ButtonGroup>
                     ) : null}
                 </Grid>
-                {window.screen.width > 768 ? (
-                    <Grid item xs={12} md="auto" display="flex" gap="8px" justifyContent="end">
+                {window.screen.width >= 768 ? (
+                    <Grid item xs={12} sm={6} md="auto" display="flex" gap="8px" justifyContent="end">
                         <ButtonGroup
                             variant="contained"
                             sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>

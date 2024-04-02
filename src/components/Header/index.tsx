@@ -750,24 +750,19 @@ const Header: React.FC<HeaderProps> = (
                                     localStorage.clear();
                                     handleClose();
                                     navigate('/login');
+                                    window.location.reload();
                                 }}>
-                                <Link
-                                    to="/login"
-                                    style={{ textDecoration: 'none', listStyle: 'none' }}
-                                    onClick={() => {
-                                        Object.keys(Cookies.get()).forEach((cookieName) => {
-                                            if (cookieName !== 'TenantName' && cookieName !== 'Abp.TenantId') {
-                                                Cookies.remove(cookieName);
-                                            }
-                                        });
-                                        localStorage.clear();
-                                    }}>
+                                <Box
+                                    display={'flex'}
+                                    flexDirection={'row'}
+                                    gap={2}
+                                    alignItems={'center'}
+                                    justifyContent={'start'}>
                                     <LogoutIcon />
                                     <Box component="button" className="typo">
-                                        {' '}
                                         Đăng xuất{' '}
                                     </Box>
-                                </Link>
+                                </Box>
                             </MenuItem>
                         </Menu>
                         {!open && <ExpandMoreIcon />}

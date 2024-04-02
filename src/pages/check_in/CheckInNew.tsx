@@ -135,7 +135,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     };
 
     return (
-        <>
+        <Box padding={2}>
             <ListNhanVienDataContext.Provider value={lstNhanVien}>
                 <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
             </ListNhanVienDataContext.Provider>
@@ -157,6 +157,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 sm: 'flex-start',
                                 xs: 'flex-start'
                             }}
+                            padding={2}
                             spacing={{ xs: 2, sm: 2, md: 1, lg: 1 }}
                             direction="row"
                             display="flex"
@@ -185,7 +186,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                     setTextSeach(event.target.value);
                                 }}
                             />
-                            <EventIcon
+                            {/* <EventIcon
                                 sx={{
                                     width: 38,
                                     height: 36.5,
@@ -194,7 +195,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                     padding: '6px',
                                     display: 'none'
                                 }}
-                            />
+                            /> */}
 
                             <Button
                                 className=" btn-container-hover"
@@ -329,6 +330,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                     </Grid>
                 ))}
             </Grid>
-        </>
+        </Box>
     );
 }

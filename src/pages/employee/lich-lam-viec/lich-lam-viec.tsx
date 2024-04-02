@@ -487,8 +487,8 @@ const LichLamViec: React.FC = () => {
                                 padding: '4px 4px 20px 4px'
                             }
                         }}>
-                        {lichLamViecStore.listLichLamViec?.items?.map((item) => (
-                            <TableRow key={item.tenNhanVien.replace(/\s/g, '')}>
+                        {lichLamViecStore.listLichLamViec?.items?.map((item, index) => (
+                            <TableRow key={index}>
                                 <TableCell sx={{ border: '0!important', width: '20%' }}>
                                     <Box
                                         sx={{

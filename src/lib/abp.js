@@ -171,7 +171,7 @@ var abp = abp || {};
         return true;
     };
 
-    abp.auth.tokenCookieName = 'Abp.AuthToken';
+    abp.auth.tokenCookieName = 'Abp.AuthToken1';
 
     abp.auth.setToken = function (authToken, expireDate) {
         abp.utils.setCookieValue(abp.auth.tokenCookieName, authToken, expireDate, abp.appPath, abp.domain);

@@ -281,7 +281,7 @@ export default function ModalAddMauIn({
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid item sm={12} md={6} lg={6}>
+                            <Grid item sm={12} md={6} lg={6} width={'100%'}>
                                 <CustomCkeditor html={html} handleChange={onChangeCkeditor} />
                             </Grid>
                             <Grid item sm={12} md={6} lg={6}>
