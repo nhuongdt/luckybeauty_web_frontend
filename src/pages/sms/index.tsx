@@ -42,18 +42,20 @@ import AppConsts, { ISelect, LoaiTin, TrangThaiGuiTinZalo, TrangThaiSMS, TypeAct
 import DateFilterCustom from '../../components/DatetimePicker/DateFilterCustom';
 import he_thong_sms_services from '../../services/sms/gui_tin_nhan/he_thong_sms_services';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
-import ModalSmsTemplate from './mau_tin_nhan/components/modal_sms_template';
+import ModalSmsTemplate from './mau_tin_nhan/modal_sms_template';
 import { MauTinSMSDto } from '../../services/sms/mau_tin_sms/mau_tin_dto';
-import MauTinSMService from '../../services/sms/mau_tin_sms/MauTinSMService';
+import MauTinSMService from '../../services/sms/mau_tin_sms/MauTinSMSService';
 import fileDowloadService from '../../services/file-dowload.service';
 import { IFileDto } from '../../services/dto/FileDto';
-import ModalGuiTinNhanZalo from './components/modal_gui_tin_zalo';
-import ZaloService from '../../services/sms/gui_tin_nhan/ZaloService';
-import { IZaloDataSend, InforZOA, ZaloAuthorizationDto } from '../../services/sms/gui_tin_nhan/zalo_dto';
+import ModalGuiTinNhanZalo from '../zalo/modal_gui_tin_zalo';
+import ZaloService from '../../services/zalo/ZaloService';
+import { IZaloDataSend, InforZOA, ZaloAuthorizationDto } from '../../services/zalo/zalo_dto';
 import { Guid } from 'guid-typescript';
 import abpCustom from '../../components/abp-custom';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import utils from '../../utils/utils';
+import ModalZaloTemplate from '../zalo/modal_zalo_template';
+import { IZaloTemplate } from '../../services/zalo/ZaloTemplateDto';
 
 const styleListItem = createTheme({
     components: {
@@ -224,6 +226,8 @@ const TinNhanPage = () => {
     const [lstRowSelect, setLstRowSelect] = useState<CustomerSMSDto[]>([]);
     const [idLoaiTin, setIdLoaiTin] = useState(1);
 
+    const [zaloLstTemplateDefault, setZaloLstTemplateDefault] = useState<IZaloTemplate[]>([]);
+
     useEffect(() => {
         GetListColumn_DataGrid();
     }, [tabActive]);
@@ -232,16 +236,32 @@ const TinNhanPage = () => {
         GetListBrandname();
         GetAllMauTinSMS();
         GetZaloTokenfromDB();
+        InnitData_TempZalo();
     }, []);
 
+    const InnitData_TempZalo = async () => {
+        const data = await ZaloService.InnitData_TempZalo();
+        setZaloLstTemplateDefault(data);
+        console.log('datazalo ', data);
+    };
+
     const TestGuiTinZalo = async () => {
-        await ZaloService.GuiTinNhanGiaoDich_WithMyTemp(zaloToken.accessToken, '6441788310775550433', {
-            tenKhachHang: 'Nhuong dt',
-            maHoaDon: 'HDTest001',
-            ngayLapHoaDon: '11:43 21/03/2024',
-            tongTienHang: 100000,
-            logoChiNhanh: congty?.logo
-        } as IZaloDataSend);
+        // await ZaloService.NguoiDung_ChiaSeThongTin_ChoOA(inforZOA, zaloToken.accessToken, '1311392252375682231');
+        const data = {
+            tenKhachHang: 'Nhuongdt',
+            tenChiNhanh: 'SSOFT',
+            zoaUserId: '6441788310775550433'
+        } as CustomerSMSDto;
+        await ZaloService.GuiTinGiaoDich_fromDataDB(data, zaloToken.accessToken, LoaiTin.TIN_SINH_NHAT);
+        // await ZaloService.SendMessageToUser(zaloToken.accessToken);
+
+        // await ZaloService.GuiTinNhanGiaoDich_WithMyTemp(zaloToken.accessToken, '6441788310775550433', {
+        //     tenKhachHang: 'Nhuong dt',
+        //     maHoaDon: 'HDTest001',
+        //     ngayLapHoaDon: '11:43 21/03/2024',
+        //     tongTienHang: 100000,
+        //     logoChiNhanh: congty?.logo
+        // } as IZaloDataSend);
     };
 
     const GetZaloTokenfromDB = async () => {
@@ -800,10 +820,15 @@ const TinNhanPage = () => {
                 onClose={() => setIsShowModalGuiTinZalo(false)}
                 onSaveOK={saveSMSOK}
             />
-            <ModalSmsTemplate
+            {/* <ModalSmsTemplate
                 visiable={isShowModalAddMauTin}
                 onCancel={() => setIsShowModalAddMauTin(false)}
                 onOK={saveMauTinOK}
+            /> */}
+            <ModalZaloTemplate
+                onClose={() => setIsShowModalAddMauTin(false)}
+                isShowModal={isShowModalAddMauTin}
+                lstData={zaloLstTemplateDefault}
             />
             <SnackbarAlert
                 showAlert={objAlert.show}
@@ -929,11 +954,12 @@ const TinNhanPage = () => {
                                         display: abpCustom.isGrandPermission('Pages.HeThongSMS.Create') ? '' : 'none'
                                     }}
                                     variant="contained"
-                                    onClick={() => {
-                                        setIsShowModalAdd(true);
-                                        setIdLoaiTin(1);
-                                        setLstRowSelect([]);
-                                    }}
+                                    onClick={TestGuiTinZalo}
+                                    // onClick={() => {
+                                    //     setIsShowModalAdd(true);
+                                    //     setIdLoaiTin(1);
+                                    //     setLstRowSelect([]);
+                                    // }}
                                     startIcon={<Add />}>
                                     Tin nhắn mới
                                 </Button>

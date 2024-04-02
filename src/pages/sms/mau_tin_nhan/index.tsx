@@ -1,9 +1,9 @@
 import { Box, Button, Chip, Stack, Typography } from '@mui/material';
 import AddIcon from '../../../images/add.svg';
-import ModalSmsTemplate from './components/modal_sms_template';
+import ModalSmsTemplate from './modal_sms_template';
 import { useEffect, useState } from 'react';
 import { GroupMauTinSMSDto, MauTinSMSDto } from '../../../services/sms/mau_tin_sms/mau_tin_dto';
-import MauTinSMService from '../../../services/sms/mau_tin_sms/MauTinSMService';
+import MauTinSMSService from '../../../services/sms/mau_tin_sms/MauTinSMSService';
 import PageEmpty from '../../../components/DataGrid/PageEmpty';
 import abpCustom from '../../../components/abp-custom';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
@@ -20,7 +20,7 @@ const MauTinNhan = () => {
     }, []);
 
     const GetAllMauTinSMS = async () => {
-        const data = await MauTinSMService.GetAllMauTinSMS_GroupLoaiTin();
+        const data = await MauTinSMSService.GetAllMauTinSMS_GroupLoaiTin();
         if (data !== null) {
             setDataGroupMauTin(data);
         }

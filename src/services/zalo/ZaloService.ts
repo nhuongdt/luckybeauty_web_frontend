@@ -559,8 +559,20 @@ class ZaloService {
         return result.data.result;
     };
 
+    GetZaloTemplate_byId = async (idTemp: string): Promise<IZaloTemplate | null> => {
+        const result = await http.get(`api/services/app/Zalo_Template/GetZaloTemplate_byId?id=${idTemp}`);
+        return result.data.result;
+    };
     InnitData_TempZalo = async (): Promise<IZaloTemplate[]> => {
         const result = await http.get(`api/services/app/Zalo_Template/InnitData_TempZalo`);
+        return result.data.result;
+    };
+    InsertMauTinZalo = async (input: IZaloTemplate): Promise<IZaloTemplate> => {
+        const result = await http.post(`api/services/app/Zalo_Template/InsertMauTinZalo`, input);
+        return result.data.result;
+    };
+    UpdateMauTinZalo = async (input: IZaloTemplate): Promise<IZaloTemplate> => {
+        const result = await http.post(`api/services/app/Zalo_Template/UpdateMauTinZalo`, input);
         return result.data.result;
     };
 }
