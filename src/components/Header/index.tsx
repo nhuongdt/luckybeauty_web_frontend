@@ -51,7 +51,7 @@ import UserNotificationState from '../../enum/UserNotificationState';
 import NotificationService from '../../services/notification/NotificationService';
 import utils from '../../utils/utils';
 import suggestStore from '../../stores/suggestStore';
-import impersonationService, { Impersonation } from '../../services/impersonation/impersonationService';
+import impersonationService, { Impersonation } from '../../../impersonationService';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -728,7 +728,7 @@ const Header: React.FC<HeaderProps> = (
                                 className="hover"
                                 sx={{ display: Cookies.get(Impersonation) ? '' : 'none' }}
                                 onClick={async () => {
-                                    impersonationService.backToImpersonate();
+                                    await impersonationService.backToImpersonate();
                                 }}>
                                 <Box
                                     display={'flex'}

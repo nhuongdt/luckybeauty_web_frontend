@@ -1,9 +1,9 @@
 import Cookies from 'js-cookie';
-import authenticationStore from '../../stores/authenticationStore';
 import accountService from '../account/accountService';
+import authenticationStore from '../../stores/authenticationStore';
+import sessionStore from '../../stores/sessionStore';
 import tokenAuthService from '../tokenAuth/tokenAuthService';
 import loginService from '../login/loginService';
-import sessionStore from '../../stores/sessionStore';
 export const Impersonation = 'IsImpersonation';
 class ImpersonationService {
     public async impersonate(userId: number, tenantId?: number) {

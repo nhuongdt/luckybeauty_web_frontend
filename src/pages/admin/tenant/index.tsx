@@ -21,7 +21,6 @@ import abpCustom from '../../../components/abp-custom';
 import { format as formatDateFns } from 'date-fns';
 import { IList } from '../../../services/dto/IList';
 import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
-import impersonationService from '../../../services/impersonation/impersonationService';
 import ChooseImpersonateToTenant from './components/choose_impersonate_to_tenant';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ITenantProps {}

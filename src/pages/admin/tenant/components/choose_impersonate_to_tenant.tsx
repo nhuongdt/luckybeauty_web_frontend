@@ -19,10 +19,10 @@ import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg
 import { ReactComponent as ArrowSquareRightIcon } from '../../../../images/arrow-square-right.svg';
 import React, { FC, useEffect, useState } from 'react';
 import { INameValue } from '../../../../lib/abp';
-import impersonationService from '../../../../services/impersonation/impersonationService';
 import http from '../../../../services/httpService';
 import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
 import { ReactComponent as SearchIcon } from '../../../../images/search-normal.svg';
+import impersonationService from '../../../../../impersonationService';
 interface IProps {
     visible: boolean;
     onCancel: () => void;
