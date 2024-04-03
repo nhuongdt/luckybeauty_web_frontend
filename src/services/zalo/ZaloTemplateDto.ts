@@ -4,6 +4,7 @@ export interface IZaloTemplate {
     tenMauTin: string;
     // moTaChiTiet: string;
     isDefault: boolean;
+    isSystem?: boolean;
     template_type: string;
     language: string;
     elements?: IZaloElement[];
@@ -27,7 +28,7 @@ export interface IZaloTableDetail {
 }
 export interface IZaloButtonDetail {
     id: string;
-    idElement: string;
+    idTemplate: string;
     thuTuSapXep: number;
     type: string;
     title: string;

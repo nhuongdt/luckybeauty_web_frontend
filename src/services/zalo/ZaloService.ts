@@ -558,11 +558,19 @@ class ZaloService {
         );
         return result.data.result;
     };
-
     GetZaloTemplate_byId = async (idTemp: string): Promise<IZaloTemplate | null> => {
         const result = await http.get(`api/services/app/Zalo_Template/GetZaloTemplate_byId?id=${idTemp}`);
         return result.data.result;
     };
+    XoaMauTinZalo = async (idTemp: string): Promise<boolean> => {
+        const result = await http.get(`api/services/app/Zalo_Template/XoaMauTinZalo?idTemp=${idTemp}`);
+        return result.data.result;
+    };
+    GetAllZaloTemplate_fromDB = async (): Promise<IZaloTemplate[]> => {
+        const result = await http.get(`api/services/app/Zalo_Template/GetAllZaloTemplate_fromDB`);
+        return result.data.result;
+    };
+
     InnitData_TempZalo = async (): Promise<IZaloTemplate[]> => {
         const result = await http.get(`api/services/app/Zalo_Template/InnitData_TempZalo`);
         return result.data.result;

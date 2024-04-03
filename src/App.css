@@ -428,3 +428,7 @@ body .font-normal {
 .zalo-template .zoa-element-lable {
 font-weight: 600;
 }
+.zalo-template .btnRemove {
+    color: #b93530;
+    cursor: pointer;
+}
