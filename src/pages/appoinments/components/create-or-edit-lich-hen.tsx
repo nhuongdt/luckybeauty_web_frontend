@@ -133,7 +133,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                         : 'Cập nhật lịch hẹn'}
                     <DialogButtonClose onClose={onCancel} />
                 </DialogTitle>
-                <DialogContent sx={{ pr: '0', pb: '0', pt: '16px!important' }}>
+                <DialogContent sx={{ pt: '16px!important' }}>
                     <Formik
                         initialValues={initialValues}
                         onSubmit={this.handleSubmit}
@@ -188,6 +188,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                 </Button>
                                             </Stack>
                                             <Box
+                                                className="mt-3 mt-md-0"
                                                 display={'flex'}
                                                 justifyContent={'center'}
                                                 alignItems={'center'}
@@ -196,8 +197,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                     <CustomerIcon width={'60px'} height={'60px'} />
                                                 </Avatar>
                                                 <Typography
-                                                    marginTop={'40px'}
-                                                    marginBottom={'12px'}
+                                                    className="mt-3 mt-md-4 mb-2 mb-md-3"
                                                     color={'#3D475C'}
                                                     fontSize={'18px'}
                                                     fontWeight={'700'}>
@@ -209,230 +209,241 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                             </Box>
                                         </Box>
                                     </Grid>
-                                    <Grid item xs={12} sm={7} sx={{ bgcolor: '#F9FAFC', pr: '24px' }}>
-                                        <FormGroup className="mt-4 mb-1">
-                                            <DatePickerRequiredCustom
-                                                props={{
-                                                    width: '100%',
-                                                    size: 'small',
-                                                    label: (
-                                                        <Typography variant="subtitle2">
-                                                            Ngày
-                                                            <span className="text-danger"> *</span>
-                                                        </Typography>
-                                                    ),
-                                                    error: Boolean(errors.startTime),
-                                                    helperText: Boolean(errors.startTime) && (
-                                                        <span className="text-danger">{String(errors.startTime)}</span>
-                                                    )
-                                                }}
-                                                defaultVal={values.startTime}
-                                                handleChangeDate={(value: string) => {
-                                                    values.startTime = value;
-                                                }}
-                                            />
-                                        </FormGroup>
-                                        <Grid container spacing={2} sx={{ marginTop: '4px' }}>
-                                            <Grid item md={8} sm={6} xs={12}>
-                                                <FormGroup>
-                                                    <Autocomplete
-                                                        options={suggestStore?.suggestDichVu ?? []}
-                                                        getOptionLabel={(option) => `${option.tenDichVu}`}
-                                                        value={
-                                                            suggestStore.suggestDichVu?.filter(
-                                                                (x) => x.id == values.idDonViQuiDoi
-                                                            )?.[0] ??
-                                                            ({
-                                                                id: '',
-                                                                donGia: 0,
-                                                                tenDichVu: ''
-                                                            } as SuggestDichVuDto)
-                                                        }
-                                                        size="small"
-                                                        fullWidth
-                                                        disablePortal
-                                                        onChange={async (event, value) => {
-                                                            setFieldValue('idDonViQuiDoi', value ? value.id : ''); // Cập nhật giá trị id trong Formik
-
-                                                            await suggestStore.getSuggestKyThuatVienByIdDichVu(
-                                                                value ? value.id : ''
-                                                            );
-                                                        }}
-                                                        renderInput={(params) => (
-                                                            <TextField
-                                                                {...params}
-                                                                label={
-                                                                    <Typography variant="subtitle2" fontSize="13px">
-                                                                        Dịch vụ <span className="text-danger">*</span>
-                                                                    </Typography>
-                                                                }
-                                                                error={
-                                                                    errors.idDonViQuiDoi && touched.idDonViQuiDoi
-                                                                        ? true
-                                                                        : false
-                                                                }
-                                                                helperText={
-                                                                    errors.idDonViQuiDoi &&
-                                                                    touched.idDonViQuiDoi && (
-                                                                        <small className="text-danger">
-                                                                            {errors.idDonViQuiDoi}
-                                                                        </small>
-                                                                    )
-                                                                }
-                                                                placeholder="Nhập tên dịch vụ"
-                                                            />
-                                                        )}
-                                                    />
-                                                </FormGroup>
-                                            </Grid>
-                                            <Grid item md={4} xs={12} sm={6}>
-                                                <FormGroup>
-                                                    <TextField
-                                                        label={
-                                                            <Typography variant="subtitle2" fontSize="14px">
-                                                                Thời gian bắt đầu <span className="text-danger">*</span>
+                                    <Grid item xs={12} sm={7}>
+                                        <Box sx={{ bgcolor: '#F9FAFC' }}>
+                                            <FormGroup className="mt-4 mt-md-0 mb-1">
+                                                <DatePickerRequiredCustom
+                                                    props={{
+                                                        width: '100%',
+                                                        size: 'small',
+                                                        label: (
+                                                            <Typography variant="subtitle2">
+                                                                Ngày
+                                                                <span className="text-danger"> *</span>
                                                             </Typography>
-                                                        }
-                                                        error={errors.startHours && touched.startHours ? true : false}
-                                                        helperText={
-                                                            errors.startHours &&
-                                                            touched.startHours && (
-                                                                <span className="text-danger">{errors.startHours}</span>
-                                                            )
-                                                        }
-                                                        InputLabelProps={{
-                                                            shrink: true
-                                                        }}
-                                                        type="time"
-                                                        size="small"
-                                                        name="startHours"
-                                                        value={values.startHours}
-                                                        onChange={handleChange}></TextField>
-                                                </FormGroup>
-                                            </Grid>
-                                            <Grid container item spacing={[4, 2]}>
+                                                        ),
+                                                        error: Boolean(errors.startTime),
+                                                        helperText: Boolean(errors.startTime) && (
+                                                            <span className="text-danger">
+                                                                {String(errors.startTime)}
+                                                            </span>
+                                                        )
+                                                    }}
+                                                    defaultVal={values.startTime}
+                                                    handleChangeDate={(value: string) => {
+                                                        values.startTime = value;
+                                                    }}
+                                                />
+                                            </FormGroup>
+                                            <Grid container spacing={2} sx={{ marginTop: '4px' }}>
                                                 <Grid item md={8} sm={6} xs={12}>
                                                     <FormGroup>
                                                         <Autocomplete
-                                                            options={suggestStore?.suggestKyThuatVien ?? []}
-                                                            getOptionLabel={(option) => `${option.tenNhanVien}`}
+                                                            options={suggestStore?.suggestDichVu ?? []}
+                                                            getOptionLabel={(option) => `${option.tenDichVu}`}
                                                             value={
-                                                                suggestStore.suggestKyThuatVien?.filter(
-                                                                    (x) => x.id == values.idNhanVien
+                                                                suggestStore.suggestDichVu?.filter(
+                                                                    (x) => x.id == values.idDonViQuiDoi
                                                                 )?.[0] ??
                                                                 ({
                                                                     id: '',
-                                                                    avatar: '',
-                                                                    chucVu: '',
-                                                                    soDienThoai: '',
-                                                                    tenNhanVien: '',
-                                                                    trangThai: 0
-                                                                } as SuggestNhanVienDichVuDto)
+                                                                    donGia: 0,
+                                                                    tenDichVu: ''
+                                                                } as SuggestDichVuDto)
                                                             }
                                                             size="small"
                                                             fullWidth
                                                             disablePortal
-                                                            getOptionDisabled={(option) => option.trangThai !== 1}
-                                                            onChange={(event, value) => {
-                                                                setFieldValue('idNhanVien', value ? value.id : ''); // Cập nhật giá trị id trong Formik
+                                                            onChange={async (event, value) => {
+                                                                setFieldValue('idDonViQuiDoi', value ? value.id : ''); // Cập nhật giá trị id trong Formik
+
+                                                                await suggestStore.getSuggestKyThuatVienByIdDichVu(
+                                                                    value ? value.id : ''
+                                                                );
                                                             }}
                                                             renderInput={(params) => (
                                                                 <TextField
                                                                     {...params}
                                                                     label={
-                                                                        <Typography variant="body2">
-                                                                            Nhân viên
+                                                                        <Typography variant="subtitle2" fontSize="13px">
+                                                                            Dịch vụ{' '}
+                                                                            <span className="text-danger">*</span>
                                                                         </Typography>
                                                                     }
-                                                                    placeholder="Nhập tên nhân viên"
+                                                                    error={
+                                                                        errors.idDonViQuiDoi && touched.idDonViQuiDoi
+                                                                            ? true
+                                                                            : false
+                                                                    }
+                                                                    helperText={
+                                                                        errors.idDonViQuiDoi &&
+                                                                        touched.idDonViQuiDoi && (
+                                                                            <small className="text-danger">
+                                                                                {errors.idDonViQuiDoi}
+                                                                            </small>
+                                                                        )
+                                                                    }
+                                                                    placeholder="Nhập tên dịch vụ"
                                                                 />
                                                             )}
                                                         />
                                                     </FormGroup>
                                                 </Grid>
-                                                <Grid item md={4} sm={6} xs={12}>
+                                                <Grid item md={4} xs={12} sm={6}>
                                                     <FormGroup>
                                                         <TextField
                                                             label={
                                                                 <Typography variant="subtitle2" fontSize="14px">
-                                                                    Thời gian làm
+                                                                    Thời gian bắt đầu{' '}
+                                                                    <span className="text-danger">*</span>
                                                                 </Typography>
                                                             }
-                                                            value={
-                                                                suggestStore.suggestDichVu?.find(
-                                                                    (x) => x.id == values.idDonViQuiDoi
-                                                                )?.thoiGianThucHien ?? '0'
+                                                            error={
+                                                                errors.startHours && touched.startHours ? true : false
                                                             }
-                                                            type="text"
-                                                            size="small"></TextField>
+                                                            helperText={
+                                                                errors.startHours &&
+                                                                touched.startHours && (
+                                                                    <span className="text-danger">
+                                                                        {errors.startHours}
+                                                                    </span>
+                                                                )
+                                                            }
+                                                            InputLabelProps={{
+                                                                shrink: true
+                                                            }}
+                                                            type="time"
+                                                            size="small"
+                                                            name="startHours"
+                                                            value={values.startHours}
+                                                            onChange={handleChange}></TextField>
                                                     </FormGroup>
                                                 </Grid>
+                                                <Grid container item spacing={[4, 2]}>
+                                                    <Grid item md={8} sm={6} xs={12}>
+                                                        <FormGroup>
+                                                            <Autocomplete
+                                                                options={suggestStore?.suggestKyThuatVien ?? []}
+                                                                getOptionLabel={(option) => `${option.tenNhanVien}`}
+                                                                value={
+                                                                    suggestStore.suggestKyThuatVien?.filter(
+                                                                        (x) => x.id == values.idNhanVien
+                                                                    )?.[0] ??
+                                                                    ({
+                                                                        id: '',
+                                                                        avatar: '',
+                                                                        chucVu: '',
+                                                                        soDienThoai: '',
+                                                                        tenNhanVien: '',
+                                                                        trangThai: 0
+                                                                    } as SuggestNhanVienDichVuDto)
+                                                                }
+                                                                size="small"
+                                                                fullWidth
+                                                                disablePortal
+                                                                getOptionDisabled={(option) => option.trangThai !== 1}
+                                                                onChange={(event, value) => {
+                                                                    setFieldValue('idNhanVien', value ? value.id : ''); // Cập nhật giá trị id trong Formik
+                                                                }}
+                                                                renderInput={(params) => (
+                                                                    <TextField
+                                                                        {...params}
+                                                                        label={
+                                                                            <Typography variant="body2">
+                                                                                Nhân viên
+                                                                            </Typography>
+                                                                        }
+                                                                        placeholder="Nhập tên nhân viên"
+                                                                    />
+                                                                )}
+                                                            />
+                                                        </FormGroup>
+                                                    </Grid>
+                                                    <Grid item md={4} sm={6} xs={12}>
+                                                        <FormGroup>
+                                                            <TextField
+                                                                label={
+                                                                    <Typography variant="subtitle2" fontSize="14px">
+                                                                        Thời gian làm
+                                                                    </Typography>
+                                                                }
+                                                                value={
+                                                                    suggestStore.suggestDichVu?.find(
+                                                                        (x) => x.id == values.idDonViQuiDoi
+                                                                    )?.thoiGianThucHien ?? '0'
+                                                                }
+                                                                type="text"
+                                                                size="small"></TextField>
+                                                        </FormGroup>
+                                                    </Grid>
+                                                </Grid>
                                             </Grid>
-                                        </Grid>
-                                        {[
-                                            TrangThaiBooking.Wait,
-                                            TrangThaiBooking.Confirm,
-                                            TrangThaiBooking.CheckIn
-                                        ].includes(values.trangThai) && (
-                                            <Grid item sx={{ marginTop: '16px' }}>
-                                                <FormControl fullWidth>
-                                                    <InputLabel>
-                                                        <Typography fontSize="14px">Trạng thái</Typography>
-                                                    </InputLabel>
-                                                    <Select
-                                                        label={<Typography fontSize="14px">Trạng thái</Typography>}
-                                                        fullWidth
-                                                        size="small"
-                                                        name="trangThai"
-                                                        value={values.trangThai}
-                                                        onChange={handleChange}>
-                                                        {AppConsts.trangThaiBooking
-                                                            .filter(
-                                                                (x) =>
-                                                                    x.value !== TrangThaiBooking.Cancel &&
-                                                                    x.value !== TrangThaiBooking.Success
-                                                            )
-                                                            .map((item) => (
-                                                                <MenuItem key={item.value} value={item.value}>
-                                                                    {item.name}
-                                                                </MenuItem>
-                                                            ))}
-                                                    </Select>
-                                                </FormControl>
-                                            </Grid>
-                                        )}
+                                            {[
+                                                TrangThaiBooking.Wait,
+                                                TrangThaiBooking.Confirm,
+                                                TrangThaiBooking.CheckIn
+                                            ].includes(values.trangThai) && (
+                                                <Grid item sx={{ marginTop: '16px' }}>
+                                                    <FormControl fullWidth>
+                                                        <InputLabel>
+                                                            <Typography fontSize="14px">Trạng thái</Typography>
+                                                        </InputLabel>
+                                                        <Select
+                                                            label={<Typography fontSize="14px">Trạng thái</Typography>}
+                                                            fullWidth
+                                                            size="small"
+                                                            name="trangThai"
+                                                            value={values.trangThai}
+                                                            onChange={handleChange}>
+                                                            {AppConsts.trangThaiBooking
+                                                                .filter(
+                                                                    (x) =>
+                                                                        x.value !== TrangThaiBooking.Cancel &&
+                                                                        x.value !== TrangThaiBooking.Success
+                                                                )
+                                                                .map((item) => (
+                                                                    <MenuItem key={item.value} value={item.value}>
+                                                                        {item.name}
+                                                                    </MenuItem>
+                                                                ))}
+                                                        </Select>
+                                                    </FormControl>
+                                                </Grid>
+                                            )}
 
-                                        <Grid item sx={{ marginTop: '16px' }}>
-                                            <FormGroup className="mt-2 mb-4">
-                                                <TextField
-                                                    label={
-                                                        <Typography variant="subtitle2" fontSize="14px">
-                                                            Ghi chú
-                                                        </Typography>
-                                                    }
-                                                    type="text"
-                                                    multiline
-                                                    rows={4}
-                                                    size="small"
-                                                    name="ghiChu"
-                                                    value={values.ghiChu}
-                                                    onChange={handleChange}></TextField>
-                                            </FormGroup>
-                                        </Grid>
+                                            <Grid item sx={{ marginTop: '16px' }}>
+                                                <FormGroup className="mt-2 mb-4">
+                                                    <TextField
+                                                        label={
+                                                            <Typography variant="subtitle2" fontSize="14px">
+                                                                Ghi chú
+                                                            </Typography>
+                                                        }
+                                                        type="text"
+                                                        multiline
+                                                        rows={4}
+                                                        size="small"
+                                                        name="ghiChu"
+                                                        value={values.ghiChu}
+                                                        onChange={handleChange}></TextField>
+                                                </FormGroup>
+                                            </Grid>
+                                        </Box>
                                     </Grid>
                                 </Grid>
                                 <DialogActions
                                     sx={{
-                                        pr: '0',
-                                        pb: '24px',
+                                        pr: '0px !important',
+                                        //pb: '24px',
                                         position: 'sticky',
                                         bgcolor: '#fff',
-                                        bottom: '0',
+                                        bottom: '-16px',
                                         left: '0',
-                                        pt: 2
+                                        pt: 2,
+                                        zIndex: 2
                                     }}>
                                     <Grid container>
-                                        <Grid item xs={12} sx={{ bgcolor: '#F9FAFC' }}>
+                                        <Grid item xs={12}>
                                             <Box
                                                 display="flex"
                                                 justifyContent="end"
