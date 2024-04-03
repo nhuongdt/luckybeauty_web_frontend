@@ -51,7 +51,7 @@ import UserNotificationState from '../../enum/UserNotificationState';
 import NotificationService from '../../services/notification/NotificationService';
 import utils from '../../utils/utils';
 import suggestStore from '../../stores/suggestStore';
-import impersonationService, { Impersonation } from '../../../impersonationService';
+import impersonationService, { Impersonation } from '../../services/impersonation/impersonationService';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;

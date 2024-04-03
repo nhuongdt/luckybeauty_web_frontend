@@ -22,7 +22,7 @@ import { INameValue } from '../../../../lib/abp';
 import http from '../../../../services/httpService';
 import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
 import { ReactComponent as SearchIcon } from '../../../../images/search-normal.svg';
-import impersonationService from '../../../../../impersonationService';
+import impersonationService from '../../../../services/impersonation/impersonationService';
 interface IProps {
     visible: boolean;
     onCancel: () => void;
