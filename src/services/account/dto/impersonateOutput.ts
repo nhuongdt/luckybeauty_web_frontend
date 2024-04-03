@@ -1,4 +1,4 @@
 export interface ImpersonateOutput {
-    impersonationToken: string | undefined;
-    tenancyName: string | undefined;
+    impersonationToken: string;
+    tenancyName: string;
 }

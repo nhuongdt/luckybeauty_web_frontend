@@ -10,15 +10,19 @@ import AddIcon from '../../../images/add.svg';
 import CreateOrEditTenant from './components/create-or-edit-tenant';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import CreateTenantInput from '../../../services/tenant/dto/createTenantInput';
-import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { Info, Edit, DeleteForever, MoreHoriz } from '@mui/icons-material';
 import { TextTranslate } from '../../../components/TableLanguage';
 import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { enqueueSnackbar } from 'notistack';
 import abpCustom from '../../../components/abp-custom';
 import { format as formatDateFns } from 'date-fns';
+import { IList } from '../../../services/dto/IList';
+import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
+import impersonationService from '../../../services/impersonation/impersonationService';
+import ChooseImpersonateToTenant from './components/choose_impersonate_to_tenant';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ITenantProps {}
 
@@ -48,7 +52,8 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
         isShowConfirmDelete: false,
         anchorEl: null,
         selectedRowId: 0,
-        rowSelectedModel: [] as GridRowSelectionModel
+        rowSelectedModel: [] as GridRowSelectionModel,
+        visiableImperonate: false
     };
 
     componentDidMount() {
@@ -172,6 +177,30 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
         // Handle View action
         this.handleCloseMenu();
     };
+    onShowImpersonate = async () => {
+        await this.setState({ visiableImperonate: !this.state.visiableImperonate });
+    };
+    doActionRow = async (action: number, tenantId: number) => {
+        this.setState({ tenantId: tenantId, selectedRowId: tenantId });
+        switch (action) {
+            case 0:
+                {
+                    this.createOrUpdateModalOpen(tenantId);
+                }
+                break;
+            case 1:
+                {
+                    this.createOrUpdateModalOpen(tenantId);
+                }
+                break;
+            case 2:
+                this.onShowDelete();
+                break;
+            case 3:
+                this.onShowImpersonate();
+                break;
+        }
+    };
     render(): React.ReactNode {
         const columns: GridColDef[] = [
             {
@@ -283,21 +312,70 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                 maxWidth: 60,
                 flex: 1,
                 disableColumnMenu: true,
-                renderCell: (params: any) => (
-                    <Box>
-                        <IconButton
-                            aria-label="Actions"
-                            aria-controls={`actions-menu-${params.row.id}`}
-                            aria-haspopup="true"
-                            onClick={(event) => {
-                                this.handleOpenMenu(event, params.row.id);
-                            }}>
-                            <MoreHorizIcon />
-                        </IconButton>
-                    </Box>
+                renderCell: (params) => (
+                    <ActionViewEditDelete
+                        lstOption={
+                            [
+                                {
+                                    id: '0',
+                                    text: 'Xem',
+                                    color: '#009EF7',
+                                    isShow: abpCustom.isGrandPermission('Pages.Tenants'),
+                                    icon: <Info sx={{ color: '#009EF7' }} />
+                                },
+                                {
+                                    id: '1',
+                                    text: 'Sửa',
+                                    color: '#009EF7',
+                                    isShow: abpCustom.isGrandPermission('Pages.Tenants.Edit'),
+                                    icon: <Edit sx={{ color: '#009EF7' }} />
+                                },
+                                {
+                                    id: '2',
+                                    text: 'Xóa',
+                                    color: '#F1416C',
+                                    isShow:
+                                        !abpCustom.isGrandPermission('Pages.Tenants.Delete') ||
+                                        params.row.tenancyName === 'Default'
+                                            ? false
+                                            : true,
+                                    icon: <DeleteForever sx={{ color: '#F1416C' }} />
+                                },
+                                {
+                                    id: '3',
+                                    text: 'Chuyển đến tenant: ' + params.row.tenancyName,
+                                    color: '#009EF7',
+                                    isShow: true,
+                                    icon: <Info sx={{ color: '#009EF7' }} />
+                                }
+                            ] as IList[]
+                        }
+                        handleAction={(action: number) => this.doActionRow(action, params.row.id)}
+                    />
                 ),
                 renderHeader: (params: any) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
             }
+            // {
+            //     field: 'action',
+            //     headerName: 'Hành động',
+            //     maxWidth: 60,
+            //     flex: 1,
+            //     disableColumnMenu: true,
+            //     renderCell: (params: any) => (
+            //         <Box>
+            //             <IconButton
+            //                 aria-label="Actions"
+            //                 aria-controls={`actions-menu-${params.row.id}`}
+            //                 aria-haspopup="true"
+            //                 onClick={(event) => {
+            //                     this.handleOpenMenu(event, params.row.id);
+            //                 }}>
+            //                 <MoreHorizIcon />
+            //             </IconButton>
+            //         </Box>
+            //     ),
+            //     renderHeader: (params: any) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
+            // }
         ];
         return (
             <Box sx={{ paddingTop: '16px' }}>
@@ -384,7 +462,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                         hideFooter
                         localeText={TextTranslate}
                     />
-                    <ActionMenuTable
+                    {/* <ActionMenuTable
                         selectedRowId={this.state.selectedRowId}
                         anchorEl={this.state.anchorEl}
                         closeMenu={this.handleCloseMenu}
@@ -394,7 +472,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                         permissionEdit="Pages.Tenants.Edit"
                         handleDelete={this.onShowDelete}
                         permissionDelete="Pages.Tenants.Delete"
-                    />
+                    /> */}
                     <CustomTablePagination
                         currentPage={this.state.currentPage}
                         rowPerPage={this.state.maxResultCount}
@@ -421,6 +499,12 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     isShow={this.state.isShowConfirmDelete}
                     onOk={this.onOkDelete}
                     onCancel={this.onShowDelete}></ConfirmDelete>
+                <ChooseImpersonateToTenant
+                    tenantId={this.state.selectedRowId}
+                    visible={this.state.visiableImperonate}
+                    onCancel={() => {
+                        this.setState({ visiableImperonate: !this.state.visiableImperonate });
+                    }}></ChooseImpersonateToTenant>
             </Box>
         );
     }
