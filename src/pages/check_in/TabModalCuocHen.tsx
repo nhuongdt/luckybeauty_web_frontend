@@ -144,6 +144,7 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                 </Grid>
                 <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center' }}>
                     <Button
+                        fullWidth={window.screen.width < 768 ? true : false}
                         variant="contained"
                         sx={{
                             bgcolor: 'var(--color-main)',
