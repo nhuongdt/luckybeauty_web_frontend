@@ -47,8 +47,18 @@ class AuthenticationStore {
             ? Cookies.set('isRememberMe', 'true', { expires: tokenExpireDate })
             : Cookies.set('isRememberMe', 'false');
     }
-
-    async logout(reload?: boolean, returnUrl?: string) {
+    logout() {
+        localStorage.clear();
+        sessionStorage.clear();
+        // get an array of all cookie names
+        Object.keys(Cookies.get()).forEach((cookieName) => {
+            if (cookieName !== 'TenantName') {
+                Cookies.remove(cookieName);
+            }
+        });
+        window.location.href = '/login';
+    }
+    async LogoutForImpersonate() {
         await http
             .get('api/TokenAuth/LogOut', {
                 headers: {
@@ -59,21 +69,23 @@ class AuthenticationStore {
             .then((result) => {
                 localStorage.clear();
                 sessionStorage.clear();
-                // get an array of all cookie names
+                //get an array of all cookie names
                 Object.keys(Cookies.get()).forEach((cookieName) => {
-                    Cookies.remove(cookieName);
+                    this.handleDeleteCookie(cookieName);
                 });
-                if (reload !== false) {
-                    if (returnUrl) {
-                        location.href = returnUrl;
-                    } else {
-                        location.href = '';
-                    }
-                }
             })
             .catch((ex) => console.error(ex));
     }
-
+    handleDeleteCookie(cookieName: string) {
+        // Đặt ngày hết hạn của cookie thành một thời gian trong quá khứ
+        document.cookie = cookieName + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        // Kiểm tra xem cookie đã được xóa thành công hay không
+        if (Cookies.get(cookieName) === undefined) {
+            console.log(`Cookie ${cookieName} đã được xóa.`);
+        } else {
+            console.log(`Xóa cookie ${cookieName} thất bại.`);
+        }
+    }
     constructor() {
         makeAutoObservable(this);
     }

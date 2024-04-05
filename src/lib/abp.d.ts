@@ -226,22 +226,15 @@ export declare namespace abp {
 
         let messageFormatters: any;
 
-        function getUserNotificationStateAsString(
-            userNotificationState: userNotificationState
-        ): string;
+        function getUserNotificationStateAsString(userNotificationState: userNotificationState): string;
 
         function getUiNotifyFuncBySeverity(
             severity: severity
         ): (message: string, title?: string, options?: any) => void;
 
-        function getFormattedMessageFromUserNotification(
-            userNotification: IUserNotification
-        ): string;
+        function getFormattedMessageFromUserNotification(userNotification: IUserNotification): string;
 
-        function showUiNotifyForUserNotification(
-            userNotification: IUserNotification,
-            options?: any
-        ): void;
+        function showUiNotifyForUserNotification(userNotification: IUserNotification, options?: any): void;
     }
 
     namespace log {
@@ -289,12 +282,7 @@ export declare namespace abp {
 
         function error(message: string, title?: string, options?: any): any;
 
-        function confirm(
-            message: string,
-            title?: string,
-            callback?: (result: boolean) => void,
-            options?: any
-        ): any;
+        function confirm(message: string, title?: string, callback?: (result: boolean) => void, options?: any): any;
     }
 
     namespace ui {
@@ -333,18 +321,11 @@ export declare namespace abp {
 
         function truncateString(str: string, maxLength: number): string;
 
-        function truncateStringWithPostfix(
-            str: string,
-            maxLength: number,
-            postfix?: string
-        ): string;
+        function truncateStringWithPostfix(str: string, maxLength: number, postfix?: string): string;
 
         function isFunction(obj: any): boolean;
 
-        function buildQueryString(
-            parameterInfos: INameValue[],
-            includeQuestionMark?: boolean
-        ): string;
+        function buildQueryString(parameterInfos: INameValue[], includeQuestionMark?: boolean): string;
 
         /**
          * Sets a cookie value for given key.

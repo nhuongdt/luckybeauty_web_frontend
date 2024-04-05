@@ -23,9 +23,7 @@ import {
     List,
     ListItemButton,
     ListItemIcon,
-    ListItemText,
-    Divider,
-    ListItem
+    ListItemText
 } from '@mui/material';
 import './header.css';
 import { ReactComponent as LogoNew } from '../../images/Logo_Lucky_Beauty.svg';
@@ -37,12 +35,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import NotificationIcon from '../../images/notification.svg';
 import Cookies from 'js-cookie';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
-import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { ReactComponent as LocationIcon } from '../../images/location.svg';
 import { ReactComponent as ProfileIcon } from '../../images/profile-circle.svg';
 import { ReactComponent as SettingIcon } from '../../images/settingIcon.svg';
 import { ReactComponent as LogoutIcon } from '../../images/logoutInner.svg';
+import { ReactComponent as BackIcon } from '../../images/back_linear_icon.svg';
 import { ReactComponent as RestartIcon } from '../../images/restart_alt.svg';
 import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
 import useWindowWidth from '../StateWidth';
@@ -53,6 +51,7 @@ import UserNotificationState from '../../enum/UserNotificationState';
 import NotificationService from '../../services/notification/NotificationService';
 import utils from '../../utils/utils';
 import suggestStore from '../../stores/suggestStore';
+import impersonationService, { Impersonation } from '../../services/impersonation/impersonationService';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -722,6 +721,24 @@ const Header: React.FC<HeaderProps> = (
                                         }}>
                                         <Box component="h2">{Cookies.get('fullname') ?? ''}</Box>
                                         <Box component="p">{Cookies.get('email') ?? ''}</Box>
+                                    </Box>
+                                </Box>
+                            </MenuItem>
+                            <MenuItem
+                                className="hover"
+                                sx={{ display: Cookies.get(Impersonation) ? '' : 'none' }}
+                                onClick={async () => {
+                                    await impersonationService.backToImpersonate();
+                                }}>
+                                <Box
+                                    display={'flex'}
+                                    flexDirection={'row'}
+                                    gap={2}
+                                    alignItems={'center'}
+                                    justifyContent={'start'}>
+                                    <BackIcon />
+                                    <Box component="button" className="typo">
+                                        Quay lại Host
                                     </Box>
                                 </Box>
                             </MenuItem>

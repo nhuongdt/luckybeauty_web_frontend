@@ -145,11 +145,11 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                 mes={inforDelete.mes}
                 onOk={deleteCusChecking}
                 onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
-            <Grid item xs={12} sm={6} md={8} lg={8} xl={8}>
+            <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
                 <Grid container>
                     <Grid item xs={12}>
                         <Stack
-                            flexWrap="wrap"
+                            //flexWrap="wrap"
                             useFlexGap
                             justifyContent={{
                                 md: 'flex-end',
@@ -204,14 +204,15 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                     backgroundColor: 'var(--color-main)!important',
                                     display: abpCustom.isGrandPermission('Pages.CheckIn.Create') ? '' : 'none'
                                 }}
-                                startIcon={<Add />}
+                                title="Thêm khách"
+                                startIcon={window.screen.width < 768 ? null : <Add />}
                                 onClick={() =>
                                     setTriggerAddCheckIn({
                                         ...triggerAddCheckIn,
                                         isShow: true
                                     })
                                 }>
-                                Thêm khách
+                                {window.screen.width < 768 ? <Add /> : 'Thêm khách'}
                             </Button>
                         </Stack>
                     </Grid>

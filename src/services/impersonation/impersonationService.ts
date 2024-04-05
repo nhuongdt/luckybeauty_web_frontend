@@ -1,25 +1,53 @@
 import Cookies from 'js-cookie';
-import authenticationStore from '../../stores/authenticationStore';
 import accountService from '../account/accountService';
-import { AppUrlService } from '../appUrlService';
-
+import authenticationStore from '../../stores/authenticationStore';
+import sessionStore from '../../stores/sessionStore';
+import tokenAuthService from '../tokenAuth/tokenAuthService';
+import loginService from '../login/loginService';
+export const Impersonation = 'IsImpersonation';
 class ImpersonationService {
-    public impersonate(userId: number, tenantId?: number) {
+    public async impersonate(userId: number, tenantId?: number) {
         accountService
             .impersonate({ tenantId: tenantId, userId: userId })
-            .then((response) => {
-                authenticationStore.logout(false);
-                const appUrlService = new AppUrlService();
-                let targetUrl =
-                    appUrlService.getAppRootUrlOfTenant(response.tenancyName) +
-                    '?impersonationToken=' +
-                    response.impersonationToken;
-                if (tenantId) {
-                    targetUrl = targetUrl + '&tenantId=' + tenantId;
-                    Cookies.set('Abp.TenantId', tenantId.toString());
-                }
+            .then(async (response) => {
+                await authenticationStore.LogoutForImpersonate();
+                const impersonateTenantResult = tokenAuthService.ImpersonatedAuthenticate(response.impersonationToken);
+                impersonateTenantResult
+                    .then((res) => {
+                        Cookies.set('accessToken', res.accessToken, { expires: 1 });
+                        Cookies.set('encryptedAccessToken', res.encryptedAccessToken, { expires: 1 });
+                        Cookies.set('refreshToken', res.refreshToken, { expires: 365 });
+                        if (tenantId) {
+                            Cookies.set('Abp.TenantId', tenantId.toString(), { expires: 1 });
+                        }
+                        Cookies.set(Impersonation, 'true', { expires: 1 });
+                        sessionStore.getCurrentLoginInformations().then(async (result) => {
+                            Cookies.set('userId', result.user.id.toString(), {
+                                expires: 1
+                            });
+                            if (result.user.nhanSuId) {
+                                Cookies.set('IdNhanVien', result.user.nhanSuId, {
+                                    expires: 1
+                                });
+                            }
 
-                location.href = targetUrl;
+                            Cookies.set('fullname', result.user.fullName, {
+                                expires: 1
+                            });
+                            Cookies.set('email', result.user.emailAddress, {
+                                expires: 1
+                            });
+                            if (result.user.avatar) {
+                                Cookies.set('avatar', result.user.avatar, {
+                                    expires: 1
+                                });
+                            }
+                            await loginService.GetPermissionByUserId(result.user.id, true);
+                            // Tải lại trang và chuyển hướng đến trang chủ
+                            window.location.href = '/';
+                        });
+                    })
+                    .catch((ex) => console.log(ex));
             })
             .catch((ex) => {
                 console.log(ex);
@@ -30,18 +58,39 @@ class ImpersonationService {
     public backToImpersonate() {
         accountService
             .backToImpersonator()
-            .then((response) => {
-                authenticationStore.logout(false);
-                const appUrlService = new AppUrlService();
-                let targetUrl =
-                    appUrlService.getAppRootUrlOfTenant(response.tenancyName) +
-                    '?impersonationToken=' +
-                    response.impersonationToken;
-                if (Cookies.get('Abp.TenantId')) {
-                    targetUrl = targetUrl + '&tenantId=' + Cookies.get('Abp.TenantId');
-                }
+            .then(async (response) => {
+                await authenticationStore.LogoutForImpersonate();
+                const impersonateTenantResult = await tokenAuthService.ImpersonatedAuthenticate(
+                    response.impersonationToken
+                );
+                Cookies.set('accessToken', impersonateTenantResult.accessToken, { expires: 1 });
+                Cookies.set('encryptedAccessToken', impersonateTenantResult.encryptedAccessToken, { expires: 1 });
+                Cookies.set('refreshToken', impersonateTenantResult.encryptedAccessToken, { expires: 365 });
+                await sessionStore.getCurrentLoginInformations().then(async (result) => {
+                    Cookies.set('userId', result.user.id.toString(), {
+                        expires: 1
+                    });
+                    if (result.user.nhanSuId) {
+                        Cookies.set('IdNhanVien', result.user.nhanSuId, {
+                            expires: 1
+                        });
+                    }
 
-                location.href = targetUrl;
+                    Cookies.set('fullname', result.user.fullName, {
+                        expires: 1
+                    });
+                    Cookies.set('email', result.user.emailAddress, {
+                        expires: 1
+                    });
+                    if (result.user.avatar) {
+                        Cookies.set('avatar', result.user.avatar, {
+                            expires: 1
+                        });
+                    }
+                    await loginService.GetPermissionByUserId(result.user.id, true);
+                    // Tải lại trang và chuyển hướng đến trang chủ
+                    window.location.href = '/';
+                });
             })
             .catch((ex) => {
                 console.log(ex);
