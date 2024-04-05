@@ -31,11 +31,11 @@ export const ZaloConst = {
     ButtonType: ZaloButtonType,
     TemplateType: ZaloTemplateType,
     ListTemplateType: [
-        { value: ZaloTemplateType.MESSAAGE, text: 'Tin thường (dạng văn bản)' },
-        { value: ZaloTemplateType.MEDIA, text: 'Tin thường (kèm ảnh)' },
+        { value: ZaloTemplateType.MESSAAGE, text: 'Tin tư vấn (dạng văn bản)' },
+        { value: ZaloTemplateType.MEDIA, text: 'Tin tư vấn (kèm ảnh)' },
         { value: ZaloTemplateType.TRANSACTION, text: 'Tin giao dịch' },
-        { value: ZaloTemplateType.PROMOTION, text: 'Tin truyền thông' },
-        { value: ZaloTemplateType.REQUEST_USER_INFOR, text: 'Mời quan tâm cửa hàng' }
+        { value: ZaloTemplateType.PROMOTION, text: 'Tin truyền thông' }
+        // { value: ZaloTemplateType.REQUEST_USER_INFOR, text: 'Mời quan tâm cửa hàng' }
     ] as ISelect[],
     ListElementType: [
         { value: ZaloElementType.BANNER, text: 'Logo, hình ảnh' },

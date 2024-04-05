@@ -1,6 +1,17 @@
 import { Guid } from 'guid-typescript';
 import { ICustomerBasic } from '../khach-hang/dto/CustomerBasicDto';
 
+export interface IZaloResultMessage<T> {
+    error: number;
+    message: string;
+    data: T;
+}
+
+export interface IZaloDataMessage {
+    message_id: string;
+    user_id: string;
+}
+
 // dto lien quan den DB --
 export interface IZalo_InforHoaDon {
     id: string;
@@ -28,11 +39,11 @@ export interface InforZOA {
     linked_ZCA: string;
 }
 export interface IInforUserZOA extends ICustomerBasic {
-    avatar: string;
-    display_name: string;
-    user_gender: number;
-    user_id: string;
-    user_id_by_app: string;
+    avatar?: string;
+    display_name?: string;
+    user_gender?: number;
+    user_id?: string;
+    user_id_by_app?: string;
     user_is_follower?: boolean;
 
     idHoaDons?: string[]; // 1 khachhang - N hoaddon
