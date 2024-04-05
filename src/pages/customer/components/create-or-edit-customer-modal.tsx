@@ -188,9 +188,9 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                 );
                                 if (user !== null) {
                                     const input: IMemberZOA = {
-                                        user_id: user.user_id,
-                                        display_name: user.display_name,
-                                        user_id_by_app: user.user_id_by_app,
+                                        user_id: user.user_id as string,
+                                        display_name: user.display_name as string,
+                                        user_id_by_app: user.user_id_by_app as string,
                                         user_is_follower: user.user_is_follower,
                                         avatar: user.avatar
                                     };

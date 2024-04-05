@@ -242,7 +242,6 @@ const TinNhanPage = () => {
     const InnitData_TempZalo = async () => {
         const data = await ZaloService.InnitData_TempZalo();
         setZaloLstTemplateDefault(data);
-        console.log('datazalo ', data);
     };
 
     const TestGuiTinZalo = async () => {
@@ -252,16 +251,10 @@ const TinNhanPage = () => {
             tenChiNhanh: 'SSOFT',
             zoaUserId: '6441788310775550433'
         } as CustomerSMSDto;
-        await ZaloService.GuiTinGiaoDich_fromDataDB(data, zaloToken.accessToken, LoaiTin.TIN_SINH_NHAT);
-        // await ZaloService.SendMessageToUser(zaloToken.accessToken);
 
-        // await ZaloService.GuiTinNhanGiaoDich_WithMyTemp(zaloToken.accessToken, '6441788310775550433', {
-        //     tenKhachHang: 'Nhuong dt',
-        //     maHoaDon: 'HDTest001',
-        //     ngayLapHoaDon: '11:43 21/03/2024',
-        //     tongTienHang: 100000,
-        //     logoChiNhanh: congty?.logo
-        // } as IZaloDataSend);
+        // await ZaloService.GuiTinNhanGiaoDich_WithMyTemp(zaloToken.accessToken,data,)
+
+        // await ZaloService.SendMessageToUser(zaloToken.accessToken);
     };
 
     const GetZaloTokenfromDB = async () => {

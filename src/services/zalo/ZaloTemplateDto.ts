@@ -2,7 +2,6 @@ export interface IZaloTemplate {
     id: string;
     idLoaiTin: number;
     tenMauTin: string;
-    // moTaChiTiet: string;
     isDefault: boolean;
     isSystem?: boolean;
     template_type: string;
