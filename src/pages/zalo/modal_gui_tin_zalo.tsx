@@ -570,8 +570,8 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                             soDienThoai: itemEx[0].soDienThoai ?? '',
                                             tenKhachHang: itemEx[0]?.display_name,
                                             maHoaDon: element?.maHoaDon,
-                                            tongTienHang: element?.tongTienHang ?? 0,
-                                            ngayLapHoaDon: new Date(element?.ngayLapHoaDon),
+                                            tongThanhToan: element?.tongTienHang ?? 0,
+                                            ngayLapHoaDon: element?.ngayLapHoaDon,
                                             tenChiNhanh: itemEx[0]?.tenChiNhanh,
                                             soDienThoaiChiNhanh: itemEx[0]?.soDienThoaiChiNhanh,
                                             diaChiChiNhanh: itemEx[0]?.diaChiChiNhanh,
@@ -594,7 +594,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                                 new Date(dataSend?.ngayLapHoaDon ?? new Date()),
                                                 'HH:mm dd/MM/yyyy'
                                             )}<br /> Tổng tiền: ${new Intl.NumberFormat('vi-VN').format(
-                                                dataSend?.tongTienHang ?? 0
+                                                dataSend?.tongThanhToan ?? 0
                                             )}`;
                                             await saveHeThongSMS(itemEx[0], result.data, params);
                                         } else {
@@ -638,8 +638,9 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                             maKhachHang: '',
                                             soDienThoai: itemEx[0]?.soDienThoai ?? '',
                                             tenKhachHang: itemEx[0]?.display_name,
-                                            bookingDate: new Date(element?.startTime),
-                                            tenDichVu: utils.Remove_LastComma(tenDichVu),
+                                            bookingDate: element?.startTime,
+                                            startDate: element?.startTime,
+                                            tenHangHoa: utils.Remove_LastComma(tenDichVu),
                                             tenChiNhanh: element?.tenChiNhanh ?? '',
                                             diaChiChiNhanh: element?.diaChiChiNhanh ?? '',
                                             soDienThoaiChiNhanh: element?.soDienThoaiChiNhanh ?? '0973474985',
