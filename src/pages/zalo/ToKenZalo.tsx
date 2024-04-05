@@ -1,29 +1,29 @@
-import { Dialog, DialogContent, DialogTitle, Grid, Stack, Typography, Button } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, Grid, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import { ISelect } from '../../lib/appconst';
 
 export const ListZaloToken_CuaHang: ISelect[] = [
-    { value: '<TenCuaHang>', text: 'Tên cửa hàng' },
-    { value: '<DiaChiCuaHang>', text: 'Địa chỉ cửa hàng' },
-    { value: '<DienThoaiCuaHang>', text: 'Số điện thoại cửa hàng' },
-    { value: '<TenChiNhanh>', text: 'Chi nhánh bán hàng' },
-    { value: '<DienThoaiChiNhanh>', text: 'Địa chỉ chi nhánh' },
-    { value: '<DiaChiChiNhanh>', text: 'Điện thoại chi nhánh' }
+    { value: '{TenCuaHang}', text: 'Tên cửa hàng' },
+    { value: '{DiaChiCuaHang}', text: 'Địa chỉ cửa hàng' },
+    { value: '{DienThoaiCuaHang}', text: 'Số điện thoại cửa hàng' },
+    { value: '{TenChiNhanh}', text: 'Chi nhánh bán hàng' },
+    { value: '{DienThoaiChiNhanh}', text: 'Địa chỉ chi nhánh' },
+    { value: '{DiaChiChiNhanh}', text: 'Điện thoại chi nhánh' }
 ];
 export const ListZaloToken_KhachHang: ISelect[] = [
-    { value: '<MaKhachHang>', text: 'Mã khách hàng' },
-    { value: '<TenKhachHang>', text: 'Tên khách hàng' },
-    { value: '<SoDienThoai>', text: 'Số điện thoại khách hàng' }
+    { value: '{MaKhachHang}', text: 'Mã khách hàng' },
+    { value: '{TenKhachHang}', text: 'Tên khách hàng' },
+    { value: '{SoDienThoai}', text: 'Số điện thoại khách hàng' }
 ];
 
 export const ListZaloToken_HoaDon: ISelect[] = [
-    { value: '<MaHoaDon>', text: 'Mã hóa đơn' },
-    { value: '<NgayLapHoaDon>', text: 'Ngày hóa đơn' },
-    { value: '<TongTienHang>', text: 'Tổng tiền hàng' },
-    { value: '<TenDichVu>', text: 'Tên dịch vụ' },
-    { value: '<BookingDate>', text: 'Ngày đặt lịch hẹn' }
+    { value: '{MaHoaDon}', text: 'Mã hóa đơn' },
+    { value: '{NgayLapHoaDon}', text: 'Ngày hóa đơn' },
+    { value: '{TongTienHang}', text: 'Tổng tiền hàng' },
+    { value: '{TenDichVu}', text: 'Tên dịch vụ' },
+    { value: '{BookingDate}', text: 'Ngày đặt lịch hẹn' }
 ];
 
 export default function TokenZalo({ isShow, onClose }: any) {
