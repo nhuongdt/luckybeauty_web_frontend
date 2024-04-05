@@ -11,8 +11,6 @@ import {
     Button,
     Typography,
     Tab,
-    Menu,
-    MenuItem,
     DialogActions
 } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
@@ -21,7 +19,8 @@ import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import CakeOutlinedIcon from '@mui/icons-material/CakeOutlined';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import { Add, Close, VoiceChatRounded } from '@mui/icons-material';
+import StarOutlineOutlinedIcon from '@mui/icons-material/StarOutlineOutlined';
+import { Add, Close } from '@mui/icons-material';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
@@ -40,12 +39,6 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import TokenZalo, { ListZaloToken_CuaHang, ListZaloToken_HoaDon, ListZaloToken_KhachHang } from './ToKenZalo';
-import AutocompleteWithData from '../../components/Autocomplete/AutocompleteWithData';
-import { IDataAutocomplete } from '../../services/dto/IDataAutocomplete';
-import { util } from 'prettier';
-import ActionViewEditDelete from '../../components/Menu/ActionViewEditDelete';
-import { IList } from '../../services/dto/IList';
-import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
 import { handleClickOutside } from '../../utils/customReactHook';
 
 export interface IPropModal<T> {
@@ -66,7 +59,15 @@ export function BtnRemoveElement({ isShow, elementType, handleClick }: any) {
     };
     return (
         <>
-            <DeleteOutlinedIcon className="btnRemove" onClick={removeElement} sx={{ display: isShow ? '' : 'none' }} />
+            {!isShow ? (
+                <StarOutlineOutlinedIcon />
+            ) : (
+                <DeleteOutlinedIcon
+                    className="btnRemove"
+                    onClick={removeElement}
+                    sx={{ display: isShow ? '' : 'none' }}
+                />
+            )}
         </>
     );
 }
@@ -78,14 +79,13 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
     const [isShowToken, setIsShowToken] = useState(false);
     const [tabActive, setTabActive] = useState(ZaloTemp_tabActive.SYSTEM);
     const [idMauTinChosed, setIdMauTinChosed] = useState('');
-    const [allMauTinDB, setAllMauTinDB] = useState<IZaloTemplate[]>([]);
 
     // thông tin mẫu tin zalo cần phải có
     const [tenMauTin, setTenMauTin] = useState('');
     const [isCheckMauMacDinh, setIsCheckMauMacDinh] = useState(false);
     const [imageUrl, setImageUrl] = useState(''); // url of imge
     const [imageFile, setImageFile] = useState<File>({} as File);
-    const [idLoaiTin, setIdLoaiTin] = useState(LoaiTin.TIN_GIAO_DICH);
+    const [idLoaiTin, setIdLoaiTin] = useState(LoaiTin.TIN_THUONG);
     const [zaloTemplateType, setZaloTemplateType] = useState('');
 
     const [lstButton, setLstButton] = useState<IZaloButtonDetail[]>([]);
@@ -116,6 +116,17 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
 
     const [expandAction, setExpandAction] = useState(false);
     const ref = handleClickOutside(() => setExpandAction(false));
+
+    const banner_showIconRemove = zaloTemplateType !== ZaloConst.TemplateType.MEDIA;
+    const text_showIconRemove =
+        zaloTemplateType !== ZaloConst.TemplateType.MESSAAGE && zaloTemplateType !== ZaloConst.TemplateType.MEDIA;
+    const table_showIconRemove = ![
+        ZaloConst.TemplateType.TRANSACTION,
+        ZaloConst.TemplateType.BOOKING,
+        ZaloConst.TemplateType.EVENT,
+        ZaloConst.TemplateType.PARTNERSHIP,
+        ZaloConst.TemplateType.MEMBERSHIP
+    ].includes(zaloTemplateType);
 
     const ResetDataModal = () => {
         setImageUrl('');
@@ -207,6 +218,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
         setTabActive(newValue);
         if (newValue === ZaloTemp_tabActive.USER) {
             ResetDataModal();
+            setIdLoaiTin(LoaiTin.TIN_THUONG);
             setZaloTemplateType('');
         } else {
             if (lstData !== undefined && lstData?.length > 0) {
@@ -337,6 +349,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
 
     const changeLoaiTin = (loaiTin: string) => {
         setZaloTemplateType(loaiTin);
+        setIdLoaiTin(LoaiTin.TIN_THUONG);
 
         switch (loaiTin) {
             case ZaloConst.TemplateType.MEDIA: // tin nhắn kèm ảnh
@@ -377,8 +390,6 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                     setTableElm(null);
                     setLstButton([]);
                     setTblDetail([]);
-                    // setIdLoaiTin(LoaiTin.TIN_SINH_NHAT);
-                    setIdLoaiTin(LoaiTin.TIN_THUONG);
 
                     FindElem_andAdd(ZaloConst.ElementType.BANNER);
                     FindElem_andAdd(ZaloConst.ElementType.HEADER);
@@ -410,32 +421,6 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                         ZaloConst.ElementType.BUTTON
                     ]);
                 }
-                break;
-        }
-
-        switch (loaiTin) {
-            case ZaloConst.TemplateType.MEDIA:
-            case ZaloConst.TemplateType.MESSAAGE:
-            case ZaloConst.TemplateType.REQUEST_USER_INFOR:
-                setIdLoaiTin(LoaiTin.TIN_THUONG);
-                break;
-            case ZaloConst.TemplateType.PARTNERSHIP:
-            case ZaloConst.TemplateType.MEMBERSHIP:
-                // setIdLoaiTin(LoaiTin.TIN_SINH_NHAT);
-                setIdLoaiTin(LoaiTin.TIN_THUONG);
-                break;
-            case ZaloConst.TemplateType.BOOKING:
-            case ZaloConst.TemplateType.EVENT:
-                // setIdLoaiTin(LoaiTin.TIN_LICH_HEN);
-                setIdLoaiTin(LoaiTin.TIN_THUONG);
-                break;
-            case ZaloConst.TemplateType.TRANSACTION:
-                // setIdLoaiTin(LoaiTin.TIN_LICH_HEN);
-                setIdLoaiTin(LoaiTin.TIN_THUONG);
-                break;
-            case ZaloConst.TemplateType.PROMOTION:
-                // setIdLoaiTin(LoaiTin.TIN_KHUYEN_MAI);
-                setIdLoaiTin(LoaiTin.TIN_THUONG);
                 break;
         }
     };
@@ -501,6 +486,10 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
         switch (zaloTemplateType) {
             case ZaloConst.TemplateType.MEDIA: // tin nhắn kèm ảnh
                 {
+                    if (utils.checkNull(imageUrl)) {
+                        setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng chọn hình ảnh', type: 2 });
+                        check = false;
+                    }
                     if (utils.checkNull(textElm?.content)) {
                         setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng nhập nội dung tin nhắn', type: 2 });
                         check = false;
@@ -517,22 +506,47 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                 break;
             default:
                 {
+                    // nếu tin giao dịch: bắt buộc phải có bảng
+                    if (zaloTemplateType === ZaloConst.TemplateType.TRANSACTION) {
+                        if (tableElm == null || tableElm === undefined) {
+                            setObjAlert({
+                                ...objAlert,
+                                show: true,
+                                mes: 'Tin giao dịch: bắt buộc phải có Bảng',
+                                type: 2
+                            });
+                            return false;
+                        }
+                    }
+
+                    // ngược lại: phải có ít nhất 1 trong 4 thành phần: logo, header, text, table
+                    // button: không bắt buộc
+                    if (
+                        (bannerElm === null || bannerElm === undefined) &&
+                        (headerElm === null || headerElm === undefined) &&
+                        (textElm === null || textElm === undefined) &&
+                        (tableElm === null || tableElm === undefined)
+                    ) {
+                        setObjAlert({
+                            ...objAlert,
+                            show: true,
+                            mes: 'Bắt buộc phải có ít nhất (1 trong 4) thành phần: Logo, Tiêu đề, Văn bản, Bảng',
+                            type: 2
+                        });
+                        return false;
+                    }
+
                     if (bannerElm !== null && bannerElm !== undefined) {
                         if (utils.checkNull(imageUrl)) {
                             setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng chọn logo', type: 2 });
                             return false;
                         }
                     }
-                    // bắt buộc phải có tiêu đề
-                    // if (headerElm === null || headerElm === undefined) {
-                    //     setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng thêm tiêu đề cho mẫu tin', type: 2 });
-                    //     return false;
-                    // }
 
-                    // if (utils.checkNull(headerElm?.content)) {
-                    //     setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng nhập tiêu đề mẫu tin', type: 2 });
-                    //     return false;
-                    // }
+                    if (utils.checkNull(headerElm?.content)) {
+                        setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng nhập tiêu đề mẫu tin', type: 2 });
+                        return false;
+                    }
                     if (textElm !== null && textElm !== undefined) {
                         if (utils.checkNull(textElm?.content)) {
                             setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng nhập nội dung tin nhắn', type: 2 });
@@ -644,7 +658,17 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
             return;
         }
 
-        const googleDrive_fileId = await uploadFileService.GoogleApi_UploaFileToDrive(imageFile, 'Zalo');
+        let googleDrive_fileId = '';
+        if (Object.keys(imageFile)?.length === 0) {
+            if (!utils.checkNull(imageUrl)) {
+                const arr = imageUrl.split('/');
+                if (arr.length === 5) {
+                    googleDrive_fileId = arr[4];
+                }
+            }
+        } else {
+            googleDrive_fileId = await uploadFileService.GoogleApi_UploaFileToDrive(imageFile, 'Zalo');
+        }
 
         const newMauTin: IZaloTemplate = {
             id: Guid.EMPTY,
@@ -772,7 +796,15 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                                                 (elm) => elm.elementType == ZaloConst.ElementType.TEXT
                                                             )
                                                             ?.map((elm, index2) => (
-                                                                <Typography variant="body2" key={index2}>
+                                                                <Typography
+                                                                    variant="body2"
+                                                                    key={index2}
+                                                                    sx={{
+                                                                        textOverflow: 'ellipsis!important',
+                                                                        overflow: 'hidden'
+                                                                    }}
+                                                                    maxHeight={80}
+                                                                    minHeight={80}>
                                                                     {elm.content}
                                                                 </Typography>
                                                             ))}
@@ -851,7 +883,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                         <Stack spacing={1}>
                                             <Stack spacing={1} direction={'row'}>
                                                 <BtnRemoveElement
-                                                    isShow={tabActive === ZaloTemp_tabActive.USER}
+                                                    isShow={banner_showIconRemove}
                                                     elementType={ZaloConst.ElementType.BANNER}
                                                     handleClick={removeElement}
                                                 />
@@ -871,7 +903,15 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                                             />
                                                         </Box>
                                                     ) : (
-                                                        <Stack padding={'30px 60px'} border={'1px solid #ccc'}>
+                                                        <Stack
+                                                            border={'1px solid #ccc'}
+                                                            sx={{
+                                                                height: '100%',
+                                                                width: '100%',
+                                                                paddingTop: '30px',
+                                                                paddingBottom: '30px',
+                                                                alignItems: 'center'
+                                                            }}>
                                                             <Typography variant="caption">
                                                                 File định dạng jpeg, png
                                                             </Typography>
@@ -905,7 +945,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                         <Stack spacing={1}>
                                             <Stack spacing={1} direction={'row'}>
                                                 <BtnRemoveElement
-                                                    isShow={tabActive === ZaloTemp_tabActive.USER}
+                                                    isShow={true}
                                                     elementType={ZaloConst.ElementType.HEADER}
                                                     handleClick={removeElement}
                                                 />
@@ -930,7 +970,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                         <Stack spacing={1}>
                                             <Stack spacing={1} direction={'row'}>
                                                 <BtnRemoveElement
-                                                    isShow={tabActive === ZaloTemp_tabActive.USER}
+                                                    isShow={text_showIconRemove}
                                                     elementType={ZaloConst.ElementType.TEXT}
                                                     handleClick={removeElement}
                                                 />
@@ -955,7 +995,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                         <Stack spacing={1}>
                                             <Stack spacing={1} direction={'row'} alignItems={'center'}>
                                                 <BtnRemoveElement
-                                                    isShow={tabActive === ZaloTemp_tabActive.USER}
+                                                    isShow={table_showIconRemove}
                                                     elementType={ZaloConst.ElementType.TABLE}
                                                     handleClick={removeElement}
                                                 />
@@ -1052,7 +1092,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                         <Stack spacing={1}>
                                             <Stack spacing={1} direction={'row'}>
                                                 <BtnRemoveElement
-                                                    isShow={tabActive === ZaloTemp_tabActive.USER}
+                                                    isShow={true}
                                                     elementType={ZaloConst.ElementType.BUTTON}
                                                     handleClick={removeElement}
                                                 />
@@ -1216,37 +1256,35 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Stack direction={'row'} spacing={1}>
-                        <Button variant="outlined" fullWidth color="error" onClick={onClose}>
-                            Đóng
+                    <Button variant="outlined" size="large" color="error" onClick={onClose}>
+                        Đóng
+                    </Button>
+                    <Button variant="outlined" size="large" onClick={saveMauTin} startIcon={<CheckOutlinedIcon />}>
+                        {utils.checkNull(idUpdate) ? 'Lưu mẫu tin' : 'Cập nhật mẫu'}
+                    </Button>
+                    {!utils.checkNull(idUpdate) && (
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            fullWidth
+                            onClick={() => {
+                                setInforObjDelete(
+                                    new PropConfirmOKCancel({
+                                        show: true,
+                                        title: 'Xác nhận xóa',
+                                        mes: `Bạn có chắc chắn muốn xóa mẫu tin ${tenMauTin} không?`
+                                    })
+                                );
+                            }}
+                            // sx={{
+                            //     display: abpCustom.isGrandPermission('Pages.Zalo_Template.Delete')
+                            //         ? ''
+                            //         : 'none'
+                            // }}
+                        >
+                            Xóa mẫu tin
                         </Button>
-                        <Button variant="outlined" fullWidth onClick={saveMauTin}>
-                            {utils.checkNull(idUpdate) ? 'Lưu mẫu tin' : 'Cập nhật mẫu'}
-                        </Button>
-                        {!utils.checkNull(idUpdate) && (
-                            <Button
-                                variant="outlined"
-                                color="error"
-                                fullWidth
-                                onClick={() => {
-                                    setInforObjDelete(
-                                        new PropConfirmOKCancel({
-                                            show: true,
-                                            title: 'Xác nhận xóa',
-                                            mes: `Bạn có chắc chắn muốn xóa mẫu tin ${tenMauTin} không?`
-                                        })
-                                    );
-                                }}
-                                // sx={{
-                                //     display: abpCustom.isGrandPermission('Pages.Zalo_Template.Delete')
-                                //         ? ''
-                                //         : 'none'
-                                // }}
-                            >
-                                Xóa mẫu tin
-                            </Button>
-                        )}
-                    </Stack>
+                    )}
                 </DialogActions>
             </Dialog>
         </>
