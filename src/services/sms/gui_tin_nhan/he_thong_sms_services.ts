@@ -14,7 +14,7 @@ import http from '../../httpService';
 import { IFileDto } from '../../dto/FileDto';
 
 class HeThongSMSServices {
-    JqAutoCustomer_byIdLoaiTin = async (input: ParamSearchSMS, idLoaiTin: number): Promise<CustomerZaloDto[]> => {
+    JqAutoCustomer_byIdLoaiTin = async (input: ParamSearchSMS, idLoaiTin: number): Promise<CustomerSMSDto[]> => {
         // get ds khachhang co: sinhnhat, lichhen, giaodich
         const result = await http.post(
             `api/services/app/HeThongSMS/JqAutoCustomer_byIdLoaiTin?idLoaiTin=${idLoaiTin}`,
