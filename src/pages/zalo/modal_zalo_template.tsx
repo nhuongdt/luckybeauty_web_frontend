@@ -10,7 +10,10 @@ import {
     Checkbox,
     Button,
     Typography,
-    Tab
+    Tab,
+    Menu,
+    MenuItem,
+    DialogActions
 } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import CreditScoreOutlinedIcon from '@mui/icons-material/CreditScoreOutlined';
@@ -40,6 +43,10 @@ import TokenZalo, { ListZaloToken_CuaHang, ListZaloToken_HoaDon, ListZaloToken_K
 import AutocompleteWithData from '../../components/Autocomplete/AutocompleteWithData';
 import { IDataAutocomplete } from '../../services/dto/IDataAutocomplete';
 import { util } from 'prettier';
+import ActionViewEditDelete from '../../components/Menu/ActionViewEditDelete';
+import { IList } from '../../services/dto/IList';
+import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
+import { handleClickOutside } from '../../utils/customReactHook';
 
 export interface IPropModal<T> {
     idUpdate?: string;
@@ -106,6 +113,9 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
         }
         console.log('mautinzalo');
     }, [isShowModal]);
+
+    const [expandAction, setExpandAction] = useState(false);
+    const ref = handleClickOutside(() => setExpandAction(false));
 
     const ResetDataModal = () => {
         setImageUrl('');
@@ -225,6 +235,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
             case ZaloConst.ElementType.TABLE:
                 {
                     setTableElm(null);
+                    setTblDetail([]);
                 }
                 break;
             case ZaloConst.ElementType.BUTTON:
@@ -245,6 +256,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                 //todo: nếu là Text: được phép thêm 2 lần
             }
             setArrElmChosed([...arrElmChosed, newValue]);
+            setExpandAction(false);
         }
 
         const idTemplate = Guid.create().toString();
@@ -260,6 +272,12 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
         setLenElement(() => lenElement + 1);
         switch (item.value) {
             case ZaloConst.ElementType.BANNER:
+                {
+                    newElm.thuTuSapXep = 1;
+                    setBannerElm(newElm);
+                }
+                break;
+            case ZaloConst.ElementType.IMAGE:
                 {
                     newElm.thuTuSapXep = 1;
                     setBannerElm(newElm);
@@ -287,7 +305,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                             id: Guid.create().toString(),
                             idElement: Guid.create().toString(),
                             thuTuSapXep: tblDetail?.length + 1,
-                            value: '<MaHoaDon>',
+                            value: '{MaHoaDon}',
                             key: 'Mã hóa đơn'
                         } as IZaloTableDetail
                     ]);
@@ -327,7 +345,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                     setTableElm(null);
                     setLstButton([]);
                     setTblDetail([]);
-                    FindElem_andAdd(ZaloConst.ElementType.BANNER);
+                    FindElem_andAdd(ZaloConst.ElementType.IMAGE);
                     FindElem_andAdd(ZaloConst.ElementType.TEXT);
 
                     setArrElmChosed([ZaloConst.ElementType.BANNER, ZaloConst.ElementType.TEXT]);
@@ -353,11 +371,14 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                     );
                 }
                 break;
-            case ZaloConst.TemplateType.PARTNERSHIP:
+            case ZaloConst.TemplateType.MEMBERSHIP:
+            case ZaloConst.TemplateType.EVENT:
                 {
                     setTableElm(null);
                     setLstButton([]);
                     setTblDetail([]);
+                    // setIdLoaiTin(LoaiTin.TIN_SINH_NHAT);
+                    setIdLoaiTin(LoaiTin.TIN_THUONG);
 
                     FindElem_andAdd(ZaloConst.ElementType.BANNER);
                     FindElem_andAdd(ZaloConst.ElementType.HEADER);
@@ -391,6 +412,32 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                 }
                 break;
         }
+
+        switch (loaiTin) {
+            case ZaloConst.TemplateType.MEDIA:
+            case ZaloConst.TemplateType.MESSAAGE:
+            case ZaloConst.TemplateType.REQUEST_USER_INFOR:
+                setIdLoaiTin(LoaiTin.TIN_THUONG);
+                break;
+            case ZaloConst.TemplateType.PARTNERSHIP:
+            case ZaloConst.TemplateType.MEMBERSHIP:
+                // setIdLoaiTin(LoaiTin.TIN_SINH_NHAT);
+                setIdLoaiTin(LoaiTin.TIN_THUONG);
+                break;
+            case ZaloConst.TemplateType.BOOKING:
+            case ZaloConst.TemplateType.EVENT:
+                // setIdLoaiTin(LoaiTin.TIN_LICH_HEN);
+                setIdLoaiTin(LoaiTin.TIN_THUONG);
+                break;
+            case ZaloConst.TemplateType.TRANSACTION:
+                // setIdLoaiTin(LoaiTin.TIN_LICH_HEN);
+                setIdLoaiTin(LoaiTin.TIN_THUONG);
+                break;
+            case ZaloConst.TemplateType.PROMOTION:
+                // setIdLoaiTin(LoaiTin.TIN_KHUYEN_MAI);
+                setIdLoaiTin(LoaiTin.TIN_THUONG);
+                break;
+        }
     };
 
     const table_removeBtn = (item: IZaloTableDetail) => {
@@ -404,7 +451,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                 id: Guid.create().toString(),
                 idElement: idElement,
                 thuTuSapXep: tblDetail?.length + 1,
-                value: '<MaHoaDon>',
+                value: '{MaHoaDon}',
                 key: 'Mã hóa đơn'
             } as IZaloTableDetail
         ]);
@@ -477,15 +524,15 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                         }
                     }
                     // bắt buộc phải có tiêu đề
-                    if (headerElm === null || headerElm === undefined) {
-                        setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng thêm tiêu đề cho mẫu tin', type: 2 });
-                        return false;
-                    }
+                    // if (headerElm === null || headerElm === undefined) {
+                    //     setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng thêm tiêu đề cho mẫu tin', type: 2 });
+                    //     return false;
+                    // }
 
-                    if (utils.checkNull(headerElm?.content)) {
-                        setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng nhập tiêu đề mẫu tin', type: 2 });
-                        return false;
-                    }
+                    // if (utils.checkNull(headerElm?.content)) {
+                    //     setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng nhập tiêu đề mẫu tin', type: 2 });
+                    //     return false;
+                    // }
                     if (textElm !== null && textElm !== undefined) {
                         if (utils.checkNull(textElm?.content)) {
                             setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng nhập nội dung tin nhắn', type: 2 });
@@ -593,7 +640,6 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
     };
     const saveMauTin = async () => {
         const check = checkSave();
-        console.log('checkSave ', check);
         if (!check) {
             return;
         }
@@ -768,20 +814,22 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                                 />
                                             </Stack>
                                         </Stack>
-                                        <Stack direction={'row'} alignItems={'center'} spacing={2}>
-                                            <Typography variant="body2" fontWeight={500}>
-                                                Loại tin
-                                            </Typography>
-                                            <Stack width={'60%'}>
-                                                <SelectWithData
-                                                    idChosed={zaloTemplateType ?? ''}
-                                                    data={ZaloConst.ListTemplateType}
-                                                    handleChange={(item: ISelect) =>
-                                                        changeLoaiTin(item?.value as string)
-                                                    }
-                                                />
+                                        {tabActive === ZaloTemp_tabActive.USER && (
+                                            <Stack direction={'row'} alignItems={'center'} spacing={2}>
+                                                <Typography variant="body2" fontWeight={500}>
+                                                    Loại tin
+                                                </Typography>
+                                                <Stack width={'60%'}>
+                                                    <SelectWithData
+                                                        idChosed={zaloTemplateType ?? ''}
+                                                        data={ZaloConst.ListTemplateType}
+                                                        handleChange={(item: ISelect) =>
+                                                            changeLoaiTin(item?.value as string)
+                                                        }
+                                                    />
+                                                </Stack>
                                             </Stack>
-                                        </Stack>
+                                        )}
                                     </Stack>
                                 </Grid>
                                 <Grid item lg={4}>
@@ -811,57 +859,43 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                             </Stack>
 
                                             <Stack height={80}>
-                                                <Box
-                                                    sx={{
-                                                        border: '1px solid #cccc',
-                                                        p: 1,
-                                                        height: '100%',
-                                                        textAlign: 'center',
-                                                        position: 'relative'
-                                                    }}>
+                                                <Stack alignItems="center" position={'relative'}>
                                                     {!utils.checkNull(imageUrl) ? (
-                                                        <Box sx={{ position: 'relative', height: '100%' }}>
+                                                        <Box
+                                                            sx={{
+                                                                position: 'relative'
+                                                            }}>
                                                             <img
                                                                 src={imageUrl}
                                                                 style={{ width: '100%', height: '100%' }}
                                                             />
-                                                            <Close
-                                                                onClick={closeImage}
-                                                                sx={{
-                                                                    left: 0,
-                                                                    color: 'red',
-                                                                    position: 'absolute'
-                                                                }}
-                                                            />
                                                         </Box>
                                                     ) : (
-                                                        <>
-                                                            <TextField
-                                                                type="file"
-                                                                sx={{
-                                                                    position: 'absolute',
-                                                                    top: 0,
-                                                                    left: 0,
-                                                                    width: '100%',
-                                                                    height: '100%',
-                                                                    opacity: 0,
-                                                                    '& input': {
-                                                                        height: '100%'
-                                                                    },
-                                                                    '& div': {
-                                                                        height: '100%'
-                                                                    }
-                                                                }}
-                                                                onChange={choseImage}
-                                                            />
-                                                            <Stack spacing={1} paddingTop={2}>
-                                                                <Typography variant="caption">
-                                                                    File định dạng jpeg, png
-                                                                </Typography>
-                                                            </Stack>
-                                                        </>
+                                                        <Stack padding={'30px 60px'} border={'1px solid #ccc'}>
+                                                            <Typography variant="caption">
+                                                                File định dạng jpeg, png
+                                                            </Typography>
+                                                        </Stack>
                                                     )}
-                                                </Box>
+                                                    <TextField
+                                                        type="file"
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            top: 0,
+                                                            left: 0,
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            opacity: 0,
+                                                            '& input': {
+                                                                height: '100%'
+                                                            },
+                                                            '& div': {
+                                                                height: '100%'
+                                                            }
+                                                        }}
+                                                        onChange={choseImage}
+                                                    />
+                                                </Stack>
                                             </Stack>
                                         </Stack>
                                     </Grid>
@@ -1035,10 +1069,18 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                                                 setLstButton(
                                                                     lstButton.map((x) => {
                                                                         if (x.id === btn.id) {
-                                                                            return {
-                                                                                ...x,
-                                                                                type: item.value.toString()
-                                                                            };
+                                                                            if (x.type === ZaloConst.ButtonType.SHOW) {
+                                                                                return {
+                                                                                    ...x,
+                                                                                    type: item.value.toString(),
+                                                                                    payload: ''
+                                                                                };
+                                                                            } else {
+                                                                                return {
+                                                                                    ...x,
+                                                                                    type: item.value.toString()
+                                                                                };
+                                                                            }
                                                                         } else {
                                                                             return x;
                                                                         }
@@ -1108,48 +1150,58 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                         <Grid item xs={12} sm={12} md={4} lg={4}>
                             {tabActive === ZaloTemp_tabActive.USER && (
                                 <Stack spacing={2}>
-                                    <Stack spacing={1} direction={'row'}>
-                                        <Add />
-                                        <Typography fontWeight={500}>Chọn để thêm thành phần mong muốn</Typography>
-                                    </Stack>
-                                    <Stack>
-                                        <SelectWithData
-                                            idChosed={''}
-                                            data={lstElmType_Filter}
-                                            handleChange={(item: ISelect) => AddNew_ZaloElement(item, true)}
-                                        />
-                                    </Stack>
+                                    <div ref={ref}>
+                                        <Stack spacing={1} direction={'row'} alignItems={'center'}>
+                                            <Box sx={{ position: 'relative' }} width={'100%'}>
+                                                <Button
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    startIcon={<Add />}
+                                                    onClick={() => setExpandAction(!expandAction)}>
+                                                    Chọn thêm thành phần mong muốn
+                                                </Button>
+
+                                                <Box
+                                                    sx={{
+                                                        display: expandAction ? '' : 'none',
+                                                        zIndex: 1,
+                                                        position: 'absolute',
+                                                        borderRadius: '4px',
+                                                        border: '1px solid #cccc',
+                                                        minWidth: '100%',
+                                                        backgroundColor: 'rgba(248,248,248,1)',
+                                                        '& .MuiStack-root .MuiStack-root:hover': {
+                                                            backgroundColor: '#cccc'
+                                                        }
+                                                    }}>
+                                                    <Stack alignContent={'center'}>
+                                                        {lstElmType_Filter?.map((item: ISelect, index: number) => (
+                                                            <Stack
+                                                                direction={'row'}
+                                                                key={index}
+                                                                spacing={1}
+                                                                padding={'6px'}
+                                                                onClick={() => AddNew_ZaloElement(item, true)}
+                                                                sx={{
+                                                                    display:
+                                                                        item?.value === ZaloConst.ElementType.IMAGE
+                                                                            ? 'none'
+                                                                            : ''
+                                                                }}>
+                                                                {/* {item.icon} */}
+                                                                <Typography variant="subtitle2" marginLeft={1}>
+                                                                    {item.text}
+                                                                </Typography>
+                                                            </Stack>
+                                                        ))}
+                                                    </Stack>
+                                                </Box>
+                                            </Box>
+                                        </Stack>
+                                    </div>
                                 </Stack>
                             )}
                             <Stack spacing={2} paddingTop={2}>
-                                <Stack direction={'row'} spacing={1} justifyContent={'flex-end'}>
-                                    <Button variant="outlined" fullWidth onClick={saveMauTin}>
-                                        {utils.checkNull(idUpdate) ? 'Thêm mẫu tin' : 'Cập nhật mẫu'}
-                                    </Button>
-                                    {!utils.checkNull(idUpdate) && (
-                                        <Button
-                                            variant="outlined"
-                                            color="error"
-                                            fullWidth
-                                            onClick={() => {
-                                                setInforObjDelete(
-                                                    new PropConfirmOKCancel({
-                                                        show: true,
-                                                        title: 'Xác nhận xóa',
-                                                        mes: `Bạn có chắc chắn muốn xóa mẫu tin ${tenMauTin} không?`
-                                                    })
-                                                );
-                                            }}
-                                            // sx={{
-                                            //     display: abpCustom.isGrandPermission('Pages.Zalo_Template.Delete')
-                                            //         ? ''
-                                            //         : 'none'
-                                            // }}
-                                        >
-                                            Xóa mẫu tin
-                                        </Button>
-                                    )}
-                                </Stack>
                                 <Stack>
                                     <ZaloTemplateView
                                         logoBanner={imageUrl}
@@ -1163,6 +1215,39 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                         </Grid>
                     </Grid>
                 </DialogContent>
+                <DialogActions>
+                    <Stack direction={'row'} spacing={1}>
+                        <Button variant="outlined" fullWidth color="error" onClick={onClose}>
+                            Đóng
+                        </Button>
+                        <Button variant="outlined" fullWidth onClick={saveMauTin}>
+                            {utils.checkNull(idUpdate) ? 'Lưu mẫu tin' : 'Cập nhật mẫu'}
+                        </Button>
+                        {!utils.checkNull(idUpdate) && (
+                            <Button
+                                variant="outlined"
+                                color="error"
+                                fullWidth
+                                onClick={() => {
+                                    setInforObjDelete(
+                                        new PropConfirmOKCancel({
+                                            show: true,
+                                            title: 'Xác nhận xóa',
+                                            mes: `Bạn có chắc chắn muốn xóa mẫu tin ${tenMauTin} không?`
+                                        })
+                                    );
+                                }}
+                                // sx={{
+                                //     display: abpCustom.isGrandPermission('Pages.Zalo_Template.Delete')
+                                //         ? ''
+                                //         : 'none'
+                                // }}
+                            >
+                                Xóa mẫu tin
+                            </Button>
+                        )}
+                    </Stack>
+                </DialogActions>
             </Dialog>
         </>
     );

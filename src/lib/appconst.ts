@@ -59,7 +59,8 @@ export const LoaiTin = {
     XAC_NHAN_LICH_HEN: 31,
     NHAC_LICH_HEN: 32,
     THAY_DOI_LICH_HEN: 32,
-    TIN_GIAO_DICH: 4
+    TIN_GIAO_DICH: 4,
+    TIN_KHUYEN_MAI: 5
 };
 export const TrangThaiSMS = {
     CHUA_GUI: 0,

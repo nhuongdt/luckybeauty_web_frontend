@@ -5,6 +5,8 @@ const ZaloTemplateType = {
     TRANSACTION: 'transaction_transaction',
     BOOKING: 'transaction_booking',
     PARTNERSHIP: 'transaction_partnership',
+    MEMBERSHIP: 'transaction_membership',
+    EVENT: 'transaction_event',
     MEDIA: 'media',
     FILE: 'file',
     MESSAAGE: 'message',
@@ -15,12 +17,13 @@ const ZaloElementType = {
     HEADER: 'header',
     TEXT: 'text',
     TABLE: 'table',
-    BUTTON: 'button'
+    BUTTON: 'button',
+    IMAGE: 'image' // sử dụng cho gửi tin tư vấn kèm ảnh
 };
 const ZaloButtonType = {
     PHONE: 'oa.open.phone',
     URL: 'oa.open.url',
-    SHOW: 'oa.open.show'
+    SHOW: 'oa.query.show'
 };
 
 export const ZaloConst = {
@@ -28,16 +31,15 @@ export const ZaloConst = {
     ButtonType: ZaloButtonType,
     TemplateType: ZaloTemplateType,
     ListTemplateType: [
-        { value: ZaloTemplateType.BOOKING, text: 'Lịch hẹn' },
-        { value: ZaloTemplateType.PARTNERSHIP, text: 'Sinh nhật' },
-        { value: ZaloTemplateType.TRANSACTION, text: 'Giao dịch' },
-        { value: ZaloTemplateType.PROMOTION, text: 'Khuyến mãi' },
-        { value: ZaloTemplateType.MEDIA, text: 'Tin thường (kèm ảnh)' },
         { value: ZaloTemplateType.MESSAAGE, text: 'Tin thường (dạng văn bản)' },
+        { value: ZaloTemplateType.MEDIA, text: 'Tin thường (kèm ảnh)' },
+        { value: ZaloTemplateType.TRANSACTION, text: 'Tin giao dịch' },
+        { value: ZaloTemplateType.PROMOTION, text: 'Tin truyền thông' },
         { value: ZaloTemplateType.REQUEST_USER_INFOR, text: 'Mời quan tâm cửa hàng' }
     ] as ISelect[],
     ListElementType: [
         { value: ZaloElementType.BANNER, text: 'Logo, hình ảnh' },
+        { value: ZaloElementType.IMAGE, text: 'Hình ảnh' },
         { value: ZaloElementType.HEADER, text: 'Tiêu đề' },
         { value: ZaloElementType.TEXT, text: 'Văn bản' },
         { value: ZaloElementType.TABLE, text: 'Bảng' },
