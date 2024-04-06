@@ -16,7 +16,7 @@ import utils from '../../utils/utils';
 import uploadFileService from '../uploadFileService';
 import { CustomerSMSDto } from '../sms/gui_tin_nhan/gui_tin_nhan_dto';
 import { LoaiTin } from '../../lib/appconst';
-import { IZaloTemplate } from './ZaloTemplateDto';
+import { IZaloTemplate, IZaloTemplate_GroupLoaiTin } from './ZaloTemplateDto';
 
 class ZaloService {
     GuiTinTruyenThongorGiaoDich_fromDataDB = async (
@@ -511,6 +511,10 @@ class ZaloService {
     };
     GetAllZaloTemplate_fromDB = async (): Promise<IZaloTemplate[]> => {
         const result = await http.get(`api/services/app/Zalo_Template/GetAllZaloTemplate_fromDB`);
+        return result.data.result;
+    };
+    GetAllMauTinZalo_groupLoaiTin = async (): Promise<IZaloTemplate_GroupLoaiTin[]> => {
+        const result = await http.get(`api/services/app/Zalo_Template/GetAllMauTinZalo_groupLoaiTin`);
         return result.data.result;
     };
 

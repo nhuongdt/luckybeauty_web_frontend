@@ -1,5 +1,11 @@
 import { ISelect } from './appconst';
 
+const LoaiTinZalo = {
+    MESSAGE: 1,
+    PROMOTION: 2,
+    TRANSACTION: 3
+};
+
 const ZaloTemplateType = {
     PROMOTION: 'promotion',
     TRANSACTION: 'transaction_transaction',
@@ -9,7 +15,7 @@ const ZaloTemplateType = {
     EVENT: 'transaction_event',
     MEDIA: 'media',
     FILE: 'file',
-    MESSAAGE: 'message',
+    MESSAGE: 'message',
     REQUEST_USER_INFOR: 'request_user_info'
 };
 const ZaloElementType = {
@@ -27,11 +33,12 @@ const ZaloButtonType = {
 };
 
 export const ZaloConst = {
+    LoaiTin: LoaiTinZalo,
     ElementType: ZaloElementType,
     ButtonType: ZaloButtonType,
     TemplateType: ZaloTemplateType,
     ListTemplateType: [
-        { value: ZaloTemplateType.MESSAAGE, text: 'Tin tư vấn (dạng văn bản)' },
+        { value: ZaloTemplateType.MESSAGE, text: 'Tin tư vấn (dạng văn bản)' },
         { value: ZaloTemplateType.MEDIA, text: 'Tin tư vấn (kèm ảnh)' },
         { value: ZaloTemplateType.TRANSACTION, text: 'Tin giao dịch' },
         { value: ZaloTemplateType.PROMOTION, text: 'Tin truyền thông' }

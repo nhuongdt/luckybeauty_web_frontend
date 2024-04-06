@@ -9,6 +9,12 @@ export interface IZaloTemplate {
     elements?: IZaloElement[];
     buttons?: IZaloButtonDetail[];
 }
+
+export interface IZaloTemplate_GroupLoaiTin {
+    idLoaiTinZalo: number;
+    tenLoaiTinZalo: string;
+    lstDetail: IZaloTemplate[];
+}
 export interface IZaloElement {
     id: string;
     idTemplate: string;

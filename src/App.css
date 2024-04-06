@@ -432,3 +432,10 @@ font-weight: 600;
     color: #b93530;
     cursor: pointer;
 }
+.page-zalo-template .details-mau-tin{
+    cursor: pointer;
+    border-radius: 4px;
+}
+.page-zalo-template .details-mau-tin:hover{
+    background-color: var(--color-bg);
+}

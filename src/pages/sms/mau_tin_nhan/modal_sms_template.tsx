@@ -116,7 +116,7 @@ const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: 
                 <DialogTitle>
                     <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
                         <Typography className="modal-title">
-                            {utils.checkNull(idMauTin) ? 'Thêm mới' : 'Cập nhật'} mẫu tin{' '}
+                            {utils.checkNull(idMauTin) ? 'Thêm mới' : 'Cập nhật'} mẫu tin SMS
                         </Typography>
                         <DialogButtonClose onClose={onCancel}></DialogButtonClose>
                     </Box>

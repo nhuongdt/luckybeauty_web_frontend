@@ -724,7 +724,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                 default:
                     {
                         switch (zaloTempItem?.template_type) {
-                            case ZaloConst.TemplateType.MESSAAGE:
+                            case ZaloConst.TemplateType.MESSAGE:
                             case ZaloConst.TemplateType.MEDIA:
                                 {
                                     // gửi tin tư vấn kèm ảnh

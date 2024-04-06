@@ -29,7 +29,7 @@ import DialogButtonClose from '../../components/Dialog/ButtonClose';
 import abpCustom from '../../components/abp-custom';
 import utils from '../../utils/utils';
 import { Guid } from 'guid-typescript';
-import { ISelect, LoaiTin } from '../../lib/appconst';
+import { ISelect, LoaiTin, TypeAction } from '../../lib/appconst';
 import { ZaloConst } from '../../lib/zaloConst';
 import ZaloService from '../../services/zalo/ZaloService';
 import { IZaloButtonDetail, IZaloElement, IZaloTableDetail, IZaloTemplate } from '../../services/zalo/ZaloTemplateDto';
@@ -46,6 +46,7 @@ export interface IPropModal<T> {
     isShowModal: boolean;
     lstData?: T[];
     onClose: () => void;
+    onOK: (typeAction: number) => void;
 }
 
 export const ZaloTemp_tabActive = {
@@ -73,7 +74,7 @@ export function BtnRemoveElement({ isShow, elementType, handleClick }: any) {
 }
 
 export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
-    const { idUpdate, isShowModal, lstData, onClose } = props;
+    const { idUpdate, isShowModal, lstData, onClose, onOK } = props;
     const [inforObjDelete, setInforObjDelete] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [isShowToken, setIsShowToken] = useState(false);
@@ -85,6 +86,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
     const [isCheckMauMacDinh, setIsCheckMauMacDinh] = useState(false);
     const [imageUrl, setImageUrl] = useState(''); // url of imge
     const [imageFile, setImageFile] = useState<File>({} as File);
+    const [old_googleFileId, setOld_googleFileId] = useState('');
     const [idLoaiTin, setIdLoaiTin] = useState(LoaiTin.TIN_THUONG);
     const [zaloTemplateType, setZaloTemplateType] = useState('');
 
@@ -100,12 +102,14 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
     const [lstElmType_Filter, setLstElmType_Filter] = useState<ISelect[]>(ZaloConst.ListElementType);
 
     useEffect(() => {
-        setTabActive(ZaloTemp_tabActive.SYSTEM);
         ResetDataModal();
 
         if (!utils.checkNull(idUpdate)) {
-            setIdMauTinChosed(idUpdate as unknown as string);
+            setTabActive(ZaloTemp_tabActive.USER);
+            setIdMauTinChosed(idUpdate as string);
+            GetSetData_fromTemplate(idUpdate as string, false);
         } else {
+            setTabActive(ZaloTemp_tabActive.SYSTEM);
             if (lstData !== undefined && (lstData?.length ?? 0) > 0) {
                 GetSetData_fromTemplate(lstData[0]?.id);
                 setIdMauTinChosed(lstData[0]?.id);
@@ -119,7 +123,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
 
     const banner_showIconRemove = zaloTemplateType !== ZaloConst.TemplateType.MEDIA;
     const text_showIconRemove =
-        zaloTemplateType !== ZaloConst.TemplateType.MESSAAGE && zaloTemplateType !== ZaloConst.TemplateType.MEDIA;
+        zaloTemplateType !== ZaloConst.TemplateType.MESSAGE && zaloTemplateType !== ZaloConst.TemplateType.MEDIA;
     const table_showIconRemove = ![
         ZaloConst.TemplateType.TRANSACTION,
         ZaloConst.TemplateType.BOOKING,
@@ -130,6 +134,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
 
     const ResetDataModal = () => {
         setImageUrl('');
+        setImageFile({} as File);
         setArrElmChosed([]);
         setTenMauTin('');
         setLenElement(0);
@@ -168,10 +173,18 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
 
                     if (banner[0].isImage) {
                         setImageUrl(banner[0].content);
+
+                        const arr = banner[0].content?.split('/');
+                        if (arr.length === 5) {
+                            setOld_googleFileId(arr[4]);
+                        } else {
+                            setOld_googleFileId('');
+                        }
                     }
                 } else {
                     setImageUrl('');
                     setBannerElm(null);
+                    setOld_googleFileId('');
                 }
                 const header = itemDefault?.elements?.filter((x) => x.elementType === ZaloConst.ElementType.HEADER);
                 if (header !== undefined && header.length > 0) {
@@ -369,7 +382,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                     );
                 }
                 break;
-            case ZaloConst.TemplateType.MESSAAGE: // tin nhắn thuần văn bản
+            case ZaloConst.TemplateType.MESSAGE: // tin nhắn thuần văn bản
                 {
                     setBannerElm(null);
                     setHeaderElm(null);
@@ -471,7 +484,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
         if (data) {
             setObjAlert({ ...objAlert, show: true, mes: 'Xóa mẫu tin thành công', type: 1 });
             setInforObjDelete({ ...inforObjDelete, show: false });
-            onClose();
+            onOK(TypeAction.DELETE);
         }
     };
 
@@ -496,7 +509,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                     }
                 }
                 break;
-            case ZaloConst.TemplateType.MESSAAGE: // tin nhắn thuần văn bản
+            case ZaloConst.TemplateType.MESSAGE: // tin nhắn thuần văn bản
                 {
                     if (utils.checkNull(textElm?.content)) {
                         setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng nhập nội dung tin nhắn', type: 2 });
@@ -659,12 +672,16 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
         }
 
         let googleDrive_fileId = '';
-        if (Object.keys(imageFile)?.length === 0) {
-            if (!utils.checkNull(imageUrl)) {
-                const arr = imageUrl.split('/');
-                if (arr.length === 5) {
-                    googleDrive_fileId = arr[4];
-                }
+        if (!utils.checkNull(imageUrl)) {
+            const arr = imageUrl.split('/');
+            if (arr.length === 5) {
+                googleDrive_fileId = arr[4];
+            }
+        }
+
+        if (!utils.checkNull(old_googleFileId)) {
+            if (old_googleFileId !== googleDrive_fileId) {
+                googleDrive_fileId = await uploadFileService.GoogleApi_UploaFileToDrive(imageFile, 'Zalo');
             }
         } else {
             googleDrive_fileId = await uploadFileService.GoogleApi_UploaFileToDrive(imageFile, 'Zalo');
@@ -712,14 +729,14 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
         if (utils.checkNull(idUpdate)) {
             const data = await ZaloService.InsertMauTinZalo(newMauTin);
             setIdMauTinChosed(data?.id);
+            onOK(TypeAction.UPDATE);
         } else {
             newMauTin.id = idMauTinChosed;
             const data = await ZaloService.UpdateMauTinZalo(newMauTin);
             setIdMauTinChosed(data?.id);
+            onOK(TypeAction.INSEART);
         }
-
         setObjAlert({ ...objAlert, show: true, mes: 'Lưu mẫu tin thành công', type: 1 });
-        onClose();
     };
 
     return (
@@ -756,7 +773,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                 </DialogTitle>
                 <DialogContent>
                     <Grid container spacing={2}>
-                        <Grid item xs={12}>
+                        <Grid item xs={12} sx={{ display: utils.checkNull(idUpdate) ? '' : 'none' }}>
                             <TabContext value={tabActive}>
                                 <Stack>
                                     <TabList onChange={handleChangeTab}>
@@ -769,14 +786,18 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                 <TabPanel value={ZaloTemp_tabActive.SYSTEM} sx={{ paddingLeft: 0 }}>
                                     <Grid container spacing={1}>
                                         {lstData?.map((x) => (
-                                            <Grid item xs={3} key={x.id}>
+                                            <Grid item xs={12} sm={4} md={3} lg={3} key={x.id}>
                                                 <Box
                                                     padding={2}
                                                     sx={{ position: 'relative' }}
                                                     className="zalo-template-default"
                                                     onClick={() => changeMauTin(x.id, true)}>
                                                     <Stack spacing={1}>
-                                                        <Stack spacing={1} alignItems={'center'} direction={'row'}>
+                                                        <Stack
+                                                            spacing={1}
+                                                            alignItems={'center'}
+                                                            direction={'row'}
+                                                            className="lableOverflow">
                                                             {x?.idLoaiTin === LoaiTin.TIN_SINH_NHAT && (
                                                                 <CakeOutlinedIcon />
                                                             )}
@@ -826,7 +847,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                 </TabPanel>
                             </TabContext>
                         </Grid>
-                        <Grid item xs={12} sm={8} md={8} lg={8}>
+                        <Grid item xs={12} sm={8} md={8} lg={8} paddingTop={utils.checkNull(idUpdate) ? 0 : 2}>
                             <Grid container>
                                 <Grid item lg={8}>
                                     <Stack spacing={2}>
@@ -879,7 +900,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
 
                             <Grid container spacing={2} paddingTop={3}>
                                 {bannerElm && (
-                                    <Grid item xs={5}>
+                                    <Grid item xs={12} sm={12} md={12}>
                                         <Stack spacing={1}>
                                             <Stack spacing={1} direction={'row'}>
                                                 <BtnRemoveElement
@@ -895,11 +916,12 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                                     {!utils.checkNull(imageUrl) ? (
                                                         <Box
                                                             sx={{
-                                                                position: 'relative'
+                                                                position: 'relative',
+                                                                alignItems: 'flex-start'
                                                             }}>
                                                             <img
                                                                 src={imageUrl}
-                                                                style={{ width: '100%', height: '100%' }}
+                                                                style={{ width: '200px', height: '48px' }}
                                                             />
                                                         </Box>
                                                     ) : (
@@ -1009,7 +1031,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                             </Typography>
 
                                             <Stack spacing={1}>
-                                                <Stack direction={'row'} spacing={2} alignItems={'center'}>
+                                                <Stack spacing={2} direction={'row'} alignItems={'center'}>
                                                     <Stack flex={1}>
                                                         <Typography variant="body2" fontWeight={500}>
                                                             Tiêu đề
@@ -1025,7 +1047,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                                     <Stack
                                                         direction={'row'}
                                                         key={indexTbl}
-                                                        spacing={2}
+                                                        spacing={{ xs: 0.5, sm: 1, md: 2, lg: 2 }}
                                                         alignItems={'center'}>
                                                         <Stack flex={1}>
                                                             <TextField
@@ -1079,7 +1101,7 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                             <Button
                                                 variant="outlined"
                                                 startIcon={<Add />}
-                                                sx={{ width: '25%' }}
+                                                sx={{ width: { xs: '100%', md: '25%', lg: '25%' } }}
                                                 onClick={() => table_addNewRow(tableElm?.id)}>
                                                 Thêm hàng
                                             </Button>
@@ -1100,7 +1122,10 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                             </Stack>
 
                                             {lstButton?.map((btn, indexBtn) => (
-                                                <Stack spacing={1} direction={'row'} key={indexBtn}>
+                                                <Stack
+                                                    spacing={1}
+                                                    direction={{ xs: 'column', md: 'row', lg: 'row' }}
+                                                    key={indexBtn}>
                                                     <Stack flex={1}>
                                                         <SelectWithData
                                                             idChosed={btn?.type ?? ''}
@@ -1130,46 +1155,23 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                                             label={'Loại nút'}
                                                         />
                                                     </Stack>
-                                                    <Stack flex={1}>
-                                                        <TextField
-                                                            size="small"
-                                                            variant={'outlined'}
-                                                            label="Tiêu đề"
-                                                            value={btn?.title}
-                                                            onChange={(e) =>
-                                                                setLstButton(
-                                                                    lstButton.map((x) => {
-                                                                        if (x.id === btn.id) {
-                                                                            return {
-                                                                                ...x,
-                                                                                title: e.target.value
-                                                                            };
-                                                                        } else {
-                                                                            return x;
-                                                                        }
-                                                                    })
-                                                                )
-                                                            }
-                                                        />
-                                                    </Stack>
-                                                    {btn?.type !== ZaloConst.ButtonType.SHOW && (
+                                                    <Stack
+                                                        flex={2}
+                                                        spacing={1}
+                                                        direction={{ xs: 'column', md: 'row', lg: 'row' }}>
                                                         <Stack flex={1}>
                                                             <TextField
                                                                 size="small"
                                                                 variant={'outlined'}
-                                                                label={
-                                                                    btn?.type === ZaloConst.ButtonType.PHONE
-                                                                        ? 'Số điện thoại'
-                                                                        : 'Đường dẫn liên kết'
-                                                                }
-                                                                value={btn?.payload}
+                                                                label="Tiêu đề"
+                                                                value={btn?.title}
                                                                 onChange={(e) =>
                                                                     setLstButton(
                                                                         lstButton.map((x) => {
                                                                             if (x.id === btn.id) {
                                                                                 return {
                                                                                     ...x,
-                                                                                    payload: e.target.value
+                                                                                    title: e.target.value
                                                                                 };
                                                                             } else {
                                                                                 return x;
@@ -1179,7 +1181,35 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                                                                 }
                                                             />
                                                         </Stack>
-                                                    )}
+                                                        {btn?.type !== ZaloConst.ButtonType.SHOW && (
+                                                            <Stack flex={1}>
+                                                                <TextField
+                                                                    size="small"
+                                                                    variant={'outlined'}
+                                                                    label={
+                                                                        btn?.type === ZaloConst.ButtonType.PHONE
+                                                                            ? 'Số điện thoại'
+                                                                            : 'Đường dẫn liên kết'
+                                                                    }
+                                                                    value={btn?.payload}
+                                                                    onChange={(e) =>
+                                                                        setLstButton(
+                                                                            lstButton.map((x) => {
+                                                                                if (x.id === btn.id) {
+                                                                                    return {
+                                                                                        ...x,
+                                                                                        payload: e.target.value
+                                                                                    };
+                                                                                } else {
+                                                                                    return x;
+                                                                                }
+                                                                            })
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </Stack>
+                                                        )}
+                                                    </Stack>
                                                 </Stack>
                                             ))}
                                         </Stack>
@@ -1256,17 +1286,14 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="outlined" size="large" color="error" onClick={onClose}>
+                    <Button variant="outlined" size="large" className="btn-outline-hover" onClick={onClose}>
                         Đóng
-                    </Button>
-                    <Button variant="outlined" size="large" onClick={saveMauTin} startIcon={<CheckOutlinedIcon />}>
-                        {utils.checkNull(idUpdate) ? 'Lưu mẫu tin' : 'Cập nhật mẫu'}
                     </Button>
                     {!utils.checkNull(idUpdate) && (
                         <Button
                             variant="outlined"
                             color="error"
-                            fullWidth
+                            size="large"
                             onClick={() => {
                                 setInforObjDelete(
                                     new PropConfirmOKCancel({
@@ -1285,6 +1312,9 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                             Xóa mẫu tin
                         </Button>
                     )}
+                    <Button variant="outlined" size="large" onClick={saveMauTin} startIcon={<CheckOutlinedIcon />}>
+                        {utils.checkNull(idUpdate) ? 'Lưu mẫu tin' : 'Cập nhật mẫu'}
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>
