@@ -28,7 +28,6 @@ import SelectWithData from '../../../components/Select/SelectWithData';
 import { ExpandMoreOutlined } from '@mui/icons-material';
 import CaiDatNhacNhoService from '../../../services/sms/cai_dat_nhac_nho/CaiDatNhacNhoService';
 import { handleClickOutside } from '../../../utils/customReactHook';
-import { CaiDatNhacNhoChiTietDto, CaiDatNhacNhoDto } from '../../../services/sms/cai_dat_nhac_nho/cai_dat_nhac_nho_dto';
 
 const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: any) => {
     const ref = handleClickOutside(() => setExpandAction(false));
@@ -78,23 +77,23 @@ const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: 
                     }
                 }
                 // insert if not exists
-                if (!existSetup) {
-                    const objNhacNho = new CaiDatNhacNhoDto({
-                        id: Guid.EMPTY,
-                        idLoaiTin: params.idLoaiTin,
-                        idMauTin: data.id as unknown as null,
-                        noiDungTin: params.noiDungTinMau
-                    });
-                    const dataSetup = await CaiDatNhacNhoService.CreateCaiDatNhacNho(objNhacNho);
-                    const objDetail = {
-                        id: Guid.EMPTY,
-                        idCaiDatNhacTuDong: dataSetup.id,
-                        hinhThucGui: SMS_HinhThucGuiTin.SMS,
-                        trangThai: TrangThaiActive.ACTIVE
-                    } as CaiDatNhacNhoChiTietDto;
+                // if (!existSetup) {
+                //     const objNhacNho = new CaiDatNhacNhoDto({
+                //         id: Guid.EMPTY,
+                //         idLoaiTin: params.idLoaiTin,
+                //         idMauTin: data.id as unknown as null,
+                //         noiDungTin: params.noiDungTinMau
+                //     });
+                //     const dataSetup = await CaiDatNhacNhoService.CreateCaiDatNhacNho(objNhacNho);
+                //     const objDetail = {
+                //         id: Guid.EMPTY,
+                //         idCaiDatNhacTuDong: dataSetup.id,
+                //         hinhThucGui: SMS_HinhThucGuiTin.SMS,
+                //         trangThai: TrangThaiActive.ACTIVE
+                //     } as CaiDatNhacNhoChiTietDto;
 
-                    await CaiDatNhacNhoService.CreateOrUpdateCaiDatNhacNhoChiTiet(dataSetup.id, objDetail);
-                }
+                //     await CaiDatNhacNhoService.CreateOrUpdateCaiDatNhacNhoChiTiet(dataSetup.id, objDetail);
+                // }
             }
             onOK(params, TypeAction.INSEART);
         } else {
@@ -116,7 +115,7 @@ const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: 
                 <DialogTitle>
                     <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
                         <Typography className="modal-title">
-                            {utils.checkNull(idMauTin) ? 'Thêm mới' : 'Cập nhật'} mẫu tin{' '}
+                            {utils.checkNull(idMauTin) ? 'Thêm mới' : 'Cập nhật'} mẫu tin SMS
                         </Typography>
                         <DialogButtonClose onClose={onCancel}></DialogButtonClose>
                     </Box>

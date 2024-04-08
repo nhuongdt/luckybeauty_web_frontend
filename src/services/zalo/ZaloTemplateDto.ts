@@ -2,12 +2,18 @@ export interface IZaloTemplate {
     id: string;
     idLoaiTin: number;
     tenMauTin: string;
-    // moTaChiTiet: string;
     isDefault: boolean;
+    isSystem?: boolean;
     template_type: string;
     language: string;
     elements?: IZaloElement[];
     buttons?: IZaloButtonDetail[];
+}
+
+export interface IZaloTemplate_GroupLoaiTin {
+    idLoaiTinZalo: number;
+    tenLoaiTinZalo: string;
+    lstDetail: IZaloTemplate[];
 }
 export interface IZaloElement {
     id: string;
@@ -27,7 +33,7 @@ export interface IZaloTableDetail {
 }
 export interface IZaloButtonDetail {
     id: string;
-    idElement: string;
+    idTemplate: string;
     thuTuSapXep: number;
     type: string;
     title: string;

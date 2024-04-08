@@ -49,12 +49,15 @@ export default function AutocompleteWithData(props: IPropsAutocompleteWithData) 
                             <Grid container alignItems="center">
                                 <Grid item xs={12}>
                                     <Stack direction={'row'} spacing={1}>
-                                        <img
-                                            width={40}
-                                            height={40}
-                                            src={option?.imgUrl}
-                                            style={{ borderRadius: '100%' }}
-                                        />
+                                        {option?.imgUrl && (
+                                            <img
+                                                width={40}
+                                                height={40}
+                                                src={option?.imgUrl}
+                                                style={{ borderRadius: '100%' }}
+                                            />
+                                        )}
+
                                         <Stack
                                             direction={'row'}
                                             justifyContent={'space-between'}

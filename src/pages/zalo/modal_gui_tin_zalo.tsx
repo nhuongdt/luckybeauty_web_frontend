@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import {
     CreateOrEditSMSDto,
+    CustomerSMSDto,
     NhatKyGuiTinSMSDto,
     ParamSearchSMS
 } from '../../services/sms/gui_tin_nhan/gui_tin_nhan_dto';
@@ -21,7 +22,6 @@ import {
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 
 import DialogButtonClose from '../../components/Dialog/ButtonClose';
-import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import { Form, Formik } from 'formik';
 import * as yup from 'yup';
 import SelectWithData from '../../components/Select/SelectWithData';
@@ -38,16 +38,18 @@ import DateFilterCustom from '../../components/DatetimePicker/DateFilterCustom';
 import { format } from 'date-fns';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import HeThongSMSServices from '../../services/sms/gui_tin_nhan/he_thong_sms_services';
-import { IInforUserZOA, ITemplateZNS, IZaloDataSend } from '../../services/zalo/zalo_dto';
+import { IInforUserZOA, ITemplateZNS, IZaloDataMessage, IZaloDataSend } from '../../services/zalo/zalo_dto';
 import ZaloService from '../../services/zalo/ZaloService';
 import { IDataAutocomplete } from '../../services/dto/IDataAutocomplete';
-import { RequestFromToDto } from '../../services/dto/ParamSearchDto';
 import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { Guid } from 'guid-typescript';
 import { ZaloTemplateData } from '../../services/zalo/ZaloTemplateData';
 import uploadFileService from '../../services/uploadFileService';
 import datLichService from '../../services/dat-lich/datLichService';
+import { IZaloButtonDetail, IZaloElement, IZaloTableDetail, IZaloTemplate } from '../../services/zalo/ZaloTemplateDto';
+import { ZaloTemplateView } from './zalo_template_view';
+import { ZaloConst } from '../../lib/zaloConst';
 
 export function AutocompleteCustomerZalo({ handleChoseItem, lstOption, helperText, err }: any) {
     const [lstChosed, setLstChosed] = useState<IInforUserZOA[]>([]);
@@ -131,11 +133,10 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
     const idChiNhanh = chinhanh.id;
-    const zalo_logoBanner = `https://lh3.googleusercontent.com/d/1TDXeqE458lvu9DJXFg85FtBEuC_1OHUw`;
 
     const [newSMS, setNewSMS] = useState<CreateOrEditSMSDto>(new CreateOrEditSMSDto({}) as CreateOrEditSMSDto);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
-    const [lstCustomerChosed, setLstCustomerChosed] = useState<IInforUserZOA[]>([]);
+    const [lstCustomerChosed, setLstCustomerChosed] = useState<CustomerSMSDto[]>([]);
     const [allKhachHangOA, setAllKhachHangOA] = useState<IInforUserZOA[]>([]);
     const [lstcustomerByLoaiTin, setLstcustomerByLoaiTin] = useState<IInforUserZOA[]>([]);
     const [txtFromTo, setTextFromTo] = useState('');
@@ -145,19 +146,28 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
     const [dateType, setDateType] = useState<string>(DateType.HOM_NAY);
     const [dateTypeText, setDateTypeText] = useState<string>('Hôm nay');
     const [lstMauTinZNS, setLstMauTinZNS] = useState<ITemplateZNS[]>([]);
+    const [allMauTinDB, setAllMauTinDB] = useState<IZaloTemplate[]>([]);
+
+    const [imageUrl, setImageUrl] = useState(''); // url of imge
+    const [lstButton, setLstButton] = useState<IZaloButtonDetail[]>([]);
+    const [tblDetail, setTblDetail] = useState<IZaloTableDetail[]>([]);
+
+    const [headerElm, setHeaderElm] = useState<IZaloElement | null>();
+    const [textElm, setTextElm] = useState<IZaloElement | null>();
+    const [zaloTempItem, setZaloTempItem] = useState<IZaloTemplate | null>();
+
     const [idMauTinZalo, setIdMauTinZalo] = useState('');
-    const [itemMauTinZaloChosed, setItemMauTinZaloChosed] = useState<any>();
 
     useEffect(() => {
         if (isShow) {
             setIdMauTinZalo('');
             if (utils.checkNull(idTinNhan)) {
-                setNewSMS({ ...newSMS, id: '', idLoaiTin: 1, soTinGui: 0 });
+                setNewSMS({ ...newSMS, id: '', idLoaiTin: LoaiTin.TIN_THUONG, soTinGui: 0 });
             } else {
                 // get data from db
             }
             Zalo_GetListKhachHangQuanTam();
-            GetAllMauTinZalo_fromZNS();
+            GetAllZaloTemplate_fromDB();
             console.log('into1');
         }
     }, [isShow]);
@@ -167,7 +177,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
         lstCustomer: yup.array().required('Vui lòng chọn khách hàng')
     });
 
-    const choseCustomer = (lstCustomer: IInforUserZOA[]) => {
+    const choseCustomer = (lstCustomer: CustomerSMSDto[]) => {
         setLstCustomerChosed(lstCustomer);
         console.log(' lstCustomer ', lstCustomer);
     };
@@ -257,12 +267,25 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                             itFor.zoaUserId
                                         );
                                         if (user != null) {
-                                            user.idKhachHang = itFor.idKhachHang;
-                                            user.soDienThoai = itFor?.soDienThoai;
-                                            user.ngaySinh = itFor?.ngaySinh;
-                                            user.idHoaDons = [itFor?.idHoaDon ?? ''];
-                                            user.idBookings = [itFor?.idBooking ?? ''];
-                                            arr.push(user);
+                                            const dataMes: CustomerSMSDto = {
+                                                id: itFor?.idKhachHang ?? '',
+                                                zoaUserId: user?.user_id as string,
+                                                display_name: user?.display_name,
+                                                user_id: user?.user_id,
+                                                avatar: user?.avatar,
+                                                idKhachHang: itFor?.idKhachHang,
+                                                soDienThoai: itFor?.soDienThoai,
+                                                ngaySinh: itFor.idKhachHang,
+                                                idHoaDons: [itFor?.idHoaDon ?? ''],
+                                                idBookings: [itFor?.idBooking ?? ''],
+                                                tenChiNhanh: itFor?.tenChiNhanh,
+                                                soDienThoaiChiNhanh: itFor?.soDienThoaiChiNhanh,
+                                                diaChiChiNhanh: itFor?.diaChiChiNhanh,
+                                                tenCuaHang: itFor?.tenCuaHang,
+                                                diaChiCuaHang: itFor?.diaChiCuaHang,
+                                                dienThoaiCuaHang: itFor?.dienThoaiCuaHang
+                                            };
+                                            arr.push(dataMes);
                                         }
                                     } else {
                                         // push new idhoadon
@@ -286,33 +309,64 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
         }
     };
 
-    const GetAllMauTinZalo_fromZNS = async () => {
-        const data = await ZaloService.GetList_TempFromZNS(zaloToken?.accessToken);
-        setLstMauTinZNS(data);
+    const GetAllZaloTemplate_fromDB = async () => {
+        const data = await ZaloService.GetAllZaloTemplate_fromDB();
+        setAllMauTinDB(data);
     };
 
     const getMauTinZaLo = async (item: IDataAutocomplete | null) => {
-        switch (item?.id) {
-            case LoaiTin.TIN_GIAO_DICH.toString():
-            case LoaiTin.TIN_LICH_HEN.toString():
-            case LoaiTin.TIN_SINH_NHAT.toString():
-                {
-                    // get from data test / from DB (todo)
-                    const data = ZaloTemplateData.filter((x) => x.id === item.id); // datatest
-                    if (data?.length > 0) {
-                        setItemMauTinZaloChosed(data[0]);
-                        setIdMauTinZalo(item?.id);
+        setIdMauTinZalo(item?.id ?? '');
+
+        // get from db
+        const itemDefault = await ZaloService.GetZaloTemplate_byId(item?.id as string);
+
+        if (itemDefault != null && itemDefault != undefined) {
+            setZaloTempItem(itemDefault);
+
+            if (itemDefault?.elements !== undefined) {
+                const banner = itemDefault?.elements?.filter(
+                    (x) => x.elementType === ZaloConst.ElementType.BANNER || ZaloConst.ElementType.IMAGE
+                );
+                if (banner !== undefined && banner.length > 0) {
+                    if (banner[0].isImage) {
+                        setImageUrl(banner[0].content);
+                    } else {
+                        setImageUrl('');
                     }
+                } else {
+                    setImageUrl('');
                 }
-                break;
-            default:
-                {
-                    // get from ZNS temp
-                    const data = await ZaloService.GetZNSTemplate_byId(zaloToken?.accessToken, item?.id);
-                    setItemMauTinZaloChosed(data);
-                    setIdMauTinZalo(item?.id ?? '');
+                const header = itemDefault?.elements?.filter((x) => x.elementType === ZaloConst.ElementType.HEADER);
+                if (header !== undefined && header.length > 0) {
+                    setHeaderElm(header[0]);
+                } else {
+                    setHeaderElm(null);
                 }
-                break;
+                const text = itemDefault?.elements?.filter((x) => x.elementType === ZaloConst.ElementType.TEXT);
+                if (text !== undefined && text.length > 0) {
+                    setTextElm(text[0]);
+                } else {
+                    setTextElm(null);
+                }
+
+                const tbl = itemDefault?.elements
+                    ?.filter((x) => x.elementType === ZaloConst.ElementType.TABLE)
+                    ?.map((x) => {
+                        return x?.tables;
+                    });
+                if (tbl !== undefined && tbl?.length > 0) {
+                    setTblDetail(tbl[0]);
+                } else {
+                    setTblDetail([]);
+                }
+            }
+            if (itemDefault?.buttons !== undefined) {
+                setLstButton(itemDefault?.buttons);
+            } else {
+                setLstButton([]);
+            }
+        } else {
+            setZaloTempItem(null);
         }
     };
 
@@ -442,7 +496,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
         Zalo_GetListKhachHangQuanTam(fromDate, toDate);
     };
 
-    const saveHeThongSMS = async (cusItem: IInforUserZOA, dataZalo: any, objSMS: CreateOrEditSMSDto) => {
+    const saveHeThongSMS = async (cusItem: IInforUserZOA, dataZalo: IZaloDataMessage, objSMS: CreateOrEditSMSDto) => {
         console.log('saverdb ', cusItem, 'dataZalo ', dataZalo, 'objSMS', objSMS);
         if (!utils.checkNull(cusItem?.idKhachHang) && cusItem?.idKhachHang !== Guid.EMPTY) {
             const newObj = { ...objSMS };
@@ -478,7 +532,6 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
 
     const GuiTinZalo = async (params: CreateOrEditSMSDto) => {
         let countErr = 0;
-
         if (utils.checkNull(idMauTinZalo)) {
             for (let i = 0; i < lstCustomerChosed.length; i++) {
                 const cusItem = lstCustomerChosed[i];
@@ -490,9 +543,8 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                 await saveHeThongSMS(cusItem, result.data, params);
             }
         } else {
-            // todo check muatin - loaitin
-            switch (idMauTinZalo) {
-                case LoaiTin.TIN_GIAO_DICH.toString():
+            switch (newSMS?.idLoaiTin) {
+                case LoaiTin.TIN_GIAO_DICH:
                     {
                         // get listHD from arrIdHoaDon
                         const arrIdHoaDon = lstCustomerChosed?.map((x) => {
@@ -510,34 +562,39 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                         (x) => x?.idKhachHang === element?.idKhachHang
                                     );
                                     if (itemEx.length > 0) {
-                                        const dataSend: IZaloDataSend = {
-                                            logoChiNhanh: zalo_logoBanner,
+                                        const dataSend: CustomerSMSDto = {
+                                            id: itemEx[0].idKhachHang ?? Guid.EMPTY,
+                                            zoaUserId: itemEx[0]?.user_id as string,
+                                            idKhachHang: itemEx[0]?.idKhachHang as string,
+                                            maKhachHang: '',
                                             soDienThoai: itemEx[0].soDienThoai ?? '',
                                             tenKhachHang: itemEx[0]?.display_name,
                                             maHoaDon: element?.maHoaDon,
-                                            tongTienHang: element?.tongTienHang ?? 0,
-                                            ngayLapHoaDon: element?.ngayLapHoaDon
+                                            tongThanhToan: element?.tongTienHang ?? 0,
+                                            ngayLapHoaDon: element?.ngayLapHoaDon,
+                                            tenChiNhanh: itemEx[0]?.tenChiNhanh,
+                                            soDienThoaiChiNhanh: itemEx[0]?.soDienThoaiChiNhanh,
+                                            diaChiChiNhanh: itemEx[0]?.diaChiChiNhanh,
+                                            tenCuaHang: itemEx[0]?.tenCuaHang,
+                                            dienThoaiCuaHang: itemEx[0]?.dienThoaiCuaHang,
+                                            diaChiCuaHang: itemEx[0]?.diaChiCuaHang
                                         };
-                                        // const result = await ZaloService.DevMode_GuiTinNhanGiaoDich_ByTempId(
-                                        //     zaloToken?.accessToken,
-                                        //     idMauTinZalo,
-                                        //     dataSend
-                                        // );
-                                        const result = await ZaloService.GuiTinNhanGiaoDich_WithMyTemp(
+
+                                        const result = await ZaloService.GuiTinTruyenThongorGiaoDich_fromDataDB(
+                                            dataSend,
                                             zaloToken?.accessToken,
-                                            itemEx[0]?.user_id,
-                                            dataSend
+                                            idMauTinZalo ?? ''
                                         );
                                         if (result.error === 0) {
                                             params.idHoaDon = element?.id;
 
-                                            params.noiDungTin = `${itemMauTinZaloChosed?.tieuDe} Hóa đơn:  ${
+                                            params.noiDungTin = `${headerElm?.content} Hóa đơn:  ${
                                                 dataSend?.maHoaDon
                                             } <br/> Ngày lập:  ${format(
                                                 new Date(dataSend?.ngayLapHoaDon ?? new Date()),
                                                 'HH:mm dd/MM/yyyy'
                                             )}<br /> Tổng tiền: ${new Intl.NumberFormat('vi-VN').format(
-                                                dataSend?.tongTienHang ?? 0
+                                                dataSend?.tongThanhToan ?? 0
                                             )}`;
                                             await saveHeThongSMS(itemEx[0], result.data, params);
                                         } else {
@@ -550,7 +607,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                         }
                     }
                     break;
-                case LoaiTin.TIN_LICH_HEN.toString():
+                case LoaiTin.TIN_LICH_HEN:
                     {
                         // get listBooking from arrIdBooing
                         const arrIdBooking = lstCustomerChosed?.map((x) => {
@@ -573,26 +630,35 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                         for (let j = 0; j < element?.details?.length; j++) {
                                             tenDichVu += element?.details[j]?.tenHangHoa + ', ';
                                         }
-                                        const dataSend: IZaloDataSend = {
-                                            logoChiNhanh: zalo_logoBanner,
-                                            soDienThoai: itemEx[0].soDienThoai ?? '',
+
+                                        const dataSend: CustomerSMSDto = {
+                                            id: element?.idKhachHang ?? Guid.EMPTY,
+                                            zoaUserId: itemEx[0]?.user_id as string,
+                                            idKhachHang: itemEx[0]?.idKhachHang as string,
+                                            maKhachHang: '',
+                                            soDienThoai: itemEx[0]?.soDienThoai ?? '',
                                             tenKhachHang: itemEx[0]?.display_name,
                                             bookingDate: element?.startTime,
+                                            startDate: element?.startTime,
+                                            tenHangHoa: utils.Remove_LastComma(tenDichVu),
                                             tenChiNhanh: element?.tenChiNhanh ?? '',
                                             diaChiChiNhanh: element?.diaChiChiNhanh ?? '',
-                                            sdtChiNhanh: element?.soDienThoaiChiNhanh ?? '0973474985',
-                                            tenDichVu: utils.Remove_LastComma(tenDichVu)
+                                            soDienThoaiChiNhanh: element?.soDienThoaiChiNhanh ?? '0973474985',
+                                            tenCuaHang: itemEx[0]?.tenCuaHang,
+                                            dienThoaiCuaHang: itemEx[0]?.dienThoaiCuaHang,
+                                            diaChiCuaHang: itemEx[0]?.diaChiCuaHang
                                         };
-                                        const result = await ZaloService.GuiTinNhanXacNhanLichHen_WithMyTemp(
+
+                                        const result = await ZaloService.GuiTinTruyenThongorGiaoDich_fromDataDB(
+                                            dataSend,
                                             zaloToken?.accessToken,
-                                            itemEx[0]?.user_id,
-                                            dataSend
+                                            idMauTinZalo ?? ''
                                         );
                                         if (result.error === 0) {
                                             params.idBooking = element?.idBooking;
 
                                             params.noiDungTin = `${
-                                                itemMauTinZaloChosed?.tieuDe
+                                                headerElm?.content
                                             } dịch vụ:  ${tenDichVu} <br/> Số điện thoại:  ${
                                                 dataSend?.soDienThoai
                                             } <br /> Tên khách: ${dataSend?.tenKhachHang} <br/> Ngày đặt: ${format(
@@ -611,25 +677,34 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                         }
                     }
                     break;
-                case LoaiTin.TIN_SINH_NHAT.toString():
+                case LoaiTin.TIN_SINH_NHAT:
                     {
-                        // get all dichvu book
                         for (let j = 0; j < lstCustomerChosed?.length; j++) {
                             const itemEx = lstCustomerChosed[j];
-                            const dataSend: IZaloDataSend = {
-                                logoChiNhanh: zalo_logoBanner,
-                                tenChiNhanh: 'Lucky beauty',
+
+                            const dataSend: CustomerSMSDto = {
+                                id: Guid.EMPTY,
+                                zoaUserId: itemEx?.user_id as string,
+                                idKhachHang: Guid.EMPTY,
+                                maKhachHang: '',
                                 soDienThoai: itemEx?.soDienThoai ?? '',
-                                tenKhachHang: itemEx?.display_name
+                                tenKhachHang: itemEx?.display_name,
+                                tenChiNhanh: itemEx?.tenChiNhanh,
+                                soDienThoaiChiNhanh: itemEx?.soDienThoaiChiNhanh,
+                                diaChiChiNhanh: itemEx?.diaChiChiNhanh,
+                                tenCuaHang: itemEx?.tenCuaHang,
+                                dienThoaiCuaHang: itemEx?.dienThoaiCuaHang,
+                                diaChiCuaHang: itemEx?.diaChiCuaHang
                             };
-                            const result = await ZaloService.GuiTinNhanChucMungSinhNhat_WithMyTemp(
+
+                            const result = await ZaloService.GuiTinTruyenThongorGiaoDich_fromDataDB(
+                                dataSend,
                                 zaloToken?.accessToken,
-                                itemEx?.user_id,
-                                dataSend
+                                idMauTinZalo ?? ''
                             );
 
                             if (result.error === 0) {
-                                params.noiDungTin = `${itemMauTinZaloChosed?.tieuDe} khách hàng ${
+                                params.noiDungTin = `${headerElm?.content} khách hàng ${
                                     dataSend?.tenKhachHang
                                 }, ngày sinh:  ${format(new Date(itemEx?.ngaySinh ?? new Date()), 'dd/MM/yyy')}`;
                                 await saveHeThongSMS(itemEx, result.data, params);
@@ -637,6 +712,84 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                 countErr += 1;
                                 setObjAlert({ ...objAlert, show: true, type: 2, mes: result.message });
                             }
+                        }
+                    }
+                    break;
+                case LoaiTin.TIN_KHUYEN_MAI:
+                    {
+                        //
+                    }
+                    break;
+
+                default:
+                    {
+                        switch (zaloTempItem?.template_type) {
+                            case ZaloConst.TemplateType.MESSAGE:
+                            case ZaloConst.TemplateType.MEDIA:
+                                {
+                                    // gửi tin tư vấn kèm ảnh
+                                    if (zaloTempItem?.template_type === ZaloConst.TemplateType.MEDIA) {
+                                        const imageElement = zaloTempItem?.elements?.filter(
+                                            (x) => x.elementType === ZaloConst.ElementType.IMAGE
+                                        );
+                                        if (imageElement !== undefined && imageElement?.length > 0) {
+                                            for (let i = 0; i < lstCustomerChosed.length; i++) {
+                                                const cusItem = lstCustomerChosed[i];
+                                                const result = await ZaloService.GuiTinTuVan_KemAnh(
+                                                    zaloToken?.accessToken,
+                                                    cusItem.user_id,
+                                                    textElm?.content,
+                                                    imageElement[0]?.content
+                                                );
+                                                params.noiDungTin = textElm?.content ?? '';
+                                                await saveHeThongSMS(cusItem, result.data, params);
+                                            }
+                                        }
+                                    } else {
+                                        // gửi tin tư vấn dạng văn bản (theo mẫu có sẵn)
+                                        for (let i = 0; i < lstCustomerChosed.length; i++) {
+                                            const cusItem = lstCustomerChosed[i];
+                                            const result = await ZaloService.GuiTinTuVan(
+                                                zaloToken?.accessToken,
+                                                cusItem.user_id,
+                                                textElm?.content
+                                            );
+                                            params.noiDungTin = textElm?.content ?? '';
+                                            await saveHeThongSMS(cusItem, result.data, params);
+                                        }
+                                    }
+                                }
+                                break;
+                            default:
+                                {
+                                    for (let i = 0; i < lstCustomerChosed.length; i++) {
+                                        const cusItem = lstCustomerChosed[i];
+                                        const dataSend: CustomerSMSDto = {
+                                            id: cusItem?.idKhachHang ?? Guid.EMPTY,
+                                            zoaUserId: cusItem?.user_id as string,
+                                            idKhachHang: cusItem?.idKhachHang as string,
+                                            maKhachHang: cusItem?.maKhachHang,
+                                            soDienThoai: cusItem.soDienThoai ?? '',
+                                            tenKhachHang: cusItem?.display_name,
+                                            tenChiNhanh: cusItem?.tenChiNhanh,
+                                            soDienThoaiChiNhanh: cusItem?.soDienThoaiChiNhanh,
+                                            diaChiChiNhanh: cusItem?.diaChiChiNhanh,
+                                            tenCuaHang: cusItem?.tenCuaHang,
+                                            dienThoaiCuaHang: cusItem?.dienThoaiCuaHang,
+                                            diaChiCuaHang: cusItem?.diaChiCuaHang,
+                                            maHoaDon: 'HDTesMauTin001'
+                                        };
+                                        // không có data: do mẫu tin (giao dịch) - loại tin: (tin thường)
+                                        const result = await ZaloService.GuiTinTruyenThongorGiaoDich_fromDataDB(
+                                            dataSend,
+                                            zaloToken?.accessToken,
+                                            idMauTinZalo ?? ''
+                                        );
+                                        params.noiDungTin = `${headerElm?.content ?? ''} ${textElm?.content ?? ''}`;
+                                        await saveHeThongSMS(cusItem, result.data, params);
+                                    }
+                                }
+                                break;
                         }
                     }
                     break;
@@ -704,7 +857,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                             <Stack direction={'row'}>
                                                 <AutocompleteCustomerZalo
                                                     lstOption={lstcustomerByLoaiTin}
-                                                    handleChoseItem={(lst: IInforUserZOA[]) => {
+                                                    handleChoseItem={(lst: CustomerSMSDto[]) => {
                                                         choseCustomer(lst);
                                                         setFieldValue('lstCustomer', lst);
                                                     }}
@@ -732,7 +885,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
 
                                                 <AutocompleteCustomerZalo
                                                     lstOption={lstcustomerByLoaiTin}
-                                                    handleChoseItem={(lst: IInforUserZOA[]) => {
+                                                    handleChoseItem={(lst: CustomerSMSDto[]) => {
                                                         choseCustomer(lst);
                                                         setFieldValue('lstCustomer', lst);
                                                     }}
@@ -743,33 +896,15 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                         )}
                                     </Grid>
                                     <Grid item xs={12}>
-                                        {/* <Stack direction={'row'} spacing={1} alignItems={'center'}>
-                                            <AutocompleteWithData
-                                                label="Mẫu tin"
-                                                idChosed={values?.idMauTin}
-                                                lstData={lstMauTinZNS.map((x) => {
-                                                    return { id: x.templateId, text1: x.templateName, text2: '' };
-                                                })}
-                                                handleChoseItem={(item: IDataAutocomplete) => {
-                                                    getMauTinZaLo(item);
-                                                    setFieldValue('idMauTin', item?.id);
-                                                }}
-                                            />
-                                            <RemoveRedEyeOutlinedIcon
-                                                className="btnIcon"
-                                                titleAccess="Xem mẫu"
-                                                onClick={() => window.open(itemMauTinZaloChosed?.previewUrl, '_blank')}
-                                            />
-                                        </Stack> */}
                                         <Stack>
                                             <AutocompleteWithData
                                                 label="Mẫu tin"
                                                 idChosed={values?.idMauTin}
-                                                lstData={ZaloTemplateData.filter(
-                                                    (x) => x.idLoaiTin == newSMS.idLoaiTin
-                                                ).map((x) => {
-                                                    return { id: x?.id, text1: x?.tieuDe, text2: x?.noiDung };
-                                                })}
+                                                lstData={allMauTinDB
+                                                    ?.filter((x) => x.idLoaiTin == newSMS.idLoaiTin)
+                                                    .map((x) => {
+                                                        return { id: x?.id, text1: x?.tenMauTin, text2: '' };
+                                                    })}
                                                 handleChoseItem={(item: IDataAutocomplete | null) => {
                                                     getMauTinZaLo(item);
                                                     setFieldValue('idMauTin', item?.id);
@@ -798,7 +933,13 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                                 }
                                             />
                                         ) : (
-                                            <Zalo_Template idMauTinZalo={idMauTinZalo} />
+                                            <ZaloTemplateView
+                                                logoBanner={imageUrl}
+                                                headerText={headerElm?.content ?? ''}
+                                                contentText={textElm?.content ?? ''}
+                                                tables={tblDetail}
+                                                buttons={lstButton}
+                                            />
                                         )}
                                     </Grid>
                                 </Grid>

@@ -3,7 +3,9 @@ import {
     IInforUserZOA,
     IMemberZOA,
     ITemplateZNS,
+    IZaloDataMessage,
     IZaloDataSend,
+    IZaloResultMessage,
     IZalo_InforHoaDon,
     InforZOA,
     ZaloAuthorizationDto
@@ -14,36 +16,21 @@ import utils from '../../utils/utils';
 import uploadFileService from '../uploadFileService';
 import { CustomerSMSDto } from '../sms/gui_tin_nhan/gui_tin_nhan_dto';
 import { LoaiTin } from '../../lib/appconst';
-import { IZaloTemplate } from './ZaloTemplateDto';
+import { IZaloTemplate, IZaloTemplate_GroupLoaiTin } from './ZaloTemplateDto';
 
 class ZaloService {
-    GuitinTuVan_fromDB = async (input: CustomerSMSDto, access_token = '') => {
+    GuiTinTruyenThongorGiaoDich_fromDataDB = async (
+        input: CustomerSMSDto,
+        access_token = '',
+        zaloTempId: string
+    ): Promise<IZaloResultMessage<IZaloDataMessage>> => {
         const result = await http.post(
-            `api/services/app/ZaloAuthorization/GuiTinTuVan?accessToken=${access_token}`,
+            `api/services/app/ZaloSendMes/GuiTinTruyenThongorGiaoDich_fromDataDB?accessToken=${access_token}&zaloTempId=${zaloTempId}`,
             input
         );
         return result.data.result;
     };
-    GuiTinGiaoDich_fromDataDB = async (input: CustomerSMSDto, access_token = '', idLoaiTin = LoaiTin.TIN_SINH_NHAT) => {
-        const result = await http.post(
-            `api/services/app/ZaloAuthorization/GuiTinGiaoDich_fromDataDB?accessToken=${access_token}&idLoaiTin=${idLoaiTin}`,
-            input
-        );
-        return result.data.result;
-    };
-    GuiTinGiaoDich = async (input: CustomerSMSDto, access_token = '') => {
-        const result = await http.post(
-            `api/services/app/ZaloAuthorization/GuiTinGiaoDich?accessToken=${access_token}`,
-            input
-        );
-        return result.data.result;
-    };
-    SendMessageToUser = async (access_token = '') => {
-        const result = await http.post(
-            `api/services/app/ZaloAuthorization/SendMessageToUser?accessToken=${access_token}`
-        );
-        return result.data.result;
-    };
+
     Zalo_GetInforHoaDon = async (arrIdHoaDon: string[]): Promise<IZalo_InforHoaDon[] | null> => {
         if (arrIdHoaDon.length == 0) return null;
         const result = await http.post('api/services/app/HoaDon/Zalo_GetInforHoaDon?arrIdHoaDon=', arrIdHoaDon);
@@ -275,72 +262,6 @@ class ZaloService {
         console.log('GuiTinNhan_HasPhone', result.data);
     };
 
-    GuiTinNhanGiaoDich_WithMyTemp = async (
-        access_token: string,
-        user_id: string,
-        dataSend: IZaloDataSend = {} as IZaloDataSend
-    ) => {
-        const param = {
-            recipient: {
-                user_id: user_id
-            },
-            message: {
-                attachment: {
-                    type: 'template',
-                    payload: {
-                        template_type: 'transaction_transaction',
-                        language: 'VI',
-                        elements: [
-                            { type: 'banner', image_url: dataSend?.logoChiNhanh },
-                            { type: 'header', content: 'Thông báo giao dịch' },
-                            {
-                                type: 'text',
-                                content: `Xin chào ${dataSend?.tenKhachHang}, cảm ơn bạn đã mua hàng tại cửa hàng. Chúng tôi đã ghi nhận thanh toán của bạn với chi tiết như sau:`
-                            },
-                            {
-                                type: 'table',
-                                content: [
-                                    { key: 'Mã đơn', value: dataSend?.maHoaDon },
-                                    {
-                                        key: 'Ngày mua hàng',
-                                        value: format(
-                                            new Date(dataSend?.ngayLapHoaDon ?? new Date()),
-                                            'HH:mm dd/MM/yyyy'
-                                        )
-                                    },
-                                    {
-                                        key: 'Tổng tiền',
-                                        value: new Intl.NumberFormat('vi-VN').format(dataSend?.tongTienHang ?? 0)
-                                    }
-                                ]
-                            }
-                        ],
-                        buttons: [
-                            {
-                                type: 'oa.open.url',
-                                // type: 'oa.query.show',
-                                title: 'Xem chi tiết đơn hàng',
-                                // payload: 'ABC'
-                                payload: {
-                                    url: `${process.env.REACT_APP_APP_BASE_URL}/giao-dich-thanh-toan`
-                                }
-                            }
-                        ]
-                    }
-                }
-            }
-        };
-        console.log('GuiTinNhanGiaoDich_WithMyTemp ', param);
-
-        const result = await axios.post('https://openapi.zalo.me/v3.0/oa/message/transaction', param, {
-            headers: {
-                access_token: access_token,
-                'Content-Type': 'application/json'
-            }
-        });
-        console.log('zalo test ', result.data);
-        return result.data;
-    };
     GuiTinNhanXacNhanLichHen_WithMyTemp = async (
         access_token: string,
         user_id: string,
@@ -468,10 +389,6 @@ class ZaloService {
         }
         return null;
     };
-    async ZaloWebhook_UserSendMessage() {
-        const res = await http.get(`/api/zalo/webhook/user-send-message`);
-        return res.data;
-    }
     GuiTinTuVan = async (access_token: string, userId = '1311392252375682231', noiDungTin = '') => {
         const param = {
             recipient: {
@@ -479,6 +396,35 @@ class ZaloService {
             },
             message: {
                 text: noiDungTin
+            }
+        };
+        const result = await axios.post('https://openapi.zalo.me/v3.0/oa/message/cs', param, {
+            headers: {
+                access_token: access_token,
+                'Content-Type': 'application/json'
+            }
+        });
+        return result.data;
+    };
+    GuiTinTuVan_KemAnh = async (
+        access_token: string,
+        userId = '1311392252375682231',
+        noiDungTin = '',
+        imageUrl = ''
+    ) => {
+        const param = {
+            recipient: {
+                user_id: userId
+            },
+            message: {
+                text: noiDungTin,
+                attachment: {
+                    type: 'template',
+                    payload: {
+                        template_type: 'media',
+                        elements: [{ media_type: 'image', url: imageUrl }]
+                    }
+                }
             }
         };
         const result = await axios.post('https://openapi.zalo.me/v3.0/oa/message/cs', param, {
@@ -558,11 +504,20 @@ class ZaloService {
         );
         return result.data.result;
     };
-
     GetZaloTemplate_byId = async (idTemp: string): Promise<IZaloTemplate | null> => {
+        if (utils.checkNull(idTemp)) return null;
         const result = await http.get(`api/services/app/Zalo_Template/GetZaloTemplate_byId?id=${idTemp}`);
         return result.data.result;
     };
+    GetAllZaloTemplate_fromDB = async (): Promise<IZaloTemplate[]> => {
+        const result = await http.get(`api/services/app/Zalo_Template/GetAllZaloTemplate_fromDB`);
+        return result.data.result;
+    };
+    GetAllMauTinZalo_groupLoaiTin = async (): Promise<IZaloTemplate_GroupLoaiTin[]> => {
+        const result = await http.get(`api/services/app/Zalo_Template/GetAllMauTinZalo_groupLoaiTin`);
+        return result.data.result;
+    };
+
     InnitData_TempZalo = async (): Promise<IZaloTemplate[]> => {
         const result = await http.get(`api/services/app/Zalo_Template/InnitData_TempZalo`);
         return result.data.result;
@@ -573,6 +528,10 @@ class ZaloService {
     };
     UpdateMauTinZalo = async (input: IZaloTemplate): Promise<IZaloTemplate> => {
         const result = await http.post(`api/services/app/Zalo_Template/UpdateMauTinZalo`, input);
+        return result.data.result;
+    };
+    XoaMauTinZalo = async (idTemp: string): Promise<boolean> => {
+        const result = await http.get(`api/services/app/Zalo_Template/XoaMauTinZalo?idTemp=${idTemp}`);
         return result.data.result;
     };
 }

@@ -5,6 +5,7 @@ import { IDataAutocomplete } from '../../dto/IDataAutocomplete';
 import { format } from 'date-fns';
 import { SMS_HinhThucGuiTin } from '../../../lib/appconst';
 import { RequestFromToDto } from '../../dto/ParamSearchDto';
+import { IInforUserZOA } from '../../zalo/zalo_dto';
 
 export class ParamSearchSMS extends RequestFromToDto {
     hinhThucGuiTins?: string[] = [];
@@ -100,31 +101,40 @@ export interface IResultESMS_CountSuccess {
     messageStatus?: number;
 }
 
-export class CustomerSMSDto extends CustomerBasicDto {
-    id = '';
-    zoaUserId = '';
+export interface CustomerSMSDto extends IInforUserZOA {
+    id: string;
+    zoaUserId: string;
     maHoaDon?: string | null;
-    ngayLapHoaDon?: Date | null;
+    ngayLapHoaDon?: string;
+    tongThanhToan?: number;
 
-    tenDichVu?: string | null;
-    bookingDate?: Date | null;
+    idHoaDon?: string;
+    idBooking?: string;
+
+    tenHangHoa?: string | null;
+    bookingDate?: string;
+    startDate?: string;
     thoiGianHen?: string;
 
     tenChiNhanh?: string;
     diaChiChiNhanh?: string;
     soDienThoaiChiNhanh?: string;
 
-    sTrangThaiGuiTinNhan? = '';
+    tenCuaHang?: string;
+    diaChiCuaHang?: string;
+    dienThoaiCuaHang?: string;
 
-    constructor({ idKhachHang = '', maKhachHang = '', tenKhachHang = '', soDienThoai = '', ngaySinh = '' }) {
-        super({
-            idKhachHang: idKhachHang,
-            maKhachHang: maKhachHang,
-            tenKhachHang: tenKhachHang,
-            soDienThoai: soDienThoai,
-            ngaySinh: ngaySinh
-        });
-    }
+    sTrangThaiGuiTinNhan?: string;
+
+    // constructor({ idKhachHang = '', maKhachHang = '', tenKhachHang = '', soDienThoai = '', ngaySinh = '' }) {
+    //     super({
+    //         idKhachHang: idKhachHang,
+    //         maKhachHang: maKhachHang,
+    //         tenKhachHang: tenKhachHang,
+    //         soDienThoai: soDienThoai,
+    //         ngaySinh: ngaySinh
+    //     });
+    // }
 }
 
 export class CustomerZaloDto extends CustomerBasicDto {

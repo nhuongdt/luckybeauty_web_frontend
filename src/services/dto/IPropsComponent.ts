@@ -17,3 +17,12 @@ export interface IPropsListRadioFilter {
     defaultValue: number | string;
     onChange: (newValue: number | string) => void;
 }
+
+export interface IPropModal<T> {
+    idUpdate?: string;
+    isShowModal: boolean;
+    lstData?: T[];
+    objUpDate?: T;
+    onClose: () => void;
+    onOK: (typeAction: number) => void;
+}

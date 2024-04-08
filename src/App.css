@@ -428,3 +428,14 @@ body .font-normal {
 .zalo-template .zoa-element-lable {
 font-weight: 600;
 }
+.zalo-template .btnRemove {
+    color: #b93530;
+    cursor: pointer;
+}
+.page-zalo-template .details-mau-tin{
+    cursor: pointer;
+    border-radius: 4px;
+}
+.page-zalo-template .details-mau-tin:hover{
+    background-color: var(--color-bg);
+}

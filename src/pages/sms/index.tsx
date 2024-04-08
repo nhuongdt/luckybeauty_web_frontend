@@ -242,26 +242,6 @@ const TinNhanPage = () => {
     const InnitData_TempZalo = async () => {
         const data = await ZaloService.InnitData_TempZalo();
         setZaloLstTemplateDefault(data);
-        console.log('datazalo ', data);
-    };
-
-    const TestGuiTinZalo = async () => {
-        // await ZaloService.NguoiDung_ChiaSeThongTin_ChoOA(inforZOA, zaloToken.accessToken, '1311392252375682231');
-        const data = {
-            tenKhachHang: 'Nhuongdt',
-            tenChiNhanh: 'SSOFT',
-            zoaUserId: '6441788310775550433'
-        } as CustomerSMSDto;
-        await ZaloService.GuiTinGiaoDich_fromDataDB(data, zaloToken.accessToken, LoaiTin.TIN_SINH_NHAT);
-        // await ZaloService.SendMessageToUser(zaloToken.accessToken);
-
-        // await ZaloService.GuiTinNhanGiaoDich_WithMyTemp(zaloToken.accessToken, '6441788310775550433', {
-        //     tenKhachHang: 'Nhuong dt',
-        //     maHoaDon: 'HDTest001',
-        //     ngayLapHoaDon: '11:43 21/03/2024',
-        //     tongTienHang: 100000,
-        //     logoChiNhanh: congty?.logo
-        // } as IZaloDataSend);
     };
 
     const GetZaloTokenfromDB = async () => {
@@ -825,11 +805,6 @@ const TinNhanPage = () => {
                 onCancel={() => setIsShowModalAddMauTin(false)}
                 onOK={saveMauTinOK}
             /> */}
-            <ModalZaloTemplate
-                onClose={() => setIsShowModalAddMauTin(false)}
-                isShowModal={isShowModalAddMauTin}
-                lstData={zaloLstTemplateDefault}
-            />
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
@@ -927,7 +902,7 @@ const TinNhanPage = () => {
                                 onClick={() => setIsShowModalGuiTinZalo(true)}>
                                 Gửi tin Zalo
                             </Button>
-                            <Button
+                            {/* <Button
                                 size="small"
                                 variant="contained"
                                 sx={{
@@ -938,7 +913,7 @@ const TinNhanPage = () => {
                                 startIcon={<Add />}
                                 onClick={() => setIsShowModalAddMauTin(true)}>
                                 Thêm mẫu tin
-                            </Button>
+                            </Button> */}
                         </Grid>
                     </Grid>
                 </Grid>
@@ -954,12 +929,11 @@ const TinNhanPage = () => {
                                         display: abpCustom.isGrandPermission('Pages.HeThongSMS.Create') ? '' : 'none'
                                     }}
                                     variant="contained"
-                                    onClick={TestGuiTinZalo}
-                                    // onClick={() => {
-                                    //     setIsShowModalAdd(true);
-                                    //     setIdLoaiTin(1);
-                                    //     setLstRowSelect([]);
-                                    // }}
+                                    onClick={() => {
+                                        setIsShowModalAdd(true);
+                                        setIdLoaiTin(1);
+                                        setLstRowSelect([]);
+                                    }}
                                     startIcon={<Add />}>
                                     Tin nhắn mới
                                 </Button>
