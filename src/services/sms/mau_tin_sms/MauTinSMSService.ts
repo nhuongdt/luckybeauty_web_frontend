@@ -1,7 +1,16 @@
+import { Guid } from 'guid-typescript';
+import utils from '../../../utils/utils';
 import http from '../../httpService';
 import { MauTinSMSDto, GroupMauTinSMSDto } from './mau_tin_dto';
 
 class MauTinSMSService {
+    GetMauTinSMS_byId = async (idMauTin: string): Promise<MauTinSMSDto | null> => {
+        if (utils.checkNull(idMauTin) || idMauTin == Guid.EMPTY) {
+            return null;
+        }
+        const xx = await http.get(`api/services/app/MauTinSMS/GetMauTinSMS_byId?id=${idMauTin}`);
+        return xx.data.result;
+    };
     GetAllMauTinSMS = async (): Promise<MauTinSMSDto[]> => {
         const xx = await http.get(`api/services/app/MauTinSMS/GetAllMauTinSMS`);
         return xx.data.result;

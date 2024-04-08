@@ -1,7 +1,7 @@
 import utils from '../../../utils/utils';
 import http from '../../httpService';
 import { CustomerSMSDto } from '../gui_tin_nhan/gui_tin_nhan_dto';
-import { CaiDatNhacNhoChiTietDto, CaiDatNhacNhoDto } from './cai_dat_nhac_nho_dto';
+import { ICaiDatNhacNhoDto, IICaiDatNhacNho_GroupLoaiTin } from './cai_dat_nhac_nho_dto';
 import { format } from 'date-fns';
 
 const objSMS = {
@@ -47,38 +47,26 @@ class CaiDatNhacNhoService {
         txt = txt.replace('{SDTCuaHang}', '0243.933.033');
         return txt;
     };
-    GetAllCaiDatNhacNho = async (): Promise<CaiDatNhacNhoDto[]> => {
+    GetAllCaiDatNhacNho = async (): Promise<ICaiDatNhacNhoDto[] | null> => {
         const xx = await http.get(`api/services/app/CaiDatNhacNho/GetAllCaiDat`);
         return xx.data.result;
     };
-    GetInforCaiDatNhacNho_byId = async (idSetup: string): Promise<CaiDatNhacNhoDto> => {
+    GetAllCaiDatNhacNho_GroupLoaiTin = async (): Promise<IICaiDatNhacNho_GroupLoaiTin[] | null> => {
+        const xx = await http.get(`api/services/app/CaiDatNhacNho/GetAllCaiDatNhacNho_GroupLoaiTin`);
+        return xx.data.result;
+    };
+    GetInforCaiDatNhacNho_byId = async (idSetup: string): Promise<ICaiDatNhacNhoDto> => {
         const xx = await http.get(
             `api/services/app/CaiDatNhacNho/GetInforCaiDatNhacNho_byId?idCaiDatNhacNho=${idSetup}`
         );
         return xx.data.result;
     };
-    CreateCaiDatNhacNho = async (input: CaiDatNhacNhoDto): Promise<CaiDatNhacNhoDto> => {
+    CreateCaiDatNhacNho = async (input: ICaiDatNhacNhoDto): Promise<ICaiDatNhacNhoDto> => {
         const xx = await http.post(`api/services/app/CaiDatNhacNho/CreateCaiDatNhacNho`, input);
         return xx.data.result;
     };
-    UpdateCaiDatNhacNho = async (input: CaiDatNhacNhoDto): Promise<string> => {
+    UpdateCaiDatNhacNho = async (input: ICaiDatNhacNhoDto): Promise<string> => {
         const xx = await http.post(`api/services/app/CaiDatNhacNho/UpdateCaiDatNhacNho`, input);
-        return xx.data.result;
-    };
-    CaiDatNhacNho_UpdateTrangThai = async (idSetup: string, trangThai = 0): Promise<CaiDatNhacNhoDto> => {
-        const xx = await http.get(
-            `api/services/app/CaiDatNhacNho/CaiDatNhacNho_UpdateTrangThai?idCaiDatNhacNho=${idSetup}&trangThai=${trangThai}`
-        );
-        return xx.data.result;
-    };
-    CreateOrUpdateCaiDatNhacNhoChiTiet = async (
-        idSetup: string,
-        itemDetail: CaiDatNhacNhoChiTietDto
-    ): Promise<CaiDatNhacNhoChiTietDto> => {
-        const xx = await http.post(
-            `api/services/app/CaiDatNhacNho/CreateOrUpdateCaiDatNhacNhoChiTiet?idCaiDatNhacNho=${idSetup}`,
-            itemDetail
-        );
         return xx.data.result;
     };
 }

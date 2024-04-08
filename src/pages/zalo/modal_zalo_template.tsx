@@ -40,14 +40,7 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import TokenZalo, { ListZaloToken_CuaHang, ListZaloToken_HoaDon, ListZaloToken_KhachHang } from './ToKenZalo';
 import { handleClickOutside } from '../../utils/customReactHook';
-
-export interface IPropModal<T> {
-    idUpdate?: string;
-    isShowModal: boolean;
-    lstData?: T[];
-    onClose: () => void;
-    onOK: (typeAction: number) => void;
-}
+import { IPropModal } from '../../services/dto/IPropsComponent';
 
 export const ZaloTemp_tabActive = {
     SYSTEM: '1',

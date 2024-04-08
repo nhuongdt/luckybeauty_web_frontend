@@ -10,52 +10,92 @@ import {
     Typography,
     Stack
 } from '@mui/material';
-import { Form, Formik } from 'formik';
-import AppConsts, { ISelect, LoaiTin, TypeAction, TimeType } from '../../../../lib/appconst';
+import AppConsts, {
+    ISelect,
+    LoaiTin,
+    TypeAction,
+    TimeType,
+    SMS_HinhThucGuiTin,
+    TrangThaiActive
+} from '../../../../lib/appconst';
 import { IOSSwitch } from '../../../../components/Switch/IOSSwitch';
 import { useEffect, useState } from 'react';
-import * as yup from 'yup';
 import utils from '../../../../utils/utils';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
 import DialogButtonClose from '../../../../components/Dialog/ButtonClose';
 import { Guid } from 'guid-typescript';
 import SelectWithData from '../../../../components/Select/SelectWithData';
-import { CaiDatNhacNhoDto } from '../../../../services/sms/cai_dat_nhac_nho/cai_dat_nhac_nho_dto';
 import CaiDatNhacNhoService from '../../../../services/sms/cai_dat_nhac_nho/CaiDatNhacNhoService';
-import AutocompleteWithData from '../../../../components/Autocomplete/AutocompleteWithData';
-import { MauTinSMSDto } from '../../../../services/sms/mau_tin_sms/mau_tin_dto';
-import { IDataAutocomplete } from '../../../../services/dto/IDataAutocomplete';
 import { ExpandMoreOutlined } from '@mui/icons-material';
-import { handleClickOutside } from '../../../../utils/customReactHook';
+import { ICaiDatNhacNhoDto } from '../../../../services/sms/cai_dat_nhac_nho/cai_dat_nhac_nho_dto';
+import { IPropModal } from '../../../../services/dto/IPropsComponent';
+import ZaloService from '../../../../services/zalo/ZaloService';
+import MauTinSMSService from '../../../../services/sms/mau_tin_sms/MauTinSMSService';
+import { IDataAutocomplete } from '../../../../services/dto/IDataAutocomplete';
+import AutocompleteWithData from '../../../../components/Autocomplete/AutocompleteWithData';
+import { ZaloTemplateView } from '../../../zalo/zalo_template_view';
+import { IZaloButtonDetail, IZaloElement, IZaloTableDetail } from '../../../../services/zalo/ZaloTemplateDto';
+import { ZaloConst } from '../../../../lib/zaloConst';
 
-const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSetup, onOK }: any) => {
-    const [objSetup, setObjSetup] = useState<CaiDatNhacNhoDto>(
-        new CaiDatNhacNhoDto({ id: '', trangThai: 1, noiDungTin: '' })
-    );
+const ModalCaiDatNhacNho = (props: IPropModal<ICaiDatNhacNhoDto>) => {
+    const { idUpdate, isShowModal, objUpDate, onClose, onOK } = props;
+
+    const [allMauTin, setAllMauTin] = useState<IDataAutocomplete[]>([]);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
-    const [expandAction, setExpandAction] = useState(false);
     const [titleDialog, setTitleDialog] = useState('');
-    const ref = handleClickOutside(() => setExpandAction(false));
+    const [noiDungXemTruoc, setNoiDungXemTruoc] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
+    const [objSetup, setObjSetup] = useState<ICaiDatNhacNhoDto>({
+        id: Guid.EMPTY,
+        trangThai: TrangThaiActive.NOT_ACTIVE
+    } as ICaiDatNhacNhoDto);
+
+    const [imageUrl, setImageUrl] = useState(''); // url of imge
+    const [lstButton, setLstButton] = useState<IZaloButtonDetail[]>([]);
+    const [tblDetail, setTblDetail] = useState<IZaloTableDetail[]>([]);
+    const [headerElm, setHeaderElm] = useState<IZaloElement | null>();
+    const [textElm, setTextElm] = useState<IZaloElement | null>();
 
     useEffect(() => {
-        if (visiable) {
-            if (utils.checkNull(idSetup) || idSetup === Guid.EMPTY) {
+        ResetDataModal();
+        if (isShowModal) {
+            const idLoaiTin = objUpDate?.idLoaiTin ?? 0;
+            if (utils.checkNull(idUpdate) || idUpdate === Guid.EMPTY) {
                 switch (idLoaiTin) {
                     case LoaiTin.TIN_SINH_NHAT:
                     case LoaiTin.TIN_GIAO_DICH:
+                    case LoaiTin.XAC_NHAN_LICH_HEN:
                         {
-                            setObjSetup(new CaiDatNhacNhoDto({ loaiThoiGian: TimeType.SECOND, idLoaiTin: idLoaiTin }));
+                            setObjSetup({
+                                ...objSetup,
+                                idLoaiTin: idLoaiTin,
+                                idMauTin: '',
+                                loaiThoiGian: 0,
+                                trangThai: TrangThaiActive.NOT_ACTIVE,
+                                nhacTruocKhoangThoiGian: 0,
+                                hinhThucGui: objUpDate?.hinhThucGui
+                            });
                         }
                         break;
-                    case LoaiTin.TIN_LICH_HEN:
+                    case LoaiTin.NHAC_LICH_HEN:
                         {
-                            setObjSetup(new CaiDatNhacNhoDto({ loaiThoiGian: TimeType.HOUR, idLoaiTin: idLoaiTin }));
+                            setObjSetup({
+                                ...objSetup,
+                                idLoaiTin: idLoaiTin,
+                                idMauTin: '',
+                                trangThai: TrangThaiActive.NOT_ACTIVE,
+                                loaiThoiGian: TimeType.HOUR,
+                                nhacTruocKhoangThoiGian: 0,
+                                hinhThucGui: objUpDate?.hinhThucGui
+                            });
                         }
                         break;
                 }
+                GetAllMauTin(objUpDate?.hinhThucGui);
             } else {
-                GetInforCaiDatNhacNho_byId(idSetup);
+                GetSetData_CaiDatNhacNho(objUpDate ?? null);
             }
+
             switch (idLoaiTin) {
                 case LoaiTin.TIN_SINH_NHAT:
                     {
@@ -67,6 +107,16 @@ const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSet
                         setTitleDialog('Cài đặt nhắc nhở cuộc hẹn');
                     }
                     break;
+                case LoaiTin.NHAC_LICH_HEN:
+                    {
+                        setTitleDialog('Cài đặt nhắc nhở cuộc hẹn');
+                    }
+                    break;
+                case LoaiTin.XAC_NHAN_LICH_HEN:
+                    {
+                        setTitleDialog('Cài đặt xác nhận lịch hẹn');
+                    }
+                    break;
                 case LoaiTin.TIN_GIAO_DICH:
                     {
                         setTitleDialog('Cài đặt thông báo giao dịch');
@@ -74,41 +124,151 @@ const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSet
                     break;
             }
         }
-    }, [visiable]);
+    }, [isShowModal]);
 
-    const GetInforCaiDatNhacNho_byId = async (idSetup: string) => {
-        const data = await CaiDatNhacNhoService.GetInforCaiDatNhacNho_byId(idSetup);
-        if (data != null) {
-            setObjSetup({
-                id: idSetup,
-                idLoaiTin: idLoaiTin,
-                idMauTin: data.idMauTin,
-                nhacTruocKhoangThoiGian: data.nhacTruocKhoangThoiGian,
-                loaiThoiGian: data.loaiThoiGian,
-                noiDungTin: data.noiDungTin,
-                trangThai: data.trangThai,
-                noiDungXemTruoc: CaiDatNhacNhoService.ReplaceBienSMS(data.noiDungTin as string)
-            });
-        }
-        return data;
+    const ResetDataModal = () => {
+        setIsSaving(false);
+        setNoiDungXemTruoc('');
+        setImageUrl('');
+        setLstButton([]);
+        setTblDetail([]);
+        setHeaderElm(null);
+        setTextElm(null);
     };
 
-    const rules = yup.object().shape({
-        noiDungTin: yup.string().required('Vui lòng nhập nội dung tin')
-    });
+    const GetSetData_CaiDatNhacNho = async (objUpdate: ICaiDatNhacNhoDto | null) => {
+        await GetAllMauTin(objUpdate?.hinhThucGui);
+        await GetInforCaiDatNhacNho_byId(idUpdate as string);
+    };
 
-    const saveCaiDatNhacNho = async (params: CaiDatNhacNhoDto) => {
-        if (utils.checkNull(params.id) || params.id === Guid.EMPTY) {
-            params.id = Guid.EMPTY;
-            const data = await CaiDatNhacNhoService.CreateCaiDatNhacNho(params);
-            params.id = data.id;
-            onOK(params, TypeAction.INSEART);
-            setObjAlert({ ...objAlert, show: true, mes: 'Thêm mới mẫu tin thành công' });
-        } else {
-            await CaiDatNhacNhoService.UpdateCaiDatNhacNho(params);
-            onOK(params, TypeAction.UPDATE);
-            setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật mẫu tin thành công' });
+    const GetInforCaiDatNhacNho_byId = async (idUpdate: string) => {
+        const data = await CaiDatNhacNhoService.GetInforCaiDatNhacNho_byId(idUpdate);
+        if (data != null) {
+            setObjSetup({
+                ...objSetup,
+                id: idUpdate,
+                idLoaiTin: data?.idLoaiTin,
+                idMauTin: data?.idMauTin,
+                hinhThucGui: data?.hinhThucGui,
+                trangThai: data?.trangThai,
+                loaiThoiGian: data?.loaiThoiGian,
+                nhacTruocKhoangThoiGian: data?.nhacTruocKhoangThoiGian
+            });
+
+            if (!utils.checkNull(data?.idMauTin)) {
+                await BindNoiDungMauTin(data?.idMauTin ?? '');
+            }
         }
+    };
+
+    const getMauTinZaLo = async (idMauTin: string) => {
+        // get from db
+        const itemDefault = await ZaloService.GetZaloTemplate_byId(idMauTin);
+
+        if (itemDefault != null && itemDefault != undefined) {
+            if (itemDefault?.elements !== undefined) {
+                const banner = itemDefault?.elements?.filter(
+                    (x) => x.elementType === ZaloConst.ElementType.BANNER || ZaloConst.ElementType.IMAGE
+                );
+                if (banner !== undefined && banner.length > 0) {
+                    if (banner[0].isImage) {
+                        setImageUrl(banner[0].content);
+                    } else {
+                        setImageUrl('');
+                    }
+                } else {
+                    setImageUrl('');
+                }
+                const header = itemDefault?.elements?.filter((x) => x.elementType === ZaloConst.ElementType.HEADER);
+                if (header !== undefined && header.length > 0) {
+                    setHeaderElm(header[0]);
+                } else {
+                    setHeaderElm(null);
+                }
+                const text = itemDefault?.elements?.filter((x) => x.elementType === ZaloConst.ElementType.TEXT);
+                if (text !== undefined && text.length > 0) {
+                    setTextElm(text[0]);
+                } else {
+                    setTextElm(null);
+                }
+
+                const tbl = itemDefault?.elements
+                    ?.filter((x) => x.elementType === ZaloConst.ElementType.TABLE)
+                    ?.map((x) => {
+                        return x?.tables;
+                    });
+                if (tbl !== undefined && tbl?.length > 0) {
+                    setTblDetail(tbl[0]);
+                } else {
+                    setTblDetail([]);
+                }
+            }
+            if (itemDefault?.buttons !== undefined) {
+                setLstButton(itemDefault?.buttons);
+            } else {
+                setLstButton([]);
+            }
+        } else {
+            // setZaloTempItem(null);
+        }
+    };
+
+    const BindNoiDungMauTin = async (idMauTin: string) => {
+        switch (objUpDate?.hinhThucGui) {
+            case SMS_HinhThucGuiTin.SMS:
+                {
+                    const data = await MauTinSMSService.GetMauTinSMS_byId(idMauTin);
+                    if (data !== undefined && data != null) {
+                        setNoiDungXemTruoc(CaiDatNhacNhoService.ReplaceBienSMS(data?.noiDungTinMau as string));
+                    }
+                }
+                break;
+            case SMS_HinhThucGuiTin.ZALO:
+                {
+                    await getMauTinZaLo(idMauTin);
+                }
+                break;
+        }
+    };
+
+    const changeMauTin = async (item: IDataAutocomplete) => {
+        setObjSetup({
+            ...objSetup,
+            idMauTin: item?.id
+        });
+        await BindNoiDungMauTin(item?.id);
+    };
+
+    const GetAllMauTin = async (hinhThucGui = 0) => {
+        if (hinhThucGui === SMS_HinhThucGuiTin.SMS) {
+            const data = await MauTinSMSService.GetAllMauTinSMS();
+            setAllMauTin(
+                data?.map((x) => {
+                    return { id: x.id, text1: x.tenMauTin, text2: x.noiDungTinMau } as IDataAutocomplete;
+                })
+            );
+        } else {
+            const data = await ZaloService.GetAllZaloTemplate_fromDB();
+            setAllMauTin(
+                data?.map((x) => {
+                    return { id: x.id, text1: x.tenMauTin, text2: '' } as IDataAutocomplete;
+                })
+            );
+        }
+    };
+
+    const saveCaiDatNhacNho = async () => {
+        if (isSaving) return;
+        setIsSaving(true);
+
+        if (utils.checkNull(idUpdate) || idUpdate === Guid.EMPTY) {
+            await CaiDatNhacNhoService.CreateCaiDatNhacNho(objSetup);
+            onOK(TypeAction.INSEART);
+        } else {
+            await CaiDatNhacNhoService.UpdateCaiDatNhacNho(objSetup);
+            onOK(TypeAction.UPDATE);
+        }
+        setObjAlert({ ...objAlert, show: true, mes: `${titleDialog} thành công` });
     };
 
     return (
@@ -119,234 +279,149 @@ const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSet
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
 
-            <Dialog open={visiable} onClose={onCancel}>
+            <Dialog open={isShowModal} onClose={onClose} maxWidth="sm" fullWidth>
                 <DialogTitle>
                     <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                        <Typography className="modal-title">{titleDialog}</Typography>
-                        <DialogButtonClose onClose={onCancel}></DialogButtonClose>
+                        <Typography className="modal-title">
+                            {objUpDate?.hinhThucGui === SMS_HinhThucGuiTin.SMS ? 'SMS: ' : 'Zalo: '}
+                            {titleDialog}
+                        </Typography>
+                        <DialogButtonClose onClose={onClose}></DialogButtonClose>
                     </Box>
                 </DialogTitle>
                 <DialogContent sx={{ overflow: 'hidden' }}>
-                    <Formik
-                        enableReinitialize
-                        initialValues={objSetup}
-                        validationSchema={rules}
-                        onSubmit={saveCaiDatNhacNho}>
-                        {({ values, handleChange, errors, touched, isSubmitting, setFieldValue }) => (
-                            <Form>
-                                <Grid container spacing={2} paddingTop={1}>
-                                    <Grid item xs={12}>
-                                        <Stack direction={'row'} spacing={1} alignItems={'center'}>
-                                            <Typography variant="body2">Kích hoạt</Typography>
-                                            <IOSSwitch
-                                                sx={{ m: 1 }}
-                                                value={values.trangThai}
-                                                checked={values.trangThai == 1 ? true : false}
-                                                onChange={() => {
-                                                    const newVal = values.trangThai == 1 ? 0 : 1;
-                                                    setFieldValue('trangThai', newVal);
-                                                }}
-                                            />
-                                        </Stack>
-                                    </Grid>
-                                    {idLoaiTin === LoaiTin.TIN_LICH_HEN && (
-                                        <Grid item xs={12}>
-                                            <Grid container spacing={1}>
-                                                <Grid item xs={9}>
-                                                    <TextField
-                                                        name="nhacTruocKhoangThoiGian"
-                                                        label="Gửi trước"
-                                                        value={values?.nhacTruocKhoangThoiGian}
-                                                        onChange={handleChange}
-                                                        size="small"
-                                                        fullWidth
-                                                        helperText={
-                                                            touched.nhacTruocKhoangThoiGian &&
-                                                            errors.nhacTruocKhoangThoiGian && (
-                                                                <span>{errors.nhacTruocKhoangThoiGian}</span>
-                                                            )
-                                                        }
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <SelectWithData
-                                                        label="Loại thời gian"
-                                                        data={AppConsts.ListTimeType}
-                                                        idChosed={values.loaiThoiGian}
-                                                        handleChange={(item: ISelect) => {
-                                                            setFieldValue('loaiThoiGian', item.value);
-                                                        }}
-                                                    />
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
-                                    )}
-
-                                    <Grid item xs={12}>
-                                        <AutocompleteWithData
-                                            label="Mẫu tin"
-                                            idChosed={values?.idMauTin}
-                                            lstData={lstMauTinSMS
-                                                ?.filter((x: MauTinSMSDto) => x.idLoaiTin === values?.idLoaiTin)
-                                                .map((x: MauTinSMSDto) => {
-                                                    return { id: x.id, text1: x.tenMauTin, text2: x.noiDungTinMau };
-                                                })}
-                                            handleChoseItem={(item: IDataAutocomplete) => {
-                                                setFieldValue('idMauTin', item?.id);
-                                                setFieldValue('noiDungTin', item?.text2);
-                                                setFieldValue(
-                                                    'noiDungXemTruoc',
-                                                    CaiDatNhacNhoService.ReplaceBienSMS(item?.text2 as string)
-                                                );
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
+                    <Grid container spacing={2} paddingTop={1}>
+                        <Grid item xs={12}>
+                            <Stack direction={'row'} spacing={1} alignItems={'center'}>
+                                <Typography variant="body2">Kích hoạt</Typography>
+                                <IOSSwitch
+                                    sx={{ m: 1 }}
+                                    value={objSetup?.trangThai}
+                                    checked={objSetup?.trangThai == TrangThaiActive.ACTIVE ? true : false}
+                                    onChange={() => {
+                                        const newVal =
+                                            objSetup?.trangThai == TrangThaiActive.ACTIVE
+                                                ? TrangThaiActive.NOT_ACTIVE
+                                                : TrangThaiActive.ACTIVE;
+                                        setObjSetup({ ...objSetup, trangThai: newVal });
+                                    }}
+                                />
+                            </Stack>
+                        </Grid>
+                        {objUpDate?.idLoaiTin === LoaiTin.NHAC_LICH_HEN && (
+                            <Grid item xs={12}>
+                                <Grid container spacing={1}>
+                                    <Grid item xs={9}>
                                         <TextField
-                                            name="noiDungTin"
-                                            multiline
-                                            rows={3}
-                                            label="Nội dung tin"
-                                            value={values?.noiDungTin}
-                                            onChange={(e) => {
-                                                const value = e.target.value;
-                                                setFieldValue('noiDungTin', value);
-                                                setFieldValue(
-                                                    'noiDungXemTruoc',
-                                                    CaiDatNhacNhoService.ReplaceBienSMS(value)
-                                                );
-                                            }}
+                                            name="nhacTruocKhoangThoiGian"
+                                            label="Gửi trước"
+                                            value={objSetup?.nhacTruocKhoangThoiGian}
+                                            onChange={(event) =>
+                                                setObjSetup({
+                                                    ...objSetup,
+                                                    nhacTruocKhoangThoiGian: parseInt(event.target.value)
+                                                })
+                                            }
                                             size="small"
                                             fullWidth
-                                            helperText={
-                                                touched.noiDungTin &&
-                                                errors.noiDungTin && <span>{errors.noiDungTin}</span>
-                                            }
                                         />
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        <Box ref={ref} sx={{ width: '15%' }}>
-                                            <Box sx={{ position: 'relative' }}>
-                                                <Button
-                                                    variant="contained"
-                                                    endIcon={<ExpandMoreOutlined />}
-                                                    onClick={() => setExpandAction(!expandAction)}>
-                                                    Chèn
-                                                </Button>
-
-                                                <Box
-                                                    sx={{
-                                                        display: expandAction ? '' : 'none',
-                                                        overflow: 'auto',
-                                                        maxHeight: '180px',
-                                                        position: 'absolute',
-                                                        borderRadius: '4px',
-                                                        border: '1px solid #cccc',
-                                                        minWidth: 160,
-                                                        backgroundColor: 'rgba(248,248,248,1)',
-                                                        '& .MuiStack-root .MuiStack-root:hover': {
-                                                            backgroundColor: '#cccc'
-                                                        }
-                                                    }}>
-                                                    <Stack alignContent={'center'}>
-                                                        {AppConsts.DanhSachBienSMS?.map(
-                                                            (item: ISelect, index: number) => (
-                                                                <Stack
-                                                                    direction={'row'}
-                                                                    key={index}
-                                                                    spacing={1}
-                                                                    padding={'6px'}
-                                                                    onClick={() => {
-                                                                        const content = values.noiDungTin?.concat(
-                                                                            item.value.toString()
-                                                                        );
-                                                                        setFieldValue('noiDungTin', content);
-                                                                        setFieldValue(
-                                                                            'noiDungXemTruoc',
-                                                                            CaiDatNhacNhoService.ReplaceBienSMS(
-                                                                                content as string
-                                                                            )
-                                                                        );
-                                                                        setExpandAction(false);
-                                                                    }}>
-                                                                    <Typography variant="subtitle2" marginLeft={1}>
-                                                                        {item.text}
-                                                                    </Typography>
-                                                                </Stack>
-                                                            )
-                                                        )}
-                                                    </Stack>
-                                                </Box>
-                                            </Box>
-                                        </Box>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Stack
-                                            padding={2}
-                                            spacing={2}
-                                            sx={{ border: '1px dashed #ccc' }}
-                                            alignItems={'center'}>
-                                            <Typography fontSize={16} fontWeight={600} color={'#525F7A'}>
-                                                Xem trước tin nhắn
-                                            </Typography>
-                                            <Stack
-                                                sx={{
-                                                    width: '100%',
-                                                    backgroundColor: '#EEF0F4',
-                                                    borderRadius: '4px',
-                                                    alignItems: 'center'
-                                                }}>
-                                                <Typography fontSize={14} padding={1}>
-                                                    {values?.noiDungXemTruoc}
-                                                </Typography>
-                                            </Stack>
-                                        </Stack>
+                                    <Grid item xs={3}>
+                                        <SelectWithData
+                                            label="Loại thời gian"
+                                            data={AppConsts.ListTimeType}
+                                            idChosed={objSetup?.loaiThoiGian}
+                                            handleChange={(item: ISelect) => {
+                                                setObjSetup({
+                                                    ...objSetup,
+                                                    loaiThoiGian: item?.value as number
+                                                });
+                                            }}
+                                        />
                                     </Grid>
                                 </Grid>
-                                <DialogActions sx={{ padding: '16px 0px 0px !important' }}>
-                                    <Button
-                                        onClick={onCancel}
-                                        variant="outlined"
-                                        sx={{
-                                            fontSize: '14px',
-                                            textTransform: 'unset',
-                                            color: 'var(--color-main)'
-                                        }}
-                                        className="btn-outline-hover">
-                                        Hủy
-                                    </Button>
-                                    {!isSubmitting ? (
-                                        <Button
-                                            type="submit"
-                                            variant="contained"
-                                            sx={{
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                color: '#fff',
-
-                                                border: 'none'
-                                            }}
-                                            className="btn-container-hover">
-                                            Lưu
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            variant="contained"
-                                            sx={{
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                color: '#fff',
-
-                                                border: 'none'
-                                            }}
-                                            className="btn-container-hover">
-                                            Đang lưu
-                                        </Button>
-                                    )}
-                                </DialogActions>
-                            </Form>
+                            </Grid>
                         )}
-                    </Formik>
+
+                        <Grid item xs={12}>
+                            <AutocompleteWithData
+                                idChosed={objSetup?.idMauTin ?? ''}
+                                label="Mẫu tin"
+                                lstData={allMauTin}
+                                handleChoseItem={changeMauTin}
+                            />
+                        </Grid>
+                        {objUpDate?.hinhThucGui == SMS_HinhThucGuiTin.SMS && (
+                            <Grid item xs={12}>
+                                <Stack padding={2} spacing={2} sx={{ border: '1px dashed #ccc' }} alignItems={'center'}>
+                                    <Typography fontSize={16} fontWeight={600} color={'#525F7A'}>
+                                        Xem trước tin nhắn
+                                    </Typography>
+                                    <Stack
+                                        sx={{
+                                            width: '100%',
+                                            backgroundColor: '#EEF0F4',
+                                            borderRadius: '4px',
+                                            alignItems: 'center'
+                                        }}>
+                                        <Typography fontSize={14} padding={1}>
+                                            {noiDungXemTruoc}
+                                        </Typography>
+                                    </Stack>
+                                </Stack>
+                            </Grid>
+                        )}
+                        {objUpDate?.hinhThucGui === SMS_HinhThucGuiTin.ZALO && (
+                            <ZaloTemplateView
+                                logoBanner={imageUrl}
+                                headerText={headerElm?.content ?? ''}
+                                contentText={textElm?.content ?? ''}
+                                tables={tblDetail}
+                                buttons={lstButton}
+                            />
+                        )}
+                    </Grid>
+                    <DialogActions sx={{ padding: '16px 0px 0px !important' }}>
+                        <Button
+                            onClick={onClose}
+                            variant="outlined"
+                            sx={{
+                                fontSize: '14px',
+                                textTransform: 'unset',
+                                color: 'var(--color-main)'
+                            }}
+                            className="btn-outline-hover">
+                            Hủy
+                        </Button>
+                        {!isSaving ? (
+                            <Button
+                                variant="contained"
+                                onClick={saveCaiDatNhacNho}
+                                sx={{
+                                    fontSize: '14px',
+                                    textTransform: 'unset',
+                                    color: '#fff',
+
+                                    border: 'none'
+                                }}
+                                className="btn-container-hover">
+                                Lưu
+                            </Button>
+                        ) : (
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    fontSize: '14px',
+                                    textTransform: 'unset',
+                                    color: '#fff',
+
+                                    border: 'none'
+                                }}
+                                className="btn-container-hover">
+                                Đang lưu
+                            </Button>
+                        )}
+                    </DialogActions>
                 </DialogContent>
             </Dialog>
         </>
