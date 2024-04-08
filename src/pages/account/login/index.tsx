@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import {
@@ -24,6 +24,16 @@ import { enqueueSnackbar } from 'notistack';
 const LoginScreen: React.FC = () => {
     const navigate = useNavigate();
     const loginModel = new LoginModel();
+    useEffect(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+        // get an array of all cookie names
+        Object.keys(Cookies.get()).forEach((cookieName) => {
+            if (cookieName !== 'TenantName') {
+                Cookies.remove(cookieName);
+            }
+        });
+    }, []);
     const [showPassword, setShowPassword] = useState(false);
     const formik = useFormik({
         initialValues: {

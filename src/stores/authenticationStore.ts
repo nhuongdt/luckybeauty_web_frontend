@@ -56,6 +56,7 @@ class AuthenticationStore {
                 Cookies.remove(cookieName);
             }
         });
+
         window.location.href = '/login';
     }
     async LogoutForImpersonate() {

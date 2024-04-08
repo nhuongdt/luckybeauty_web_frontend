@@ -22,6 +22,7 @@ import { format as formatDateFns } from 'date-fns';
 import { IList } from '../../../services/dto/IList';
 import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
 import ChooseImpersonateToTenant from './components/choose_impersonate_to_tenant';
+import TenantHistoryActivityModal from './components/tenant_history_activity_modal';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ITenantProps {}
 
@@ -31,6 +32,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
         maxResultCount: 10,
         skipCount: 0,
         tenantId: 0,
+        tenantName: '',
         filter: '',
         listTenant: [] as GetAllTenantOutput[],
         totalCount: 0,
@@ -52,7 +54,8 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
         anchorEl: null,
         selectedRowId: 0,
         rowSelectedModel: [] as GridRowSelectionModel,
-        visiableImperonate: false
+        visiableImperonate: false,
+        visiableHistoryActivity: false
     };
 
     componentDidMount() {
@@ -179,6 +182,9 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
     onShowImpersonate = async () => {
         await this.setState({ visiableImperonate: !this.state.visiableImperonate });
     };
+    onShowTenantHistoryActivity = async () => {
+        await this.setState({ visiableHistoryActivity: !this.state.visiableHistoryActivity });
+    };
     doActionRow = async (action: number, tenantId: number) => {
         this.setState({ tenantId: tenantId, selectedRowId: tenantId });
         switch (action) {
@@ -197,6 +203,9 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                 break;
             case 3:
                 this.onShowImpersonate();
+                break;
+            case 4:
+                this.onShowTenantHistoryActivity();
                 break;
         }
     };
@@ -346,10 +355,20 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                                     color: '#009EF7',
                                     isShow: true,
                                     icon: <Info sx={{ color: '#009EF7' }} />
+                                },
+                                {
+                                    id: '4',
+                                    text: 'Lịch sử hoạt động',
+                                    color: '#009EF7',
+                                    isShow: true,
+                                    icon: <Info sx={{ color: '#009EF7' }} />
                                 }
                             ] as IList[]
                         }
-                        handleAction={(action: number) => this.doActionRow(action, params.row.id)}
+                        handleAction={(action: number) => {
+                            this.setState({ tenantName: params.row.tenancyName });
+                            this.doActionRow(action, params.row.id);
+                        }}
                     />
                 ),
                 renderHeader: (params: any) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
@@ -504,6 +523,14 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     onCancel={() => {
                         this.setState({ visiableImperonate: !this.state.visiableImperonate });
                     }}></ChooseImpersonateToTenant>
+                <TenantHistoryActivityModal
+                    tenantId={this.state.selectedRowId}
+                    tenantName={this.state.tenantName}
+                    visible={this.state.visiableHistoryActivity}
+                    onCancel={() => {
+                        this.onShowTenantHistoryActivity();
+                    }}
+                />
             </Box>
         );
     }

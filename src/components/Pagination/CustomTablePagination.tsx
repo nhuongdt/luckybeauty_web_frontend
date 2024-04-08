@@ -16,7 +16,7 @@ class CustomTablePagination extends Component<TablePaginationProps> {
         const { totalPage, totalRecord, currentPage, rowPerPage, handlePageChange, handlePerPageChange } = this.props;
         return (
             <Grid container sx={{ display: totalRecord > 0 ? '' : 'none', backgroundColor: '#fff' }} padding="0px 16px">
-                <Grid item xs={6} md={3}>
+                <Grid item xs={12} sm={12} md={3}>
                     <Box
                         sx={{
                             display: 'flex',
@@ -35,7 +35,7 @@ class CustomTablePagination extends Component<TablePaginationProps> {
                         </FormControl>
                     </Box>
                 </Grid>
-                <Grid item xs={12} md={9}>
+                <Grid item xs={12} sm={12} md={9}>
                     <Box
                         sx={{
                             display: 'flex',

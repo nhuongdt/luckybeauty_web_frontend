@@ -8,6 +8,8 @@ import { PagedTenantResultRequestDto } from './dto/PagedTenantResultRequestDto';
 import UpdateTenantInput from './dto/updateTenantInput';
 import UpdateTenantOutput from './dto/updateTenantOutput';
 import http from '../httpService';
+import { PagedRequestDto } from '../dto/pagedRequestDto';
+import { TenantHistoryActivityDto } from './dto/tenantHistoryActivityDto';
 
 class TenantService {
     public async create(createTenantInput: CreateTenantInput): Promise<CreateTenantOutput> {
@@ -69,6 +71,21 @@ class TenantService {
             return result.data.result;
         } catch (error) {
             console.error('Error occurred while updating tenant:', error);
+            throw error;
+        }
+    }
+
+    public async getTenantHistoryActivity(
+        pagedFilterAndSortedRequest: PagedRequestDto,
+        tenantId: number
+    ): Promise<PagedResultDto<TenantHistoryActivityDto>> {
+        try {
+            const result = await http.get('api/services/app/Tenant/GetTenantHistoryActivity', {
+                params: { ...pagedFilterAndSortedRequest, tenantId: tenantId }
+            });
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while retrieving all tenants:', error);
             throw error;
         }
     }

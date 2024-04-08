@@ -10,6 +10,7 @@ class LoginService {
     public async CheckTenant(tenantName: string): Promise<IsTenantAvaibleOutput> {
         //const tenancy = tenantName || 'default';
         if (tenantName === '') {
+            Cookies.remove('TenantName');
             return {
                 state: TenantAvailabilityState.Available,
                 tenantId: 0
