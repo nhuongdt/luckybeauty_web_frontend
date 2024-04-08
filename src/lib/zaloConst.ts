@@ -41,6 +41,7 @@ export const ZaloConst = {
         { value: ZaloTemplateType.MESSAGE, text: 'Tin tư vấn (dạng văn bản)' },
         { value: ZaloTemplateType.MEDIA, text: 'Tin tư vấn (kèm ảnh)' },
         { value: ZaloTemplateType.TRANSACTION, text: 'Tin giao dịch' },
+        { value: ZaloTemplateType.BOOKING, text: 'Tin lịch hẹn' },
         { value: ZaloTemplateType.PROMOTION, text: 'Tin truyền thông' }
         // { value: ZaloTemplateType.REQUEST_USER_INFOR, text: 'Mời quan tâm cửa hàng' }
     ] as ISelect[],

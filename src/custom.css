@@ -16,6 +16,9 @@
     --color-hoverIcon: brightness(0) saturate(100%) invert(45%) sepia(84%) saturate(2392%) hue-rotate(174deg)
         brightness(98%) contrast(103%);
     --color-header-table: #eef0f4;
+    --color-tin-giao-dich: rgb(80, 205, 137);
+    --color-tin-sinh-nhat: rgb(128, 10, 199);
+    --color-tin-lich-hen: rgb(255, 125, 161);
 }
 
 .btn-import {

@@ -56,9 +56,10 @@ export const LoaiTin = {
     TIN_THUONG: 1,
     TIN_SINH_NHAT: 2,
     TIN_LICH_HEN: 3,
-    XAC_NHAN_LICH_HEN: 31,
-    NHAC_LICH_HEN: 32,
-    THAY_DOI_LICH_HEN: 32,
+    NHAC_LICH_HEN: 31,
+    XAC_NHAN_LICH_HEN: 32,
+    THAY_DOI_LICH_HEN: 33,
+    HUY_LICH_HEN: 30,
     TIN_GIAO_DICH: 4,
     TIN_KHUYEN_MAI: 5
 };
