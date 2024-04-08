@@ -3,6 +3,7 @@ import ZaloService from '../../services/zalo/ZaloService';
 import { useEffect, useState } from 'react';
 import { IZaloButtonDetail, IZaloTableDetail } from '../../services/zalo/ZaloTemplateDto';
 import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined';
+import CaiDatNhacNhoService from '../../services/sms/cai_dat_nhac_nho/CaiDatNhacNhoService';
 
 export type PropsZaloTempView = {
     logoBanner?: string;
@@ -14,6 +15,8 @@ export type PropsZaloTempView = {
 
 export const ZaloTemplateView = (props: PropsZaloTempView) => {
     const { logoBanner, headerText, contentText, tables, buttons } = props;
+    const headerTextNew = CaiDatNhacNhoService.ReplaceBienSMS(headerText);
+    const contentTextNew = CaiDatNhacNhoService.ReplaceBienSMS(contentText);
     // todo replace content
     return (
         <>
@@ -21,9 +24,9 @@ export const ZaloTemplateView = (props: PropsZaloTempView) => {
                 {logoBanner && <img src={logoBanner} style={{ width: '200px', height: '48px' }} />}
 
                 <Typography variant="body1" fontWeight={600}>
-                    {headerText}
+                    {headerTextNew}
                 </Typography>
-                <Typography variant="body2">{contentText}</Typography>
+                <Typography variant="body2">{contentTextNew}</Typography>
 
                 {tables?.map((x, index) => (
                     <Grid container key={index}>

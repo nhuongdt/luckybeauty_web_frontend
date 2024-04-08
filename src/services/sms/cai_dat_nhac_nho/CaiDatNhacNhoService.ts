@@ -7,7 +7,8 @@ import { format } from 'date-fns';
 const objSMS = {
     idKhachHang: '',
     maKhachHang: 'KH001',
-    tenKhachHang: 'Chị Mai Hương',
+    tenKhachHang: 'Mai Hương',
+    xungHo: 'chị',
     soDienThoai: '0978005006',
     ngaySinh: '1990-11-11',
     bookingDate: '11:00 05/04/2024',
@@ -15,7 +16,15 @@ const objSMS = {
     thoiGianHen: '14:00 - 16:00',
     tenHangHoa: 'Cắt tóc',
     maHoaDon: 'HD001',
-    ngayLapHoaDon: '10:00 04/04/2024'
+    ngayLapHoaDon: '10:00 04/04/2024',
+    daThanhToan: 1000000,
+    ptThanhToan: 'Tiền mặt',
+    tenChiNhanh: 'SSOFT HN',
+    soDienThoaiChiNhanh: '02437949191',
+    diaChiChiNhanh: '31 Lê Văn Lương',
+    tenCuaHang: 'SSOFT Việt Nam',
+    diaChiCuaHang: 'Dịch Vọng Hậu',
+    dienThoaiCuaHang: '0978555444'
 } as CustomerSMSDto;
 
 class CaiDatNhacNhoService {
@@ -23,6 +32,8 @@ class CaiDatNhacNhoService {
     ReplaceBienSMS = (input: string): string => {
         let txt = input;
         txt = txt.replace('{TenKhachHang}', this.objSMS?.tenKhachHang ?? '');
+        txt = txt.replace('{SoDienThoai}', this.objSMS?.soDienThoai ?? '');
+        txt = txt.replace('{XungHo}', this.objSMS?.xungHo ?? '');
         if (!utils.checkNull(this.objSMS?.ngaySinh as unknown as string)) {
             txt = txt.replace('{NgaySinh}', format(new Date(this.objSMS?.ngaySinh ?? new Date()), 'dd/MM/yyyy'));
         } else {
@@ -31,7 +42,7 @@ class CaiDatNhacNhoService {
         if (!utils.checkNull(this.objSMS?.bookingDate as unknown as string)) {
             txt = txt.replace(
                 '{BookingDate}',
-                format(new Date(this.objSMS?.bookingDate ?? new Date()), 'HH:mm dd/MM/yyyy')
+                format(new Date(this.objSMS?.startDate ?? new Date()), 'HH:mm dd/MM/yyyy')
             );
         }
         txt = txt.replace('{ThoiGianHen}', this.objSMS?.thoiGianHen ?? '');
@@ -42,9 +53,16 @@ class CaiDatNhacNhoService {
                 format(new Date(this.objSMS?.ngayLapHoaDon ?? new Date()), 'HH:mm dd/MM/yyyy')
             );
         }
-        txt = txt.replace('{TenHangHoa}', this.objSMS?.tenHangHoa ?? '');
-        txt = txt.replace('{TenCuaHang}', 'Nail salon HN');
-        txt = txt.replace('{SDTCuaHang}', '0243.933.033');
+        txt = txt.replace('{TenDichVu}', this.objSMS?.tenHangHoa ?? '');
+        txt = txt.replace('{TenCuaHang}', this.objSMS?.tenCuaHang ?? '');
+        txt = txt.replace('{DienThoaiCuaHang}', this.objSMS?.dienThoaiCuaHang ?? '');
+        txt = txt.replace('{DiaChiCuaHang}', this.objSMS?.dienThoaiCuaHang ?? '');
+        txt = txt.replace('{TenChiNhanh}', this.objSMS?.tenChiNhanh ?? '');
+        txt = txt.replace('{DienThoaiChiNhanh}', this.objSMS?.soDienThoaiChiNhanh ?? '');
+        txt = txt.replace('{DiaChiChiNhanh}', this.objSMS?.diaChiChiNhanh ?? '');
+        txt = txt.replace('{TongTienHang}', new Intl.NumberFormat('vi-VN').format(this.objSMS?.tongThanhToan ?? 0));
+        txt = txt.replace('{DaThanhToan}', new Intl.NumberFormat('vi-VN').format(this.objSMS?.daThanhToan ?? 0));
+        txt = txt.replace('{PTThanhToan}', this.objSMS?.ptThanhToan ?? '');
         return txt;
     };
     GetAllCaiDatNhacNho = async (): Promise<ICaiDatNhacNhoDto[] | null> => {

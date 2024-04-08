@@ -94,41 +94,6 @@ export function AutocompleteCustomerZalo({ handleChoseItem, lstOption, helperTex
     );
 }
 
-export const Zalo_Template: React.FC<{ idMauTinZalo: string }> = ({ idMauTinZalo }) => {
-    const dataTemp = ZaloTemplateData.filter((x) => x.id === idMauTinZalo)[0];
-    const zalo_logoBanner = `https://lh3.googleusercontent.com/d/1TDXeqE458lvu9DJXFg85FtBEuC_1OHUw`;
-    return (
-        <>
-            <Stack spacing={1} padding={2}>
-                <img src={zalo_logoBanner} style={{ width: '200px', height: '48px' }} />
-                <Typography variant="body1" fontWeight={600}>
-                    {dataTemp?.tieuDe}
-                </Typography>
-                <Typography variant="body2">{dataTemp?.noiDung}</Typography>
-
-                {dataTemp?.noiDungChiTiet?.map((x, index) => (
-                    <Grid container key={index}>
-                        <Grid item xs={4}>
-                            <Typography variant="body2">{x.key}</Typography>
-                        </Grid>
-                        <Grid item xs={8}>
-                            <Typography variant="body2">{x.value}</Typography>
-                        </Grid>
-                    </Grid>
-                ))}
-
-                <Stack spacing={1}>
-                    {dataTemp?.buttons?.map((x: any, index: number) => (
-                        <Button variant="contained" key={index}>
-                            {x.title}
-                        </Button>
-                    ))}
-                </Stack>
-            </Stack>
-        </>
-    );
-};
-
 export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idTinNhan, onClose, onSaveOK }: any) {
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
@@ -145,7 +110,6 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
     const [toDate, setToDate] = useState(format(new Date(), 'yyyy-MM-dd'));
     const [dateType, setDateType] = useState<string>(DateType.HOM_NAY);
     const [dateTypeText, setDateTypeText] = useState<string>('Hôm nay');
-    const [lstMauTinZNS, setLstMauTinZNS] = useState<ITemplateZNS[]>([]);
     const [allMauTinDB, setAllMauTinDB] = useState<IZaloTemplate[]>([]);
 
     const [imageUrl, setImageUrl] = useState(''); // url of imge
@@ -228,6 +192,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                     if (!userZalo_IsCustomer.includes(itFor.zoaUserId)) {
                                         user.idKhachHang = itFor.id;
                                         user.soDienThoai = itFor?.soDienThoai;
+                                        user.xungHo = itFor?.xungHo ?? 'chị';
                                         arr.push(user);
                                         userZalo_IsCustomer.push(itFor.zoaUserId);
                                     }
@@ -275,7 +240,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                                 avatar: user?.avatar,
                                                 idKhachHang: itFor?.idKhachHang,
                                                 soDienThoai: itFor?.soDienThoai,
-                                                ngaySinh: itFor.idKhachHang,
+                                                ngaySinh: itFor.ngaySinh,
                                                 idHoaDons: [itFor?.idHoaDon ?? ''],
                                                 idBookings: [itFor?.idBooking ?? ''],
                                                 tenChiNhanh: itFor?.tenChiNhanh,
@@ -283,7 +248,10 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                                 diaChiChiNhanh: itFor?.diaChiChiNhanh,
                                                 tenCuaHang: itFor?.tenCuaHang,
                                                 diaChiCuaHang: itFor?.diaChiCuaHang,
-                                                dienThoaiCuaHang: itFor?.dienThoaiCuaHang
+                                                dienThoaiCuaHang: itFor?.dienThoaiCuaHang,
+                                                daThanhToan: itFor?.daThanhToan,
+                                                ptThanhToan: itFor?.ptThanhToan,
+                                                xungHo: itFor?.xungHo
                                             };
                                             arr.push(dataMes);
                                         }
@@ -567,10 +535,13 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                             zoaUserId: itemEx[0]?.user_id as string,
                                             idKhachHang: itemEx[0]?.idKhachHang as string,
                                             maKhachHang: '',
+                                            xungHo: itemEx[0]?.xungHo ?? '',
                                             soDienThoai: itemEx[0].soDienThoai ?? '',
                                             tenKhachHang: itemEx[0]?.display_name,
                                             maHoaDon: element?.maHoaDon,
                                             tongThanhToan: element?.tongTienHang ?? 0,
+                                            daThanhToan: itemEx[0]?.daThanhToan,
+                                            ptThanhToan: itemEx[0]?.ptThanhToan,
                                             ngayLapHoaDon: element?.ngayLapHoaDon,
                                             tenChiNhanh: itemEx[0]?.tenChiNhanh,
                                             soDienThoaiChiNhanh: itemEx[0]?.soDienThoaiChiNhanh,
@@ -636,6 +607,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                             zoaUserId: itemEx[0]?.user_id as string,
                                             idKhachHang: itemEx[0]?.idKhachHang as string,
                                             maKhachHang: '',
+                                            xungHo: itemEx[0]?.xungHo ?? '',
                                             soDienThoai: itemEx[0]?.soDienThoai ?? '',
                                             tenKhachHang: itemEx[0]?.display_name,
                                             bookingDate: element?.startTime,
@@ -687,6 +659,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                 zoaUserId: itemEx?.user_id as string,
                                 idKhachHang: Guid.EMPTY,
                                 maKhachHang: '',
+                                xungHo: itemEx?.xungHo ?? '',
                                 soDienThoai: itemEx?.soDienThoai ?? '',
                                 tenKhachHang: itemEx?.display_name,
                                 tenChiNhanh: itemEx?.tenChiNhanh,

@@ -38,9 +38,15 @@ import { ZaloTemplateView } from './zalo_template_view';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import TokenZalo, { ListZaloToken_CuaHang, ListZaloToken_HoaDon, ListZaloToken_KhachHang } from './ToKenZalo';
+import TokenZalo, {
+    ListZaloToken_CuaHang,
+    ListZaloToken_HoaDon,
+    ListZaloToken_KhachHang,
+    ListZaloToken_LichHen
+} from './ToKenZalo';
 import { handleClickOutside } from '../../utils/customReactHook';
 import { IPropModal } from '../../services/dto/IPropsComponent';
+import CaiDatNhacNhoService from '../../services/sms/cai_dat_nhac_nho/CaiDatNhacNhoService';
 
 export const ZaloTemp_tabActive = {
     SYSTEM: '1',
@@ -160,7 +166,10 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                 setIdLoaiTin(itemDefault?.idLoaiTin);
                 setZaloTemplateType(itemDefault?.template_type);
 
-                const banner = itemDefault?.elements?.filter((x) => x.elementType === ZaloConst.ElementType.BANNER);
+                const banner = itemDefault?.elements?.filter(
+                    (x) =>
+                        x.elementType === ZaloConst.ElementType.BANNER || x.elementType === ZaloConst.ElementType.IMAGE
+                );
                 if (banner !== undefined && banner.length > 0) {
                     setBannerElm(banner[0]);
 
@@ -238,6 +247,8 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
             case ZaloConst.ElementType.BANNER:
                 {
                     setBannerElm(null);
+                    setImageUrl('');
+                    setImageFile({} as File);
                 }
                 break;
             case ZaloConst.ElementType.HEADER:
@@ -591,14 +602,17 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                         const allToken = [
                             ...ListZaloToken_CuaHang,
                             ...ListZaloToken_KhachHang,
-                            ...ListZaloToken_HoaDon
+                            ...ListZaloToken_HoaDon,
+                            ...ListZaloToken_LichHen
                         ];
 
                         const allKey = allToken?.map((x) => {
                             return x.value;
                         });
                         // check value exists in token
-                        const keyNotExists = tblDetail?.filter((x) => !allKey.includes(x.value));
+                        const keyNotExists = tblDetail?.filter(
+                            (x) => !allKey.includes(x.value) && !utils.checkNull(x.value)
+                        );
                         if (keyNotExists?.length > 0) {
                             setObjAlert({
                                 ...objAlert,

@@ -49,6 +49,7 @@ export interface IInforUserZOA extends ICustomerBasic {
     idHoaDons?: string[]; // 1 khachhang - N hoaddon
     idBookings?: string[];
     ngaySinh?: string;
+    xungHo?: string;
 }
 
 export interface IMemberZOA {

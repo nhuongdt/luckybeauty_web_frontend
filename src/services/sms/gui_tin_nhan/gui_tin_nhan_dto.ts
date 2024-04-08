@@ -107,6 +107,8 @@ export interface CustomerSMSDto extends IInforUserZOA {
     maHoaDon?: string | null;
     ngayLapHoaDon?: string;
     tongThanhToan?: number;
+    daThanhToan?: number;
+    ptThanhToan?: string;
 
     idHoaDon?: string;
     idBooking?: string;
@@ -125,16 +127,6 @@ export interface CustomerSMSDto extends IInforUserZOA {
     dienThoaiCuaHang?: string;
 
     sTrangThaiGuiTinNhan?: string;
-
-    // constructor({ idKhachHang = '', maKhachHang = '', tenKhachHang = '', soDienThoai = '', ngaySinh = '' }) {
-    //     super({
-    //         idKhachHang: idKhachHang,
-    //         maKhachHang: maKhachHang,
-    //         tenKhachHang: tenKhachHang,
-    //         soDienThoai: soDienThoai,
-    //         ngaySinh: ngaySinh
-    //     });
-    // }
 }
 
 export class CustomerZaloDto extends CustomerBasicDto {
