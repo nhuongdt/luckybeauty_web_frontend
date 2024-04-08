@@ -18,6 +18,7 @@ import {
     TextField,
     Typography
 } from '@mui/material';
+import htmlParse from 'html-react-parser';
 import { format as formatDate } from 'date-fns';
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
 import { ReactComponent as SearchIcon } from '../../../../images/search-normal.svg';
@@ -35,6 +36,7 @@ const TenantHistoryActivityModal = ({ visible, onCancel, tenantId, tenantName }:
     const [filter, setFilter] = useState('');
     const [totalPage, setTotalPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
+    const [selectedRow, setSelectedRow] = useState<number | null>(null);
     const getData = async () => {
         const result = await tenantService.getTenantHistoryActivity(
             {
@@ -52,6 +54,7 @@ const TenantHistoryActivityModal = ({ visible, onCancel, tenantId, tenantName }:
     };
     useEffect(() => {
         getData();
+        setSelectedRow(null);
     }, [skipCount, maxResultCount, tenantId]);
     const handlePageChange = async (event: any, value: any) => {
         setSkipCount(value);
@@ -59,6 +62,9 @@ const TenantHistoryActivityModal = ({ visible, onCancel, tenantId, tenantName }:
     const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
         setMaxResultCount(parseInt(event.target.value.toString(), 10));
         setSkipCount(1);
+    };
+    const handleRowClick = (index: number) => {
+        setSelectedRow(index === selectedRow ? null : index); // Nếu dòng được chọn đã được chọn trước đó, hủy chọn
     };
     return (
         <Dialog open={visible} onClose={onCancel} fullWidth maxWidth="sm">
@@ -116,16 +122,23 @@ const TenantHistoryActivityModal = ({ visible, onCancel, tenantId, tenantName }:
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {listData.map((item, index) => {
-                            return (
-                                <TableRow key={index}>
+                        {listData.map((item, index) => (
+                            <React.Fragment key={index}>
+                                <TableRow onClick={() => handleRowClick(index)}>
                                     <TableCell>{item.tenNguoiThaoTac}</TableCell>
                                     <TableCell>{item.chucNang}</TableCell>
                                     <TableCell>{formatDate(new Date(item.creationTime), 'dd/MM/yyyy HH:mm')}</TableCell>
                                     <TableCell>{item.noiDung}</TableCell>
                                 </TableRow>
-                            );
-                        })}
+                                {selectedRow === index && ( // Hiển thị TableRow phụ nếu dòng được chọn
+                                    <TableRow style={{ background: '#e6e6e6' }}>
+                                        <TableCell colSpan={4} sx={{ padding: '8px 16px !important' }}>
+                                            {htmlParse(item.noiDungChiTiet ?? '')}
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </React.Fragment>
+                        ))}
                     </TableBody>
                 </Table>
                 <CustomTablePagination

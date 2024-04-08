@@ -56,7 +56,6 @@ body .font-normal {
     font-size: 18px;
 }
 
-
 /* .MuiDialogActions-root {
     padding-right: 20px;
 } */
@@ -88,7 +87,7 @@ body .font-normal {
     padding: 10px !important;
     cursor: pointer;
 }
-.btnIcon:hover{
+.btnIcon:hover {
     background-color: var(--color-bg);
     color: black;
 }
@@ -97,7 +96,6 @@ body .font-normal {
     padding-top: 5px;
     padding-bottom: 5px;
 }
-
 
 /* .MuiAutocomplete-root .MuiOutlinedInput-root {
     padding: 3px;
@@ -130,15 +128,14 @@ body .font-normal {
     font-size: var(--font-size-main) !important;
 }
 
-
 /* style main button*/
 
 .btnNhapXuat {
-    background-color: #fff!important;
-    color: #666466!important;
+    background-color: #fff !important;
+    color: #666466 !important;
     padding: 10px 16px;
-    border-color: #e6e1e6!important;
-    height: 40px!important;
+    border-color: #e6e1e6 !important;
+    height: 40px !important;
 }
 
 .button-not-active {
@@ -146,14 +143,12 @@ body .font-normal {
     border-color: #cccc !important;
 }
 
-
 /* style text in button */
 
 .MuiButton-root {
     text-transform: initial !important;
     font-weight: 400 !important;
 }
-
 
 /* button paging selected */
 
@@ -175,14 +170,12 @@ body .font-normal {
     font-weight: 500 !important;
 }
 
-
 /* error at TextField */
 
 .MuiFormHelperText-root {
     margin-left: 0px !important;
     color: red !important;
 }
-
 
 /* .MuiInputBase-input::placeholder {
     font-size: 14px;
@@ -192,19 +185,16 @@ body .font-normal {
     font-size: 14px;
 } */
 
-
 /* .MuiOutlinedInput-root {
     font-size: 14px;
     border-radius: 4px !important;
 } */
-
 
 /* text input */
 
 .MuiOutlinedInput-input {
     font-size: var(--font-size-main) !important;
 }
-
 
 /* .inputEdit .MuiOutlinedInput-root {
     border-radius: 4px !important;
@@ -216,11 +206,11 @@ body .font-normal {
 
 .MuiDataGrid-root {
     font-size: var(--font-size-main) !important;
-    border: none!important
+    border: none !important;
 }
 
 .MuiTypography-root {
-    font-family: var(--font-family-main) !important
+    font-family: var(--font-family-main) !important;
 }
 
 .MuiPaper-root:not(.MuiDialog-paper) {
@@ -228,30 +218,27 @@ body .font-normal {
 }
 
 .MuiTypography-root.MuiTypography-body2 {
-    font-size: var(--font-size-main) !important
+    font-size: var(--font-size-main) !important;
 }
 
 .MuiMenuItem-root,
 .MuiInputBase-formControl {
     font-size: var(--font-size-main) !important;
-    font-family: var(--font-family-main) !important
+    font-family: var(--font-family-main) !important;
 }
-
 
 /* placeholder (not MuiInputLabel-shrink: label when focus)  */
 
 .MuiFormControl-root .MuiFormLabel-root:not(.MuiInputLabel-shrink) {
-    font-size: var(--font-size-main)!important;
-    font-family: var(--font-family-main) !important
+    font-size: var(--font-size-main) !important;
+    font-family: var(--font-family-main) !important;
 }
-
 
 /* dịnh dang label khi focus vao input (vẫn giữ nguyên font mặc định = Roboto*/
 
 .MuiFormControl-root .MuiFormLabel-root.MuiInputLabel-shrink {
-    font-size: 15px!important
+    font-size: 15px !important;
 }
-
 
 /* data-grid */
 
@@ -261,77 +248,76 @@ body .font-normal {
 
 .MuiDataGrid-columnHeadersInner,
 .MuiTableHead-root {
-    background-color: var(--color-header-table) !important
+    background-color: var(--color-header-table) !important;
 }
 
 .MuiDataGrid-columnHeader:focus,
 .MuiDataGrid-cell:focus {
-    outline: none!important
+    outline: none !important;
 }
 
 .MuiDataGrid-columnHeader:focus-within,
 .MuiDataGrid-cell:focus-within {
-    outline: none!important
+    outline: none !important;
 }
 
 .MuiDataGrid-row.Mui-selected,
 .MuiDataGrid-row.Mui-selected:hover,
 .MuiDataGrid-row.Mui-selected.Mui-hovered {
-    background-color: var(--color-bg)!important
+    background-color: var(--color-bg) !important;
 }
 
 .autocomplete-option {
     /* border-bottom: 1px dashed var(--border-color); */
     font-size: var(--font-size-main);
-    padding: 10px!important
+    padding: 10px !important;
 }
-
 
 /* label at radio */
 
 .MuiFormControlLabel-label.MuiTypography-root {
-    font-size: var(--font-size-main)!important;
+    font-size: var(--font-size-main) !important;
 }
 
 .lableOverflow {
-    text-overflow: ellipsis!important;
-    overflow: hidden!important;
-    white-space: nowrap!important;
+    text-overflow: ellipsis !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
 }
 
 .page-title {
-    font-size: 16px!important;
-    font-weight: 700!important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
     color: #333233;
 }
 
 .modal-title {
     /* ~ 22px*/
-    font-size: 1.375rem!important;
-    font-weight: 700!important;
+    font-size: 1.375rem !important;
+    font-weight: 700 !important;
 }
 
 .user-icon-upload {
-    width: 80px!important;
-    height: 80px!important;
-    color: #dfdcdc!important;
-    border-radius: 100%!important;
+    width: 80px !important;
+    height: 80px !important;
+    color: #dfdcdc !important;
+    border-radius: 100% !important;
     border: 1px solid #cccc;
-    padding: 10px!important;
+    padding: 10px !important;
 }
 
 .user-image-upload {
-    width: 100%!important;
-    height: 100%!important;
-    min-width: 80px!important;
-    min-height: 80px!important;
-    max-width: 80px!important;
-    max-height: 80px!important;
-    border-radius: 100%!important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 80px !important;
+    min-height: 80px !important;
+    max-width: 80px !important;
+    max-height: 80px !important;
+    border-radius: 100% !important;
 }
 
 .filter-left-title {
-    background-color: var(--color-header-table) !important
+    background-color: var(--color-header-table) !important;
 }
 
 .page-box-left {
@@ -352,15 +338,15 @@ body .font-normal {
 }
 
 .data-grid-cell-trangthai-active {
-    color: #5572cb!important;
+    color: #5572cb !important;
 }
 
 .data-grid-cell-trangthai-notActive {
-    color: rgb(255, 153, 0)!important;
+    color: rgb(255, 153, 0) !important;
 }
 
 .bank-account {
-    font-size: 18px!important;
+    font-size: 18px !important;
     font-weight: 600;
     font-family: 'Courier New', monospace !important;
 }
@@ -371,33 +357,33 @@ body .font-normal {
 
 .text-search input {
     /* ô nhập nội dung tìm kiếm */
-    padding-left: 0px!important;
+    padding-left: 0px !important;
 }
 
 .text-search .MuiButtonBase-root {
     /* ô tìm kiếm: nếu có Icon search: reset paddingLeft = 0 */
-    margin-left: -12px!important;
+    margin-left: -12px !important;
 }
 
 .tab-active {
-    border-radius: 16px!important;
-    border-bottom-right-radius: unset!important;
-    border-bottom-left-radius: unset!important;
-    background-color: var(--color-bg)!important;
+    border-radius: 16px !important;
+    border-bottom-right-radius: unset !important;
+    border-bottom-left-radius: unset !important;
+    background-color: var(--color-bg) !important;
 }
 
 .MuiTableFooter-root {
-    background-color: var(--color-header-table)!important;
+    background-color: var(--color-header-table) !important;
 }
 
 .MuiTableFooter-root .MuiTableCell-root {
-    padding: 10px!important;
+    padding: 10px !important;
     font-size: var(--font-size-main);
-    font-weight: 600!important;
+    font-weight: 600 !important;
 }
 
 .MuiTableBody-root .MuiTableCell-root {
-    padding: 8px!important;
+    padding: 8px;
 }
 
 .table-empty {
@@ -409,33 +395,33 @@ body .font-normal {
 }
 
 .table-head-has-colspan tr th {
-    padding: 6px 16px!important;
+    padding: 6px 16px !important;
 }
 
 .td-check-box .MuiButtonBase-root {
-    padding: 0px!important;
+    padding: 0px !important;
 }
-.zalo-template-default{
+.zalo-template-default {
     background-color: #fff;
     border-radius: 8px;
     border: 1px solid #ccc;
     cursor: pointer;
-    transition: .4s;
+    transition: 0.4s;
 }
-.zalo-template-default:hover{
-    border-color:var(--color-main);
+.zalo-template-default:hover {
+    border-color: var(--color-main);
 }
 .zalo-template .zoa-element-lable {
-font-weight: 600;
+    font-weight: 600;
 }
 .zalo-template .btnRemove {
     color: #b93530;
     cursor: pointer;
 }
-.page-zalo-template .details-mau-tin{
+.page-zalo-template .details-mau-tin {
     cursor: pointer;
     border-radius: 4px;
 }
-.page-zalo-template .details-mau-tin:hover{
+.page-zalo-template .details-mau-tin:hover {
     background-color: var(--color-bg);
 }
