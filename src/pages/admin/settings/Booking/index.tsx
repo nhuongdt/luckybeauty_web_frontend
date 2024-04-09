@@ -43,7 +43,7 @@ const Booking: React.FC = () => {
                 </Grid>
                 <Grid item xs={12} sm={8} md={8} lg={8}>
                     <Stack spacing={1} direction={'row'} justifyContent={'end'}>
-                        <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
+                        <ButtonNavigate navigateTo="/settings" btnText="Trở về cài đặt" />
                         <Button
                             variant="contained"
                             sx={{

@@ -394,7 +394,7 @@ export default function PageMauIn({ xx }: any) {
 
                         <Grid item xs={12} sm={12} md={6} lg={6}>
                             <Stack spacing={1} justifyContent={'flex-end'} direction={'row'}>
-                                <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
+                                <ButtonNavigate navigateTo="/settings" btnText="Trở về cài đặt" />
                                 {idMauInChosed.length === 36 && (
                                     <Stack spacing={1} justifyContent={'flex-end'} direction={'row'}>
                                         <Button

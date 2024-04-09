@@ -125,15 +125,15 @@ export default function ThietLapKetNoiZaloGmail() {
                                 </TabList>
                             </Box>
                             <Stack>
-                                <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
+                                <ButtonNavigate navigateTo="/settings" btnText="Trở về cài đặt" />
                             </Stack>
                         </Stack>
 
                         <TabPanel value="2">
                             {!zaloToken?.accessToken && (
                                 <Grid container spacing={3}>
-                                    <Grid item xs={5}></Grid>
-                                    <Grid item xs={2}>
+                                    <Grid item xs={12} md={5}></Grid>
+                                    <Grid item xs={12} md={2}>
                                         <Box alignItems={'center'}>
                                             <Link underline="none" variant="body2" href={urlPermissionOA}>
                                                 <Button
@@ -146,7 +146,7 @@ export default function ThietLapKetNoiZaloGmail() {
                                             </Link>
                                         </Box>
                                     </Grid>
-                                    <Grid item xs={5}></Grid>
+                                    <Grid item xs={12} md={5}></Grid>
 
                                     <Grid item xs={12}>
                                         <Stack spacing={2} alignItems={'center'}>
