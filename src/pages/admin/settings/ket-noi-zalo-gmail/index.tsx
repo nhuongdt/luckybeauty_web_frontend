@@ -12,6 +12,9 @@ import utils from '../../../../utils/utils';
 import { Guid } from 'guid-typescript';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
 import { ButtonNavigate } from '../../../../components/Button/ButtonNavigate';
+import EmailSetting from '../Email';
+import { isGranted } from '../../../../lib/abpUtility';
+import abpCustom from '../../../../components/abp-custom';
 
 export default function ThietLapKetNoiZaloGmail() {
     const [tabActive, setTabActive] = useState('2');
@@ -116,7 +119,9 @@ export default function ThietLapKetNoiZaloGmail() {
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                 <TabList onChange={handleChange}>
                                     <Tab label="Zalo" value="2" />
-                                    <Tab label="Email" value="3" />
+                                    {abpCustom.isGrandPermission('Pages.Tenants') ? (
+                                        <Tab label="Email" value="3" />
+                                    ) : null}
                                 </TabList>
                             </Box>
                             <Stack>
@@ -201,7 +206,11 @@ export default function ThietLapKetNoiZaloGmail() {
                                 </Grid>
                             )}
                         </TabPanel>
-                        <TabPanel value="3">Item Three</TabPanel>
+                        {abpCustom.isGrandPermission('Pages.Tenants') ? (
+                            <TabPanel value="3">
+                                <EmailSetting />
+                            </TabPanel>
+                        ) : null}
                     </TabContext>
                 </Grid>
             </Grid>
