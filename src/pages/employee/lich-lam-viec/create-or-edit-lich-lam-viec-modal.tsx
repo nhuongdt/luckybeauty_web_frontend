@@ -84,7 +84,7 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
         //     .required('Ngày làm việc trong tuần không được để trống')
     });
     return (
-        <Dialog open={open} onClose={onClose} sx={{ '& .MuiPaper-root': { width: '71vw' } }} maxWidth={false}>
+        <Dialog open={open} onClose={onClose} maxWidth={false}>
             <DialogTitle>
                 <Typography
                     variant="h3"
@@ -140,7 +140,7 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                                 }
                             }}>
                             <Grid container spacing={3}>
-                                <Grid item xs={5}>
+                                <Grid item xs={12} md={5}>
                                     <Box
                                         sx={{
                                             display: 'flex',
@@ -227,7 +227,7 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                                         </Box>
                                     </Box>
                                 </Grid>
-                                <Grid item xs={7}>
+                                <Grid item xs={12} md={7}>
                                     <Box
                                         sx={{
                                             gap: '16px',
