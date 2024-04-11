@@ -19,7 +19,8 @@ import {
     Autocomplete,
     FormHelperText,
     FormLabel,
-    AutocompleteRenderInputParams
+    AutocompleteRenderInputParams,
+    IconButton
 } from '@mui/material';
 import * as Yup from 'yup';
 import { ReactComponent as ArrowDown } from '../../../images/arow-down.svg';
@@ -85,28 +86,19 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
     });
     return (
         <Dialog open={open} onClose={onClose} maxWidth={false}>
-            <DialogTitle>
-                <Typography
-                    variant="h3"
-                    fontSize="24px"
-                    // color="#333233"
-                    fontWeight="700"
-                    mb={3}>
+            <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography fontSize="24px" fontWeight="700">
                     Đặt ca làm việc thường xuyên
                 </Typography>
-                <Button
+                <IconButton
                     onClick={onClose}
                     sx={{
-                        position: 'absolute',
-                        right: '16px',
-                        top: '16px',
-                        minWidth: 'unset',
                         '&:hover svg': {
                             filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
                         }
                     }}>
                     <CloseIcon />
-                </Button>
+                </IconButton>
             </DialogTitle>
             <DialogContent>
                 <Formik

@@ -12,7 +12,9 @@ import {
     RadioGroup,
     FormControlLabel,
     Radio,
-    Checkbox
+    Checkbox,
+    DialogTitle,
+    DialogContent
 } from '@mui/material';
 import closeIcon from '../../../images/close-square.svg';
 import '../employee.css';
@@ -145,28 +147,19 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
             <Dialog
                 open={visible}
                 onClose={onCancel}
-                maxWidth="sm"
+                maxWidth="md"
+                fullWidth
                 //className="poppup-them-nhan-vien"
                 sx={{
                     borderRadius: '12px',
                     padding: '24px'
                 }}>
-                <Box
-                    sx={{
-                        position: 'sticky',
-                        top: '0',
-                        left: '0',
-                        bgcolor: '#fff',
-                        zIndex: '5',
-                        paddingBottom: '8px'
-                    }}>
+                <DialogTitle>
                     <Typography
                         variant="h3"
                         fontSize="24px"
                         //color="#333233"
-                        fontWeight="700"
-                        paddingLeft="24px"
-                        marginTop="28px">
+                        fontWeight="700">
                         {title}
                     </Typography>
                     <Button
@@ -184,448 +177,454 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                         }}>
                         <img src={closeIcon} />
                     </Button>
-                </Box>
-                <Formik
-                    initialValues={initValues}
-                    validationSchema={rules}
-                    onSubmit={async (values, { setFieldError }) => {
-                        values.id = initValues.id;
-                        values.idChucVu = nhanVienStore.createEditNhanVien.idChucVu;
-                        let fileId = this.state.googleDrive_fileId;
-                        const fileSelect = this.state.fileImage;
-                        if (!utils.checkNull(this.state.staffImage)) {
-                            fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileSelect, 'NhanVien');
-                            values.avatar = fileId !== '' ? `https://drive.google.com/uc?export=view&id=${fileId}` : '';
-                        }
-                        if (values.idChucVu === '' || values.idChucVu === AppConsts.guidEmpty) {
-                            setFieldError('idChucVu', 'Vị trí nhân viên không được để trống');
-                        } else {
-                            const createOrEdit = await nhanVienService.createOrEdit(values);
-                            createOrEdit != null
-                                ? formRef.id === AppConsts.guidEmpty
-                                    ? enqueueSnackbar('Thêm mới thành công', {
-                                          variant: 'success',
+                </DialogTitle>
+                <DialogContent>
+                    <Formik
+                        initialValues={initValues}
+                        validationSchema={rules}
+                        onSubmit={async (values, { setFieldError }) => {
+                            values.id = initValues.id;
+                            values.idChucVu = nhanVienStore.createEditNhanVien.idChucVu;
+                            let fileId = this.state.googleDrive_fileId;
+                            const fileSelect = this.state.fileImage;
+                            if (!utils.checkNull(this.state.staffImage)) {
+                                fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileSelect, 'NhanVien');
+                                values.avatar =
+                                    fileId !== '' ? `https://drive.google.com/uc?export=view&id=${fileId}` : '';
+                            }
+                            if (values.idChucVu === '' || values.idChucVu === AppConsts.guidEmpty) {
+                                setFieldError('idChucVu', 'Vị trí nhân viên không được để trống');
+                            } else {
+                                const createOrEdit = await nhanVienService.createOrEdit(values);
+                                createOrEdit != null
+                                    ? formRef.id === AppConsts.guidEmpty
+                                        ? enqueueSnackbar('Thêm mới thành công', {
+                                              variant: 'success',
+                                              autoHideDuration: 3000
+                                          })
+                                        : enqueueSnackbar('Cập nhật thành công', {
+                                              variant: 'success',
+                                              autoHideDuration: 3000
+                                          })
+                                    : enqueueSnackbar('Có lỗi xảy ra vui lòng thử lại sau', {
+                                          variant: 'error',
                                           autoHideDuration: 3000
-                                      })
-                                    : enqueueSnackbar('Cập nhật thành công', {
-                                          variant: 'success',
-                                          autoHideDuration: 3000
-                                      })
-                                : enqueueSnackbar('Có lỗi xảy ra vui lòng thử lại sau', {
-                                      variant: 'error',
-                                      autoHideDuration: 3000
-                                  });
-                            this.setState({ staffImage: '' });
-                            onOk();
-                        }
-                    }}>
-                    {({ isSubmitting, handleChange, errors, values, setFieldValue, touched }) => (
-                        <Form
-                            onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
-                                if (event.key === 'Enter') {
-                                    event.preventDefault(); // Prevent form submission
-                                }
-                            }}>
-                            <Box
-                                display="flex"
-                                flexDirection={useWindowWidth() < 600 ? 'column' : 'row'}
-                                justifyContent="space-between"
-                                padding="0px 24px 0px 24px">
-                                <Grid container className="form-container" spacing={2}>
-                                    <Grid item xs={12}>
-                                        <Box>
-                                            <Stack alignItems="center" position={'relative'}>
-                                                {!utils.checkNull(values.avatar) ? (
-                                                    <Box
+                                      });
+                                this.setState({ staffImage: '' });
+                                onOk();
+                            }
+                        }}>
+                        {({ isSubmitting, handleChange, errors, values, setFieldValue, touched }) => (
+                            <Form
+                                onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                    if (event.key === 'Enter') {
+                                        event.preventDefault(); // Prevent form submission
+                                    }
+                                }}>
+                                <Box
+                                    display="flex"
+                                    flexDirection={useWindowWidth() < 600 ? 'column' : 'row'}
+                                    justifyContent="space-between">
+                                    <Grid container className="form-container" spacing={2}>
+                                        <Grid item xs={12}>
+                                            <Box>
+                                                <Stack alignItems="center" position={'relative'}>
+                                                    {!utils.checkNull(values.avatar) ? (
+                                                        <Box
+                                                            sx={{
+                                                                position: 'relative'
+                                                            }}>
+                                                            <img src={values.avatar} className="user-image-upload" />
+                                                        </Box>
+                                                    ) : (
+                                                        <div>
+                                                            <PersonIcon className="user-icon-upload" />
+                                                        </div>
+                                                    )}
+                                                    <TextField
+                                                        type="file"
+                                                        name="avatar"
                                                         sx={{
-                                                            position: 'relative'
-                                                        }}>
-                                                        <img src={values.avatar} className="user-image-upload" />
-                                                    </Box>
-                                                ) : (
-                                                    <div>
-                                                        <PersonIcon className="user-icon-upload" />
-                                                    </div>
-                                                )}
-                                                <TextField
-                                                    type="file"
-                                                    name="avatar"
-                                                    sx={{
-                                                        position: 'absolute',
-                                                        top: 0,
-                                                        left: 0,
-                                                        width: '100%',
-                                                        height: '100%',
-                                                        opacity: 0,
-                                                        '& input': {
-                                                            height: '100%'
-                                                        },
-                                                        '& div': {
-                                                            height: '100%'
-                                                        }
-                                                    }}
-                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                        if (e.target.files && e.target.files[0]) {
-                                                            const file: File = e.target.files[0];
-                                                            const reader = new FileReader();
-                                                            reader.readAsDataURL(file);
-                                                            reader.onload = () => {
-                                                                this.setState((prev) => ({
-                                                                    ...prev,
-                                                                    staffImage: reader.result?.toString() ?? '',
-                                                                    fileImage: file
-                                                                }));
-                                                                setFieldValue(
-                                                                    'avatar',
-                                                                    reader.result?.toString() ?? ''
-                                                                );
-                                                            };
-                                                        }
-                                                    }}
-                                                />
-                                            </Stack>
-                                        </Box>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            name="tenNhanVien"
-                                            size="small"
-                                            value={values.tenNhanVien}
-                                            label={
-                                                <Typography
-                                                    //color="#4C4B4C"
-                                                    variant="subtitle2">
-                                                    Họ và tên
-                                                    <span className="text-danger">*</span>
-                                                </Typography>
-                                            }
-                                            error={errors.tenNhanVien && touched.tenNhanVien ? true : false}
-                                            helperText={
-                                                errors.tenNhanVien &&
-                                                touched.tenNhanVien && (
-                                                    <small className="text-danger">{errors.tenNhanVien}</small>
-                                                )
-                                            }
-                                            onChange={handleChange}
-                                            fullWidth
-                                            sx={{
-                                                fontSize: '16px'
-                                            }}></TextField>
-                                    </Grid>
-
-                                    <Grid item xs={12} md={6}>
-                                        <NumericFormat
-                                            name="soDienThoai"
-                                            size="small"
-                                            type="tel"
-                                            label={
-                                                <Typography
-                                                    //color="#4C4B4C"
-                                                    variant="subtitle2">
-                                                    Số điện thoại
-                                                </Typography>
-                                            }
-                                            fullWidth
-                                            value={values.soDienThoai}
-                                            error={errors.soDienThoai && touched.soDienThoai ? true : false}
-                                            helperText={
-                                                errors.soDienThoai &&
-                                                touched.soDienThoai && (
-                                                    <small className="text-danger">{errors.soDienThoai}</small>
-                                                )
-                                            }
-                                            sx={{ fontSize: '13px' }}
-                                            onChange={handleChange}
-                                            customInput={TextField}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} md={6}>
-                                        <TextField
-                                            size="small"
-                                            type="text"
-                                            name="diaChi"
-                                            label={
-                                                <Typography
-                                                    //color="#4C4B4C"
-                                                    variant="subtitle2">
-                                                    Địa chỉ
-                                                </Typography>
-                                            }
-                                            value={values.diaChi}
-                                            onChange={handleChange}
-                                            placeholder="Nhập địa chỉ của nhân viên"
-                                            fullWidth
-                                            sx={{ fontSize: '16px' }}></TextField>
-                                    </Grid>
-                                    <Grid item xs={12} md={6}>
-                                        <DatePickerRequiredCustom
-                                            props={{
-                                                width: '100%',
-                                                label: 'Ngày sinh',
-                                                size: 'small'
-                                            }}
-                                            defaultVal={
-                                                values.ngaySinh
-                                                    ? formatDate(new Date(values.ngaySinh), 'yyyy-MM-dd')
-                                                    : ''
-                                            }
-                                            handleChangeDate={(dt: string) => {
-                                                values.ngaySinh = dt;
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} md={6}>
-                                        <Box display={'flex'} flexDirection={'row'} gap={1}>
-                                            <Autocomplete
-                                                value={
-                                                    suggestStore.suggestChucVu?.filter(
-                                                        (x) => x.idChucVu == nhanVienStore.createEditNhanVien.idChucVu
-                                                    )[0] ||
-                                                    ({
-                                                        idChucVu: '',
-                                                        tenChucVu: ''
-                                                    } as SuggestChucVuDto)
+                                                            position: 'absolute',
+                                                            top: 0,
+                                                            left: 0,
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            opacity: 0,
+                                                            '& input': {
+                                                                height: '100%'
+                                                            },
+                                                            '& div': {
+                                                                height: '100%'
+                                                            }
+                                                        }}
+                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                            if (e.target.files && e.target.files[0]) {
+                                                                const file: File = e.target.files[0];
+                                                                const reader = new FileReader();
+                                                                reader.readAsDataURL(file);
+                                                                reader.onload = () => {
+                                                                    this.setState((prev) => ({
+                                                                        ...prev,
+                                                                        staffImage: reader.result?.toString() ?? '',
+                                                                        fileImage: file
+                                                                    }));
+                                                                    setFieldValue(
+                                                                        'avatar',
+                                                                        reader.result?.toString() ?? ''
+                                                                    );
+                                                                };
+                                                            }
+                                                        }}
+                                                    />
+                                                </Stack>
+                                            </Box>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                name="tenNhanVien"
+                                                size="small"
+                                                value={values.tenNhanVien}
+                                                label={
+                                                    <Typography
+                                                        //color="#4C4B4C"
+                                                        variant="subtitle2">
+                                                        Họ và tên
+                                                        <span className="text-danger">*</span>
+                                                    </Typography>
                                                 }
-                                                options={suggestStore.suggestChucVu}
-                                                getOptionLabel={(option) => `${option.tenChucVu}`}
+                                                error={errors.tenNhanVien && touched.tenNhanVien ? true : false}
+                                                helperText={
+                                                    errors.tenNhanVien &&
+                                                    touched.tenNhanVien && (
+                                                        <small className="text-danger">{errors.tenNhanVien}</small>
+                                                    )
+                                                }
+                                                onChange={handleChange}
                                                 fullWidth
-                                                disablePortal
+                                                sx={{
+                                                    fontSize: '16px'
+                                                }}></TextField>
+                                        </Grid>
+
+                                        <Grid item xs={12} md={6}>
+                                            <NumericFormat
+                                                name="soDienThoai"
+                                                size="small"
+                                                type="tel"
+                                                label={
+                                                    <Typography
+                                                        //color="#4C4B4C"
+                                                        variant="subtitle2">
+                                                        Số điện thoại
+                                                    </Typography>
+                                                }
+                                                fullWidth
+                                                value={values.soDienThoai}
+                                                error={errors.soDienThoai && touched.soDienThoai ? true : false}
+                                                helperText={
+                                                    errors.soDienThoai &&
+                                                    touched.soDienThoai && (
+                                                        <small className="text-danger">{errors.soDienThoai}</small>
+                                                    )
+                                                }
+                                                sx={{ fontSize: '13px' }}
+                                                onChange={handleChange}
+                                                customInput={TextField}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            <TextField
+                                                size="small"
+                                                type="text"
+                                                name="diaChi"
+                                                label={
+                                                    <Typography
+                                                        //color="#4C4B4C"
+                                                        variant="subtitle2">
+                                                        Địa chỉ
+                                                    </Typography>
+                                                }
+                                                value={values.diaChi}
+                                                onChange={handleChange}
+                                                placeholder="Nhập địa chỉ của nhân viên"
+                                                fullWidth
+                                                sx={{ fontSize: '16px' }}></TextField>
+                                        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            <DatePickerRequiredCustom
+                                                props={{
+                                                    width: '100%',
+                                                    label: 'Ngày sinh',
+                                                    size: 'small'
+                                                }}
+                                                defaultVal={
+                                                    values.ngaySinh
+                                                        ? formatDate(new Date(values.ngaySinh), 'yyyy-MM-dd')
+                                                        : ''
+                                                }
+                                                handleChangeDate={(dt: string) => {
+                                                    values.ngaySinh = dt;
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            <Box display={'flex'} flexDirection={'row'} gap={1}>
+                                                <Autocomplete
+                                                    value={
+                                                        suggestStore.suggestChucVu?.filter(
+                                                            (x) =>
+                                                                x.idChucVu == nhanVienStore.createEditNhanVien.idChucVu
+                                                        )[0] ||
+                                                        ({
+                                                            idChucVu: '',
+                                                            tenChucVu: ''
+                                                        } as SuggestChucVuDto)
+                                                    }
+                                                    options={suggestStore.suggestChucVu}
+                                                    getOptionLabel={(option) => `${option.tenChucVu}`}
+                                                    fullWidth
+                                                    disablePortal
+                                                    onChange={(event, value) => {
+                                                        nhanVienStore.createEditNhanVien.idChucVu = value
+                                                            ? value.idChucVu
+                                                            : '';
+                                                        setFieldValue('idChucVu', value ? value.idChucVu : ''); // Cập nhật giá trị id trong Formik
+                                                    }}
+                                                    renderInput={(params) => (
+                                                        <TextField
+                                                            {...params}
+                                                            size="small"
+                                                            label={
+                                                                <Typography
+                                                                    //color="#4C4B4C"
+                                                                    variant="subtitle2">
+                                                                    Chức vụ <span className="text-danger">*</span>
+                                                                </Typography>
+                                                            }
+                                                            error={errors.idChucVu && touched.idChucVu ? true : false}
+                                                            helperText={
+                                                                errors.idChucVu &&
+                                                                touched.idChucVu && (
+                                                                    <small className="text-danger">
+                                                                        {errors.idChucVu}
+                                                                    </small>
+                                                                )
+                                                            }
+                                                            placeholder="Nhập tên chức vụ"
+                                                        />
+                                                    )}
+                                                />
+                                                <Button
+                                                    hidden={!abpCustom.isGrandPermission('Pages.ChucVu.Create')}
+                                                    sx={{ width: '48px', padding: 0, minWidth: 'auto' }}
+                                                    onClick={this.onModalChucVu}
+                                                    variant="contained">
+                                                    <AddIcon />
+                                                </Button>
+                                            </Box>
+                                        </Grid>
+                                        <Grid item xs={12} md={12}>
+                                            <Stack spacing={1} direction={'row'}>
+                                                <Stack
+                                                    className="modal-lable "
+                                                    justifyContent={'center'}
+                                                    alignItems={'center'}>
+                                                    <Typography
+                                                        //color="#4C4B4C"
+                                                        variant="subtitle2">
+                                                        Giới tính
+                                                    </Typography>
+                                                </Stack>
+                                                <RadioGroup
+                                                    onChange={handleChange}
+                                                    row
+                                                    defaultValue={'true'}
+                                                    value={values.gioiTinh}
+                                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                                    name="gioiTinh">
+                                                    <FormControlLabel value={1} control={<Radio />} label="Nam" />
+                                                    <FormControlLabel value={2} control={<Radio />} label="Nữ" />
+                                                    <FormControlLabel value={0} control={<Radio />} label="Khác" />
+                                                </RadioGroup>
+                                            </Stack>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Autocomplete
+                                                multiple
+                                                options={[
+                                                    { id: 'selectAll', tenDichVu: 'Chọn tất cả' },
+                                                    ...suggestStore.suggestDichVu
+                                                ]}
+                                                getOptionLabel={(option) => option.tenDichVu}
+                                                value={suggestStore.suggestDichVu?.filter((x) =>
+                                                    values.services?.includes(x.id)
+                                                )}
+                                                disableClearable
+                                                renderOption={(props, option) => (
+                                                    <li
+                                                        {...props}
+                                                        onClick={option.id === 'selectAll' ? undefined : props.onClick}>
+                                                        {option.id === 'selectAll' ? (
+                                                            <div
+                                                                style={{ width: '100%' }}
+                                                                onClick={() => {
+                                                                    const checked = !this.state.checkAllService;
+                                                                    this.setState({
+                                                                        checkAllService: checked
+                                                                    });
+                                                                    if (checked) {
+                                                                        setFieldValue(
+                                                                            'services',
+                                                                            suggestStore.suggestDichVu.map(
+                                                                                (item) => item.id
+                                                                            )
+                                                                        );
+                                                                    } else {
+                                                                        setFieldValue('services', []);
+                                                                    }
+                                                                }}>
+                                                                <Checkbox
+                                                                    icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                                                    checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                                                    style={{ marginRight: 8 }}
+                                                                    checked={
+                                                                        values.services?.length ===
+                                                                        suggestStore.suggestDichVu.length
+                                                                    }
+                                                                />
+                                                                {option.tenDichVu}
+                                                            </div>
+                                                        ) : (
+                                                            <div>
+                                                                <Checkbox
+                                                                    icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                                                    checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                                                    style={{ marginRight: 8 }}
+                                                                    checked={
+                                                                        values.services?.includes(option.id) || false
+                                                                    }
+                                                                />
+                                                                {option.tenDichVu}
+                                                            </div>
+                                                        )}
+                                                    </li>
+                                                )}
                                                 onChange={(event, value) => {
-                                                    nhanVienStore.createEditNhanVien.idChucVu = value
-                                                        ? value.idChucVu
-                                                        : '';
-                                                    setFieldValue('idChucVu', value ? value.idChucVu : ''); // Cập nhật giá trị id trong Formik
+                                                    if (value.some((x) => x.id === 'selectAll')) {
+                                                        setFieldValue(
+                                                            'services',
+                                                            suggestStore.suggestDichVu.map((x) => x.id)
+                                                        );
+                                                    } else {
+                                                        setFieldValue(
+                                                            'services',
+                                                            value.filter((x) => x.id !== 'selectAll').map((x) => x.id)
+                                                        );
+                                                    }
                                                 }}
                                                 renderInput={(params) => (
                                                     <TextField
                                                         {...params}
-                                                        size="small"
-                                                        label={
-                                                            <Typography
-                                                                //color="#4C4B4C"
-                                                                variant="subtitle2">
-                                                                Chức vụ <span className="text-danger">*</span>
-                                                            </Typography>
-                                                        }
-                                                        error={errors.idChucVu && touched.idChucVu ? true : false}
-                                                        helperText={
-                                                            errors.idChucVu &&
-                                                            touched.idChucVu && (
-                                                                <small className="text-danger">{errors.idChucVu}</small>
-                                                            )
-                                                        }
-                                                        placeholder="Nhập tên chức vụ"
+                                                        label="Dịch vụ"
+                                                        placeholder="Chọn dịch vụ cho nhân viên"
                                                     />
                                                 )}
                                             />
-                                            <Button
-                                                hidden={!abpCustom.isGrandPermission('Pages.ChucVu.Create')}
-                                                sx={{ width: '48px', padding: 0, minWidth: 'auto' }}
-                                                onClick={this.onModalChucVu}
-                                                variant="contained">
-                                                <AddIcon />
-                                            </Button>
-                                        </Box>
-                                    </Grid>
-                                    <Grid item xs={12} md={12}>
-                                        <Stack spacing={1} direction={'row'}>
-                                            <Stack
-                                                className="modal-lable "
-                                                justifyContent={'center'}
-                                                alignItems={'center'}>
-                                                <Typography
-                                                    //color="#4C4B4C"
-                                                    variant="subtitle2">
-                                                    Giới tính
-                                                </Typography>
-                                            </Stack>
-                                            <RadioGroup
-                                                onChange={handleChange}
-                                                row
-                                                defaultValue={'true'}
-                                                value={values.gioiTinh}
-                                                aria-labelledby="demo-row-radio-buttons-group-label"
-                                                name="gioiTinh">
-                                                <FormControlLabel value={1} control={<Radio />} label="Nam" />
-                                                <FormControlLabel value={2} control={<Radio />} label="Nữ" />
-                                                <FormControlLabel value={0} control={<Radio />} label="Khác" />
-                                            </RadioGroup>
-                                        </Stack>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Autocomplete
-                                            multiple
-                                            options={[
-                                                { id: 'selectAll', tenDichVu: 'Chọn tất cả' },
-                                                ...suggestStore.suggestDichVu
-                                            ]}
-                                            getOptionLabel={(option) => option.tenDichVu}
-                                            value={suggestStore.suggestDichVu?.filter((x) =>
-                                                values.services?.includes(x.id)
-                                            )}
-                                            disableClearable
-                                            renderOption={(props, option) => (
-                                                <li
-                                                    {...props}
-                                                    onClick={option.id === 'selectAll' ? undefined : props.onClick}>
-                                                    {option.id === 'selectAll' ? (
-                                                        <div
-                                                            style={{ width: '100%' }}
-                                                            onClick={() => {
-                                                                const checked = !this.state.checkAllService;
-                                                                this.setState({
-                                                                    checkAllService: checked
-                                                                });
-                                                                if (checked) {
-                                                                    setFieldValue(
-                                                                        'services',
-                                                                        suggestStore.suggestDichVu.map(
-                                                                            (item) => item.id
-                                                                        )
-                                                                    );
-                                                                } else {
-                                                                    setFieldValue('services', []);
-                                                                }
-                                                            }}>
-                                                            <Checkbox
-                                                                icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                                                                checkedIcon={<CheckBoxIcon fontSize="small" />}
-                                                                style={{ marginRight: 8 }}
-                                                                checked={
-                                                                    values.services?.length ===
-                                                                    suggestStore.suggestDichVu.length
-                                                                }
-                                                            />
-                                                            {option.tenDichVu}
-                                                        </div>
-                                                    ) : (
-                                                        <div>
-                                                            <Checkbox
-                                                                icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                                                                checkedIcon={<CheckBoxIcon fontSize="small" />}
-                                                                style={{ marginRight: 8 }}
-                                                                checked={values.services?.includes(option.id) || false}
-                                                            />
-                                                            {option.tenDichVu}
-                                                        </div>
-                                                    )}
-                                                </li>
-                                            )}
-                                            onChange={(event, value) => {
-                                                if (value.some((x) => x.id === 'selectAll')) {
-                                                    setFieldValue(
-                                                        'services',
-                                                        suggestStore.suggestDichVu.map((x) => x.id)
-                                                    );
-                                                } else {
-                                                    setFieldValue(
-                                                        'services',
-                                                        value.filter((x) => x.id !== 'selectAll').map((x) => x.id)
-                                                    );
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                multiline
+                                                size="small"
+                                                label={
+                                                    <Typography
+                                                        //color="#4C4B4C"
+                                                        variant="subtitle2">
+                                                        Ghi chú
+                                                    </Typography>
                                                 }
-                                            }}
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    label="Dịch vụ"
-                                                    placeholder="Chọn dịch vụ cho nhân viên"
-                                                />
-                                            )}
-                                        />
+                                                placeholder="Điền"
+                                                name="ghiChu"
+                                                value={values.ghiChu?.toString()}
+                                                maxRows={4}
+                                                minRows={4}
+                                                style={{
+                                                    width: '100%',
+                                                    borderRadius: '8px'
+                                                }}
+                                            />
+                                        </Grid>
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            multiline
-                                            size="small"
-                                            label={
-                                                <Typography
-                                                    //color="#4C4B4C"
-                                                    variant="subtitle2">
-                                                    Ghi chú
-                                                </Typography>
-                                            }
-                                            placeholder="Điền"
-                                            name="ghiChu"
-                                            value={values.ghiChu?.toString()}
-                                            maxRows={4}
-                                            minRows={4}
-                                            style={{
-                                                width: '100%',
-                                                borderRadius: '8px'
-                                            }}
-                                        />
-                                    </Grid>
-                                </Grid>
-                            </Box>
-                            <Box
-                                sx={{
-                                    position: 'sticky',
-                                    bgcolor: '#fff',
-                                    bottom: '0',
-                                    display: 'flex',
-                                    gap: '8px',
-                                    padding: '16px 24px 16px 16px',
-
-                                    right: '50px',
-                                    justifyContent: 'end'
-                                }}>
-                                <Button
-                                    onClick={onCancel}
-                                    variant="outlined"
+                                </Box>
+                                <Box
                                     sx={{
-                                        fontSize: '14px',
-                                        textTransform: 'unset',
-                                        color: 'var(--color-main)'
-                                    }}
-                                    className="btn-outline-hover">
-                                    Hủy
-                                </Button>
-                                {values.id === AppConsts.guidEmpty || values.id === '' ? null : (
+                                        position: 'sticky',
+                                        bgcolor: '#fff',
+                                        bottom: '0',
+                                        display: 'flex',
+                                        gap: '8px',
+                                        paddingTop: '16px',
+                                        justifyContent: 'end'
+                                    }}>
                                     <Button
-                                        onClick={this.onModalDelete}
+                                        onClick={onCancel}
                                         variant="outlined"
-                                        color="error"
-                                        sx={{
-                                            fontSize: '14px'
-                                            //textTransform: 'unset'
-                                            //color: 'var(--color-main)'
-                                        }}>
-                                        Xóa
-                                    </Button>
-                                )}
-
-                                {!isSubmitting ? (
-                                    <Button
-                                        type="submit"
-                                        variant="contained"
                                         sx={{
                                             fontSize: '14px',
                                             textTransform: 'unset',
-                                            color: '#fff',
-
-                                            border: 'none'
+                                            color: 'var(--color-main)'
                                         }}
-                                        className="btn-container-hover">
-                                        Lưu
+                                        className="btn-outline-hover">
+                                        Hủy
                                     </Button>
-                                ) : (
-                                    <Button
-                                        variant="contained"
-                                        sx={{
-                                            fontSize: '14px',
-                                            textTransform: 'unset',
-                                            color: '#fff',
+                                    {values.id === AppConsts.guidEmpty || values.id === '' ? null : (
+                                        <Button
+                                            onClick={this.onModalDelete}
+                                            variant="outlined"
+                                            color="error"
+                                            sx={{
+                                                fontSize: '14px'
+                                                //textTransform: 'unset'
+                                                //color: 'var(--color-main)'
+                                            }}>
+                                            Xóa
+                                        </Button>
+                                    )}
 
-                                            border: 'none'
-                                        }}
-                                        className="btn-container-hover">
-                                        Đang lưu
-                                    </Button>
-                                )}
-                            </Box>
-                        </Form>
-                    )}
-                </Formik>
+                                    {!isSubmitting ? (
+                                        <Button
+                                            type="submit"
+                                            variant="contained"
+                                            sx={{
+                                                fontSize: '14px',
+                                                textTransform: 'unset',
+                                                color: '#fff',
+
+                                                border: 'none'
+                                            }}
+                                            className="btn-container-hover">
+                                            Lưu
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            variant="contained"
+                                            sx={{
+                                                fontSize: '14px',
+                                                textTransform: 'unset',
+                                                color: '#fff',
+
+                                                border: 'none'
+                                            }}
+                                            className="btn-container-hover">
+                                            Đang lưu
+                                        </Button>
+                                    )}
+                                </Box>
+                            </Form>
+                        )}
+                    </Formik>
+                </DialogContent>
+
                 <CreateOrEditChucVuModal
                     idChucVu={Guid.EMPTY}
                     visiable={this.state.chucVuVisiable}

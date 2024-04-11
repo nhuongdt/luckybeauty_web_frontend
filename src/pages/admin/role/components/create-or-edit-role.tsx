@@ -265,6 +265,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                     onCancel();
                 }}
                 fullWidth
+                sx={{ paddingBottom: 0 }}
                 maxWidth="sm">
                 <DialogTitle>
                     <Typography variant="h3" fontSize="24px" fontWeight="700">
@@ -291,7 +292,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
-                <DialogContent>
+                <DialogContent sx={{ padding: '20px 24px 0px 20px' }}>
                     <Formik initialValues={initialValues} onSubmit={this.handleSubmit} validationSchema={rules}>
                         {({ values, handleChange, errors, touched, isSubmitting }) => (
                             <Form onKeyPress={this.handleFormKeyPress}>
@@ -445,7 +446,11 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                         sx={{
                                             paddingRight: '0!important',
                                             paddingTop: '16px !important',
-                                            paddingBottom: '0px !important'
+                                            paddingBottom: '16px !important',
+                                            position: 'sticky',
+                                            bottom: 0,
+                                            zIndex: 10,
+                                            background: '#FFFFFF'
                                         }}>
                                         <Box
                                             display="flex"

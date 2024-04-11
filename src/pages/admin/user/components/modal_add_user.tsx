@@ -370,7 +370,7 @@ export default function ModalAddUser({
                                         <Tab label="Người dùng" value={'1'}></Tab>
                                         <Tab label="Vai trò" value={'2'}></Tab>
                                     </TabList>
-                                    <TabPanel value="1">
+                                    <TabPanel value="1" sx={{ marginTop: 2 }}>
                                         <Grid container spacing={1}>
                                             <Grid item xs={4}>
                                                 <CircleImageUpload
@@ -638,7 +638,7 @@ export default function ModalAddUser({
                                             </Grid>
                                         </Grid>
                                     </TabPanel>
-                                    <TabPanel value="2">
+                                    <TabPanel value="2" sx={{ marginTop: 2 }}>
                                         <TableRoleChiNhanh
                                             userId={userId}
                                             allRoles={allRoles}
