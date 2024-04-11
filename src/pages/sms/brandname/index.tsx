@@ -420,9 +420,9 @@ export default function PageBrandname() {
                 onOk={saveNapTienBrandname}
             />
 
-            <Grid container paddingTop={2}>
-                <Grid item xs={6}>
-                    <Grid container alignItems={'center'}>
+            <Grid container paddingTop={2} spacing={2}>
+                <Grid item xs={12} md={6}>
+                    <Grid container alignItems={'center'} spacing={1}>
                         <Grid item lg={4}>
                             <Typography className="page-title">Danh mục brandname</Typography>
                         </Grid>
@@ -454,7 +454,7 @@ export default function PageBrandname() {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} md={6}>
                     <Stack direction={'row'} spacing={1} justifyContent={'end'}>
                         <Button
                             size="small"
@@ -520,7 +520,7 @@ export default function PageBrandname() {
                         </div>
                     )}
 
-                    <Stack marginTop={rowSelectionModel.length > 0 ? 1 : 5} className="page-box-right" spacing={1}>
+                    <Stack marginTop={2} className="page-box-right" spacing={1}>
                         <DataGrid
                             disableRowSelectionOnClick
                             className={rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'}
