@@ -120,6 +120,7 @@ export default function ModalAddUser({
         // nhanSuId: Yup.string().required('Vui lòng chọn nhân viên'),
         emailAddress: Yup.string().matches(AppConsts.emailRegex, 'Email không hợp lệ').required('Vui lòng nhập email'),
         userName: Yup.string().required('Vui lòng nhập tên truy cập'),
+        idChiNhanhMacDinh: Yup.string().required('Vui lòng chọn chi nhánh'),
         password: Yup.lazy((value: any, schema: any) => {
             return passwordValidation(schema.parent.userId, schema.parent.changePassword);
         }),
@@ -408,7 +409,7 @@ export default function ModalAddUser({
                                                         fullWidth
                                                         name="userName"
                                                         label={
-                                                            <label style={{ fontSize: '13px' }}>
+                                                            <label style={{ fontSize: '16px' }}>
                                                                 Tên truy cập
                                                                 <span
                                                                     style={{
@@ -433,7 +434,7 @@ export default function ModalAddUser({
                                                         fullWidth
                                                         name="emailAddress"
                                                         label={
-                                                            <label style={{ fontSize: '13px' }}>
+                                                            <label style={{ fontSize: '16px' }}>
                                                                 Email
                                                                 <span
                                                                     style={{
@@ -459,9 +460,27 @@ export default function ModalAddUser({
                                         <Grid container spacing={2} paddingTop={2}>
                                             <Grid item xs={12}>
                                                 <AutocompleteChiNhanh
-                                                    label="Chi nhánh mặc định"
+                                                    label={
+                                                        <label style={{ fontSize: '16px' }}>
+                                                            Chi nhánh mặc định
+                                                            <span
+                                                                style={{
+                                                                    color: 'red',
+                                                                    marginLeft: '2px'
+                                                                }}>
+                                                                *
+                                                            </span>
+                                                        </label>
+                                                    }
                                                     dataChiNhanh={dataChiNhanh}
                                                     idChosed={values?.idChiNhanhMacDinh || ''}
+                                                    error={errors.idChiNhanhMacDinh && touched.idChiNhanhMacDinh}
+                                                    helperText={
+                                                        touched.idChiNhanhMacDinh &&
+                                                        errors.idChiNhanhMacDinh && (
+                                                            <span>{errors.idChiNhanhMacDinh}</span>
+                                                        )
+                                                    }
                                                     handleChoseItem={(item: any) => {
                                                         setFieldValue('idChiNhanhMacDinh', item?.id);
                                                     }}

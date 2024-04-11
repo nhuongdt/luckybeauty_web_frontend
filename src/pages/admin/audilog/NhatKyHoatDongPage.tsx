@@ -235,7 +235,7 @@ const NhatKyHoatDongPage = () => {
                                 Lịch sử thao tác
                             </Typography>
                         </Grid>
-                        <Grid item xs={6} md={5} display={'flex'} alignItems={'center'} justifyContent={'end'}>
+                        <Grid item xs={6} md={5} display={'flex'} alignItems={'center'} justifyContent={'end'} gap={1}>
                             <Button
                                 className="border-color btn-outline-hover"
                                 aria-describedby="popover-filter"
@@ -247,6 +247,7 @@ const NhatKyHoatDongPage = () => {
                                     padding: '10px 16px',
                                     borderColor: '#E6E1E6',
                                     bgcolor: '#fff!important',
+                                    minWidth: 'fit-content',
                                     display: window.screen.width > 500 ? 'none' : 'inherit'
                                 }}
                                 onClick={(e) => {
@@ -292,6 +293,7 @@ const NhatKyHoatDongPage = () => {
                                     <th style={{ color: '#3d475c', fontSize: 14, fontWeight: 600 }}>Chức năng</th>
                                     <th style={{ color: '#3d475c', fontSize: 14, fontWeight: 600 }}>Thời gian</th>
                                     <th style={{ color: '#3d475c', fontSize: 14, fontWeight: 600 }}>Nội dung</th>
+                                    <th style={{ color: '#3d475c', fontSize: 14, fontWeight: 600 }}>Chi nhánh</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -339,6 +341,15 @@ const NhatKyHoatDongPage = () => {
                                                         fontFamily: 'Roboto'
                                                     }}>
                                                     {item.noiDung}
+                                                </td>
+                                                <td
+                                                    style={{
+                                                        color: '#3d475c',
+                                                        fontSize: 14,
+                                                        fontWeight: 400,
+                                                        fontFamily: 'Roboto'
+                                                    }}>
+                                                    {item.chiNhanh}
                                                 </td>
                                             </tr>
                                             <tr key={item.noiDungChiTiet}>

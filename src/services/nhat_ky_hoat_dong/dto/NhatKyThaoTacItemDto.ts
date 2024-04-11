@@ -5,4 +5,5 @@ export default interface NhatKyThaoTacItemDto {
     noiDungChiTiet: string;
     creationTime: Date;
     tenNguoiThaoTac: string;
+    chiNhanh: string;
 }

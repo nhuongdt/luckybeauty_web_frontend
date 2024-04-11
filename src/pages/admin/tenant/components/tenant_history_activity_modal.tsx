@@ -120,6 +120,7 @@ const TenantHistoryActivityModal = ({ visible, onCancel, tenantId, tenantName }:
                             <TableCell sx={{ padding: '16px 8px' }}>Chức năng</TableCell>
                             <TableCell sx={{ padding: '16px 8px' }}>Thời gian</TableCell>
                             <TableCell sx={{ padding: '16px 8px' }}>Nội dung</TableCell>
+                            <TableCell sx={{ padding: '16px 8px' }}>Chi nhánh</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -130,6 +131,7 @@ const TenantHistoryActivityModal = ({ visible, onCancel, tenantId, tenantName }:
                                     <TableCell>{item.chucNang}</TableCell>
                                     <TableCell>{formatDate(new Date(item.creationTime), 'dd/MM/yyyy HH:mm')}</TableCell>
                                     <TableCell>{item.noiDung}</TableCell>
+                                    <TableCell>{item.chiNhanh}</TableCell>
                                 </TableRow>
                                 {selectedRow === index && ( // Hiển thị TableRow phụ nếu dòng được chọn
                                     <TableRow style={{ background: '#e6e6e6' }}>
