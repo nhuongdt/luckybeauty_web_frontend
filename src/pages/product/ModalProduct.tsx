@@ -42,6 +42,7 @@ import ModalNhomHangHoa from './ModalGroupProduct';
 import { observer } from 'mobx-react';
 import nhomHangHoaStore from '../../stores/nhomHangHoaStore';
 import { TypeAction } from '../../lib/appconst';
+import ImgurAPI from '../../services/ImgurAPI/ImgurAPI';
 
 const ModalHangHoa = ({ handleSave, trigger }: any) => {
     const [open, setOpen] = useState(false);
@@ -180,6 +181,7 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
             };
             setFileImage(file);
         }
+        await ImgurAPI.GetFile_fromId();
     };
     const closeImage = async () => {
         setProductImage('');
@@ -234,7 +236,7 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
             return;
         }
 
-        let fileId = googleDrive_fileId;
+        const fileId = googleDrive_fileId;
         if (!utils.checkNull(productImage)) {
             // nếu cập nhật hàng: chỉ upload nếu chọn lại ảnh
             if (
@@ -243,7 +245,8 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
                 utils.checkNull(product.image)
             ) {
                 // awlay insert: because iamge was delete before save
-                fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileImage, 'HangHoa');
+                // fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileImage, 'HangHoa');
+                await ImgurAPI.UploadFile(fileImage);
             }
         }
 
