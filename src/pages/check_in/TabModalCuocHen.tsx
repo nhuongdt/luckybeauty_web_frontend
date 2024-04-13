@@ -47,7 +47,7 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
 
     const [paramSearch, setParamSearch] = useState<BookingRequestDto>(
         new BookingRequestDto(
-            { currentPage: 0, trangThaiBook: 3 } // 0.xoa 1.chua xacnhan, 2.da xacnhan, 3.all
+            { currentPage: 0, trangThaiBook: 3, pageSize: 1000 } // 0.xoa 1.chua xacnhan, 2.da xacnhan, 3.all
         )
     );
 
