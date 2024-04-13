@@ -16,7 +16,10 @@ const ZaloTemplateType = {
     MEDIA: 'media',
     FILE: 'file',
     MESSAGE: 'message',
-    REQUEST_USER_INFOR: 'request_user_info'
+    REQUEST_USER_INFOR: 'request_user_info',
+    // loại tự định nghĩa (không có trong zalo template_type)
+    ADS: 'ads', // quảng cáo
+    INVITE_FOLLOW: 'invite_follow' // mời quan tâm cửa hàng
 };
 const ZaloElementType = {
     BANNER: 'banner',
