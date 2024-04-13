@@ -67,10 +67,21 @@ export interface IMemberZOA {
     tenQuanHuyen?: string;
 }
 
+export interface IPropParam_TemplateZNS {
+    name: string;
+    require: boolean;
+    minLength: number;
+    maxLength: number;
+    type: string;
+}
+
 export interface ITemplateZNS {
     templateId: number;
     templateName: string;
     status: string;
+
+    previewUrl?: string;
+    listParams?: IPropParam_TemplateZNS[];
 }
 
 export interface IZaloDataSend {
