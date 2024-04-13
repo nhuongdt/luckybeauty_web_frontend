@@ -153,13 +153,16 @@ class ZaloService {
         };
     };
     // danh sách các mẫu template
-    GetList_TempFromZNS = async (access_token: string): Promise<ITemplateZNS[]> => {
-        const result = await axios.get(`https://business.openapi.zalo.me/template/all?offset=0&limit=100&status=2`, {
-            headers: {
-                access_token: access_token,
-                'Content-Type': 'application/json'
+    GetList_TempFromZNS = async (access_token: string, status = 1): Promise<ITemplateZNS[]> => {
+        const result = await axios.get(
+            `https://business.openapi.zalo.me/template/all?offset=0&limit=100&status=${status}`,
+            {
+                headers: {
+                    access_token: access_token,
+                    'Content-Type': 'application/json'
+                }
             }
-        });
+        );
         return result.data.data;
     };
     GetZNSTemplate_byId = async (access_token: string, zns_template_id = '320131') => {
@@ -177,7 +180,7 @@ class ZaloService {
     AssignData_toZNSTemplete = async (
         access_token: string,
         zns_template_id = '320131',
-        dataSend: IZaloDataSend = {} as IZaloDataSend
+        dataSend: CustomerSMSDto = {} as CustomerSMSDto
     ) => {
         const dataTemp = await this.GetZNSTemplate_byId(access_token, zns_template_id);
         const tempdata: any = {};
@@ -196,19 +199,22 @@ class ZaloService {
                     tempdata[key] = dataSend?.maHoaDon ?? 'HD001';
                     break;
                 case 'NgayLapHoaDon':
-                    tempdata[key] = dataSend?.ngayLapHoaDon ?? '15:00 20/03/2024';
+                    tempdata[key] =
+                        format(new Date(dataSend?.ngayLapHoaDon ?? new Date()), 'HH:mm dd/MM/yyyy') ??
+                        '15:00 20/03/2024';
                     break;
                 case 'TongTienHang':
-                    tempdata[key] = new Intl.NumberFormat('vi-VN').format(dataSend?.tongTienHang ?? 0) ?? '5.000.000';
+                    tempdata[key] = new Intl.NumberFormat('vi-VN').format(dataSend?.tongThanhToan ?? 0) ?? '5.000.000';
                     break;
                 case 'BookingDate':
-                    tempdata[key] = dataSend?.bookingDate ?? '15:45 19/03/2024';
+                    tempdata[key] =
+                        format(new Date(dataSend?.startDate ?? new Date()), 'HH:mm dd/MM/yyyy') ?? '15:00 20/03/2024';
                     break;
                 case 'TenDichVu':
-                    tempdata[key] = dataSend?.tenDichVu ?? 'Nhuộm + gội test';
+                    tempdata[key] = dataSend?.tenHangHoa ?? 'Nhuộm + gội test';
                     break;
                 case 'TenChiNhanh':
-                    tempdata[key] = dataSend?.tenChiNhanh ?? '31 Lê Văn Lương';
+                    tempdata[key] = dataSend?.tenChiNhanh ?? 'SSOFT Viẹt Nam JSC';
                     break;
                 case 'DiaChiCuaHang':
                     tempdata[key] = dataSend?.diaChiChiNhanh ?? '31 Lê Văn Lương';
@@ -219,13 +225,13 @@ class ZaloService {
     };
     DevMode_GuiTinNhanGiaoDich_ByTempId = async (
         access_token: string,
-        zns_template_id = '320131',
-        dataSend: IZaloDataSend = {} as IZaloDataSend
+        zns_template_id = '325757',
+        dataSend: CustomerSMSDto = {} as CustomerSMSDto
     ) => {
         // lấy mẫu zns
         const tempdata = await this.AssignData_toZNSTemplete(access_token, zns_template_id, dataSend);
+        console.log('guitinzan ', dataSend);
         const param = {
-            // mode: 'development',
             phone: dataSend?.soDienThoai,
             template_id: zns_template_id,
             template_data: tempdata
@@ -483,7 +489,7 @@ class ZaloService {
     };
     UpdateZaloToken = async (input: ZaloAuthorizationDto): Promise<ZaloAuthorizationDto> => {
         console.log('UpdateZaloToken ', input);
-        const result = await http.post(`api/services/app/ZaloAuthorization/Update`, input);
+        const result = await http.post(`api/services/app/ZaloAuthorization/Update}`, input);
         return result.data.result;
     };
     XoaKetNoi = async (id: string): Promise<string> => {

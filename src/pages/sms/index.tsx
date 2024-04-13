@@ -49,7 +49,7 @@ import fileDowloadService from '../../services/file-dowload.service';
 import { IFileDto } from '../../services/dto/FileDto';
 import ModalGuiTinNhanZalo from '../zalo/modal_gui_tin_zalo';
 import ZaloService from '../../services/zalo/ZaloService';
-import { IZaloDataSend, InforZOA, ZaloAuthorizationDto } from '../../services/zalo/zalo_dto';
+import { InforZOA, ZaloAuthorizationDto } from '../../services/zalo/zalo_dto';
 import { Guid } from 'guid-typescript';
 import abpCustom from '../../components/abp-custom';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';

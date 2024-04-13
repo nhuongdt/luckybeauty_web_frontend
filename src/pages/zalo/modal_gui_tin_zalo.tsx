@@ -25,27 +25,18 @@ import DialogButtonClose from '../../components/Dialog/ButtonClose';
 import { Form, Formik } from 'formik';
 import * as yup from 'yup';
 import SelectWithData from '../../components/Select/SelectWithData';
-import AppConsts, {
-    DateType,
-    ISelect,
-    LoaiTin,
-    SMS_HinhThucGuiTin,
-    TrangThaiGuiTinZalo,
-    TrangThaiSMS
-} from '../../lib/appconst';
+import AppConsts, { DateType, ISelect, LoaiTin, SMS_HinhThucGuiTin, TrangThaiGuiTinZalo } from '../../lib/appconst';
 import AutocompleteWithData from '../../components/Autocomplete/AutocompleteWithData';
 import DateFilterCustom from '../../components/DatetimePicker/DateFilterCustom';
 import { format } from 'date-fns';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import HeThongSMSServices from '../../services/sms/gui_tin_nhan/he_thong_sms_services';
-import { IInforUserZOA, ITemplateZNS, IZaloDataMessage, IZaloDataSend } from '../../services/zalo/zalo_dto';
+import { IInforUserZOA, IZaloDataMessage } from '../../services/zalo/zalo_dto';
 import ZaloService from '../../services/zalo/ZaloService';
 import { IDataAutocomplete } from '../../services/dto/IDataAutocomplete';
 import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { Guid } from 'guid-typescript';
-import { ZaloTemplateData } from '../../services/zalo/ZaloTemplateData';
-import uploadFileService from '../../services/uploadFileService';
 import datLichService from '../../services/dat-lich/datLichService';
 import { IZaloButtonDetail, IZaloElement, IZaloTableDetail, IZaloTemplate } from '../../services/zalo/ZaloTemplateDto';
 import { ZaloTemplateView } from './zalo_template_view';
@@ -251,7 +242,9 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                                 dienThoaiCuaHang: itFor?.dienThoaiCuaHang,
                                                 daThanhToan: itFor?.daThanhToan,
                                                 ptThanhToan: itFor?.ptThanhToan,
-                                                xungHo: itFor?.xungHo
+                                                xungHo: itFor?.xungHo,
+                                                bookingDate: itFor?.bookingDate,
+                                                startDate: itFor?.startDate
                                             };
                                             arr.push(dataMes);
                                         }
@@ -512,6 +505,11 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
             }
         } else {
             switch (newSMS?.idLoaiTin) {
+                case LoaiTin.MOI_QUAN_TAM_CUA_HANG:
+                    {
+                        // gui tin from ZNS template
+                    }
+                    break;
                 case LoaiTin.TIN_GIAO_DICH:
                     {
                         // get listHD from arrIdHoaDon
@@ -874,7 +872,11 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                                                 label="Mẫu tin"
                                                 idChosed={values?.idMauTin}
                                                 lstData={allMauTinDB
-                                                    ?.filter((x) => x.idLoaiTin == newSMS.idLoaiTin)
+                                                    ?.filter(
+                                                        (x) =>
+                                                            x.idLoaiTin == newSMS.idLoaiTin ||
+                                                            x.idLoaiTin == LoaiTin.MOI_QUAN_TAM_CUA_HANG
+                                                    )
                                                     .map((x) => {
                                                         return { id: x?.id, text1: x?.tenMauTin, text2: '' };
                                                     })}
