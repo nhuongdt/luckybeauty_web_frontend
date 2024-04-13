@@ -61,6 +61,8 @@ import CustomerFilterDrawer from './components/CustomerFilterDrawer';
 import CustomerInfor2 from './components/customer_infor2';
 import ActionRow2Button from '../../components/DataGrid/ActionRow2Button';
 import { TypeAction } from '../../lib/appconst';
+import ZaloService from '../../services/zalo/ZaloService';
+import ModalGuiTinNhanZalo from '../zalo/modal_gui_tin_zalo2';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -95,6 +97,7 @@ interface CustomerScreenState {
     checkAllRow: boolean;
     lstErrImport: BangBaoLoiFileimportDto[];
     anchorElFilter: any;
+    isShowModalGuiTinZalo?: boolean;
 }
 class CustomerScreen extends React.Component<any, CustomerScreenState> {
     constructor(props: any) {
@@ -133,7 +136,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             expendActionSelectedRow: false,
             listItemSelectedModel: [],
             lstErrImport: [],
-            anchorElFilter: false
+            anchorElFilter: false,
+            isShowModalGuiTinZalo: false
         };
     }
     componentDidMount(): void {
@@ -455,7 +459,15 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     await this.exportSelectedRow();
                 }
                 break;
+            case 4:
+                {
+                    this.setState({ isShowModalGuiTinZalo: true });
+                }
+                break;
         }
+    };
+    saveSMSOK = (typeAction: number) => {
+        //
     };
     chuyenNhomKhach = async (itemChosed: IList) => {
         const ok = await khachHangService.ChuyenNhomKhachHang(this.state.rowSelectionModel, itemChosed.id);
@@ -627,6 +639,12 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             <>
                 {this.state.information === false ? (
                     <Grid className="customer-page" container paddingTop={2}>
+                        <ModalGuiTinNhanZalo
+                            isShowModal={this.state.isShowModalGuiTinZalo ?? false}
+                            idUpdate={''}
+                            onClose={() => this.setState({ isShowModalGuiTinZalo: false })}
+                            onOK={this.saveSMSOK}
+                        />
                         <BangBaoLoiFileImport
                             isOpen={this.state.lstErrImport.length > 0}
                             lstError={this.state.lstErrImport}
@@ -839,6 +857,11 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 {
                                                     id: '2',
                                                     text: 'Xóa khách hàng',
+                                                    isShow: abpCustom.isGrandPermission('Pages.KhachHang.Delete')
+                                                },
+                                                {
+                                                    id: '4',
+                                                    text: 'Gửi tin zalo qua SĐT',
                                                     isShow: abpCustom.isGrandPermission('Pages.KhachHang.Delete')
                                                 },
                                                 {
