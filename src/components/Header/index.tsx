@@ -117,6 +117,8 @@ const Header: React.FC<HeaderProps> = (
                     const arrChiNhanh = toJS(listChiNhanh);
                     setListChiNhanh(listChiNhanh);
 
+                    console.log('listChiNhanh ', listChiNhanh, 'arrChiNhanh ', arrChiNhanh);
+
                     const idChiNhanhMacDinh = Cookies.get('idChiNhanhMacDinh');
                     let idChiNhanh = Cookies.get('IdChiNhanh')?.toString() as unknown as string;
                     let tenChiNhanh = '';
