@@ -168,7 +168,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                             isUserZalo: 1
                         } as PagedKhachHangResultRequestDto;
                         const data = await khachHangService.jqAutoCustomer(param);
-                        const allUser = await ZaloService.GetDanhSach_KhachHang_QuanTamOA(zaloToken?.accessToken);
+                        const allUser = await ZaloService.ZOA_GetDanhSachNguoiDung(zaloToken?.accessToken);
 
                         const userZalo_IsCustomer: string[] = [];
                         if (data !== null && data.length > 0) {
@@ -192,7 +192,7 @@ export default function ModalGuiTinNhanZalo({ accountZOA, zaloToken, isShow, idT
                         }
 
                         // tinthuong: get all user zalo (not/or not customer)
-                        const userZalo_isNotCustomer = allUser?.followers?.filter(
+                        const userZalo_isNotCustomer = allUser?.users?.filter(
                             (x: any) => !userZalo_IsCustomer.includes(x.user_id)
                         );
                         for (let i = 0; i < userZalo_isNotCustomer.length; i++) {

@@ -384,6 +384,23 @@ class ZaloService {
             followers: []
         };
     };
+    ZOA_GetDanhSachNguoiDung = async (access_token: string) => {
+        const xx = await axios.get(`https://openapi.zalo.me/v3.0/oa/user/getlist?data={"offset":0,"count":15}`, {
+            headers: {
+                access_token: access_token,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (xx.data.error == 0) {
+            return xx.data.data;
+        }
+        return {
+            total: 0,
+            count: 0,
+            offset: 0,
+            users: []
+        };
+    };
     GetInforUser_ofOA = async (access_token: string, user_id: string): Promise<IInforUserZOA | null> => {
         const xx = await axios.get(`https://openapi.zalo.me/v2.0/oa/getprofile?data={"user_id":"${user_id}"}`, {
             headers: {

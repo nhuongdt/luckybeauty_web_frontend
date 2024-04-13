@@ -66,6 +66,7 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
             firsLoad.current = false;
             return;
         }
+        paramSearch.skipCount = 1;
         debounceDropDown(paramSearch);
     }, [paramSearch.keyword]);
 
