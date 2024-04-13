@@ -11,7 +11,8 @@ import {
     TextField,
     Box,
     FormControl,
-    Typography
+    Typography,
+    IconButton
 } from '@mui/material';
 import * as Yup from 'yup';
 import { Formik, Form, Field } from 'formik';
@@ -69,25 +70,22 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
 
         return (
             <Dialog open={visible} onClose={onCancel} maxWidth="sm" fullWidth>
-                <DialogTitle>
-                    <div className="row">
-                        <Box className="col-8" sx={{ float: 'left', fontSize: '24px', fontWeight: '700' }}>
-                            {title}
-                        </Box>
-                        <Box
-                            className="col-4"
-                            sx={{
-                                float: 'right',
-                                '& svg:hover': {
-                                    filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
-                                }
-                            }}>
-                            <CloseIcon
-                                style={{ float: 'right', height: '24px', cursor: 'pointer' }}
-                                onClick={onCancel}
-                            />
-                        </Box>
-                    </div>
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Typography
+                        fontSize="24px"
+                        //color="#333233"
+                        fontWeight="700">
+                        {title}
+                    </Typography>
+                    <IconButton
+                        onClick={onCancel}
+                        sx={{
+                            '&:hover img': {
+                                filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
+                            }
+                        }}>
+                        <CloseIcon />
+                    </IconButton>
                 </DialogTitle>
                 <DialogContent>
                     <Formik initialValues={initialValues} validationSchema={rules} onSubmit={handleSubmit}>

@@ -18,11 +18,12 @@ import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { enqueueSnackbar } from 'notistack';
 import abpCustom from '../../../components/abp-custom';
-import { format as formatDateFns } from 'date-fns';
+import { format as formatDateFns, differenceInDays } from 'date-fns';
 import { IList } from '../../../services/dto/IList';
 import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
 import ChooseImpersonateToTenant from './components/choose_impersonate_to_tenant';
 import TenantHistoryActivityModal from './components/tenant_history_activity_modal';
+import { TenantInfoActivityDto } from '../../../services/tenant/dto/tenantInfoActivityDto';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ITenantProps {}
 
@@ -34,7 +35,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
         tenantId: 0,
         tenantName: '',
         filter: '',
-        listTenant: [] as GetAllTenantOutput[],
+        listTenant: [] as TenantInfoActivityDto[],
         totalCount: 0,
         currentPage: 1,
         totalPage: 0,
@@ -63,7 +64,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
     }
 
     async getAll() {
-        const tenants = await tenantService.getAll({
+        const tenants = await tenantService.getTenantStatusActivity({
             maxResultCount: this.state.maxResultCount,
             skipCount: this.state.currentPage,
             keyword: this.state.filter
@@ -260,10 +261,10 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                 )
             },
             {
-                field: 'isActive',
+                field: 'status',
                 headerName: 'Trạng thái',
                 minWidth: 100,
-                flex: 1,
+                flex: 0.7,
                 renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
                         {params.colDef.headerName}
@@ -272,10 +273,6 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                 renderCell: (params) => (
                     <Box
                         sx={{
-                            padding: '4px 8px',
-                            borderRadius: '100px',
-                            color: 'rgb(0, 158, 247)',
-                            bgcolor: 'rgb(241, 250, 255)',
                             fontSize: '13px',
                             fontWeight: '400',
                             fontFamily: 'Roboto',
@@ -283,13 +280,71 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                             display: 'flex',
                             justifyContent: 'left'
                         }}>
-                        {params.value == true ? 'Hoạt động' : 'Ngừng hoạt động'}
+                        {params.row.subscriptionEndDate &&
+                            params.value +
+                                ' ' +
+                                differenceInDays(new Date(params.row.subscriptionEndDate), new Date()) +
+                                ' ngày'}
                     </Box>
                 )
             },
             {
+                field: 'creationTime',
+                headerName: 'Ngày bắt đầu',
+                headerAlign: 'center',
+                align: 'center',
+                minWidth: 112,
+                flex: 0.8,
+                renderCell: (params) => (
+                    <Box
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '100%'
+                        }}>
+                        {params.value != null ? (
+                            <>
+                                <DateIcon style={{ marginRight: 4 }} />
+                                <Typography variant="body2" fontSize="var(--font-size-main)">
+                                    {formatDateFns(new Date(params.value), 'dd/MM/yyyy HH:mm')}
+                                </Typography>
+                            </>
+                        ) : null}
+                    </Box>
+                ),
+                renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+            },
+            {
                 field: 'subscriptionEndDate',
                 headerName: 'Ngày hết hạn',
+                headerAlign: 'center',
+                align: 'center',
+                minWidth: 112,
+                flex: 0.8,
+                renderCell: (params) => (
+                    <Box
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '100%'
+                        }}>
+                        {params.value != null ? (
+                            <>
+                                <DateIcon style={{ marginRight: 4 }} />
+                                <Typography variant="body2" fontSize="var(--font-size-main)">
+                                    {formatDateFns(new Date(params.value), 'dd/MM/yyyy HH:mm')}
+                                </Typography>
+                            </>
+                        ) : null}
+                    </Box>
+                ),
+                renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+            },
+            {
+                field: 'lastActivityTime',
+                headerName: 'Ngày hoạt động gần nhất',
                 headerAlign: 'center',
                 align: 'center',
                 minWidth: 112,

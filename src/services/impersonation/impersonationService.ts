@@ -22,6 +22,9 @@ class ImpersonationService {
                         }
                         Cookies.set(Impersonation, 'true', { expires: 1 });
                         sessionStore.getCurrentLoginInformations().then(async (result) => {
+                            Cookies.set('TenantName', result.tenant.tenancyName, {
+                                expires: 1
+                            });
                             Cookies.set('userId', result.user.id.toString(), {
                                 expires: 1
                             });

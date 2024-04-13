@@ -135,7 +135,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     };
 
     return (
-        <Box padding={2}>
+        <Box padding={2} width={'100%'}>
             <ListNhanVienDataContext.Provider value={lstNhanVien}>
                 <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
             </ListNhanVienDataContext.Provider>

@@ -137,7 +137,10 @@ const MauTinNhan = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                         <TabContext value={tabActive}>
-                            <Stack justifyContent={'space-between'} direction={'row'}>
+                            <Stack
+                                justifyContent={'space-between'}
+                                spacing={2}
+                                direction={window.screen.width >= 768 ? 'row' : 'column'}>
                                 <Stack>
                                     <TabList onChange={handleChangeTab}>
                                         <Tab

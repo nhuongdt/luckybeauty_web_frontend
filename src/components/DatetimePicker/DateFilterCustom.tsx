@@ -1,4 +1,4 @@
-import { Popover, Grid, Box, Button } from '@mui/material';
+import { Popover, Grid, Box, Button, Typography } from '@mui/material';
 import { DateField, LocalizationProvider, viVN } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ReactComponent as DateIcon } from '../../images/calendarMenu.svg';
@@ -278,8 +278,9 @@ export default function DateFilterCustom({
                             </Box>
                         </Grid>
                         <Grid item xs={9}>
-                            <Grid item container spacing={2}>
-                                <Grid item xs={6}>
+                            <Grid item container spacing={0.5}>
+                                <Grid item xs={12} md={6}>
+                                    <Typography>Từ ngày</Typography>
                                     <DateFieldCustomer
                                         disabled={disableSelectDate}
                                         defaultVal={dateFrom}
@@ -291,7 +292,8 @@ export default function DateFilterCustom({
                                         disable={disableSelectDate}
                                     />
                                 </Grid>
-                                <Grid item xs={6}>
+                                <Grid item xs={12} md={6}>
+                                    <Typography>Đến ngày</Typography>
                                     <DateFieldCustomer
                                         disabled={disableSelectDate}
                                         defaultVal={dateTo}

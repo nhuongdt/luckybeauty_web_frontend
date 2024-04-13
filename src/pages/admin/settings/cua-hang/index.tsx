@@ -250,8 +250,8 @@ class StoreDetail extends Component {
                                             <Stack direction={'row'} spacing={1}>
                                                 <ButtonNavigate
                                                     navigateTo="/settings"
-                                                    title="Trở về trang cài đặt"
-                                                    btnText={window.screen.width > 768 ? 'Trở về trang cài đặt' : ''}
+                                                    title="Trở về cài đặt"
+                                                    btnText={window.screen.width > 768 ? 'Trở về cài đặt' : ''}
                                                 />
                                                 <Button
                                                     variant="contained"

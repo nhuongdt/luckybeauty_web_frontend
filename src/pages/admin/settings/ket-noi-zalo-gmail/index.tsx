@@ -12,6 +12,9 @@ import utils from '../../../../utils/utils';
 import { Guid } from 'guid-typescript';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
 import { ButtonNavigate } from '../../../../components/Button/ButtonNavigate';
+import EmailSetting from '../Email';
+import { isGranted } from '../../../../lib/abpUtility';
+import abpCustom from '../../../../components/abp-custom';
 
 export default function ThietLapKetNoiZaloGmail() {
     const [tabActive, setTabActive] = useState('2');
@@ -116,19 +119,21 @@ export default function ThietLapKetNoiZaloGmail() {
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                 <TabList onChange={handleChange}>
                                     <Tab label="Zalo" value="2" />
-                                    <Tab label="Email" value="3" />
+                                    {abpCustom.isGrandPermission('Pages.Tenants') ? (
+                                        <Tab label="Email" value="3" />
+                                    ) : null}
                                 </TabList>
                             </Box>
                             <Stack>
-                                <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
+                                <ButtonNavigate navigateTo="/settings" btnText="Trở về cài đặt" />
                             </Stack>
                         </Stack>
 
                         <TabPanel value="2">
                             {!zaloToken?.accessToken && (
                                 <Grid container spacing={3}>
-                                    <Grid item xs={5}></Grid>
-                                    <Grid item xs={2}>
+                                    <Grid item xs={12} md={5}></Grid>
+                                    <Grid item xs={12} md={2}>
                                         <Box alignItems={'center'}>
                                             <Link underline="none" variant="body2" href={urlPermissionOA}>
                                                 <Button
@@ -141,7 +146,7 @@ export default function ThietLapKetNoiZaloGmail() {
                                             </Link>
                                         </Box>
                                     </Grid>
-                                    <Grid item xs={5}></Grid>
+                                    <Grid item xs={12} md={5}></Grid>
 
                                     <Grid item xs={12}>
                                         <Stack spacing={2} alignItems={'center'}>
@@ -201,7 +206,11 @@ export default function ThietLapKetNoiZaloGmail() {
                                 </Grid>
                             )}
                         </TabPanel>
-                        <TabPanel value="3">Item Three</TabPanel>
+                        {abpCustom.isGrandPermission('Pages.Tenants') ? (
+                            <TabPanel value="3">
+                                <EmailSetting />
+                            </TabPanel>
+                        ) : null}
                     </TabContext>
                 </Grid>
             </Grid>

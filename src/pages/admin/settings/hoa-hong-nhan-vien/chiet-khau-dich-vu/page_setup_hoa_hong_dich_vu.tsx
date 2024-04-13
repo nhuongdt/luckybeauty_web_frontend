@@ -965,7 +965,7 @@ export default function PageSetupHoaHongDichVu() {
                         </Grid>
                     </Grid>
                     <Grid item xs={12} md={6} lg={6} display="flex" gap="8px" justifyContent="end">
-                        <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
+                        <ButtonNavigate navigateTo="/settings" btnText="Trở về cài đặt" />
 
                         <Button
                             size="small"

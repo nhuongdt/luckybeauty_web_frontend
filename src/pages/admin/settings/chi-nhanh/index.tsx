@@ -439,8 +439,8 @@ class ChiNhanhScreen extends Component {
                     <Grid xs={12} md={6} item display="flex" gap="8px" justifyContent="end">
                         <ButtonNavigate
                             navigateTo="/settings"
-                            title="Trở về trang cài đặt"
-                            btnText={window.screen.width > 768 ? 'Trở về trang cài đặt' : ''}
+                            title="Trở về cài đặt"
+                            btnText={window.screen.width > 768 ? 'Trở về cài đặt' : ''}
                         />
                         <Button
                             className="border-color btn-outline-hover"

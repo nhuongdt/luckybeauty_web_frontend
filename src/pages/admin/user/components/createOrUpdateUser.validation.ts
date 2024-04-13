@@ -10,6 +10,7 @@ const rules = Yup.object().shape({
     name: Yup.string().required('Họ là bắt buộc'),
     emailAddress: Yup.string().matches(emailRegex, 'Email không hợp lệ').required('Email là bắt buộc'),
     userName: Yup.string().required('Tên truy cập là bắt buộc'),
+    idChiNhanhMacDinh: Yup.string().required('Vui lòng chọn chi nhánh'),
     password: Yup.string().when('userId', (userId: any, schema) => {
         return userId === 0
             ? schema

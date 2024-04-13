@@ -10,6 +10,7 @@ import UpdateTenantOutput from './dto/updateTenantOutput';
 import http from '../httpService';
 import { PagedRequestDto } from '../dto/pagedRequestDto';
 import { TenantHistoryActivityDto } from './dto/tenantHistoryActivityDto';
+import { TenantInfoActivityDto } from './dto/tenantInfoActivityDto';
 
 class TenantService {
     public async create(createTenantInput: CreateTenantInput): Promise<CreateTenantOutput> {
@@ -82,6 +83,19 @@ class TenantService {
         try {
             const result = await http.get('api/services/app/Tenant/GetTenantHistoryActivity', {
                 params: { ...pagedFilterAndSortedRequest, tenantId: tenantId }
+            });
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while retrieving all tenants:', error);
+            throw error;
+        }
+    }
+    public async getTenantStatusActivity(
+        pagedFilterAndSortedRequest: PagedTenantResultRequestDto
+    ): Promise<PagedResultDto<TenantInfoActivityDto>> {
+        try {
+            const result = await http.get('api/services/app/Tenant/getTenantStatusActivity', {
+                params: pagedFilterAndSortedRequest
             });
             return result.data.result;
         } catch (error) {

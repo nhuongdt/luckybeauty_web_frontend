@@ -160,7 +160,7 @@ export default function PageCaiDatNhacTuDong() {
                         <Typography fontSize={18} fontWeight={600}>
                             Tin nhắn tự động
                         </Typography>
-                        <ButtonNavigate navigateTo="/settings" btnText="Trở về trang cài đặt" />
+                        <ButtonNavigate navigateTo="/settings" btnText="Trở về cài đặt" />
                     </Stack>
                 </Grid>
                 {arrSetup?.map((item: ICaiDatNhacNho, index) => (
