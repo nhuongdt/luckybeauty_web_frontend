@@ -8,6 +8,7 @@ import { RequestFromToDto } from '../../dto/ParamSearchDto';
 import { IInforUserZOA } from '../../zalo/zalo_dto';
 
 export class ParamSearchSMS extends RequestFromToDto {
+    idLoaiTin?: number;
     hinhThucGuiTins?: string[] = [];
     isFilterCustomer?: boolean = false;
     loaiUser_CoTheGuiTin?: number = 0;
@@ -125,6 +126,7 @@ export interface CustomerSMSDto extends IInforUserZOA {
     tenCuaHang?: string;
     diaChiCuaHang?: string;
     dienThoaiCuaHang?: string;
+    websiteCuHang?: string;
 
     sTrangThaiGuiTinNhan?: string;
 }
