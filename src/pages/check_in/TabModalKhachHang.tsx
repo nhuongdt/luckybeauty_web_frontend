@@ -1,5 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import { Box, TextField, Button, Typography, Grid, InputAdornment, Avatar, debounce, Stack } from '@mui/material';
+import {
+    Box,
+    TextField,
+    Button,
+    Typography,
+    Grid,
+    InputAdornment,
+    Avatar,
+    debounce,
+    Stack,
+    Pagination
+} from '@mui/material';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as AddIcon } from '../../images/add.svg';
 import '../../pages/customer/customerPage.css';
@@ -15,24 +26,33 @@ import { format } from 'date-fns';
 import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 import utils from '../../utils/utils';
 import abpCustom from '../../components/abp-custom';
+import { PagedResultDto } from '../../services/dto/pagedResultDto';
 const TabKhachHang = ({ handleChoseCus }: any) => {
     const firsLoad = useRef(true);
     const windowWidth = useWindowWidth();
 
     const [isShowModalAddCus, setIsShowModalAddCus] = useState(false);
     const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>({} as CreateOrEditKhachHangDto);
-
-    const [pageDataCustomer, setPageDataCustomer] = useState<KhachHangItemDto[]>([]);
+    const [pageDataCustomer, setPageDataCustomer] = useState<PagedResultDto<KhachHangItemDto>>();
 
     const [paramSearch, setParamSearch] = useState<PagedKhachHangResultRequestDto>({
         keyword: '',
-        maxResultCount: 10,
-        skipCount: 0
+        maxResultCount: 9,
+        skipCount: 1
     } as PagedKhachHangResultRequestDto);
 
     const GetKhachHang_noBooking = async (paramSearch: PagedKhachHangResultRequestDto) => {
         const data = await khachHangService.GetKhachHang_noBooking(paramSearch);
-        setPageDataCustomer(data);
+        setPageDataCustomer({
+            ...pageDataCustomer,
+            items: data?.items,
+            totalCount: data?.totalCount,
+            totalPage: Math.ceil(data?.totalCount / paramSearch?.maxResultCount)
+        });
+    };
+
+    const handleChangePage = (event: any, value: number) => {
+        setParamSearch({ ...paramSearch, skipCount: value });
     };
 
     const debounceDropDown = useRef(
@@ -125,7 +145,7 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
             </Grid>
 
             <Grid container spacing={2} mt="0">
-                {pageDataCustomer?.map((item, index) => (
+                {pageDataCustomer?.items?.map((item, index) => (
                     <Grid item key={index} sm={6} md={4} xs={12}>
                         <Stack
                             onClick={() => saveOKCustomer(item)}
@@ -178,6 +198,21 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
                     </Grid>
                 ))}
             </Grid>
+            {(pageDataCustomer?.totalPage ?? 0) > 1 && (
+                <Grid container mt={2}>
+                    <Grid item xs={12}>
+                        <Stack spacing={1} direction={'row'} justifyContent={'center'}>
+                            <Pagination
+                                shape="circular"
+                                count={pageDataCustomer?.totalPage}
+                                page={paramSearch?.skipCount}
+                                defaultPage={1}
+                                onChange={handleChangePage}
+                            />
+                        </Stack>
+                    </Grid>
+                </Grid>
+            )}
         </Box>
     );
 };

@@ -90,7 +90,7 @@ class KhachHangService {
         const result = await http.get(`api/services/app/KhachHang/CheckExistSoDienThoai?phone=${phone}&id=${id}`);
         return result.data.result;
     }
-    async GetKhachHang_noBooking(input: PagedKhachHangResultRequestDto) {
+    async GetKhachHang_noBooking(input: PagedKhachHangResultRequestDto): Promise<PagedResultDto<KhachHangItemDto>> {
         const param = QueryString.stringify(input); // convert object to param string
         const result = await http.get(`api/services/app/KhachHang/GetKhachHang_noBooking?${param}`);
         return result.data.result;
