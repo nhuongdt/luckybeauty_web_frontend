@@ -52,7 +52,7 @@ import NotificationService from '../../services/notification/NotificationService
 import utils from '../../utils/utils';
 import suggestStore from '../../stores/suggestStore';
 import impersonationService, { Impersonation } from '../../services/impersonation/impersonationService';
-import { toJS } from 'mobx';
+import { Guid } from 'guid-typescript';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -114,22 +114,19 @@ const Header: React.FC<HeaderProps> = (
                 const listChiNhanh = suggestStore?.suggestChiNhanh_byUserLogin;
                 if (listChiNhanh !== undefined && listChiNhanh != null && listChiNhanh.length > 0) {
                     // mobx return Proxy object --> convert to array
-                    const arrChiNhanh = toJS(listChiNhanh);
                     setListChiNhanh(listChiNhanh);
-
-                    console.log('listChiNhanh ', listChiNhanh, 'arrChiNhanh ', arrChiNhanh);
 
                     const idChiNhanhMacDinh = Cookies.get('idChiNhanhMacDinh');
                     let idChiNhanh = Cookies.get('IdChiNhanh')?.toString() as unknown as string;
                     let tenChiNhanh = '';
                     const remember = Cookies.get('isRememberMe');
                     if (utils.checkNull(idChiNhanh)) {
-                        idChiNhanh = arrChiNhanh[0].id;
-                        tenChiNhanh = arrChiNhanh[0].tenChiNhanh;
-                        if (!utils.checkNull(idChiNhanhMacDinh)) {
+                        idChiNhanh = listChiNhanh[0].id;
+                        tenChiNhanh = listChiNhanh[0].tenChiNhanh;
+                        if (!utils.checkNull(idChiNhanhMacDinh) && idChiNhanhMacDinh !== Guid.EMPTY) {
                             idChiNhanh = idChiNhanhMacDinh ?? '';
                             // find chinhanh mac dinh
-                            const cnMacDinh = arrChiNhanh.filter((x: SuggestChiNhanhDto) => x.id === idChiNhanh);
+                            const cnMacDinh = listChiNhanh.filter((x: SuggestChiNhanhDto) => x.id === idChiNhanh);
                             if (cnMacDinh.length > 0) {
                                 tenChiNhanh = cnMacDinh[0].tenChiNhanh;
                             }
@@ -144,8 +141,8 @@ const Header: React.FC<HeaderProps> = (
                     } else {
                         // if chinhanh was change: set this
                         setCurrentChiNhanh(idChiNhanh);
-                        tenChiNhanh = arrChiNhanh[0].tenChiNhanh;
-                        const cnMacDinh = arrChiNhanh.filter((x: SuggestChiNhanhDto) => x.id === idChiNhanh);
+                        tenChiNhanh = listChiNhanh[0].tenChiNhanh;
+                        const cnMacDinh = listChiNhanh.filter((x: SuggestChiNhanhDto) => x.id === idChiNhanh);
                         if (cnMacDinh.length > 0) {
                             tenChiNhanh = cnMacDinh[0].tenChiNhanh;
                         }
