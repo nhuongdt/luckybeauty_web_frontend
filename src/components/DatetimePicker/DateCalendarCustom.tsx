@@ -31,10 +31,19 @@ export default function DateCalendarCustom({ defaultVal, handleChangeDate, disab
                 <DateCalendar
                     value={value}
                     sx={{
-                        width: '240px',
+                        minWidth: '200px',
+                        maxWidth: '100%',
+                        '& .MuiPickersCalendarHeader-root': {
+                            paddingRight: 0,
+                            paddingLeft: '12px'
+                        },
                         '& .MuiPickersCalendarHeader-label': {
                             fontSize: '13px'
                         },
+                        '& .MuiDayCalendar-weekDayLabel': {
+                            width: '32px'
+                        },
+
                         '& .MuiPickersDay-root': {
                             width: '32px',
                             height: '32px'

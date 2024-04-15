@@ -256,7 +256,7 @@ export default function DateFilterCustom({
                     vertical: 'bottom',
                     horizontal: 'left'
                 }}>
-                <div style={{ minWidth: '350px' }}>
+                <div>
                     <Grid container spacing={2} padding={'16px'}>
                         <Grid item xs={3}>
                             <Box display={'flex'} flexDirection={'column'} borderRight={'1px solid #EEF0F4'}>
@@ -279,7 +279,7 @@ export default function DateFilterCustom({
                         </Grid>
                         <Grid item xs={9}>
                             <Grid item container spacing={0.5}>
-                                <Grid item xs={12} md={6}>
+                                <Grid item xs={12} sm={6} md={6}>
                                     <Typography>Từ ngày</Typography>
                                     <DateFieldCustomer
                                         disabled={disableSelectDate}
@@ -292,7 +292,7 @@ export default function DateFilterCustom({
                                         disable={disableSelectDate}
                                     />
                                 </Grid>
-                                <Grid item xs={12} md={6}>
+                                <Grid item xs={12} sm={6} md={6}>
                                     <Typography>Đến ngày</Typography>
                                     <DateFieldCustomer
                                         disabled={disableSelectDate}
