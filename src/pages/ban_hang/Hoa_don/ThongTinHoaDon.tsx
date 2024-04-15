@@ -36,7 +36,8 @@ import suggestStore from '../../../stores/suggestStore';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import { TrangThaiHoaDon } from '../../../services/ban_hang/HoaDonConst';
-import { TypeAction } from '../../../lib/appconst';
+import AppConsts, { TypeAction } from '../../../lib/appconst';
+import nhatKyHoatDongService from '../../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
 const themOutlineInput = createTheme({
     components: {
         MuiOutlinedInput: {
@@ -132,6 +133,14 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
         const objUpdate = { ...hoadonChosed };
         objUpdate.trangThai = TrangThaiHoaDon.HUY;
         setHoaDonChosed({ ...hoadonChosed, trangThai: TrangThaiHoaDon.HUY });
+        await nhatKyHoatDongService.createNhatKyThaoTac({
+            chucNang: 'Hóa đơn',
+            loaiNhatKy: AppConsts.loaiNhatKyThaoTac.cancel,
+            noiDung: 'Hủy hóa đơn :' + objUpdate.maHoaDon,
+            noiDungChiTiet: `<div>
+            <p>Thông tin hóa đơn: ${JSON.stringify(objUpdate)}</p>
+            </div >`
+        });
         setTypeAction(TypeAction.DELETE);
         handleGotoBack(objUpdate, TypeAction.DELETE);
     };
@@ -190,6 +199,14 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
         const data = await HoaDonService.Update_InforHoaDon(hoadonChosed);
         setHoaDonChosed({ ...hoadonChosed, maHoaDon: data?.maHoaDon });
         setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật thông tin hóa đơn thành công' });
+        await nhatKyHoatDongService.createNhatKyThaoTac({
+            chucNang: 'Hóa đơn',
+            loaiNhatKy: AppConsts.loaiNhatKyThaoTac.update,
+            noiDung: 'Cập nhật hóa đơn :' + hoadonChosed.maHoaDon,
+            noiDungChiTiet: `<div>
+            <p>Thông tin hóa đơn mới: ${JSON.stringify(hoadonChosed)}</p>
+            </div >`
+        });
         handleGotoBack(hoadonChosed, TypeAction.UPDATE);
     };
 
@@ -219,6 +236,14 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
         const objUpdate = { ...hoadonChosed };
         objUpdate.trangThai = TrangThaiHoaDon.HOAN_THANH;
         setHoaDonChosed({ ...hoadonChosed, trangThai: TrangThaiHoaDon.HOAN_THANH });
+        await nhatKyHoatDongService.createNhatKyThaoTac({
+            chucNang: 'Hóa đơn',
+            loaiNhatKy: AppConsts.loaiNhatKyThaoTac.update,
+            noiDung: 'Khôi phục hóa đơn :' + hoadonChosed.maHoaDon,
+            noiDungChiTiet: `<div>
+            <p>Thông tin hóa đơn: ${JSON.stringify(hoadonChosed)}</p>
+            </div >`
+        });
         setTypeAction(TypeAction.RESTORE);
         handleGotoBack(objUpdate, TypeAction.RESTORE);
         setObjAlert({ ...objAlert, show: true, mes: 'Khôi phục hóa đơn thành công' });

@@ -318,7 +318,16 @@ const AppConsts = {
             value: 2,
             text: 'Mẫu A4'
         }
-    ] as ISelect[]
+    ] as ISelect[],
+    loaiNhatKyThaoTac: {
+        create: 1,
+        update: 2,
+        delete: 3,
+        import: 4,
+        export: 5,
+        login: 6,
+        cancel: 7
+    }
 };
 
 export default AppConsts;
