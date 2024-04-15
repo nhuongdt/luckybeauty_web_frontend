@@ -156,7 +156,13 @@ class Utils {
         }
     };
     checkNull = (input: string | null | undefined) => {
-        return input === 'null' || input === null || input === undefined || input.toString().replace(/\s+/g, '') === '';
+        return (
+            input === 'null' ||
+            input === null ||
+            input === undefined ||
+            input === 'undefined' ||
+            input.toString().replace(/\s+/g, '') === ''
+        );
     };
     formatNumberToFloat = (objVal: any) => {
         if (objVal === undefined || objVal === null) {
