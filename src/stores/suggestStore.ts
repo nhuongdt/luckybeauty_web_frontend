@@ -16,6 +16,7 @@ import { SuggestNganHangDto } from '../services/suggests/dto/SuggestNganHangDto'
 import { SuggestTaiKhoanNganHangQrDto } from '../services/suggests/dto/SuggestTaiKhoanNganHangQrDTo';
 import TaiKhoanNganHangServices from '../services/so_quy/TaiKhoanNganHangServices';
 import { TaiKhoanNganHangDto } from '../services/so_quy/Dto/TaiKhoanNganHangDto';
+import ZaloService from '../services/zalo/ZaloService';
 
 class SuggestStore {
     suggestKyThuatVien!: SuggestNhanVienDichVuDto[];
@@ -33,6 +34,8 @@ class SuggestStore {
     suggestDonViQuiDoi!: SuggestDonViQuiDoiDto[];
     suggestNganHang!: SuggestNganHangDto[];
     suggestTaiKhoanNganHangQr!: TaiKhoanNganHangDto[];
+
+    zaloAccessToken?: string;
     constructor() {
         makeAutoObservable(this);
     }
@@ -100,6 +103,12 @@ class SuggestStore {
     GetChiNhanhByUser = async () => {
         const data = await chiNhanhService.GetChiNhanhByUser();
         this.suggestChiNhanh_byUserLogin = data;
+    };
+    Zalo_GetAccessToken = async () => {
+        const data = await ZaloService.Innit_orGetToken();
+        if (data !== null) {
+            this.zaloAccessToken = data?.accessToken ?? '';
+        }
     };
 }
 export default new SuggestStore();
