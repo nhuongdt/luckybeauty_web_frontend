@@ -94,6 +94,7 @@ import HoaHongNhanVienDichVu from '../../nhan_vien_thuc_hien/hoa_hong_nhan_vien_
 import DateTimePickerCustom from '../../../components/DatetimePicker/DateTimePickerCustom';
 import DatePickerRequireCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
 import { format } from 'date-fns';
+import nhatKyHoatDongService from '../../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
 
 const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const appContext = useContext(AppContext);

@@ -188,7 +188,7 @@ const NhatKyHoatDongPage = () => {
                         />
                         <FormControlLabel
                             control={<Checkbox />}
-                            value={3}
+                            value={7}
                             checked={loaiNhatKys.find((x) => x === 7) ? true : false}
                             onChange={chonLoaiThaoTac}
                             label={'Hủy'}
