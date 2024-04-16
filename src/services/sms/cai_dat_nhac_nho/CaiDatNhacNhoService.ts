@@ -12,7 +12,7 @@ const objSMS = {
     soDienThoai: '0978005006',
     ngaySinh: '1990-11-11',
     bookingDate: '11:00 05/04/2024',
-    startDate: '11:25 05/04/2024',
+    startTime: '11:25 05/04/2024',
     thoiGianHen: '14:00 - 16:00',
     tenHangHoa: 'Cắt tóc',
     maHoaDon: 'HD001',
@@ -42,7 +42,7 @@ class CaiDatNhacNhoService {
         if (!utils.checkNull(this.objSMS?.bookingDate as unknown as string)) {
             txt = txt.replace(
                 '{BookingDate}',
-                format(new Date(this.objSMS?.startDate ?? new Date()), 'HH:mm dd/MM/yyyy')
+                format(new Date(this.objSMS?.startTime ?? new Date()), 'HH:mm dd/MM/yyyy')
             );
         }
         txt = txt.replace('{ThoiGianHen}', this.objSMS?.thoiGianHen ?? '');

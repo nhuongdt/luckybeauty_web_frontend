@@ -117,13 +117,13 @@ const Header: React.FC<HeaderProps> = (
                     setListChiNhanh(listChiNhanh);
 
                     const idChiNhanhMacDinh = Cookies.get('idChiNhanhMacDinh');
-                    let idChiNhanh = Cookies.get('IdChiNhanh')?.toString() as unknown as string;
+                    let idChiNhanh = Cookies.get('IdChiNhanh')?.toString() ?? '';
                     let tenChiNhanh = '';
                     const remember = Cookies.get('isRememberMe');
                     if (utils.checkNull(idChiNhanh)) {
                         idChiNhanh = listChiNhanh[0].id;
                         tenChiNhanh = listChiNhanh[0].tenChiNhanh;
-                        if (!utils.checkNull(idChiNhanhMacDinh) && idChiNhanhMacDinh !== Guid.EMPTY) {
+                        if (!utils.checkNull(idChiNhanhMacDinh)) {
                             idChiNhanh = idChiNhanhMacDinh ?? '';
                             // find chinhanh mac dinh
                             const cnMacDinh = listChiNhanh.filter((x: SuggestChiNhanhDto) => x.id === idChiNhanh);
@@ -131,7 +131,6 @@ const Header: React.FC<HeaderProps> = (
                                 tenChiNhanh = cnMacDinh[0].tenChiNhanh;
                             }
                         }
-
                         setCurrentChiNhanh(idChiNhanh);
 
                         Cookies.set('IdChiNhanh', idChiNhanh, {

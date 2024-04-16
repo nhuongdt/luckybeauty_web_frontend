@@ -177,6 +177,18 @@ class ZaloService {
         );
         return result.data.data;
     };
+    ZNStemplate_GetDuLieuMau_ById = async (access_token: string, zns_template_id = '320131') => {
+        const result = await axios.get(
+            `https://business.openapi.zalo.me/template/sample-data?template_id=${zns_template_id}`,
+            {
+                headers: {
+                    access_token: access_token,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        return result.data.data;
+    };
     AssignData_toZNSTemplete = async (
         access_token: string,
         zns_template_id = '320131',
@@ -204,20 +216,32 @@ class ZaloService {
                         '15:00 20/03/2024';
                     break;
                 case 'TongTienHang':
-                    tempdata[key] = new Intl.NumberFormat('vi-VN').format(dataSend?.tongThanhToan ?? 0) ?? '5.000.000';
+                    tempdata[key] = dataSend?.tongThanhToan; // zalo ZNS tự động format tiền
                     break;
                 case 'BookingDate':
                     tempdata[key] =
-                        format(new Date(dataSend?.startDate ?? new Date()), 'HH:mm dd/MM/yyyy') ?? '15:00 20/03/2024';
+                        format(new Date(dataSend?.startTime ?? new Date()), 'HH:mm dd/MM/yyyy') ?? '15:00 20/03/2024';
                     break;
                 case 'TenDichVu':
                     tempdata[key] = dataSend?.tenHangHoa ?? 'Nhuộm + gội test';
                     break;
                 case 'TenChiNhanh':
-                    tempdata[key] = dataSend?.tenChiNhanh ?? 'SSOFT Viẹt Nam JSC';
+                    tempdata[key] = dataSend?.tenChiNhanh ?? 'SSOFT Việt Nam Hà Nội';
+                    break;
+                case 'DiaChiChiNhanh':
+                    tempdata[key] = dataSend?.diaChiChiNhanh ?? '31 Lê Văn Lương';
+                    break;
+                case 'DienThoaiChiNhanh':
+                    tempdata[key] = dataSend?.soDienThoaiChiNhanh ?? '0393363069';
+                    break;
+                case 'TenCuaHang':
+                    tempdata[key] = dataSend?.tenCuaHang ?? 'SSOFT Việt Nam JSC';
                     break;
                 case 'DiaChiCuaHang':
-                    tempdata[key] = dataSend?.diaChiChiNhanh ?? '31 Lê Văn Lương';
+                    tempdata[key] = dataSend?.diaChiCuaHang ?? 'số 6, Duy Tân, HN';
+                    break;
+                case 'DienThoaiCuaHang':
+                    tempdata[key] = dataSend?.dienThoaiCuaHang ?? '02344455566';
                     break;
             }
         }
@@ -227,11 +251,12 @@ class ZaloService {
         access_token: string,
         zns_template_id = '325757',
         dataSend: CustomerSMSDto = {} as CustomerSMSDto
-    ) => {
+    ): Promise<IZaloResultMessage<IZaloDataMessage>> => {
         // lấy mẫu zns
         const tempdata = await this.AssignData_toZNSTemplete(access_token, zns_template_id, dataSend);
-        console.log('guitinzan ', dataSend);
+        console.log('guitinzan ', tempdata);
         const param = {
+            mode: 'development',
             phone: dataSend?.soDienThoai,
             template_id: zns_template_id,
             template_data: tempdata
@@ -242,12 +267,8 @@ class ZaloService {
                 'Content-Type': 'application/json'
             }
         });
-        console.log('DevMode_GuiTinNhan_ByTempId', result.data);
-        return {
-            msg_id: result.data.msg_id,
-            sent_time: result.data.sent_time,
-            error: result.data.error
-        };
+        console.log('guitinzan_datareturn ', result.data);
+        return result.data;
     };
     // TODO HASHPHONE
     GuiTinNhan_HasPhone = async (access_token: string, zns_template_id = '320131') => {
@@ -385,12 +406,16 @@ class ZaloService {
         };
     };
     ZOA_GetDanhSachNguoiDung = async (access_token: string) => {
-        const xx = await axios.get(`https://openapi.zalo.me/v3.0/oa/user/getlist?data={"offset":0,"count":15}`, {
-            headers: {
-                access_token: access_token,
-                'Content-Type': 'application/json'
+        // chỉ lấy người dùng có phát sinh tương tác trong vòng 30 ngày (L30D)
+        const xx = await axios.get(
+            `https://openapi.zalo.me/v3.0/oa/user/getlist?data={"offset":0,"count":50, "last_interaction_period":"L30D"}`,
+            {
+                headers: {
+                    access_token: access_token,
+                    'Content-Type': 'application/json'
+                }
             }
-        });
+        );
         if (xx.data.error == 0) {
             return xx.data.data;
         }
@@ -401,7 +426,7 @@ class ZaloService {
             users: []
         };
     };
-    GetInforUser_ofOA = async (access_token: string, user_id: string): Promise<IInforUserZOA | null> => {
+    GetThongTinKhachHang_QuanTamOA = async (access_token: string, user_id: string): Promise<IInforUserZOA | null> => {
         const xx = await axios.get(`https://openapi.zalo.me/v2.0/oa/getprofile?data={"user_id":"${user_id}"}`, {
             headers: {
                 access_token: access_token
@@ -412,7 +437,22 @@ class ZaloService {
         }
         return null;
     };
-    GuiTinTuVan = async (access_token: string, userId = '1311392252375682231', noiDungTin = '') => {
+    GetInforUser_ofOA = async (access_token: string, user_id: string): Promise<IInforUserZOA | null> => {
+        const xx = await axios.get(`https://openapi.zalo.me/v3.0/oa/user/detail?data={"user_id":"${user_id}"}`, {
+            headers: {
+                access_token: access_token
+            }
+        });
+        if (xx.data.error === 0) {
+            return xx.data.data;
+        }
+        return null;
+    };
+    GuiTinTuVan = async (
+        access_token: string,
+        userId = '1311392252375682231',
+        noiDungTin = ''
+    ): Promise<IZaloResultMessage<IZaloDataMessage>> => {
         const param = {
             recipient: {
                 user_id: userId
@@ -434,7 +474,7 @@ class ZaloService {
         userId = '1311392252375682231',
         noiDungTin = '',
         imageUrl = ''
-    ) => {
+    ): Promise<IZaloResultMessage<IZaloDataMessage>> => {
         const param = {
             recipient: {
                 user_id: userId
@@ -474,11 +514,9 @@ class ZaloService {
                         template_type: 'request_user_info',
                         elements: [
                             {
-                                title: `Chào mừng bạn đến với ${accountZOA?.name} trên Zalo`,
+                                title: `Chào mừng bạn đến với ${accountZOA?.name}`,
                                 subtitle: 'Đăng ký thành viên để nhận thông tin ưu đãi hấp dẫn',
-                                image_url: uploadFileService.GoogleApi_NewLink(
-                                    'https://drive.google.com/uc?export=view&id=1TDXeqE458lvu9DJXFg85FtBEuC_1OHUw'
-                                )
+                                image_url: `https://imgur.com/ctVPLJr`
                             }
                         ]
                     }
@@ -505,8 +543,7 @@ class ZaloService {
         return result.data.result;
     };
     UpdateZaloToken = async (input: ZaloAuthorizationDto): Promise<ZaloAuthorizationDto> => {
-        console.log('UpdateZaloToken ', input);
-        const result = await http.post(`api/services/app/ZaloAuthorization/Update}`, input);
+        const result = await http.post(`api/services/app/ZaloAuthorization/Update`, input);
         return result.data.result;
     };
     XoaKetNoi = async (id: string): Promise<string> => {

@@ -62,7 +62,7 @@ import CustomerInfor2 from './components/customer_infor2';
 import ActionRow2Button from '../../components/DataGrid/ActionRow2Button';
 import { TypeAction } from '../../lib/appconst';
 import ZaloService from '../../services/zalo/ZaloService';
-import ModalGuiTinNhanZalo from '../zalo/modal_gui_tin_zalo2';
+import ModalGuiTinNhanZalo from '../zalo/modal_gui_tin_zalo';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -151,6 +151,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     }
     async getSuggest() {
         await suggestStore.getSuggestNhomKhach();
+        await suggestStore.Zalo_GetAccessToken();
     }
     async getData() {
         const khachHangs = await khachHangService.getAll({
@@ -467,7 +468,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         }
     };
     saveSMSOK = (typeAction: number) => {
-        //
+        this.setState({ isShowModalGuiTinZalo: false });
     };
     chuyenNhomKhach = async (itemChosed: IList) => {
         const ok = await khachHangService.ChuyenNhomKhachHang(this.state.rowSelectionModel, itemChosed.id);
@@ -861,7 +862,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 },
                                                 {
                                                     id: '4',
-                                                    text: 'Gửi tin zalo qua SĐT',
+                                                    text: 'Gửi tin zalo',
                                                     isShow: abpCustom.isGrandPermission('Pages.KhachHang.Delete')
                                                 },
                                                 {

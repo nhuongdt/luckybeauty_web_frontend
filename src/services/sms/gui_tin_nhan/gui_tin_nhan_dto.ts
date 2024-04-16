@@ -9,7 +9,7 @@ import { IInforUserZOA } from '../../zalo/zalo_dto';
 
 export class ParamSearchSMS extends RequestFromToDto {
     idLoaiTin?: number;
-    hinhThucGuiTins?: string[] = [];
+    hinhThucGuiTins?: string[] = []; // 1.sms, 2.zalo, 3.gmail
     isFilterCustomer?: boolean = false;
     loaiUser_CoTheGuiTin?: number = 0;
 }
@@ -116,7 +116,7 @@ export interface CustomerSMSDto extends IInforUserZOA {
 
     tenHangHoa?: string | null;
     bookingDate?: string;
-    startDate?: string;
+    startTime?: string;
     thoiGianHen?: string;
 
     tenChiNhanh?: string;

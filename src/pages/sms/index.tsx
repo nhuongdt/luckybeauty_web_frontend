@@ -42,7 +42,6 @@ import AppConsts, { ISelect, LoaiTin, TrangThaiGuiTinZalo, TrangThaiSMS, TypeAct
 import DateFilterCustom from '../../components/DatetimePicker/DateFilterCustom';
 import he_thong_sms_services from '../../services/sms/gui_tin_nhan/he_thong_sms_services';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
-import ModalSmsTemplate from './mau_tin_nhan/modal_sms_template';
 import { MauTinSMSDto } from '../../services/sms/mau_tin_sms/mau_tin_dto';
 import MauTinSMService from '../../services/sms/mau_tin_sms/MauTinSMSService';
 import fileDowloadService from '../../services/file-dowload.service';
@@ -54,8 +53,7 @@ import { Guid } from 'guid-typescript';
 import abpCustom from '../../components/abp-custom';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import utils from '../../utils/utils';
-import ModalZaloTemplate from '../zalo/modal_zalo_template';
-import { IZaloTemplate } from '../../services/zalo/ZaloTemplateDto';
+import suggestStore from '../../stores/suggestStore';
 
 const styleListItem = createTheme({
     components: {
@@ -226,8 +224,6 @@ const TinNhanPage = () => {
     const [lstRowSelect, setLstRowSelect] = useState<CustomerSMSDto[]>([]);
     const [idLoaiTin, setIdLoaiTin] = useState(1);
 
-    const [zaloLstTemplateDefault, setZaloLstTemplateDefault] = useState<IZaloTemplate[]>([]);
-
     useEffect(() => {
         GetListColumn_DataGrid();
     }, [tabActive]);
@@ -236,18 +232,12 @@ const TinNhanPage = () => {
         GetListBrandname();
         GetAllMauTinSMS();
         GetZaloTokenfromDB();
-        InnitData_TempZalo();
     }, []);
 
-    const InnitData_TempZalo = async () => {
-        const data = await ZaloService.InnitData_TempZalo();
-        setZaloLstTemplateDefault(data);
-    };
-
     const GetZaloTokenfromDB = async () => {
+        // todo: sau này phải có hàm chạy tự động: check  hết hạn accestoken
         const objAuthen = await ZaloService.Innit_orGetToken();
         if (objAuthen !== null) {
-            // await Always_CreateAccessToken(objAuthen);
             if (objAuthen.isExpiresAccessToken) {
                 const objNewToken = await ZaloService.GetNewAccessToken_fromRefreshToken(objAuthen?.refreshToken);
                 if (objNewToken !== null) {
@@ -276,6 +266,7 @@ const TinNhanPage = () => {
                 const newOA = await ZaloService.GetInfor_ZaloOfficialAccount(objAuthen?.accessToken);
                 setInforZOA(newOA);
             }
+            await suggestStore.Zalo_GetAccessToken(); // get again token --> pass to modal gửi tin nhắn
         }
     };
 
@@ -323,6 +314,10 @@ const TinNhanPage = () => {
         paramSearch.trangThais,
         tabActive
     ]);
+
+    const testguitin = async () => {
+        const data = ZaloService.NguoiDung_ChiaSeThongTin_ChoOA(inforZOA, zaloToken.accessToken, '482229554629807799');
+    };
 
     const LoadData_byTabActive = async () => {
         switch (tabActive) {
@@ -792,19 +787,11 @@ const TinNhanPage = () => {
                 idLoaiTin={idLoaiTin}
             />
             <ModalGuiTinNhanZalo
-                accountZOA={inforZOA}
-                zaloToken={zaloToken}
-                lstMauTinSMS={lstAllMauTinSMS}
-                isShow={isShowModalGuiTinZalo}
-                idTinNhan={''}
+                isShowModal={isShowModalGuiTinZalo}
+                idUpdate={''}
                 onClose={() => setIsShowModalGuiTinZalo(false)}
-                onSaveOK={saveSMSOK}
+                onOK={saveSMSOK}
             />
-            {/* <ModalSmsTemplate
-                visiable={isShowModalAddMauTin}
-                onCancel={() => setIsShowModalAddMauTin(false)}
-                onOK={saveMauTinOK}
-            /> */}
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
@@ -929,11 +916,12 @@ const TinNhanPage = () => {
                                         display: abpCustom.isGrandPermission('Pages.HeThongSMS.Create') ? '' : 'none'
                                     }}
                                     variant="contained"
-                                    onClick={() => {
-                                        setIsShowModalAdd(true);
-                                        setIdLoaiTin(1);
-                                        setLstRowSelect([]);
-                                    }}
+                                    onClick={testguitin}
+                                    // onClick={() => {
+                                    //     setIsShowModalAdd(true);
+                                    //     setIdLoaiTin(1);
+                                    //     setLstRowSelect([]);
+                                    // }}
                                     startIcon={<Add />}>
                                     Tin nhắn mới
                                 </Button>

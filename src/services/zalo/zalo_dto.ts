@@ -9,7 +9,7 @@ export interface IZaloResultMessage<T> {
 
 export interface IZaloDataMessage {
     message_id: string;
-    user_id: string;
+    user_id?: string;
 }
 
 // dto lien quan den DB --
@@ -80,6 +80,7 @@ export interface ITemplateZNS {
     templateName: string;
     status: string;
 
+    price?: string;
     previewUrl?: string;
     listParams?: IPropParam_TemplateZNS[];
 }
