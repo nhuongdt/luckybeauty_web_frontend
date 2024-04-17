@@ -32,13 +32,10 @@ import { NumericFormat } from 'react-number-format';
 import { format as formatDate } from 'date-fns';
 import bookingStore from '../../../stores/bookingStore';
 import DatePickerRequiredCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
-import MultipleAutocompleteWithData from '../../../components/Autocomplete/MultipleAutocompleteWithData';
 import ZaloService from '../../../services/zalo/ZaloService';
 import { IInforUserZOA, IMemberZOA, ZaloAuthorizationDto } from '../../../services/zalo/zalo_dto';
-import { IList } from '../../../services/dto/IList';
 import AutocompleteWithData from '../../../components/Autocomplete/AutocompleteWithData';
 import { IDataAutocomplete } from '../../../services/dto/IDataAutocomplete';
-import { util } from 'prettier';
 
 export interface ICreateOrEditCustomerProps {
     visible: boolean;
@@ -67,12 +64,12 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
         const zaloToken = await ZaloService.Innit_orGetToken();
         if (zaloToken != null && zaloToken.accessToken !== null) {
             this.setState({ zaloToken: zaloToken });
-            const data = await ZaloService.GetDanhSach_KhachHang_QuanTamOA(zaloToken.accessToken);
+            const data = await ZaloService.ZOA_GetDanhSachNguoiDung(zaloToken.accessToken);
 
             if ((data?.total ?? 0) > 0) {
                 const arr: IInforUserZOA[] = [];
-                for (let index = 0; index < data?.followers?.length; index++) {
-                    const itFor = data?.followers[index];
+                for (let index = 0; index < data?.users?.length; index++) {
+                    const itFor = data?.users[index];
                     const user = await ZaloService.GetInforUser_ofOA(zaloToken?.accessToken, itFor.user_id);
                     if (user != null) {
                         user.idKhachHang = itFor.id;

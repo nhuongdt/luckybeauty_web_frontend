@@ -48,28 +48,30 @@ export default function AutocompleteWithData(props: IPropsAutocompleteWithData) 
                         <li {...props} style={{ borderBottom: '1px dashed var(--border-color)' }}>
                             <Grid container>
                                 <Grid item xs={12}>
-                                    {option?.imgUrl && (
-                                        <img
-                                            width={40}
-                                            height={40}
-                                            src={option?.imgUrl}
-                                            style={{ borderRadius: '100%' }}
-                                        />
-                                    )}
-
                                     <Stack
                                         direction={'row'}
                                         justifyContent={'space-between'}
                                         paddingLeft={0}
                                         marginLeft={0}>
-                                        <Stack direction={'row'} spacing={1}>
-                                            <Typography style={{ fontSize: '13px' }} color={'#acaca5'}>
-                                                {optionLabel?.label1}
-                                            </Typography>
-                                            <Typography style={{ fontSize: '13px', fontWeight: 500 }}>
-                                                {option.text1}
-                                            </Typography>
+                                        <Stack spacing={1} alignItems={'center'} direction={'row'}>
+                                            {option?.imgUrl && (
+                                                <img
+                                                    width={40}
+                                                    height={40}
+                                                    src={option?.imgUrl}
+                                                    style={{ borderRadius: '100%' }}
+                                                />
+                                            )}
+                                            <Stack direction={'row'} spacing={1}>
+                                                <Typography style={{ fontSize: '13px' }} color={'#acaca5'}>
+                                                    {optionLabel?.label1}
+                                                </Typography>
+                                                <Typography style={{ fontSize: '13px', fontWeight: 500 }}>
+                                                    {option.text1}
+                                                </Typography>
+                                            </Stack>
                                         </Stack>
+
                                         {option.text2 && (
                                             <Stack
                                                 direction={'row'}
