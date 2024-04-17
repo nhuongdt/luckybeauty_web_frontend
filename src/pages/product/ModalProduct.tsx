@@ -76,8 +76,9 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
                     laHangHoa: old.idLoaiHangHoa === 1
                 };
             });
-            setProductImage(uploadFileService.GoogleApi_NewLink(obj.image));
-            setgoogleDrive_fileId(uploadFileService.GoogleApi_GetFileIdfromLink(obj.image));
+            const imgLink = await ImgurAPI.GetFile_fromId(obj.image);
+            setProductImage(imgLink?.data?.link ?? '');
+            setgoogleDrive_fileId(obj.image);
 
             // find nhomhang
             const nhom = nhomHangHoaStore.listAllNhomHang?.filter((x: any) => x.id == obj.idNhomHangHoa);
@@ -181,7 +182,6 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
             };
             setFileImage(file);
         }
-        await ImgurAPI.GetFile_fromId();
     };
     const closeImage = async () => {
         setProductImage('');
@@ -236,7 +236,7 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
             return;
         }
 
-        const fileId = googleDrive_fileId;
+        let fileId = googleDrive_fileId;
         if (!utils.checkNull(productImage)) {
             // nếu cập nhật hàng: chỉ upload nếu chọn lại ảnh
             if (
@@ -246,7 +246,8 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
             ) {
                 // awlay insert: because iamge was delete before save
                 // fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileImage, 'HangHoa');
-                await ImgurAPI.UploadFile(fileImage);
+                const dataImg = await ImgurAPI.UploadFile(fileImage);
+                fileId = dataImg?.data?.id ?? '';
             }
         }
 
@@ -255,7 +256,7 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
         objNew.tenHangHoa_KhongDau = utils.strToEnglish(objNew.tenHangHoa ?? '');
         objNew.tenLoaiHangHoa = objNew.idLoaiHangHoa == 1 ? 'Hàng hóa' : 'Dịch vụ';
         objNew.txtTrangThaiHang = objNew.trangThai == 1 ? 'Đang kinh doanh' : 'Ngừng kinh doanh';
-        objNew.image = fileId !== '' ? `https://drive.google.com/uc?export=view&id=${fileId}` : '';
+        objNew.image = fileId;
         objNew.donViQuiDois = [
             {
                 id: objNew.idDonViQuyDoi,

@@ -637,7 +637,6 @@ export default function ModalGuiTinNhanZalo(props: IPropModal<CreateOrEditSMSDto
                         <Grid item xs={12}>
                             <AutocompleteWithData
                                 label="Mẫu tin"
-                                optionLabel={{ label2: 'Mẫu: ' }}
                                 idChosed={idMauTinZalo}
                                 lstData={allMauTinZalo
                                     ?.filter(
@@ -647,7 +646,7 @@ export default function ModalGuiTinNhanZalo(props: IPropModal<CreateOrEditSMSDto
                                         return {
                                             id: x?.id,
                                             text1: x?.tenMauTin,
-                                            text2: x?.isSystem ? 'DB' : 'ZNS'
+                                            text2: x?.isSystem ? '' : 'ZNS'
                                         } as IDataAutocomplete;
                                     })}
                                 handleChoseItem={choseMauTinZNS}

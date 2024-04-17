@@ -1,15 +1,33 @@
 import axios from 'axios';
+import utils from '../../utils/utils';
+
+export interface ImgurCommonDto<T> {
+    status: number;
+    success: boolean;
+    data?: T;
+}
+
+export interface Imgur_ImageDetailDto {
+    id: string;
+    deletehash: string;
+    title: string;
+    link: string;
+    width: number;
+    height: number;
+    size: number;
+}
 
 class ImgurAPI {
-    GetFile_fromId = async (fileId = 'mVu3TZz') => {
-        const result = await axios.get(`https://api.imgur.com/3/image/${fileId}`, {
+    GetFile_fromId = async (fileId = 'mVu3TZz'): Promise<ImgurCommonDto<Imgur_ImageDetailDto> | null> => {
+        if (utils.checkNull(fileId)) return null;
+        const response = await axios.get(`https://api.imgur.com/3/image/${fileId}`, {
             headers: {
                 Authorization: `Client-ID ${process.env.REACT_APP_IMGUR_CLIENT_ID}`
             }
         });
-        return result.data.data; // {id, link}
+        return response.data;
     };
-    UploadFile = async (file: File) => {
+    UploadFile = async (file: File): Promise<ImgurCommonDto<Imgur_ImageDetailDto>> => {
         const myHeaders = new Headers();
         myHeaders.append('Authorization', `Client-ID ${process.env.REACT_APP_IMGUR_CLIENT_ID}`);
 
@@ -24,14 +42,9 @@ class ImgurAPI {
             headers: myHeaders,
             body: formdata
         };
-
-        const result = await fetch('https://api.imgur.com/3/image', requestOptions)
-            .then((response) => console.log(22, response.text()))
-            .then((result) => {
-                return result;
-            })
-            .catch((error) => console.log('error', error));
-        console.log('result imgu ', result);
+        const result = await fetch('https://api.imgur.com/3/image', requestOptions);
+        const data = await result.json();
+        return data;
     };
     DeleteFile = async () => {
         const myHeaders = new Headers();
