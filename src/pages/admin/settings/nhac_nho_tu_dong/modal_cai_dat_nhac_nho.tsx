@@ -26,7 +26,6 @@ import DialogButtonClose from '../../../../components/Dialog/ButtonClose';
 import { Guid } from 'guid-typescript';
 import SelectWithData from '../../../../components/Select/SelectWithData';
 import CaiDatNhacNhoService from '../../../../services/sms/cai_dat_nhac_nho/CaiDatNhacNhoService';
-import { ExpandMoreOutlined } from '@mui/icons-material';
 import { ICaiDatNhacNhoDto } from '../../../../services/sms/cai_dat_nhac_nho/cai_dat_nhac_nho_dto';
 import { IPropModal } from '../../../../services/dto/IPropsComponent';
 import ZaloService from '../../../../services/zalo/ZaloService';
@@ -34,8 +33,15 @@ import MauTinSMSService from '../../../../services/sms/mau_tin_sms/MauTinSMSServ
 import { IDataAutocomplete } from '../../../../services/dto/IDataAutocomplete';
 import AutocompleteWithData from '../../../../components/Autocomplete/AutocompleteWithData';
 import { ZaloTemplateView } from '../../../zalo/zalo_template_view';
-import { IZaloButtonDetail, IZaloElement, IZaloTableDetail } from '../../../../services/zalo/ZaloTemplateDto';
+import {
+    IZaloButtonDetail,
+    IZaloElement,
+    IZaloTableDetail,
+    IZaloTemplate
+} from '../../../../services/zalo/ZaloTemplateDto';
 import { ZaloConst } from '../../../../lib/zaloConst';
+import suggestStore from '../../../../stores/suggestStore';
+import { ITemplateZNS } from '../../../../services/zalo/zalo_dto';
 
 const ModalCaiDatNhacNho = (props: IPropModal<ICaiDatNhacNhoDto>) => {
     const { idUpdate, isShowModal, objUpDate, onClose, onOK } = props;
@@ -44,6 +50,7 @@ const ModalCaiDatNhacNho = (props: IPropModal<ICaiDatNhacNhoDto>) => {
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [titleDialog, setTitleDialog] = useState('');
     const [noiDungXemTruoc, setNoiDungXemTruoc] = useState('');
+    const [idMauTinChosed, setIdMauTinChosed] = useState('');
     const [isSaving, setIsSaving] = useState(false);
     const [objSetup, setObjSetup] = useState<ICaiDatNhacNhoDto>({
         id: Guid.EMPTY,
@@ -55,6 +62,8 @@ const ModalCaiDatNhacNho = (props: IPropModal<ICaiDatNhacNhoDto>) => {
     const [tblDetail, setTblDetail] = useState<IZaloTableDetail[]>([]);
     const [headerElm, setHeaderElm] = useState<IZaloElement | null>();
     const [textElm, setTextElm] = useState<IZaloElement | null>();
+
+    const [itemMauTinZNS, setItemMauTinZNS] = useState<ITemplateZNS | null>();
 
     useEffect(() => {
         ResetDataModal();
@@ -162,54 +171,63 @@ const ModalCaiDatNhacNho = (props: IPropModal<ICaiDatNhacNhoDto>) => {
     };
 
     const getMauTinZaLo = async (idMauTin: string) => {
-        // get from db
-        const itemDefault = await ZaloService.GetZaloTemplate_byId(idMauTin);
+        setIdMauTinChosed(idMauTin);
+        if (idMauTin?.length < 36) {
+            // get mautin ZNS
+            const dataMauTin = await ZaloService.GetZNSTemplate_byId(suggestStore?.zaloAccessToken ?? '', idMauTin);
+            if (dataMauTin !== null) {
+                setItemMauTinZNS(dataMauTin);
+            } else {
+                setItemMauTinZNS(null);
+            }
+        } else {
+            // get from db
+            const itemDefault = await ZaloService.GetZaloTemplate_byId(idMauTin);
 
-        if (itemDefault != null && itemDefault != undefined) {
-            if (itemDefault?.elements !== undefined) {
-                const banner = itemDefault?.elements?.filter(
-                    (x) => x.elementType === ZaloConst.ElementType.BANNER || ZaloConst.ElementType.IMAGE
-                );
-                if (banner !== undefined && banner.length > 0) {
-                    if (banner[0].isImage) {
-                        setImageUrl(banner[0].content);
+            if (itemDefault != null && itemDefault != undefined) {
+                if (itemDefault?.elements !== undefined) {
+                    const banner = itemDefault?.elements?.filter(
+                        (x) => x.elementType === ZaloConst.ElementType.BANNER || ZaloConst.ElementType.IMAGE
+                    );
+                    if (banner !== undefined && banner.length > 0) {
+                        if (banner[0].isImage) {
+                            setImageUrl(banner[0].content);
+                        } else {
+                            setImageUrl('');
+                        }
                     } else {
                         setImageUrl('');
                     }
-                } else {
-                    setImageUrl('');
-                }
-                const header = itemDefault?.elements?.filter((x) => x.elementType === ZaloConst.ElementType.HEADER);
-                if (header !== undefined && header.length > 0) {
-                    setHeaderElm(header[0]);
-                } else {
-                    setHeaderElm(null);
-                }
-                const text = itemDefault?.elements?.filter((x) => x.elementType === ZaloConst.ElementType.TEXT);
-                if (text !== undefined && text.length > 0) {
-                    setTextElm(text[0]);
-                } else {
-                    setTextElm(null);
-                }
+                    const header = itemDefault?.elements?.filter((x) => x.elementType === ZaloConst.ElementType.HEADER);
+                    if (header !== undefined && header.length > 0) {
+                        setHeaderElm(header[0]);
+                    } else {
+                        setHeaderElm(null);
+                    }
+                    const text = itemDefault?.elements?.filter((x) => x.elementType === ZaloConst.ElementType.TEXT);
+                    if (text !== undefined && text.length > 0) {
+                        setTextElm(text[0]);
+                    } else {
+                        setTextElm(null);
+                    }
 
-                const tbl = itemDefault?.elements
-                    ?.filter((x) => x.elementType === ZaloConst.ElementType.TABLE)
-                    ?.map((x) => {
-                        return x?.tables;
-                    });
-                if (tbl !== undefined && tbl?.length > 0) {
-                    setTblDetail(tbl[0]);
+                    const tbl = itemDefault?.elements
+                        ?.filter((x) => x.elementType === ZaloConst.ElementType.TABLE)
+                        ?.map((x) => {
+                            return x?.tables;
+                        });
+                    if (tbl !== undefined && tbl?.length > 0) {
+                        setTblDetail(tbl[0]);
+                    } else {
+                        setTblDetail([]);
+                    }
+                }
+                if (itemDefault?.buttons !== undefined) {
+                    setLstButton(itemDefault?.buttons);
                 } else {
-                    setTblDetail([]);
+                    setLstButton([]);
                 }
             }
-            if (itemDefault?.buttons !== undefined) {
-                setLstButton(itemDefault?.buttons);
-            } else {
-                setLstButton([]);
-            }
-        } else {
-            // setZaloTempItem(null);
         }
     };
 
@@ -248,12 +266,27 @@ const ModalCaiDatNhacNho = (props: IPropModal<ICaiDatNhacNhoDto>) => {
                 })
             );
         } else {
-            const data = await ZaloService.GetAllZaloTemplate_fromDB();
-            setAllMauTin(
-                data?.map((x) => {
-                    return { id: x.id, text1: x.tenMauTin, text2: '' } as IDataAutocomplete;
-                })
-            );
+            const lstMauTinDB = await ZaloService.GetAllZaloTemplate_fromDB();
+            const mauTinZNS = await ZaloService.GetList_TempFromZNS(suggestStore?.zaloAccessToken ?? '', 1);
+
+            let arr2: IDataAutocomplete[] = [];
+            if (mauTinZNS !== undefined) {
+                arr2 = mauTinZNS?.map((x) => {
+                    return {
+                        id: x.templateId.toString(),
+                        text1: x.templateName,
+                        text2: 'ZNS' // mẫu của zalo
+                    } as IDataAutocomplete;
+                });
+            }
+            const arr1 = lstMauTinDB?.map((x) => {
+                return {
+                    id: x.id,
+                    text1: x.tenMauTin,
+                    text2: ''
+                } as IDataAutocomplete;
+            });
+            setAllMauTin([...arr1, ...arr2]);
         }
     };
 
@@ -371,15 +404,24 @@ const ModalCaiDatNhacNho = (props: IPropModal<ICaiDatNhacNhoDto>) => {
                                 </Stack>
                             </Grid>
                         )}
-                        {objUpDate?.hinhThucGui === SMS_HinhThucGuiTin.ZALO && (
-                            <ZaloTemplateView
-                                logoBanner={imageUrl}
-                                headerText={headerElm?.content ?? ''}
-                                contentText={textElm?.content ?? ''}
-                                tables={tblDetail}
-                                buttons={lstButton}
-                            />
-                        )}
+                        {objUpDate?.hinhThucGui === SMS_HinhThucGuiTin.ZALO ? (
+                            idMauTinChosed?.length < 36 ? (
+                                <iframe
+                                    src={itemMauTinZNS?.previewUrl}
+                                    width={'100%'}
+                                    height={'100%'}
+                                    style={{ minHeight: '380px' }}
+                                    name={itemMauTinZNS?.templateName}></iframe>
+                            ) : (
+                                <ZaloTemplateView
+                                    logoBanner={imageUrl}
+                                    headerText={headerElm?.content ?? ''}
+                                    contentText={textElm?.content ?? ''}
+                                    tables={tblDetail}
+                                    buttons={lstButton}
+                                />
+                            )
+                        ) : null}
                     </Grid>
                     <DialogActions sx={{ padding: '16px 0px 0px !important' }}>
                         <Button

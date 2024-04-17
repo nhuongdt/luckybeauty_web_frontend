@@ -17,6 +17,7 @@ import {
 import CaiDatNhacNhoService from '../../../../services/sms/cai_dat_nhac_nho/CaiDatNhacNhoService';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
 import { ButtonNavigate } from '../../../../components/Button/ButtonNavigate';
+import suggestStore from '../../../../stores/suggestStore';
 
 interface ICaiDatNhacNho {
     id: string;
@@ -133,6 +134,7 @@ export default function PageCaiDatNhacTuDong() {
 
     useEffect(() => {
         GetAllCaiDatNhacNho();
+        suggestStore.Zalo_GetAccessToken();
     }, []);
 
     const saveCaiDatOK = (typeAction: number) => {
