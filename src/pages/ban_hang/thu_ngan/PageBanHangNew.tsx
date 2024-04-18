@@ -95,6 +95,7 @@ import DateTimePickerCustom from '../../../components/DatetimePicker/DateTimePic
 import DatePickerRequireCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
 import { format } from 'date-fns';
 import nhatKyHoatDongService from '../../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
+import { CreateNhatKyThaoTacDto } from '../../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
 
 const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const appContext = useContext(AppContext);
@@ -1013,6 +1014,75 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         // update ngaycheckin??
     };
 
+    const saveDiaryHoaDon = async (maHoaDon: string, ngaylapHoaDonDB: string) => {
+        let sDetails = '';
+        for (let i = 0; i < hoaDonChiTiet?.length; i++) {
+            const itFor = hoaDonChiTiet[i];
+            sDetails += ` <br /> ${i + 1}. ${itFor?.tenHangHoa} (${itFor?.maHangHoa}): ${
+                itFor?.soLuong
+            } x  ${Intl.NumberFormat('vi-VN').format(itFor?.donGiaTruocCK)}  =  ${Intl.NumberFormat('vi-VN').format(
+                itFor?.thanhTienSauCK ?? 0
+            )}`;
+        }
+
+        let txtKhachHang = '';
+        if (utils.checkNull(hoadon?.soDienThoai)) {
+            txtKhachHang = `${hoadon?.tenKhachHang}`;
+        } else {
+            txtKhachHang = ` ${hoadon?.tenKhachHang} (${hoadon?.soDienThoai})`;
+        }
+
+        const diary = {
+            idChiNhanh: idChiNhanh,
+            noiDung: `Thêm mới hóa đơn ${maHoaDon}, khách hàng: ${txtKhachHang}`,
+            chucNang: 'Thêm mới hóa đơn',
+            noiDungChiTiet: `<br /> <b> Thông tin hóa đơn: </b> <br /> Mã hóa đơn: ${maHoaDon}  <br />Ngày lập: ${format(
+                new Date(ngaylapHoaDonDB),
+                'dd/MM/yyyy HH:mm'
+            )} <br /> Khách hàng: ${txtKhachHang}  <br /> Tổng tiền:  ${Intl.NumberFormat('vi-VN').format(
+                hoadon?.tongTienHangChuaChietKhau
+            )} <br /> Chiết khấu hàng:  ${Intl.NumberFormat('vi-VN').format(hoadon?.tongChietKhauHangHoa)}
+            <br /> Giảm giá hóa đơn:  ${Intl.NumberFormat('vi-VN').format(
+                hoadon?.tongGiamGiaHD
+            )}  <br /> <b> Thông tin chi tiết: </b> ${sDetails}`,
+            loaiNhatKy: 1
+        } as CreateNhatKyThaoTacDto;
+        nhatKyHoatDongService.createNhatKyThaoTac(diary);
+    };
+
+    const saveDiarySoQuy = async (maHoaDon: string, quyHD: QuyHoaDonDto) => {
+        let ptThanhToan = '';
+        const itemMat = quyHD?.quyHoaDon_ChiTiet?.filter((x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.TIEN_MAT);
+        if ((itemMat?.length ?? 0) > 0) {
+            ptThanhToan += 'Tiền mặt, ';
+        }
+        const itemCK = quyHD?.quyHoaDon_ChiTiet?.filter(
+            (x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN
+        );
+        if ((itemCK?.length ?? 0) > 0) {
+            ptThanhToan += 'Chuyển khoản, ';
+        }
+        const itemPos = quyHD?.quyHoaDon_ChiTiet?.filter((x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.QUYET_THE);
+        if ((itemPos?.length ?? 0) > 0) {
+            ptThanhToan += 'POS';
+        }
+        ptThanhToan = utils.Remove_LastComma(ptThanhToan);
+        const diary = {
+            idChiNhanh: idChiNhanh,
+            noiDung: `Thêm mới phiếu thu ${quyHD?.maHoaDon} cho hóa đơn ${maHoaDon}`,
+            chucNang: 'Thêm mới phiếu thu',
+            noiDungChiTiet: `<br /> <b> Chi tiết phiếu thu: </b> <br /> Mã phiếu thu: ${
+                quyHD?.maHoaDon
+            }  <br /> Ngày lập: ${format(new Date(quyHD?.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')} <br /> Khách hàng: ${
+                quyHD?.tenNguoiNop
+            }  <br /> Tổng tiền:  ${Intl.NumberFormat('vi-VN').format(
+                quyHD?.tongTienThu
+            )} <br /> Phương thức thanh toán: ${ptThanhToan} `,
+            loaiNhatKy: 1
+        } as CreateNhatKyThaoTacDto;
+        nhatKyHoatDongService.createNhatKyThaoTac(diary);
+    };
+
     // click thanh toan---> chon hinh thucthanhtoan--->   luu hoadon + phieuthu
     const saveHoaDon = async () => {
         setShowDetail(false);
@@ -1049,6 +1119,8 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             await CheckinService.Update_IdHoaDon_toCheckInHoaDon(triggerAddCheckIn.id as string, hodaDonDB.id);
         }
 
+        await saveDiaryHoaDon(hodaDonDB?.maHoaDon, hodaDonDB?.ngayLapHoaDon);
+
         // assign again qct if tra thua tien
         let lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(lstQuyCT, sumTienKhachTra, hoadon?.tongThanhToan ?? 0);
 
@@ -1073,9 +1145,10 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                 x.maHoaDonLienQuan = hodaDonDB.maHoaDon;
             });
             quyHD.quyHoaDon_ChiTiet = lstQCT_After;
-            await SoQuyServices.CreateQuyHoaDon(quyHD); // todo hoahong NV hoadon
-
+            const dataPT = await SoQuyServices.CreateQuyHoaDon(quyHD); // todo hoahong NV hoadon
+            quyHD.maHoaDon = dataPT?.maHoaDon;
             quyHD.tenNguoiNop = hoadon.tenKhachHang; // used to print qrCode
+            await saveDiarySoQuy(hodaDonDB?.maHoaDon, quyHD);
         }
 
         setObjAlert({
