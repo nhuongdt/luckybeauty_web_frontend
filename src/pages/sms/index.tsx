@@ -316,7 +316,7 @@ const TinNhanPage = () => {
     ]);
 
     const testguitin = async () => {
-        const data = ZaloService.NguoiDung_ChiaSeThongTin_ChoOA(inforZOA, zaloToken.accessToken, '482229554629807799');
+        const data = ZaloService.NguoiDung_ChiaSeThongTin_ChoOA(inforZOA, zaloToken.accessToken);
     };
 
     const LoadData_byTabActive = async () => {
@@ -916,12 +916,11 @@ const TinNhanPage = () => {
                                         display: abpCustom.isGrandPermission('Pages.HeThongSMS.Create') ? '' : 'none'
                                     }}
                                     variant="contained"
-                                    onClick={testguitin}
-                                    // onClick={() => {
-                                    //     setIsShowModalAdd(true);
-                                    //     setIdLoaiTin(1);
-                                    //     setLstRowSelect([]);
-                                    // }}
+                                    onClick={() => {
+                                        setIsShowModalAdd(true);
+                                        setIdLoaiTin(1);
+                                        setLstRowSelect([]);
+                                    }}
                                     startIcon={<Add />}>
                                     Tin nhắn mới
                                 </Button>

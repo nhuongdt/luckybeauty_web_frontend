@@ -256,10 +256,11 @@ class ZaloService {
         const tempdata = await this.AssignData_toZNSTemplete(access_token, zns_template_id, dataSend);
         console.log('guitinzan ', tempdata);
         const param = {
-            mode: 'development',
+            // mode: 'development',
             phone: dataSend?.soDienThoai,
             template_id: zns_template_id,
-            template_data: tempdata
+            template_data: tempdata,
+            tracking_id: dataSend?.idKhachHang
         };
         const result = await axios.post(`https://business.openapi.zalo.me/message/template`, param, {
             headers: {
@@ -516,7 +517,7 @@ class ZaloService {
                             {
                                 title: `Chào mừng bạn đến với ${accountZOA?.name}`,
                                 subtitle: 'Đăng ký thành viên để nhận thông tin ưu đãi hấp dẫn',
-                                image_url: `https://imgur.com/ctVPLJr`
+                                image_url: `https://drive.google.com/drive/folders/1MQQRB2Bg8SUncesfZAuYaXalvtCGucAp`
                             }
                         ]
                     }
