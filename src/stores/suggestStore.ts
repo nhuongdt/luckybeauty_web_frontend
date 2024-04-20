@@ -97,7 +97,6 @@ class SuggestStore {
     }
     async GetAllBankAccount(idChiNhanh: string) {
         const data = await TaiKhoanNganHangServices.GetAllBankAccount(idChiNhanh);
-        console.log('GetAllBankAccount ', data);
         this.suggestTaiKhoanNganHangQr = data;
     }
     GetChiNhanhByUser = async () => {

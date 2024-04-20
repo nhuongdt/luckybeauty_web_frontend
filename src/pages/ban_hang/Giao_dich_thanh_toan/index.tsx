@@ -12,7 +12,7 @@ import CustomTablePagination from '../../../components/Pagination/CustomTablePag
 import ThongTinHoaDon from '../Hoa_don/ThongTinHoaDon';
 import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
-
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import Utils from '../../../utils/utils'; // func common.
 import { format, lastDayOfMonth } from 'date-fns';
 import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
@@ -71,6 +71,28 @@ const GiaoDichThanhToan: React.FC = () => {
         items: []
     });
     const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+    useEffect(() => {
+        const invoiceHubConnection = new HubConnectionBuilder()
+            .withUrl(process.env.REACT_APP_REMOTE_SERVICE_BASE_URL + 'invoiceHub')
+            .build();
+
+        invoiceHubConnection
+            .start()
+            .then(() => console.log('Connected to InvoiceHub'))
+            .catch((err) => console.error('Error connecting to Hub:', err));
+
+        invoiceHubConnection.on('ReceiveInvoiceListReload', async (tenantId: string) => {
+            if (Cookies.get('Abp.TenantId') && Cookies.get('Abp.TenantId') === tenantId) {
+                setParamSearch({ ...paramSearch, currentPage: 1 });
+                GetListHoaDon();
+            }
+        });
+
+        return () => {
+            invoiceHubConnection.off('ReceiveInvoiceListReload');
+            invoiceHubConnection.stop();
+        };
+    }, []);
 
     const GetListHoaDon = async () => {
         const data = await HoaDonService.GetListHoaDon(paramSearch);

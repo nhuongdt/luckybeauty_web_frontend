@@ -21,16 +21,18 @@ class NotificationStore {
         makeAutoObservable(this);
     }
     createHubConnection = async () => {
-        const newNotificationConnection = new signalR.HubConnectionBuilder()
-            .withUrl(process.env.REACT_APP_REMOTE_SERVICE_BASE_URL + 'notifications') // Adjust the hub URL here
-            .build();
-        try {
-            await newNotificationConnection.start();
-            console.log('SignalR notification connected');
-            this.notificationHubConnection = newNotificationConnection;
-            newNotificationConnection.on('ReceiveNotification', this.handleReceivedNotification);
-        } catch (e) {
-            console.error('SignalR connection error: ', e);
+        if (!this.notificationHubConnection) {
+            const newNotificationConnection = new signalR.HubConnectionBuilder()
+                .withUrl(process.env.REACT_APP_REMOTE_SERVICE_BASE_URL + 'notifications') // Adjust the hub URL here
+                .build();
+            try {
+                await newNotificationConnection.start();
+                console.log('SignalR notification connected');
+                this.notificationHubConnection = newNotificationConnection;
+                newNotificationConnection.on('ReceiveNotification', this.handleReceivedNotification);
+            } catch (e) {
+                console.error('SignalR connection error: ', e);
+            }
         }
     };
 
