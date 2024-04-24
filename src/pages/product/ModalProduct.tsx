@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
-import storage from '../../services/firebaseConfig';
-import { ref, uploadBytesResumable, getDownloadURL, getStorage } from 'firebase/storage';
 import {
     Dialog,
     DialogTitle,
@@ -33,7 +31,6 @@ import './style.css';
 
 import { Guid } from 'guid-typescript';
 import utils from '../../utils/utils';
-import { Close } from '@mui/icons-material';
 import Cookies from 'js-cookie';
 import uploadFileService from '../../services/uploadFileService';
 import abpCustom from '../../components/abp-custom';
@@ -43,6 +40,8 @@ import { observer } from 'mobx-react';
 import nhomHangHoaStore from '../../stores/nhomHangHoaStore';
 import { TypeAction } from '../../lib/appconst';
 import ImgurAPI from '../../services/ImgurAPI/ImgurAPI';
+import { util } from 'prettier';
+import DialogButtonClose from '../../components/Dialog/ButtonClose';
 
 const ModalHangHoa = ({ handleSave, trigger }: any) => {
     const [open, setOpen] = useState(false);
@@ -50,13 +49,15 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
     const [product, setProduct] = useState(new ModelHangHoaDto());
     const [wasClickSave, setWasClickSave] = useState(false);
     const [actionProduct, setActionProduct] = useState(1);
-    const tenantName = Cookies.get('TenantName');
+    const tenantName = Cookies.get('TenantName') ?? 'HOST';
     const [productImage, setProductImage] = useState(''); // url of imge
     const [fileImage, setFileImage] = useState<File>({} as File); // file image
-    const [googleDrive_fileId, setgoogleDrive_fileId] = useState('');
 
     const [errTenHangHoa, setErrTenHangHoa] = useState(false);
     const [errMaHangHoa, setErrMaHangHoa] = useState(false);
+
+    const [imgur_imageId, setImgur_imageId] = useState('');
+    const [imgur_albumId, setImgur_albumId] = useState('');
 
     const [nhomChosed, setNhomChosed] = useState<ModelNhomHangHoa | null>(null);
     const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
@@ -70,33 +71,36 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
             const obj = await ProductService.GetDetailProduct(id);
             setProduct(obj);
 
-            setProduct((old: any) => {
+            setProduct((old: ModelHangHoaDto) => {
                 return {
                     ...old,
                     laHangHoa: old.idLoaiHangHoa === 1
                 };
             });
-            const imgLink = await ImgurAPI.GetFile_fromId(obj.image);
-            setProductImage(imgLink?.data?.link ?? '');
-            setgoogleDrive_fileId(obj.image);
 
             // find nhomhang
-            const nhom = nhomHangHoaStore.listAllNhomHang?.filter((x: any) => x.id == obj.idNhomHangHoa);
+            const nhom = nhomHangHoaStore.listAllNhomHang?.filter((x) => x.id == obj.idNhomHangHoa);
             if (nhom.length > 0) {
                 setNhomChosed(nhom[0]);
             } else {
                 setNhomChosed(null);
             }
+
+            // get image (from imgur)
+            const imgur_image = ImgurAPI.GetInforImage_fromDataImage(obj.image);
+            setImgur_imageId(imgur_image?.id);
+
+            const imgData = await ImgurAPI.GetFile_fromId(imgur_image?.id ?? '');
+            setProductImage(imgData?.link ?? '');
         } else {
             setProduct(new ModelHangHoaDto());
             setProductImage('');
-            setgoogleDrive_fileId('');
 
             if (trigger.item.idNhomHangHoa !== undefined) {
-                const nhom = nhomHangHoaStore.listAllNhomHang?.filter((x: any) => x.id == trigger.item.idNhomHangHoa);
+                const nhom = nhomHangHoaStore.listAllNhomHang?.filter((x) => x.id == trigger.item.idNhomHangHoa);
                 if (nhom.length > 0) {
                     setNhomChosed(nhom[0]);
-                    setProduct((old: any) => {
+                    setProduct((old: ModelHangHoaDto) => {
                         return {
                             ...old,
                             idNhomHangHoa: nhom[0].id,
@@ -113,15 +117,36 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
     };
 
     useEffect(() => {
+        GetInforAlbum();
+        InitData();
+
         if (trigger.isShow) {
             setOpen(true);
             showModal(trigger.id);
         }
         setIsNew(trigger.isNew);
+    }, [trigger]);
+
+    const InitData = () => {
+        setFileImage({} as File);
         setWasClickSave(false);
         setErrMaHangHoa(false);
         setErrTenHangHoa(false);
-    }, [trigger]);
+        setImgur_imageId('');
+        setImgur_albumId('');
+    };
+
+    const GetInforAlbum = async () => {
+        const dataImage = await ProductService.GetInforImage_OfAnyHangHoa();
+        const dataSubAlbum = ImgurAPI.GetInforSubAlbum_fromDataImage(dataImage);
+        setImgur_albumId(dataSubAlbum?.id);
+
+        await ImgurAPI.GetAllAlbum_WithAccount();
+        await ImgurAPI.GetAlbumDetails_byId(dataSubAlbum?.id);
+        // await ImgurAPI.RemoveAllImage_inAlbum(dataSubAlbum?.id);
+
+        console.log(111, dataSubAlbum);
+    };
 
     const editGiaBan = (event: any) => {
         setProduct((itemOlds) => {
@@ -181,47 +206,22 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
                 setProductImage(reader.result?.toString() ?? '');
             };
             setFileImage(file);
+        } else {
+            setProductImage('');
         }
+
+        await closeImage();
     };
     const closeImage = async () => {
         setProductImage('');
-        if (!utils.checkNull(googleDrive_fileId)) {
-            await uploadFileService.GoogleApi_RemoveFile_byId(googleDrive_fileId);
-            setgoogleDrive_fileId('');
-        }
-    };
-
-    const UploadFile_toFireBase = () => {
-        const storageRef = ref(storage, `/${tenantName}/product_image/${fileImage.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, fileImage);
-        uploadTask.on(
-            'state_changed',
-            (snapshot) => {
-                const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-
-                // update progress (%)
-                //setPercent(percent);
-            },
-            (err) => console.log(err),
-            () => {
-                // download url
-                getDownloadURL(uploadTask.snapshot.ref);
-            }
-        );
-    };
-
-    const GetFile_fromFireBase = (linkImage: string) => {
-        if (!utils.checkNull(linkImage)) {
-            const storage = getStorage();
-            getDownloadURL(ref(storage, linkImage))
-                .then((url) => {
-                    setProductImage(url);
-                })
-                .catch((error) => {
-                    // Handle any errors
-                });
-        } else {
-            setProductImage('');
+        if (!utils.checkNull(imgur_imageId)) {
+            await ImgurAPI.RemoveImage(imgur_imageId ?? '');
+            // if (utils.checkNull(imgur_imageId)) {
+            //     await ImgurAPI.RemoveImage(imgur_imageId ?? '');
+            // } else {
+            //     await ImgurAPI.RemoveImages_fromAlbum2(imgur_albumId, imgur_imageId);
+            // }
+            // await uploadFileService.GoogleApi_RemoveFile_byId(googleDrive_fileId);
         }
     };
 
@@ -236,27 +236,53 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
             return;
         }
 
-        let fileId = googleDrive_fileId;
-        if (!utils.checkNull(productImage)) {
-            // nếu cập nhật hàng: chỉ upload nếu chọn lại ảnh
-            if (
-                isNew ||
-                (!isNew && !utils.checkNull(product.image) && utils.checkNull(googleDrive_fileId)) ||
-                utils.checkNull(product.image)
-            ) {
-                // awlay insert: because iamge was delete before save
-                // fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileImage, 'HangHoa');
-                const dataImg = await ImgurAPI.UploadFile(fileImage);
-                fileId = dataImg?.data?.id ?? '';
+        console.log('fileImage ', fileImage?.size);
+
+        // imageData: tennantName_HangHoa/image (albumId/imageId)
+        let imgur_PathImage = product?.image ?? '';
+        if ((fileImage?.size ?? 0) > 0) {
+            let subAlbumId = imgur_albumId;
+            if (utils.checkNull(imgur_albumId)) {
+                // create subAlbum
+                const subAlbum = await ImgurAPI.CreateNewAlbum(`${tenantName}_HangHoa`);
+                if (subAlbum != null && subAlbum?.id !== undefined) {
+                    imgur_PathImage = `${subAlbum?.id}/`;
+                    subAlbumId = subAlbum?.id;
+                }
+            } else {
+                imgur_PathImage += `${imgur_albumId}/`;
+            }
+
+            // add image to subAlbum
+            const dataImage = await ImgurAPI.UploadImage(fileImage);
+            if (dataImage != null && dataImage?.id !== undefined) {
+                imgur_PathImage += `${dataImage?.id}`;
+                await ImgurAPI.AddImageToAlbum_WithImageId(subAlbumId, dataImage?.id ?? '');
             }
         }
+
+        // if update: imageId != null
+        // if (!utils.checkNull(imgur_deleteHashImage)) {
+        //     // chọn lại ảnh, hoặc không chọn ảnh
+        //     if (utils.checkNull(productImage) || fileImage?.length > 0) {
+        //         if (!utils.checkNull(imgur_subAlbumDeleteHash)) {
+        //             // remove image old from album
+        //             ImgurAPI.RemoveImages_fromAlbum(imgur_subAlbumDeleteHash, imgur_deleteHashImage);
+        //         } else {
+        //             // remove image by deleteHash
+        //             ImgurAPI.RemoveImage(imgur_deleteHashImage);
+        //         }
+        //     } else {
+        //         imgur_PathImage = product?.image ?? ''; // keep
+        //     }
+        // }
 
         const objNew = { ...product };
         objNew.giaBan = utils.formatNumberToFloat(product.giaBan);
         objNew.tenHangHoa_KhongDau = utils.strToEnglish(objNew.tenHangHoa ?? '');
         objNew.tenLoaiHangHoa = objNew.idLoaiHangHoa == 1 ? 'Hàng hóa' : 'Dịch vụ';
         objNew.txtTrangThaiHang = objNew.trangThai == 1 ? 'Đang kinh doanh' : 'Ngừng kinh doanh';
-        objNew.image = fileId;
+        objNew.image = imgur_PathImage;
         objNew.donViQuiDois = [
             {
                 id: objNew.idDonViQuyDoi,
@@ -313,19 +339,7 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <ModalNhomHangHoa trigger={triggerModalNhomHang} handleSave={saveNhomHang} />
             <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
-                <Button
-                    onClick={() => setOpen(false)}
-                    sx={{
-                        minWidth: 'unset',
-                        position: 'absolute',
-                        top: '16px',
-                        right: '16px',
-                        '&:hover svg': {
-                            filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
-                        }
-                    }}>
-                    <CloseIcon />
-                </Button>
+                <DialogButtonClose onClose={() => setOpen(false)} />
                 <DialogTitle className="modal-title">
                     {isNew ? 'Thêm ' : 'Cập nhật '}
                     {product.tenLoaiHangHoa?.toLocaleLowerCase()}
@@ -344,31 +358,9 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
                                 {!utils.checkNull(productImage) ? (
                                     <Box sx={{ position: 'relative', height: '100%' }}>
                                         <img src={productImage} style={{ width: '100%', height: '100%' }} />
-                                        <Close
-                                            onClick={closeImage}
-                                            sx={{ left: 0, color: 'red', position: 'absolute' }}
-                                        />
                                     </Box>
                                 ) : (
                                     <>
-                                        <TextField
-                                            type="file"
-                                            sx={{
-                                                position: 'absolute',
-                                                top: 0,
-                                                left: 0,
-                                                width: '100%',
-                                                height: '100%',
-                                                opacity: 0,
-                                                '& input': {
-                                                    height: '100%'
-                                                },
-                                                '& div': {
-                                                    height: '100%'
-                                                }
-                                            }}
-                                            onChange={choseImage}
-                                        />
                                         <Stack spacing={1} paddingTop={2}>
                                             <Box>
                                                 <InsertDriveFileIcon className="icon-size" />
@@ -389,6 +381,24 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
                                         </Stack>
                                     </>
                                 )}
+                                <TextField
+                                    type="file"
+                                    sx={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        width: '100%',
+                                        height: '100%',
+                                        opacity: 0,
+                                        '& input': {
+                                            height: '100%'
+                                        },
+                                        '& div': {
+                                            height: '100%'
+                                        }
+                                    }}
+                                    onChange={choseImage}
+                                />
                             </Box>
                         </Grid>
                         <Grid item xs={12} sm={8} md={8} lg={8}>
@@ -546,7 +556,7 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
                                                 size="small"
                                                 checked={product.laHangHoa}
                                                 onChange={(event) => {
-                                                    setProduct((olds: any) => {
+                                                    setProduct((olds: ModelHangHoaDto) => {
                                                         return {
                                                             ...olds,
                                                             laHangHoa: event.target.checked,

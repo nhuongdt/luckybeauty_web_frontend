@@ -18,6 +18,10 @@ class ProductService {
             return false;
         }
     };
+    GetInforImage_OfAnyHangHoa = async (): Promise<string> => {
+        const xx = await http.get(`api/services/app/HangHoa/GetInforImage_OfAnyHangHoa`);
+        return xx.data.result;
+    };
     GetDetailProduct = async (id: string) => {
         const data = await http.get(`api/services/app/HangHoa/GetDetailProduct?idDonViQuyDoi=${id}`).then((res) => {
             return res.data.result;
