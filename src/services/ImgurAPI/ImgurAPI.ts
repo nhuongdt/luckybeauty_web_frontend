@@ -83,7 +83,6 @@ class ImgurAPI {
                 Authorization: `Bearer ${accessToken}`
             }
         });
-        console.log('GetAllAlbum_WithAccount ', response.data?.data);
         return response.data?.data;
     };
     GetFile_fromId = async (fileId = 'mVu3TZz'): Promise<Imgur_ImageDetailDto | null> => {
@@ -145,15 +144,6 @@ class ImgurAPI {
         if (response.status === 200) return true;
         return false;
     };
-    RemoveImages_fromAlbum = async (albumId: string, imageId: string): Promise<boolean> => {
-        const accessToken = await this.GetAccessToken();
-        const response = await axios.delete(`${Imgur_URLApi}album/${albumId}/image/${imageId}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-        return response.status === 200;
-    };
     GetAlbumDetails_byId = async (albumId = 'irQhxYt'): Promise<Imgur_AlbumDetailDto[]> => {
         if (utils.checkNull(albumId)) return [];
         try {
@@ -195,6 +185,8 @@ class ImgurAPI {
         }
     };
     RemoveAlbum = async (albumId: string): Promise<boolean> => {
+        // mối ảnh trên Imgur chứa 1 Id duy nhất
+        // chỉ cần xóa ảnh theo Id --> ảnh sẽ tự động bị xóa khỏi album
         const accessToken = await this.GetAccessToken();
         const response = await axios.delete(`${Imgur_URLApi}album/${albumId}`, {
             headers: {
@@ -263,7 +255,7 @@ class ImgurAPI {
         }
     };
 
-    // trường Image trong database được lưu dạng: imageId-deleteHashImage/albumId-deleteHashAlbum
+    // trường Image trong database được lưu dạng: albumId/imageId
     GetInforRootAlbum_fromDataImage = (imagePath: string): Imgur_ModelBasic => {
         const data = {
             id: '',

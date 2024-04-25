@@ -1036,7 +1036,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             idChiNhanh: idChiNhanh,
             noiDung: `Thêm mới hóa đơn ${maHoaDon}, khách hàng: ${txtKhachHang}`,
             chucNang: 'Thêm mới hóa đơn',
-            noiDungChiTiet: `<br /> <b> Thông tin hóa đơn: </b> <br /> Mã hóa đơn: ${maHoaDon}  <br />Ngày lập: ${format(
+            noiDungChiTiet: `<b> Thông tin hóa đơn: </b> <br /> Mã hóa đơn: ${maHoaDon}  <br />Ngày lập: ${format(
                 new Date(ngaylapHoaDonDB),
                 'dd/MM/yyyy HH:mm'
             )} <br /> Khách hàng: ${txtKhachHang}  <br /> Tổng tiền:  ${Intl.NumberFormat('vi-VN').format(
@@ -1071,7 +1071,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             idChiNhanh: idChiNhanh,
             noiDung: `Thêm mới phiếu thu ${quyHD?.maHoaDon} cho hóa đơn ${maHoaDon}`,
             chucNang: 'Thêm mới phiếu thu',
-            noiDungChiTiet: `<br /> <b> Chi tiết phiếu thu: </b> <br /> Mã phiếu thu: ${
+            noiDungChiTiet: `<b> Chi tiết phiếu thu: </b> <br /> Mã phiếu thu: ${
                 quyHD?.maHoaDon
             }  <br /> Ngày lập: ${format(new Date(quyHD?.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')} <br /> Khách hàng: ${
                 quyHD?.tenNguoiNop
