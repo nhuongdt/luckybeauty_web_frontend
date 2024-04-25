@@ -88,6 +88,17 @@ export const TypeAction = {
     NOTHING: 0 // khong lam gi
 };
 
+export const LoaiNhatKyThaoTac = {
+    INSEART: 1,
+    UPDATE: 2,
+    DELETE: 3,
+    IMPORT: 4,
+    EXPORT: 5,
+    LOGIN: 6,
+    CANCEL: 7,
+    RESTORE: 8
+};
+
 export const TimeType = {
     SECOND: 1,
     MINUTES: 2,

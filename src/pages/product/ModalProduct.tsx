@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { NumericFormat } from 'react-number-format';
 import {
     Dialog,
@@ -38,17 +38,24 @@ import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import ModalNhomHangHoa from './ModalGroupProduct';
 import { observer } from 'mobx-react';
 import nhomHangHoaStore from '../../stores/nhomHangHoaStore';
-import { TypeAction } from '../../lib/appconst';
+import { LoaiNhatKyThaoTac, TypeAction } from '../../lib/appconst';
 import ImgurAPI from '../../services/ImgurAPI/ImgurAPI';
 import { util } from 'prettier';
 import DialogButtonClose from '../../components/Dialog/ButtonClose';
+import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import { CreateNhatKyThaoTacDto } from '../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
+import nhatKyHoatDongService from '../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
 
 const ModalHangHoa = ({ handleSave, trigger }: any) => {
+    const appContext = useContext(AppContext);
+    const chiNhanhCurrent = appContext.chinhanhCurrent;
+    const idChiNhanh = utils.checkNull(chiNhanhCurrent?.id) ? Cookies.get('IdChiNhanh') : chiNhanhCurrent?.id;
     const [open, setOpen] = useState(false);
     const [isNew, setIsNew] = useState(false);
     const [product, setProduct] = useState(new ModelHangHoaDto());
+    const [inforOldProduct, setInforOldProduct] = useState(new ModelHangHoaDto());
     const [wasClickSave, setWasClickSave] = useState(false);
-    const [actionProduct, setActionProduct] = useState(1);
+    const [actionProduct, setActionProduct] = useState(TypeAction.INSEART);
     const tenantName = Cookies.get('TenantName') ?? 'HOST';
     const [productImage, setProductImage] = useState(''); // url of imge
     const [fileImage, setFileImage] = useState<File>({} as File); // file image
@@ -70,6 +77,7 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
         if (id) {
             const obj = await ProductService.GetDetailProduct(id);
             setProduct(obj);
+            setInforOldProduct(obj);
 
             setProduct((old: ModelHangHoaDto) => {
                 return {
@@ -87,7 +95,7 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
             }
 
             // get image (from imgur)
-            const imgur_image = ImgurAPI.GetInforImage_fromDataImage(obj.image);
+            const imgur_image = ImgurAPI.GetInforImage_fromDataImage(obj.image ?? '');
             setImgur_imageId(imgur_image?.id);
 
             const imgData = await ImgurAPI.GetFile_fromId(imgur_image?.id ?? '');
@@ -141,11 +149,16 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
         const dataSubAlbum = ImgurAPI.GetInforSubAlbum_fromDataImage(dataImage);
         setImgur_albumId(dataSubAlbum?.id);
 
-        await ImgurAPI.GetAllAlbum_WithAccount();
-        await ImgurAPI.GetAlbumDetails_byId(dataSubAlbum?.id);
-        // await ImgurAPI.RemoveAllImage_inAlbum(dataSubAlbum?.id);
-
-        console.log(111, dataSubAlbum);
+        if (utils.checkNull(dataSubAlbum?.id)) {
+            // trường hợp đã có album treen Imgur, nhưng ảnh trong DM hàng hóa đã bị xóa hết
+            const allAlbums = await ImgurAPI.GetAllAlbum_WithAccount();
+            if (allAlbums !== undefined && allAlbums?.length > 0) {
+                const albumItem = allAlbums?.filter((x) => x.title === `${tenantName}_HangHoa`);
+                if (albumItem?.length > 0) {
+                    setImgur_albumId(albumItem[0]?.id);
+                }
+            }
+        }
     };
 
     const editGiaBan = (event: any) => {
@@ -208,6 +221,7 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
             setFileImage(file);
         } else {
             setProductImage('');
+            setFileImage({} as File);
         }
 
         await closeImage();
@@ -216,13 +230,31 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
         setProductImage('');
         if (!utils.checkNull(imgur_imageId)) {
             await ImgurAPI.RemoveImage(imgur_imageId ?? '');
-            // if (utils.checkNull(imgur_imageId)) {
-            //     await ImgurAPI.RemoveImage(imgur_imageId ?? '');
-            // } else {
-            //     await ImgurAPI.RemoveImages_fromAlbum2(imgur_albumId, imgur_imageId);
-            // }
-            // await uploadFileService.GoogleApi_RemoveFile_byId(googleDrive_fileId);
         }
+    };
+
+    const saveDiaryProduct = async (product: ModelHangHoaDto) => {
+        const sLoai = isNew ? 'Thêm mới' : 'Cập nhật';
+        let sOld = '';
+        if (!isNew) {
+            sOld = `<br /> <b> Thông tin cũ: </b> <br /> Mã dịch vụ: ${
+                inforOldProduct?.maHangHoa
+            }  <br /> Tên dịch vụ: ${inforOldProduct?.tenHangHoa} <br /> Thuộc nhóm: ${
+                inforOldProduct?.tenNhomHang ?? ''
+            }  <br /> Giá bán:  ${Intl.NumberFormat('vi-VN').format(inforOldProduct?.giaBan as unknown as number)}`;
+        }
+        const diary = {
+            idChiNhanh: idChiNhanh,
+            chucNang: `Danh mục dịch vụ`,
+            noiDung: `${sLoai} dịch vụ ${product?.tenHangHoa} (${product?.maHangHoa})  `,
+            noiDungChiTiet: `Mã dịch vụ: ${product?.maHangHoa}  <br /> Tên dịch vụ: ${
+                product?.tenHangHoa
+            } <br /> Thuộc nhóm: ${product?.tenNhomHang ?? ''}  <br /> Giá bán:  ${Intl.NumberFormat('vi-VN').format(
+                product?.giaBan as unknown as number
+            )} ${sOld}`,
+            loaiNhatKy: isNew ? LoaiNhatKyThaoTac.INSEART : LoaiNhatKyThaoTac.UPDATE
+        } as CreateNhatKyThaoTacDto;
+        await nhatKyHoatDongService.createNhatKyThaoTac(diary);
     };
 
     async function saveProduct() {
@@ -236,10 +268,8 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
             return;
         }
 
-        console.log('fileImage ', fileImage?.size);
-
         // imageData: tennantName_HangHoa/image (albumId/imageId)
-        let imgur_PathImage = product?.image ?? '';
+        let imgur_PathImage = '';
         if ((fileImage?.size ?? 0) > 0) {
             let subAlbumId = imgur_albumId;
             if (utils.checkNull(imgur_albumId)) {
@@ -250,7 +280,7 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
                     subAlbumId = subAlbum?.id;
                 }
             } else {
-                imgur_PathImage += `${imgur_albumId}/`;
+                imgur_PathImage = `${imgur_albumId}/`;
             }
 
             // add image to subAlbum
@@ -262,20 +292,11 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
         }
 
         // if update: imageId != null
-        // if (!utils.checkNull(imgur_deleteHashImage)) {
-        //     // chọn lại ảnh, hoặc không chọn ảnh
-        //     if (utils.checkNull(productImage) || fileImage?.length > 0) {
-        //         if (!utils.checkNull(imgur_subAlbumDeleteHash)) {
-        //             // remove image old from album
-        //             ImgurAPI.RemoveImages_fromAlbum(imgur_subAlbumDeleteHash, imgur_deleteHashImage);
-        //         } else {
-        //             // remove image by deleteHash
-        //             ImgurAPI.RemoveImage(imgur_deleteHashImage);
-        //         }
-        //     } else {
-        //         imgur_PathImage = product?.image ?? ''; // keep
-        //     }
-        // }
+        if (!utils.checkNull(imgur_imageId) && utils.checkNull(productImage)) {
+            imgur_PathImage = '';
+        } else {
+            imgur_PathImage = product?.image ?? ''; // keep
+        }
 
         const objNew = { ...product };
         objNew.giaBan = utils.formatNumberToFloat(product.giaBan);
@@ -300,7 +321,11 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
         objNew.donViQuiDois = [...data.donViQuiDois];
         objNew.maHangHoa = data.donViQuiDois.filter((x: any) => x.laDonViTinhChuan === 1)[0]?.maHangHoa;
         objNew.idDonViQuyDoi = data.donViQuiDois.filter((x: any) => x.laDonViTinhChuan === 1)[0]?.id;
-        handleSave(objNew, isNew ? 1 : 2);
+
+        // save diary
+        await saveDiaryProduct(objNew);
+
+        handleSave(objNew, isNew ? TypeAction.INSEART : TypeAction.UPDATE);
         setOpen(false);
     }
 
@@ -609,7 +634,7 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
                                     }   không?`
                                 })
                             );
-                            setActionProduct(4);
+                            setActionProduct(TypeAction.RESTORE);
                         }}>
                         Khôi phục
                     </Button>
@@ -628,7 +653,7 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
                                         } không?`
                                     })
                                 );
-                                setActionProduct(3);
+                                setActionProduct(TypeAction.DELETE);
                             }}>
                             Xóa
                         </Button>

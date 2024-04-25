@@ -4,7 +4,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Grid, Box, Autocomplete, InputAdornment, TextField, Stack } from '@mui/material';
 import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
@@ -13,11 +13,15 @@ import GroupProductService from '../../services/product/GroupProductService';
 import { ModelNhomHangHoa } from '../../services/product/dto';
 import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
 import Utils from '../../utils/utils';
-import AppConsts, { TypeAction } from '../../lib/appconst';
+import AppConsts, { LoaiNhatKyThaoTac, TypeAction } from '../../lib/appconst';
 import abpCustom from '../../components/abp-custom';
 import { NumericFormat } from 'react-number-format';
 import nhomHangHoaStore from '../../stores/nhomHangHoaStore';
 import utils from '../../utils/utils';
+import Cookies from 'js-cookie';
+import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import { CreateNhatKyThaoTacDto } from '../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
+import nhatKyHoatDongService from '../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
 
 export const GridColor = ({ handleChoseColor }: any) => {
     const [itemColor, setItemColor] = useState({});
@@ -72,6 +76,9 @@ export const GridColor = ({ handleChoseColor }: any) => {
 };
 
 const ModalNhomHangHoa = ({ handleSave, trigger }: any) => {
+    const appContext = useContext(AppContext);
+    const chiNhanhCurrent = appContext.chinhanhCurrent;
+    const idChiNhanh = utils.checkNull(chiNhanhCurrent?.id) ? Cookies.get('IdChiNhanh') : chiNhanhCurrent?.id;
     const [colorToggle, setColorToggle] = useState(false);
     const [isShow, setIsShow] = useState(false);
     const [isNew, setIsNew] = useState(false);
@@ -85,6 +92,7 @@ const ModalNhomHangHoa = ({ handleSave, trigger }: any) => {
             laNhomHangHoa: true
         })
     );
+
     const [nhomGoc, setNhomGoc] = useState<ModelNhomHangHoa | null>(null);
 
     const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
@@ -93,6 +101,7 @@ const ModalNhomHangHoa = ({ handleSave, trigger }: any) => {
 
     const showModal = async (id: string) => {
         if (id) {
+            console.log(22, trigger?.item);
             setGroupProduct(trigger.item);
             setGroupProduct((old: any) => {
                 return {
@@ -145,8 +154,9 @@ const ModalNhomHangHoa = ({ handleSave, trigger }: any) => {
         await GroupProductService.XoaNhomHangHoa(groupProduct?.id ?? '');
         setIsShow(false);
         setInforDeleteProduct({ ...inforDeleteProduct, show: false });
-        handleSave(groupProduct, true);
         nhomHangHoaStore?.changeListNhomHang(groupProduct, TypeAction.DELETE);
+
+        handleSave(groupProduct, true);
     };
 
     const CheckSave = () => {
@@ -157,7 +167,24 @@ const ModalNhomHangHoa = ({ handleSave, trigger }: any) => {
         return true;
     };
 
-    const saveNhomHangHoa = () => {
+    const saveDiaryProductGroup = async (obj: ModelNhomHangHoa) => {
+        const sLoai = isNew ? 'Thêm mới' : 'Cập nhật';
+        const tenNhomGoc = utils.checkNull(nhomGoc?.tenNhomHang) ? '' : nhomGoc?.tenNhomHang;
+        let sOld = '';
+        if (!isNew) {
+            sOld = `<br /> <b> Thông tin cũ: </b> <br /> Tên nhóm hàng: ${trigger?.item?.tenNhomHang} <br /> Thứ tự hiển thị: ${trigger?.item?.thuTuHienThi}`;
+        }
+        const diary = {
+            idChiNhanh: idChiNhanh,
+            chucNang: `Nhóm dịch vụ`,
+            noiDung: `${sLoai} nhóm dịch vụ ${obj?.tenNhomHang}`,
+            noiDungChiTiet: `Tên nhóm hàng: ${obj?.tenNhomHang}  <br /> Nhóm cha: ${tenNhomGoc} <br /> Thứ tự hiển thị: ${obj?.thuTuHienThi} ${sOld}`,
+            loaiNhatKy: isNew ? LoaiNhatKyThaoTac.INSEART : LoaiNhatKyThaoTac.UPDATE
+        } as CreateNhatKyThaoTacDto;
+        await nhatKyHoatDongService.createNhatKyThaoTac(diary);
+    };
+
+    const saveNhomHangHoa = async () => {
         setWasClickSave(true);
 
         const check = CheckSave();
@@ -184,6 +211,7 @@ const ModalNhomHangHoa = ({ handleSave, trigger }: any) => {
             });
             nhomHangHoaStore.changeListNhomHang(objNew, TypeAction.UPDATE);
         }
+        await saveDiaryProductGroup(objNew);
         setIsShow(false);
     };
 
@@ -286,7 +314,7 @@ const ModalNhomHangHoa = ({ handleSave, trigger }: any) => {
                                 }}
                                 options={nhomHangHoaStore?.listAllNhomHang?.filter((x) => x.id !== null && x.id !== '')}
                                 getOptionLabel={(option: any) => (option.tenNhomHang ? option.tenNhomHang : '')}
-                                renderInput={(params) => <TextField {...params} label="Chọn nhóm" />}
+                                renderInput={(params) => <TextField {...params} label="Nhóm cha" />}
                                 renderOption={(props, item) => (
                                     <Box component={'li'} {...props} className="autocomplete-option">
                                         {item.tenNhomHang}
