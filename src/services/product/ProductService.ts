@@ -22,10 +22,20 @@ class ProductService {
         const xx = await http.get(`api/services/app/HangHoa/GetInforImage_OfAnyHangHoa`);
         return xx.data.result;
     };
-    GetDetailProduct = async (id: string) => {
+    GetDetailProduct = async (id: string): Promise<ModelHangHoaDto> => {
         const data = await http.get(`api/services/app/HangHoa/GetDetailProduct?idDonViQuyDoi=${id}`).then((res) => {
             return res.data.result;
         });
+        return data;
+    };
+    GetInforBasic_OfListHangHoa = async (
+        arrIdHangHoa: string[]
+    ): Promise<{ id: string; idHangHoa: string; maHangHoa: string; tenHangHoa: string; ma_TenHangHoa: string }[]> => {
+        const data = await http
+            .post(`api/services/app/HangHoa/GetInforBasic_OfListHangHoa`, arrIdHangHoa)
+            .then((res) => {
+                return res.data.result;
+            });
         return data;
     };
     Get_DMHangHoa = async (input: PagedProductSearchDto): Promise<PagedResultDto<ModelHangHoaDto>> => {
