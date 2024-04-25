@@ -14,6 +14,7 @@ import Header from '../Header';
 import { CuaHangDto } from '../../services/cua_hang/Dto/CuaHangDto';
 import cuaHangService from '../../services/cua_hang/cuaHangService';
 import { PagedRequestDto } from '../../services/dto/pagedRequestDto';
+import TawkMessenger from '../../lib/tawk_chat';
 
 const isAuthenticated = (): boolean => {
     const accessToken = Cookies.get('accessToken');
@@ -179,6 +180,7 @@ const MainAppLayout: React.FC = () => {
                     </Box>
                 </Box>
             )}
+            <TawkMessenger propertyId={'6629be0b1ec1082f04e68f36'} widgetId="1hs9gso7p" />
         </Container>
     );
 };
