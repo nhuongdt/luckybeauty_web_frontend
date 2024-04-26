@@ -60,8 +60,7 @@ const LoginScreen: React.FC = () => {
                     noiDung: 'Đăng nhập hệ thống',
                     noiDungChiTiet: 'Đăng nhập hệ thống'
                 });
-                navigate('/');
-                window.location.reload();
+                window.location.href = '/';
             } else {
                 await nhatKyHoatDongService.createNhatKyThaoTac({
                     chucNang: 'Đăng nhập',
