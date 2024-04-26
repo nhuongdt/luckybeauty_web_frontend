@@ -103,10 +103,10 @@ export default function PopoverFilterHoaDon(props: IPropsPopoverFilter<HoaDonReq
                                                     { value: TrangThaiNo.HET_NO, text: 'Hết nợ' }
                                                 ] as ISelect[]
                                             }
-                                            onChange={(arrChosed: number[]) =>
+                                            onChange={(arrChosed: number[] | string[]) =>
                                                 setParamFilterThis({
                                                     ...paramFilterThis,
-                                                    trangThaiNos: arrChosed
+                                                    trangThaiNos: arrChosed as number[]
                                                 })
                                             }
                                         />

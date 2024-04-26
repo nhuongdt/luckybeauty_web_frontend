@@ -21,6 +21,8 @@ import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 import Cookies from 'js-cookie';
 import { TrangThaiCheckin } from '../../lib/appconst';
 import abpCustom from '../../components/abp-custom';
+import datLichService from '../../services/dat-lich/datLichService';
+import TrangThaiBooking from '../../enum/TrangThaiBooking';
 
 export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const [txtSearch, setTextSeach] = useState('');
@@ -102,6 +104,9 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                 mes: ''
             })
         );
+
+        // update again trangThaiBooking = xác nhận vì không biết trạng thái cũ
+        await CheckinService.UpdateTrangThaiBooking_byIdCheckIn(idCheckinDelete, TrangThaiBooking.Confirm);
 
         const dataCheckIn_Dexie = await dbDexie.hoaDon.where('idCheckIn').equals(idCheckinDelete).toArray();
         if (dataCheckIn_Dexie.length > 0) {

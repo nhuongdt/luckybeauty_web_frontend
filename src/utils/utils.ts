@@ -6,6 +6,7 @@
 // import { L } from '../lib/abpUtility'
 import { concat } from 'lodash';
 import { flatRoutes } from '../components/routers/index';
+import { Guid } from 'guid-typescript';
 
 declare let abp: any;
 
@@ -161,6 +162,16 @@ class Utils {
             input === null ||
             input === undefined ||
             input === 'undefined' ||
+            input.toString().replace(/\s+/g, '') === ''
+        );
+    };
+    checkNull_OrEmpty = (input: string | null | undefined) => {
+        return (
+            input === 'null' ||
+            input === null ||
+            input === undefined ||
+            input === 'undefined' ||
+            input === Guid.EMPTY ||
             input.toString().replace(/\s+/g, '') === ''
         );
     };

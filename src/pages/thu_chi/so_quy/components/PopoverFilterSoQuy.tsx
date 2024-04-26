@@ -77,10 +77,10 @@ export default function PopoverFilterSoQuy(props: IPropsPopoverFilter<ParamSearc
                                                     { value: LoaiChungTu.PHIEU_CHI, text: 'Phiếu chi' }
                                                 ] as ISelect[]
                                             }
-                                            onChange={(arrChosed: number[]) =>
+                                            onChange={(arrChosed: number[] | string[]) =>
                                                 setParamFilterThis({
                                                     ...paramFilterThis,
-                                                    idLoaiChungTus: arrChosed
+                                                    idLoaiChungTus: arrChosed as number[]
                                                 })
                                             }
                                         />

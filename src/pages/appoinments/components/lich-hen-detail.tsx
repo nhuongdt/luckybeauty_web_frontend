@@ -349,6 +349,12 @@ const LichHenDetail: FC = () => {
                                                         width: 30,
                                                         height: 30
                                                     },
+                                                    '& .MuiStepIcon-root': {
+                                                        cursor: 'pointer'
+                                                    },
+                                                    '& .MuiStepIcon-root:hover': {
+                                                        color: 'var(--color-bg)'
+                                                    },
                                                     ' & .MuiStepIcon-root.Mui-active': {
                                                         color: bookingStore?.bookingInfoDto?.color
                                                     }

@@ -1,5 +1,10 @@
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { ISelect } from '../../lib/appconst';
+
+// export interface IPropsSelectWithData {
+
+// }
+
 export default function SelectWithData({ idChosed, data, handleChange, label }: any) {
     const changeItem = (item: ISelect) => {
         handleChange(item);

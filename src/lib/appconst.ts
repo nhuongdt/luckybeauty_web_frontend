@@ -15,6 +15,16 @@ export const LoaiBaoCao = {
     CHI_TIET: '2'
 };
 
+export const LoaiSoSanh_Number = {
+    NONE: -1,
+    EQUALS: 0,
+    GREATER_THAN: 1,
+    LESS_THAN: 2,
+    GREATER_THAN_OR_EQUALS: 3,
+    LESS_THAN_OR_EQUALS: 4,
+    OTHER: 5
+};
+
 export const LoaiChungTu = {
     ALL: 0,
     KHAC: -1, // Chứng từ không liên quan đến hóa đơn
@@ -166,6 +176,15 @@ const AppConsts = {
         MINUTES: 'MINUTES',
         SECOND: 'SECOND'
     },
+    ListLoaiSoSanh_KieuSo: [
+        { value: LoaiSoSanh_Number.NONE, text: 'none' },
+        { value: LoaiSoSanh_Number.EQUALS, text: '=' },
+        { value: LoaiSoSanh_Number.GREATER_THAN, text: '>' },
+        { value: LoaiSoSanh_Number.LESS_THAN, text: '<' },
+        { value: LoaiSoSanh_Number.GREATER_THAN_OR_EQUALS, text: '>=' },
+        { value: LoaiSoSanh_Number.LESS_THAN_OR_EQUALS, text: '<=' },
+        { value: LoaiSoSanh_Number.OTHER, text: 'Tùy chỉnh' }
+    ] as ISelect[],
     ListTimeType: [
         { value: TimeType.SECOND, text: 'Giây' },
         { value: TimeType.MINUTES, text: 'Phút' },

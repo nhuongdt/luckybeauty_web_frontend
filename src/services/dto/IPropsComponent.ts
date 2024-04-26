@@ -8,9 +8,10 @@ export interface IPropsPopoverFilter<T> {
     paramFilter: T;
 }
 export interface IPropsListCheckFilter {
+    isShowCheckAll?: boolean;
     lstOption: ISelect[];
-    arrValueDefault: number[];
-    onChange: (arrIdChosed: number[]) => void;
+    arrValueDefault: string[] | number[];
+    onChange: (arrIdChosed: string[] | number[]) => void;
 }
 export interface IPropsListRadioFilter {
     lstOption: ISelect[];

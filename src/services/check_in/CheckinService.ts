@@ -62,6 +62,15 @@ class CheckinService {
             });
         return xx;
     };
+    UpdateTrangThaiBooking_byIdCheckIn = async (idCheckIn: string, trangThaiBooking: number): Promise<boolean> => {
+        if (utils.checkNull_OrEmpty(idCheckIn)) {
+            return false;
+        }
+        const xx = await http.get(
+            `api/services/app/CheckIn/UpdateTrangThaiBooking_byIdCheckIn?idCheckIn=${idCheckIn}&trangThaiBooking=${trangThaiBooking}`
+        );
+        return xx.data.result;
+    };
     GetArrIdChecking_fromIdBooking = async (idBooking: string): Promise<string[]> => {
         if (utils.checkNull(idBooking) || idBooking === Guid.EMPTY) {
             return [];
