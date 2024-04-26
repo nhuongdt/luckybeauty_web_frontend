@@ -1,9 +1,20 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 
-import { useState, useEffect } from 'react';
-import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
-import { Grid, Box, Typography, TextField, Stack, Button, Pagination, IconButton, Popover } from '@mui/material';
+import { useState, useEffect, useContext } from 'react';
+import { DataGrid, GridColDef, GridRenderCellParams, GridRowId, GridRowSelectionModel } from '@mui/x-data-grid';
+import {
+    Grid,
+    Box,
+    Typography,
+    TextField,
+    Stack,
+    Button,
+    Pagination,
+    IconButton,
+    Popover,
+    Checkbox
+} from '@mui/material';
 import { Add, LocalOfferOutlined, Search } from '@mui/icons-material';
 import { ReactComponent as FilterIcon } from '../../images/icons/i-filter.svg';
 // prop for send data from parent to child
@@ -24,7 +35,7 @@ import { ModelNhomHangHoa, ModelHangHoaDto, PagedProductSearchDto } from '../../
 import { ReactComponent as UploadIcon } from '../../images/upload.svg';
 import { ReactComponent as DownIcon } from '../../images/download.svg';
 import Utils from '../../utils/utils'; // func common
-import AppConsts, { TypeAction } from '../../lib/appconst';
+import AppConsts, { LoaiNhatKyThaoTac, TypeAction } from '../../lib/appconst';
 import './style.css';
 import fileDowloadService from '../../services/file-dowload.service';
 import uploadFileService from '../../services/uploadFileService';
@@ -39,8 +50,16 @@ import { ModalChuyenNhom } from '../../components/Dialog/modal_chuyen_nhom';
 import abpCustom from '../../components/abp-custom';
 import ActionRow2Button from '../../components/DataGrid/ActionRow2Button';
 import nhomHangHoaStore from '../../stores/nhomHangHoaStore';
+import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import { CreateNhatKyThaoTacDto } from '../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
+import nhatKyHoatDongService from '../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
+import Cookies from 'js-cookie';
 
 const PageProduct = () => {
+    const appContext = useContext(AppContext);
+    const chiNhanhCurrent = appContext.chinhanhCurrent;
+    const [checkAllRow, setCheckAllRow] = useState(false);
+    const idChiNhanh = utils.checkNull(chiNhanhCurrent?.id) ? Cookies.get('IdChiNhanh') : chiNhanhCurrent?.id;
     const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
     const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
         new PropConfirmOKCancel({ show: false })
@@ -78,6 +97,13 @@ const PageProduct = () => {
             totalPage: Utils.getTotalPage(list.totalCount, filterPageProduct.pageSize),
             items: list.items
         });
+
+        // check all: if allId this page exists in rowSelectionModel
+        const arrIdThisPage = list.items?.map((x) => {
+            return x.id ?? '';
+        });
+        const arrExists = rowSelectionModel?.filter((x) => arrIdThisPage.includes(x as string));
+        setCheckAllRow(arrExists?.length == arrIdThisPage?.length && rowSelectionModel?.length !== 0);
     };
 
     const GetListNhomHangHoa = async () => {
@@ -315,8 +341,19 @@ const PageProduct = () => {
                     })
                 };
             });
+
+            // save diary
+            const diary = {
+                idChiNhanh: idChiNhanh,
+                chucNang: `Danh mục dịch vụ`,
+                noiDung: `Xóa dịch vụ ${rowHover?.tenHangHoa} (${rowHover?.maHangHoa})`,
+                noiDungChiTiet: `Xóa dịch vụ ${rowHover?.tenHangHoa} (${rowHover?.maHangHoa})`,
+                loaiNhatKy: LoaiNhatKyThaoTac.DELETE
+            } as CreateNhatKyThaoTacDto;
+            await nhatKyHoatDongService.createNhatKyThaoTac(diary);
         } else {
             if (rowSelectionModel.length > 0) {
+                //  todo remove image from Imgur
                 const result = await ProductService.DeleteMultipleProduct(rowSelectionModel);
 
                 if (result) {
@@ -345,12 +382,31 @@ const PageProduct = () => {
                     })
                 });
                 setRowSelectionModel([]);
+
+                // save diary
+                const arrIDHangHoa = rowSelectionModel as string[];
+                const lstPoduct = await ProductService.GetInforBasic_OfListHangHoa(arrIDHangHoa);
+                const sTenHangHoa = lstPoduct
+                    ?.map((x) => {
+                        return x.ma_TenHangHoa;
+                    })
+                    .join(' <br />');
+
+                const diary = {
+                    idChiNhanh: idChiNhanh,
+                    chucNang: `Danh mục dịch vụ`,
+                    noiDung: `Xóa ${rowSelectionModel?.length} dịch vụ`,
+                    noiDungChiTiet: `Danh sách dịch vụ xóa gồm: <br /> ${sTenHangHoa} `,
+                    loaiNhatKy: LoaiNhatKyThaoTac.DELETE
+                } as CreateNhatKyThaoTacDto;
+                await nhatKyHoatDongService.createNhatKyThaoTac(diary);
             }
         }
     };
 
     const restoreProduct = async () => {
         await ProductService.RestoreProduct_byIdHangHoa(rowHover?.id ?? '');
+        setRowHover({} as ModelHangHoaDto);
         setObjAlert({
             show: true,
             type: 1,
@@ -372,6 +428,15 @@ const PageProduct = () => {
                 })
             };
         });
+
+        const diary = {
+            idChiNhanh: idChiNhanh,
+            chucNang: `Danh mục hàng hóa`,
+            noiDung: `Khôi phục hàng hóa ${rowHover?.tenHangHoa}`,
+            noiDungChiTiet: `Khôi phục hàng hóa ${rowHover?.tenHangHoa} (${rowHover?.maHangHoa})`,
+            loaiNhatKy: LoaiNhatKyThaoTac.RESTORE
+        } as CreateNhatKyThaoTacDto;
+        await nhatKyHoatDongService.createNhatKyThaoTac(diary);
     };
     const exportToExcel = async () => {
         const param = { ...filterPageProduct };
@@ -434,20 +499,80 @@ const PageProduct = () => {
         }
         setRowSelectionModel([]);
         GetListHangHoa();
+
+        const arrIDHangHoa = rowSelectionModel as string[];
+
+        // save diary
+        const lstPoduct = await ProductService.GetInforBasic_OfListHangHoa(arrIDHangHoa);
+        const sTenHangHoa = lstPoduct
+            ?.map((x) => {
+                return x.ma_TenHangHoa;
+            })
+            .join(' <br />');
+
+        const diary = {
+            idChiNhanh: idChiNhanh,
+            chucNang: `Danh mục dịch vụ`,
+            noiDung: `Chuyển ${rowSelectionModel?.length} dịch vụ sang nhóm ${item?.text}`,
+            noiDungChiTiet: `Danh sách dịch vụ chuyển gồm: <br /> ${sTenHangHoa} `,
+            loaiNhatKy: LoaiNhatKyThaoTac.UPDATE
+        } as CreateNhatKyThaoTacDto;
+        await nhatKyHoatDongService.createNhatKyThaoTac(diary);
+    };
+
+    const dataGrid_clickCheckOne = (idHangHoa: string, isCheck: boolean) => {
+        if (isCheck) {
+            const arrNew = [...rowSelectionModel, idHangHoa];
+            setRowSelectionModel([...arrNew]);
+
+            // check all: if allId this page exists in rowSelectionModel
+            const arrIdThisPage = pageDataProduct.items?.map((x) => {
+                return x.id ?? '';
+            });
+            const arrExists = arrNew?.filter((x) => arrIdThisPage.includes(x as string));
+            setCheckAllRow(arrExists?.length == arrIdThisPage?.length);
+        } else {
+            setRowSelectionModel(rowSelectionModel?.filter((x) => x !== idHangHoa));
+            setCheckAllRow(isCheck);
+        }
+    };
+    const dataGrid_clickCheckAll = (isCheck: boolean) => {
+        const arrIdThisPage = pageDataProduct.items?.map((x) => {
+            return x.id ?? '';
+        });
+
+        const arrIdNotThisPage = rowSelectionModel?.filter((x) => !arrIdThisPage.includes(x as string));
+        if (isCheck) {
+            setRowSelectionModel([...arrIdNotThisPage, ...arrIdThisPage]);
+        } else {
+            setRowSelectionModel([...arrIdNotThisPage]);
+        }
+        setCheckAllRow(isCheck);
     };
 
     const columns: GridColDef[] = [
+        {
+            field: 'checkBox',
+            flex: 0.3,
+            sortable: false,
+            filterable: false,
+            disableColumnMenu: true,
+            renderHeader: () => {
+                return <Checkbox onChange={(e) => dataGrid_clickCheckAll(e.target.checked)} checked={checkAllRow} />;
+            },
+            renderCell: (params) => (
+                <Checkbox
+                    onChange={(e) => dataGrid_clickCheckOne(params.row.id, e.target.checked)}
+                    checked={rowSelectionModel.includes(params.row.id)}
+                />
+            )
+        },
         {
             field: 'maHangHoa',
             headerName: 'Mã dịch vụ',
 
             minWidth: 100,
             flex: 1,
-            // renderCell: (params) => (
-            //     <Box color="#333233" sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
-            //         {params.value || ''}
-            //     </Box>
-            // ),
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         },
         {
@@ -772,6 +897,7 @@ const PageProduct = () => {
                                 choseAction={DataGrid_handleAction}
                                 removeItemChosed={() => {
                                     setRowSelectionModel([]);
+                                    setCheckAllRow(false);
                                 }}
                             />
                         )}
@@ -785,12 +911,8 @@ const PageProduct = () => {
                                 rows={pageDataProduct.items}
                                 columns={columns}
                                 hideFooter
-                                checkboxSelection
+                                checkboxSelection={false}
                                 localeText={TextTranslate}
-                                onRowSelectionModelChange={(newRowSelectionModel) => {
-                                    setRowSelectionModel(newRowSelectionModel);
-                                }}
-                                rowSelectionModel={rowSelectionModel}
                             />
 
                             <Grid
