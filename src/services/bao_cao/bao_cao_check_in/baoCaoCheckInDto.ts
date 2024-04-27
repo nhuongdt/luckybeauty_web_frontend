@@ -2,7 +2,7 @@ import { IReportCellValue } from '../../dto/IReportCellValue';
 import { RequestFromToDto } from '../../dto/ParamSearchDto';
 
 export interface IBaoCaoKhachHangCheckIn {
-    id: string;
+    idKhachHang: string;
     maKhachHang: string;
     tenKhachHang: string;
     soDienThoai: string;

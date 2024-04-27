@@ -18,7 +18,8 @@ import {
     TableCell,
     Checkbox,
     TableFooter,
-    SelectChangeEvent
+    SelectChangeEvent,
+    Tab
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
@@ -33,7 +34,7 @@ import { PagedResultDto } from '../../../services/dto/pagedResultDto';
 import abpCustom from '../../../components/abp-custom';
 import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
 import { IList } from '../../../services/dto/IList';
-import { LoaiSoSanh_Number, SMS_HinhThucGuiTin } from '../../../lib/appconst';
+import { ISelect, LoaiSoSanh_Number, LoaiTin, SMS_HinhThucGuiTin } from '../../../lib/appconst';
 import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import suggestStore from '../../../stores/suggestStore';
 
@@ -44,6 +45,13 @@ import {
 } from '../../../services/bao_cao/bao_cao_check_in/baoCaoCheckInDto';
 import BaoCaoCheckInService from '../../../services/bao_cao/bao_cao_check_in/BaoCaoCheckInService';
 import utils from '../../../utils/utils';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import fileDowloadService from '../../../services/file-dowload.service';
+import ModalGuiTinNhanZalo from '../../zalo/modal_gui_tin_zalo';
+import ModalGuiTinNhan from '../../sms/components/modal_gui_tin_nhan';
+import { BrandnameDto } from '../../../services/sms/brandname/BrandnameDto';
+import { MauTinSMSDto } from '../../../services/sms/mau_tin_sms/mau_tin_dto';
 
 export default function BaoCaoKhachHangCheckIn() {
     const today = new Date();
@@ -55,6 +63,9 @@ export default function BaoCaoKhachHangCheckIn() {
     const [txtSearch, setTxtSearch] = useState('');
     const [arrIdChosed, setArrIdChosed] = useState<string[]>([]);
     const [isCheckAll, setIsCheckAll] = useState(false);
+    const [isShowModalGuiTinZalo, setIsShowModalGuiTinZalo] = useState(false);
+    const [isShowModalGuiTinSMS, setIsShowModalGuiTinSMS] = useState(false);
+    const [lstAllMauTinSMS, setLstAllMauTinSMS] = useState<MauTinSMSDto[]>([]);
 
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [paramSearch, setParamSearch] = useState<ParamSearchBaoCaoCheckIn>({
@@ -70,18 +81,22 @@ export default function BaoCaoKhachHangCheckIn() {
         soLanCheckIn_From: 1,
         soLanCheckIn_LoaiSoSanh: LoaiSoSanh_Number.GREATER_THAN_OR_EQUALS,
         // mặc định: chỉ lấy khách hàng chưa quay lại
-        soNgayChuaCheckIn_From: 1
+        soNgayChuaCheckIn_From: 7,
+        soNgayChuaCheckIn_To: 7,
+        soNgayChuaCheckIn_LoaiSoSanh: LoaiSoSanh_Number.EQUALS
     } as ParamSearchBaoCaoCheckIn);
     const [pageDataBaoCao, setPageDataBaoCao] = useState<PagedResultDto<IBaoCaoKhachHangCheckIn>>(
         {} as PagedResultDto<IBaoCaoKhachHangCheckIn>
     );
 
-    const [inforDelete, setinforDelete] = useState<PropConfirmOKCancel>({
-        show: false,
-        title: '',
-        type: 1,
-        mes: ''
-    });
+    const [tabActive, setTabActive] = useState('7');
+    const arrTab: ISelect[] = [
+        { value: '7', text: '7 ngày' },
+        { value: '10', text: '10 ngày' },
+        { value: '30', text: '30 ngày' },
+        { value: '90', text: '90 ngày' },
+        { value: '-1', text: 'Tùy chỉnh' }
+    ];
 
     const [prevParamSearch, setPrevParamSearch] = useState<ParamSearchBaoCaoCheckIn>(paramSearch);
     if (paramSearch !== prevParamSearch) {
@@ -89,7 +104,8 @@ export default function BaoCaoKhachHangCheckIn() {
     }
 
     const PageLoad = async () => {
-        suggestStore.getSuggestNhomKhach();
+        await suggestStore.getSuggestNhomKhach();
+        await suggestStore.Zalo_GetAccessToken();
         await GetBaoCaoKhachHangCheckIn();
     };
 
@@ -125,6 +141,22 @@ export default function BaoCaoKhachHangCheckIn() {
             totalCount: data?.totalCount,
             totalPage: Math.ceil(data?.totalCount / (prevParamSearch?.pageSize ?? 10))
         });
+    };
+
+    const handleChangeTab = async (event: React.SyntheticEvent, newValue: string) => {
+        const soNgay = parseInt(newValue);
+        setTabActive(newValue);
+
+        if (soNgay == -1) {
+            //
+        } else {
+            setParamSearch({
+                ...paramSearch,
+                soNgayChuaCheckIn_From: soNgay,
+                soNgayChuaCheckIn_To: soNgay,
+                soNgayChuaCheckIn_LoaiSoSanh: LoaiSoSanh_Number.EQUALS
+            });
+        }
     };
 
     const handleKeyDownTextSearch = (event: any) => {
@@ -163,12 +195,13 @@ export default function BaoCaoKhachHangCheckIn() {
         setIsCheckAll(isCheck);
 
         const arrIdThisPage = pageDataBaoCao?.items?.map((x) => {
-            return x.id;
+            return x.idKhachHang;
         });
+        const arrIdNotThisPage = arrIdChosed.filter((x) => !arrIdThisPage.includes(x));
         if (isCheck) {
-            setArrIdChosed([...arrIdChosed, ...arrIdThisPage]);
+            setArrIdChosed([...arrIdNotThisPage, ...arrIdThisPage]);
         } else {
-            setArrIdChosed(arrIdChosed.filter((x) => !arrIdThisPage.includes(x)));
+            setArrIdChosed([...arrIdNotThisPage]);
         }
     };
 
@@ -178,7 +211,7 @@ export default function BaoCaoKhachHangCheckIn() {
             setArrIdChosed([...arrIdChosed, rowId]);
 
             const arrIdThisPage = pageDataBaoCao?.items?.map((x) => {
-                return x.id;
+                return x.idKhachHang;
             });
             const arrExist = arrIdChosed?.filter((x) => arrIdThisPage.includes(x));
             setIsCheckAll(arrIdThisPage.length === arrExist.length + 1);
@@ -190,7 +223,6 @@ export default function BaoCaoKhachHangCheckIn() {
     const [anchorElFilter, setAnchorElFilter] = useState<SVGSVGElement | null>(null);
     const ApplyFilter = (paramFilter: ParamSearchBaoCaoCheckIn) => {
         setAnchorElFilter(null);
-        console.log(33, paramFilter);
         setParamSearch({
             ...paramSearch,
             currentPage: 1,
@@ -207,11 +239,16 @@ export default function BaoCaoKhachHangCheckIn() {
 
     const DataGrid_handleAction = async (item: any) => {
         switch (parseInt(item.id)) {
-            case 1:
-                break;
-            case 2:
+            case SMS_HinhThucGuiTin.ZALO:
                 {
-                    //
+                    // gui tin zalo
+                    setIsShowModalGuiTinZalo(true);
+                }
+                break;
+            case SMS_HinhThucGuiTin.SMS:
+                {
+                    // gui tin sms
+                    setIsShowModalGuiTinSMS(true);
                 }
                 break;
         }
@@ -235,8 +272,13 @@ export default function BaoCaoKhachHangCheckIn() {
         const param = { ...paramSearch };
         param.pageSize = pageDataBaoCao.totalCount;
         param.currentPage = 1;
-        // const data = await SoQuyServices.ExportToExcel(param);
-        // fileDowloadService.downloadExportFile(data);
+        const data = await BaoCaoCheckInService.ExportToExcel_BaoCaoKhachHang_CheckIn(param);
+        fileDowloadService.downloadExportFile(data);
+    };
+
+    const saveSMSOK = (type: number) => {
+        setIsShowModalGuiTinZalo(false);
+        setIsShowModalGuiTinSMS(false);
     };
 
     const listColumnHeader: IHeaderTable[] = [
@@ -244,58 +286,153 @@ export default function BaoCaoKhachHangCheckIn() {
         { columnId: 'tenKhachHang', columnText: 'Tên khách' },
         { columnId: 'soDienThoai', columnText: 'Số điện thoại' },
         { columnId: 'soLanCheckIn', columnText: 'Số lần checkin', align: 'right' },
-        { columnId: 'ngayCheckInGanNhat', columnText: 'Ngày checkin gần nhất', align: 'center' },
+        { columnId: 'ngayCheckInGanNhat', columnText: 'Checkin gần nhất', align: 'center' },
         { columnId: 'soNgaychuaCheckIn', columnText: 'Số ngày chưa checkin', align: 'right' }
-
         // { columnId: 'soLanDatHen', columnText: 'Số lần đặt hẹn', align: 'right' },
         // { columnId: 'soLanHuyHen', columnText: 'Số lần hủy hẹn', align: 'right' }
     ];
 
     return (
         <>
-            {/* <ConfirmDelete
-                isShow={inforDelete.show}
-                title={inforDelete.title}
-                mes={inforDelete.mes}
-                onOk={deleteSoQuy}
-                onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete> */}
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
+            <ModalGuiTinNhanZalo
+                isShowModal={isShowModalGuiTinZalo}
+                idUpdate={''}
+                arrIdCustomerChosed={arrIdChosed}
+                onClose={() => setIsShowModalGuiTinZalo(false)}
+                onOK={saveSMSOK}
+            />
+            <ModalGuiTinNhan
+                isShowModal={isShowModalGuiTinSMS}
+                idUpdate={''}
+                onClose={() => setIsShowModalGuiTinSMS(false)}
+                onOK={saveSMSOK}
+                arrIdCustomerChosed={arrIdChosed}
+                idLoaiTin={LoaiTin.TIN_THUONG}
+            />
             <Box paddingTop={2}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={12} lg={6} md={12}>
-                        <Grid container alignItems="center">
-                            <Grid item xs={12} sm={5} lg={4} md={4}>
-                                <span className="page-title"> Báo cáo check in</span>
+                    <Grid item xs={12} sm={12} lg={12} md={12}>
+                        <Grid container alignItems="baseline" spacing={2} justifyContent={'space-between'}>
+                            <Grid item xs={12} sm={6} md={5} lg={4}>
+                                <span className="page-title"> Báo cáo khách hàng chưa quay lại</span>
                             </Grid>
-                            <Grid item xs={12} sm={7} lg={8} md={8}>
-                                <TextField
-                                    fullWidth
-                                    size="small"
-                                    onChange={(e) => {
-                                        setTxtSearch(e.target.value);
-                                    }}
-                                    onKeyDown={handleKeyDownTextSearch}
-                                    className="text-search"
-                                    variant="outlined"
-                                    type="search"
-                                    placeholder="Tìm kiếm"
-                                    InputProps={{
-                                        startAdornment: (
-                                            <IconButton onClick={hanClickIconSearch}>
-                                                <Search />
-                                            </IconButton>
-                                        )
-                                    }}
-                                />
+                            <Grid item xs={12} sm={6} md={6} lg={4.5}>
+                                <Stack direction={'row'} justifyContent={'end'} spacing={1}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        onChange={(e) => {
+                                            setTxtSearch(e.target.value);
+                                        }}
+                                        onKeyDown={handleKeyDownTextSearch}
+                                        className="text-search"
+                                        variant="outlined"
+                                        type="search"
+                                        placeholder="Tìm kiếm"
+                                        InputProps={{
+                                            startAdornment: (
+                                                <IconButton onClick={hanClickIconSearch}>
+                                                    <Search />
+                                                </IconButton>
+                                            )
+                                        }}
+                                    />
+                                    <Button
+                                        variant="outlined"
+                                        onClick={exportToExcel}
+                                        startIcon={<FileUploadIcon />}
+                                        sx={{
+                                            borderColor: '#CDC9CD!important',
+                                            bgcolor: '#fff!important',
+                                            color: '#333233',
+                                            fontSize: '14px',
+                                            display: abpCustom.isGrandPermission('Pages.QuyHoaDon.Export') ? '' : 'none'
+                                        }}>
+                                        Xuất
+                                    </Button>
+
+                                    <FilterAltOutlinedIcon
+                                        titleAccess="Lọc nâng cao"
+                                        className="btnIcon"
+                                        sx={{
+                                            height: '40px!important',
+                                            padding: '8px!important',
+                                            background: 'white'
+                                        }}
+                                        onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                                    />
+                                    <PopoverFilterBaoCaoCheckIn
+                                        anchorEl={anchorElFilter}
+                                        paramFilter={paramSearch}
+                                        handleClose={() => setAnchorElFilter(null)}
+                                        handleApply={ApplyFilter}
+                                    />
+                                </Stack>
+                            </Grid>
+                        </Grid>
+
+                        <Grid container paddingTop={1} spacing={2} alignItems={'baseline'}>
+                            <Grid item xs={0} md={0} lg={3}></Grid>
+                            <Grid item xs={12} md={7.5} lg={4.5}>
+                                <TabContext value={tabActive}>
+                                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                        <TabList onChange={handleChangeTab}>
+                                            {arrTab?.map((x) => (
+                                                <Tab key={x.value} label={x.text} value={x.value} />
+                                            ))}
+                                        </TabList>
+                                    </Box>
+                                </TabContext>
+                            </Grid>
+                            <Grid item xs={12} md={3.5} lg={2}>
+                                {tabActive === '-1' && (
+                                    <Stack
+                                        spacing={1}
+                                        direction={'row'}
+                                        fontStyle={'italic'}
+                                        sx={{
+                                            input: {
+                                                textAlign: 'center',
+                                                fontWeight: 500
+                                            }
+                                        }}>
+                                        <Typography variant="body2">Từ</Typography>
+                                        <TextField
+                                            size="small"
+                                            variant="standard"
+                                            value={paramSearch?.soNgayChuaCheckIn_From ?? ''}
+                                            onChange={(e) =>
+                                                setParamSearch({
+                                                    ...paramSearch,
+                                                    soNgayChuaCheckIn_From: parseInt(e.target.value)
+                                                })
+                                            }
+                                        />
+                                        <Typography variant="body2">đến</Typography>
+                                        <TextField
+                                            size="small"
+                                            variant="standard"
+                                            value={paramSearch?.soNgayChuaCheckIn_To ?? ''}
+                                            onChange={(e) =>
+                                                setParamSearch({
+                                                    ...paramSearch,
+                                                    soNgayChuaCheckIn_To: parseInt(e.target.value)
+                                                })
+                                            }
+                                        />
+                                        <Typography variant="body2">ngày</Typography>
+                                    </Stack>
+                                )}
                             </Grid>
                         </Grid>
                     </Grid>
 
-                    <Grid item xs={12} sm={12} lg={6} md={12}>
+                    <Grid item xs={12} sm={12} lg={12} md={12}>
                         <Stack
                             direction={'row'}
                             spacing={1}
@@ -331,37 +468,6 @@ export default function BaoCaoKhachHangCheckIn() {
                                     onApplyDate={onApplyFilterDate}
                                 />
                             </Stack>
-                            <Button
-                                variant="outlined"
-                                onClick={exportToExcel}
-                                startIcon={<FileUploadIcon />}
-                                sx={{
-                                    borderColor: '#CDC9CD!important',
-                                    bgcolor: '#fff!important',
-                                    color: '#333233',
-                                    fontSize: '14px',
-                                    display: abpCustom.isGrandPermission('Pages.QuyHoaDon.Export') ? '' : 'none'
-                                }}
-                                className="btn-outline-hover">
-                                Xuất
-                            </Button>
-
-                            <FilterAltOutlinedIcon
-                                titleAccess="Lọc nâng cao"
-                                className="btnIcon"
-                                sx={{
-                                    height: '40px!important',
-                                    padding: '8px!important',
-                                    background: 'white'
-                                }}
-                                onClick={(event) => setAnchorElFilter(event.currentTarget)}
-                            />
-                            <PopoverFilterBaoCaoCheckIn
-                                anchorEl={anchorElFilter}
-                                paramFilter={paramSearch}
-                                handleClose={() => setAnchorElFilter(null)}
-                                handleApply={ApplyFilter}
-                            />
                         </Stack>
                     </Grid>
                 </Grid>
@@ -418,27 +524,26 @@ export default function BaoCaoKhachHangCheckIn() {
                                                 <TableRow key={index}>
                                                     <TableCell align="center" className="td-check-box">
                                                         <Checkbox
-                                                            checked={arrIdChosed.includes(row.id)}
-                                                            onChange={(event) => onClickCheckOne(event, row.id)}
+                                                            checked={arrIdChosed.includes(row.idKhachHang)}
+                                                            onChange={(event) =>
+                                                                onClickCheckOne(event, row.idKhachHang)
+                                                            }
                                                         />
                                                     </TableCell>
                                                     <TableCell sx={{ minWidth: 100, maxWidth: 100 }}>
                                                         {row?.maKhachHang}
                                                     </TableCell>
-                                                    <TableCell
-                                                        className="lableOverflow"
-                                                        sx={{ maxWidth: 200 }}
-                                                        title={row?.tenKhachHang}>
+                                                    <TableCell className="lableOverflow" title={row?.tenKhachHang}>
                                                         {row?.tenKhachHang}
                                                     </TableCell>
                                                     <TableCell sx={{ minWidth: 100, maxWidth: 100 }}>
                                                         {row?.soDienThoai}
                                                     </TableCell>
 
-                                                    <TableCell align="right">
+                                                    <TableCell align="right" sx={{ minWidth: 100, maxWidth: 100 }}>
                                                         {new Intl.NumberFormat('vi-VN').format(row?.soLanCheckIn ?? 0)}
                                                     </TableCell>
-                                                    <TableCell align="center">
+                                                    <TableCell align="center" sx={{ minWidth: 100, maxWidth: 100 }}>
                                                         {utils.checkNull(row?.ngayCheckInGanNhat)
                                                             ? ''
                                                             : format(
@@ -446,7 +551,7 @@ export default function BaoCaoKhachHangCheckIn() {
                                                                   'dd/MM/yyyy'
                                                               )}
                                                     </TableCell>
-                                                    <TableCell align="right">
+                                                    <TableCell align="right" sx={{ minWidth: 100, maxWidth: 100 }}>
                                                         {row?.soNgayChuaCheckIn == -1
                                                             ? ''
                                                             : new Intl.NumberFormat('vi-VN').format(

@@ -139,17 +139,18 @@ export default function PopoverFilterBaoCaoCheckIn(props: IPropsPopoverFilter<Pa
                 {
                     setParamFilterThis({
                         ...paramFilterThis,
-                        soLanCheckIn_From: null,
-                        soLanCheckIn_To: null
+                        soNgayChuaCheckIn_From: null,
+                        soNgayChuaCheckIn_To: null
                     });
+                    console.log('soNgayChuaCheckIn_changeGiaTriSoSanh ', newVal, valText);
                 }
                 break;
             case LoaiSoSanh_Number.EQUALS:
                 {
                     setParamFilterThis({
                         ...paramFilterThis,
-                        soLanCheckIn_From: newVal,
-                        soLanCheckIn_To: newVal
+                        soNgayChuaCheckIn_From: newVal,
+                        soNgayChuaCheckIn_To: newVal
                     });
                 }
                 break;
@@ -157,8 +158,8 @@ export default function PopoverFilterBaoCaoCheckIn(props: IPropsPopoverFilter<Pa
                 {
                     setParamFilterThis({
                         ...paramFilterThis,
-                        soLanCheckIn_From: newVal + 1,
-                        soLanCheckIn_To: null
+                        soNgayChuaCheckIn_From: newVal + 1,
+                        soNgayChuaCheckIn_To: null
                     });
                 }
                 break;
@@ -166,8 +167,8 @@ export default function PopoverFilterBaoCaoCheckIn(props: IPropsPopoverFilter<Pa
                 {
                     setParamFilterThis({
                         ...paramFilterThis,
-                        soLanCheckIn_From: newVal,
-                        soLanCheckIn_To: null
+                        soNgayChuaCheckIn_From: newVal,
+                        soNgayChuaCheckIn_To: null
                     });
                 }
                 break;
@@ -175,8 +176,8 @@ export default function PopoverFilterBaoCaoCheckIn(props: IPropsPopoverFilter<Pa
                 {
                     setParamFilterThis({
                         ...paramFilterThis,
-                        soLanCheckIn_From: null,
-                        soLanCheckIn_To: newVal - 1
+                        soNgayChuaCheckIn_From: null,
+                        soNgayChuaCheckIn_To: newVal - 1
                     });
                 }
                 break;
@@ -184,8 +185,8 @@ export default function PopoverFilterBaoCaoCheckIn(props: IPropsPopoverFilter<Pa
                 {
                     setParamFilterThis({
                         ...paramFilterThis,
-                        soLanCheckIn_From: null,
-                        soLanCheckIn_To: newVal
+                        soNgayChuaCheckIn_From: null,
+                        soNgayChuaCheckIn_To: newVal
                     });
                 }
                 break;
@@ -308,24 +309,28 @@ export default function PopoverFilterBaoCaoCheckIn(props: IPropsPopoverFilter<Pa
                                             <SelectWithData
                                                 label="Kiểu so sánh"
                                                 data={AppConsts.ListLoaiSoSanh_KieuSo}
-                                                idChosed={soLanCheckIn_LoaiSoSanh}
+                                                idChosed={soNgayChuaCheckIn_LoaiSoSanh}
                                                 handleChange={(item: ISelect) =>
-                                                    setSoLanCheckIn_LoaiSoSanh(item.value as number)
+                                                    setSoNgayChuaCheckIn_LoaiSoSanh(item.value as number)
                                                 }
                                             />
                                         </Stack>
 
-                                        {soLanCheckIn_LoaiSoSanh !== LoaiSoSanh_Number.NONE && (
+                                        {soNgayChuaCheckIn_LoaiSoSanh !== LoaiSoSanh_Number.NONE && (
                                             <Stack direction={'row'} spacing={2} justifyContent={'center'}>
                                                 <TextField
                                                     label={
-                                                        soLanCheckIn_LoaiSoSanh === LoaiSoSanh_Number.OTHER ? 'Từ' : ''
+                                                        soNgayChuaCheckIn_LoaiSoSanh === LoaiSoSanh_Number.OTHER
+                                                            ? 'Từ'
+                                                            : ''
                                                     }
                                                     size="small"
-                                                    defaultValue={paramFilter?.soLanCheckIn_From}
-                                                    onChange={(e) => soLanCheckIn_changeGiaTriSoSanh(e.target.value)}
+                                                    defaultValue={paramFilter?.soNgayChuaCheckIn_From}
+                                                    onChange={(e) =>
+                                                        soNgayChuaCheckIn_changeGiaTriSoSanh(e.target.value)
+                                                    }
                                                 />
-                                                {soLanCheckIn_LoaiSoSanh === LoaiSoSanh_Number.OTHER && (
+                                                {soNgayChuaCheckIn_LoaiSoSanh === LoaiSoSanh_Number.OTHER && (
                                                     <TextField
                                                         label="Đến"
                                                         size="small"
@@ -333,8 +338,9 @@ export default function PopoverFilterBaoCaoCheckIn(props: IPropsPopoverFilter<Pa
                                                         onChange={(e) =>
                                                             setParamFilterThis({
                                                                 ...paramFilterThis,
-                                                                soLanCheckIn_From: paramFilterThis?.soLanCheckIn_From,
-                                                                soLanCheckIn_To: parseInt(e.target.value)
+                                                                soNgayChuaCheckIn_From:
+                                                                    paramFilterThis?.soNgayChuaCheckIn_From,
+                                                                soNgayChuaCheckIn_To: parseInt(e.target.value)
                                                             })
                                                         }
                                                     />
