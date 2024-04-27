@@ -38,7 +38,6 @@ import { ITemplateZNS, IZaloDataMessage, IZaloResultMessage, InforZOA } from '..
 import ZaloService from '../../services/zalo/ZaloService';
 import { IDataAutocomplete } from '../../services/dto/IDataAutocomplete';
 import { Guid } from 'guid-typescript';
-import { IPropModal } from '../../services/dto/IPropsComponent';
 import Zalo_MultipleAutoComplete_WithSDT, {
     IPropsZalo_AutocompleteMultipleCustomer
 } from '../../components/Autocomplete/Zalo_MultipleAutoComplete_WithSDT';
@@ -48,14 +47,14 @@ import { ZaloTemplateView } from './zalo_template_view';
 import he_thong_sms_services from '../../services/sms/gui_tin_nhan/he_thong_sms_services';
 import suggestStore from '../../stores/suggestStore';
 import { parseInt } from 'lodash';
+import { IPropModalSMS } from '../sms/components/modal_gui_tin_nhan';
 
-export default function ModalGuiTinNhanZalo(props: IPropModal<CreateOrEditSMSDto>) {
-    const { isShowModal, idUpdate, onClose, onOK } = props;
+export default function ModalGuiTinNhanZalo(props: IPropModalSMS) {
+    const { isShowModal, idUpdate, arrIdCustomerChosed, arrIdBookingChosed, arrIdHoaDonChosed, onClose, onOK } = props;
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
     const idChiNhanh = chinhanh.id;
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [lstIdCustomer, setLstIdCustomer] = useState<string[]>([]);
     const [txtFromTo, setTextFromTo] = useState('');
     const [lblLoaiKhach, setLblLoaiKhach] = useState(`Khách sinh nhật`);
     const [fromDate, setFromDate] = useState(format(new Date(), 'yyyy-MM-dd'));
@@ -140,7 +139,6 @@ export default function ModalGuiTinNhanZalo(props: IPropModal<CreateOrEditSMSDto
     };
 
     useEffect(() => {
-        setLstIdCustomer([]);
         setLstCustomerChosed([]);
     }, [newSMS?.idLoaiTin]);
 
@@ -150,10 +148,11 @@ export default function ModalGuiTinNhanZalo(props: IPropModal<CreateOrEditSMSDto
             IdChiNhanhs: [idChiNhanh],
             fromDate: fromDate,
             toDate: toDate,
+            hinhThucGuiTins: [SMS_HinhThucGuiTin.ZALO],
             // nếu gửi tin từ mẫu tin của PM (không phải ZNS) ---> chỉ lấy khách có tài khoản zoaId (2)
             loaiUser_CoTheGuiTin: newSMS?.idLoaiTin === LoaiTin.TIN_THUONG ? 0 : isZNSTemplate ? 0 : 2
         } as ParamSearchSMS,
-        arrIdChosed: lstIdCustomer,
+        arrIdChosed: arrIdCustomerChosed,
         handleChoseItem: choseCustomer
     };
 
@@ -241,7 +240,6 @@ export default function ModalGuiTinNhanZalo(props: IPropModal<CreateOrEditSMSDto
 
     useEffect(() => {
         setLstCustomerChosed([]);
-        setLstIdCustomer([]);
         onApplyFilterDate(fromDate, toDate, dateType, dateTypeText);
     }, [newSMS?.idLoaiTin]);
 
