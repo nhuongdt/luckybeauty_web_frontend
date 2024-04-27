@@ -49,7 +49,8 @@ export default function ModalAddUser({
     dataChiNhanh,
     allRoles,
     onCancel,
-    onOk
+    onOk,
+    objUserUpdate
 }: any) {
     const appContext = useContext(AppContext);
     const chinhanhCurrent = appContext.chinhanhCurrent;
@@ -153,7 +154,7 @@ export default function ModalAddUser({
     };
 
     const GetInforUser = async () => {
-        const userEdit = await userService.get(userId);
+        const userEdit = { ...objUserUpdate };
         initialValues.id = userEdit?.id;
         initialValues.nhanSuId = userEdit?.nhanSuId as string;
         initialValues.emailAddress = userEdit?.emailAddress;

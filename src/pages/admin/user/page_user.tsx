@@ -1,4 +1,4 @@
-import { Grid, Box, Stack, Typography, Button, SelectChangeEvent, Avatar } from '@mui/material';
+import { Grid, Box, Stack, Typography, SelectChangeEvent, Avatar } from '@mui/material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { useEffect, useRef, useState } from 'react';
 import { Edit, DeleteForever } from '@mui/icons-material';
@@ -32,6 +32,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
     const [isShowModalAddUser, setIsShowModalAddUser] = useState(false);
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
     const [allUser, setAllUser] = useState<IUserProfileDto[]>([]);
+    const [userUpdate, setUserUpdate] = useState<IUserProfileDto>({} as IUserProfileDto);
     const [listSearchUser, setListSearchUser] = useState<IUserProfileDto[]>([]);
     const [allNhanVien, setAllNhanVien] = useState<SuggestNhanSuDto[]>([]);
     const [allChiNhanh, setAllChiNhanh] = useState<ChiNhanhDto[]>([]);
@@ -56,6 +57,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
     useEffect(() => {
         setUserId(0);
         setIsShowModalAddUser(isShowModalAdd);
+        setUserUpdate({} as IUserProfileDto);
     }, [isShowModalAdd]);
 
     const getAllChiNhanh = async () => {
@@ -232,6 +234,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
                 {
                     setIsShowModalAddUser(true);
                     setAvatar(item?.avatar);
+                    setUserUpdate(item);
                 }
                 break;
             case 2:
@@ -410,6 +413,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
                 onCancel={() => setObjConfirmDelete({ ...objConfirmDelete, show: false })}></ConfirmDelete>
             <ModalAddUser
                 isShowModal={isShowModalAddUser}
+                objUserUpdate={userUpdate}
                 onCancel={() => {
                     setIsShowModalAddUser(false);
                     onCloseModal();

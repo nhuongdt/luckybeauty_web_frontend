@@ -17,6 +17,7 @@ export interface ProfileDto {
 
 export interface IUserProfileDto extends ProfileDto {
     tenNhanVien: string;
+    idChiNhanhMacDinh?: string;
     tenChiNhanh: string;
     isActive: boolean;
     isAdmin: boolean;
