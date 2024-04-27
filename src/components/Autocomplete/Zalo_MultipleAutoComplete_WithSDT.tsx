@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Autocomplete, Grid, TextField, Typography, Box, Stack } from '@mui/material';
 import { useState, useRef } from 'react';
 import { debounce } from '@mui/material/utils';
-import { LoaiTin, TrangThaiSMS } from '../../lib/appconst';
+import { LoaiTin, SMS_HinhThucGuiTin, TrangThaiSMS } from '../../lib/appconst';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import HeThongSMSServices from '../../services/sms/gui_tin_nhan/he_thong_sms_services';
 import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
@@ -35,6 +35,7 @@ export default function Zalo_MultipleAutoComplete_WithSDT(props: IPropsZalo_Auto
                 const customer = await khachHangService.getKhachHang(element);
                 arr.push({
                     id: customer?.id,
+                    idKhachHang: customer?.id,
                     zoaUserId: customer?.zoaUserId,
                     tenKhachHang: customer?.tenKhachHang,
                     soDienThoai: customer?.soDienThoai,
@@ -63,52 +64,89 @@ export default function Zalo_MultipleAutoComplete_WithSDT(props: IPropsZalo_Auto
                             isUserZalo: paramFilter?.loaiUser_CoTheGuiTin ?? 0
                         } as PagedKhachHangResultRequestDto;
 
-                        const arrUser: CustomerSMSDto[] = [];
-                        if ((paramFilter?.loaiUser_CoTheGuiTin ?? 0) == 0) {
-                            // get all user co tuongtac voi oa
-                            const allUser = await ZaloService.ZOA_GetDanhSachNguoiDung(
-                                suggestStore?.zaloAccessToken ?? ''
-                            );
-                            if (allUser?.users !== undefined) {
-                                for (let i = 0; i < allUser?.users?.length; i++) {
-                                    const itFor = allUser?.users[i];
-                                    const zaloUser = await ZaloService.GetInforUser_ofOA(
-                                        suggestStore?.zaloAccessToken ?? '',
-                                        itFor.user_id
-                                    );
-                                    if (zaloUser !== null) {
-                                        const zaloName = zaloUser?.display_name ?? '';
-                                        // tìm kiếm theo tên
-                                        if (
-                                            zaloName.includes(textSearch) ||
-                                            utils.strToEnglish(zaloName).includes(textSearch) ||
-                                            utils.strToEnglish(zaloName).includes(utils.strToEnglish(textSearch))
-                                        ) {
-                                            itFor.id = zaloUser?.user_id;
-                                            itFor.zoaUserId = zaloUser?.user_id;
-                                            itFor.tenKhachHang = zaloUser?.display_name;
-                                            itFor.avatar = zaloUser?.avatar;
-                                            arrUser.push(itFor);
+                        let arrUser: CustomerSMSDto[] = [];
+
+                        let hinhThucGui = SMS_HinhThucGuiTin.SMS;
+                        if (paramFilter?.hinhThucGuiTins?.length > 0) {
+                            hinhThucGui = paramFilter?.hinhThucGuiTins[0];
+                        }
+
+                        switch (hinhThucGui) {
+                            case SMS_HinhThucGuiTin.SMS:
+                                {
+                                    // get all customer has phone number
+                                    const param = {
+                                        keyword: textSearch,
+                                        loaiDoiTuong: 1,
+                                        skipCount: 0,
+                                        maxResultCount: 50
+                                    } as PagedKhachHangResultRequestDto;
+                                    const data = await khachHangService.jqAutoCustomer(param);
+                                    arrUser = data?.map((x: any) => {
+                                        return {
+                                            id: x?.id,
+                                            idKhachHang: x?.id,
+                                            maKhachHang: x?.maKhachHang,
+                                            tenKhachHang: x?.tenKhachHang,
+                                            soDienThoai: x?.soDienThoai,
+                                            avatar: x?.avatar
+                                        } as CustomerSMSDto;
+                                    });
+                                }
+                                break;
+                            case SMS_HinhThucGuiTin.ZALO:
+                                {
+                                    if ((paramFilter?.loaiUser_CoTheGuiTin ?? 0) == 0) {
+                                        // get all user co tuongtac voi oa
+                                        const allUser = await ZaloService.ZOA_GetDanhSachNguoiDung(
+                                            suggestStore?.zaloAccessToken ?? ''
+                                        );
+                                        if (allUser?.users !== undefined) {
+                                            for (let i = 0; i < allUser?.users?.length; i++) {
+                                                const itFor = allUser?.users[i];
+                                                const zaloUser = await ZaloService.GetInforUser_ofOA(
+                                                    suggestStore?.zaloAccessToken ?? '',
+                                                    itFor.user_id
+                                                );
+                                                if (zaloUser !== null) {
+                                                    const zaloName = zaloUser?.display_name ?? '';
+                                                    // tìm kiếm theo tên
+                                                    if (
+                                                        zaloName.includes(textSearch) ||
+                                                        utils.strToEnglish(zaloName).includes(textSearch) ||
+                                                        utils
+                                                            .strToEnglish(zaloName)
+                                                            .includes(utils.strToEnglish(textSearch))
+                                                    ) {
+                                                        itFor.id = zaloUser?.user_id;
+                                                        itFor.zoaUserId = zaloUser?.user_id;
+                                                        itFor.tenKhachHang = zaloUser?.display_name;
+                                                        itFor.avatar = zaloUser?.avatar;
+                                                        arrUser.push(itFor);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        // chỉ get khách hàng có tk zoaId (DB)
+                                        const data = await khachHangService.jqAutoCustomer(param);
+                                        for (let i = 0; i < data?.length; i++) {
+                                            const itFor = data[i];
+                                            if (!utils.checkNull(itFor?.zoaUserId)) {
+                                                const zaloUser = await ZaloService.GetInforUser_ofOA(
+                                                    suggestStore?.zaloAccessToken ?? '',
+                                                    itFor.zoaUserId
+                                                );
+                                                // get avartar zalo
+                                                itFor.avatar = zaloUser?.avatar;
+                                                arrUser.push(itFor);
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        } else {
-                            // chỉ get khách hàng có tk zoaId (DB)
-                            const data = await khachHangService.jqAutoCustomer(param);
-                            for (let i = 0; i < data?.length; i++) {
-                                const itFor = data[i];
-                                if (!utils.checkNull(itFor?.zoaUserId)) {
-                                    const zaloUser = await ZaloService.GetInforUser_ofOA(
-                                        suggestStore?.zaloAccessToken ?? '',
-                                        itFor.zoaUserId
-                                    );
-                                    // get avartar zalo
-                                    itFor.avatar = zaloUser?.avatar;
-                                    arrUser.push(itFor);
-                                }
-                            }
+                                break;
                         }
+
                         setLstOption(arrUser);
                     }
                     break;
