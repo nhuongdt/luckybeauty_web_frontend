@@ -207,7 +207,7 @@ const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: 
                                                         position: 'absolute',
                                                         borderRadius: '4px',
                                                         border: '1px solid #cccc',
-                                                        minWidth: 160,
+                                                        minWidth: 200,
                                                         backgroundColor: 'rgba(248,248,248,1)',
                                                         '& .MuiStack-root .MuiStack-root:hover': {
                                                             backgroundColor: '#cccc'

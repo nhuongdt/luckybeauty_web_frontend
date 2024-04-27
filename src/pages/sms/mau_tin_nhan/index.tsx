@@ -80,6 +80,7 @@ const MauTinNhan = () => {
     const showModalAddMauTin = () => {
         setVisiable(true);
         setIdMauTin('');
+        setObjMauTin({} as MauTinSMSDto);
     };
 
     const editMauTin = async (item: MauTinSMSDto) => {
@@ -90,6 +91,7 @@ const MauTinNhan = () => {
         }
         setVisiable(true);
         setIdMauTin(item.id);
+        setObjMauTin(item);
     };
 
     const saveMauTinOK = async (objMauTin: MauTinSMSDto, type: number) => {

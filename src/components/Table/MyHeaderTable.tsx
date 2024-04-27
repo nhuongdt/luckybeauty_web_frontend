@@ -46,7 +46,7 @@ export function MyHeaderTable(props: IMyTableProps) {
                         <Stack
                             direction={'row'}
                             spacing={0.5}
-                            justifyContent={x.align == 'right' ? 'end' : 'left'}
+                            justifyContent={x.align == 'right' ? 'end' : x.align}
                             onClick={() => createSortHandler(x.columnId)}>
                             <Stack>{x.columnText}</Stack>
                             {sortBy == x.columnId ? (

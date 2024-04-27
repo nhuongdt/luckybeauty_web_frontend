@@ -11,6 +11,7 @@ const objSMS = {
     xungHo: 'chị',
     soDienThoai: '0978005006',
     ngaySinh: '1990-11-11',
+    bookingCode: 'BK001',
     bookingDate: '11:00 05/04/2024',
     startTime: '11:25 05/04/2024',
     thoiGianHen: '14:00 - 16:00',
@@ -31,9 +32,10 @@ class CaiDatNhacNhoService {
     objSMS = objSMS;
     ReplaceBienSMS = (input: string): string => {
         let txt = input;
-        txt = txt.replace('{TenKhachHang}', this.objSMS?.tenKhachHang ?? '');
-        txt = txt.replace('{SoDienThoai}', this.objSMS?.soDienThoai ?? '');
-        txt = txt.replace('{XungHo}', this.objSMS?.xungHo ?? '');
+        if (utils.checkNull(txt)) return '';
+        txt = txt.replaceAll('{TenKhachHang}', this.objSMS?.tenKhachHang ?? '');
+        txt = txt.replaceAll('{SoDienThoai}', this.objSMS?.soDienThoai ?? '');
+        txt = txt.replaceAll('{XungHo}', this.objSMS?.xungHo ?? '');
         if (!utils.checkNull(this.objSMS?.ngaySinh as unknown as string)) {
             txt = txt.replace('{NgaySinh}', format(new Date(this.objSMS?.ngaySinh ?? new Date()), 'dd/MM/yyyy'));
         } else {
@@ -45,6 +47,7 @@ class CaiDatNhacNhoService {
                 format(new Date(this.objSMS?.startTime ?? new Date()), 'HH:mm dd/MM/yyyy')
             );
         }
+        txt = txt.replace('{BookingCode}', this.objSMS?.bookingCode ?? '');
         txt = txt.replace('{ThoiGianHen}', this.objSMS?.thoiGianHen ?? '');
         txt = txt.replace('{MaHoaDon}', this.objSMS?.maHoaDon ?? '');
         if (!utils.checkNull(this.objSMS?.ngayLapHoaDon as unknown as string)) {
