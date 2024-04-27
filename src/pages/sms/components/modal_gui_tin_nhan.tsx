@@ -4,7 +4,8 @@ import {
     CreateOrEditSMSDto,
     CustomerSMSDto,
     ESMSDto,
-    NhatKyGuiTinSMSDto
+    NhatKyGuiTinSMSDto,
+    ParamSearchSMS
 } from '../../../services/sms/gui_tin_nhan/gui_tin_nhan_dto';
 import utils from '../../../utils/utils';
 import {
@@ -19,11 +20,8 @@ import {
     Typography
 } from '@mui/material';
 import DialogButtonClose from '../../../components/Dialog/ButtonClose';
-import { Form, Formik } from 'formik';
-import * as yup from 'yup';
 import SelectWithData from '../../../components/Select/SelectWithData';
-import AppConsts, { DateType, ISelect, LoaiTin, TrangThaiSMS } from '../../../lib/appconst';
-import AutocompleteMultipleCustomerFromDB from '../../../components/Autocomplete/MultipleCustomerFromDB';
+import AppConsts, { DateType, ISelect, LoaiTin, SMS_HinhThucGuiTin, TrangThaiSMS } from '../../../lib/appconst';
 import { IDataAutocomplete } from '../../../services/dto/IDataAutocomplete';
 import AutocompleteWithData from '../../../components/Autocomplete/AutocompleteWithData';
 import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
@@ -32,23 +30,33 @@ import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import HeThongSMSServices from '../../../services/sms/gui_tin_nhan/he_thong_sms_services';
 import { MauTinSMSDto } from '../../../services/sms/mau_tin_sms/mau_tin_dto';
 import LichSuNap_ChuyenTienService from '../../../services/sms/lich_su_nap_tien/LichSuNap_ChuyenTienService';
+import MauTinSMSService from '../../../services/sms/mau_tin_sms/MauTinSMSService';
+import { BrandnameDto, IParamSearchBrandname } from '../../../services/sms/brandname/BrandnameDto';
+import BrandnameService from '../../../services/sms/brandname/BrandnameService';
+import Cookies from 'js-cookie';
+import { IPropModal } from '../../../services/dto/IPropsComponent';
+import Zalo_MultipleAutoComplete_WithSDT, {
+    IPropsZalo_AutocompleteMultipleCustomer
+} from '../../../components/Autocomplete/Zalo_MultipleAutoComplete_WithSDT';
+import CaiDatNhacNhoService from '../../../services/sms/cai_dat_nhac_nho/CaiDatNhacNhoService';
 
-export default function ModalGuiTinNhan({
-    lstBrandname,
-    lstMauTinSMS,
-    isShow,
-    idTinNhan,
-    onClose,
-    onSaveOK,
-    lstRowSelect, // lstRowSelect,idLoaiTin:  nếu chọn từ danh sách (giaodịch, sinhnhat,..) và click gửi tin
-    idLoaiTin
-}: any) {
+export interface IPropModalSMS extends IPropModal<CreateOrEditSMSDto> {
+    idLoaiTin?: number;
+    arrIdCustomerChosed?: string[];
+    arrIdBookingChosed?: string[];
+    arrIdHoaDonChosed?: string[];
+}
+
+export default function ModalGuiTinNhan(props: IPropModalSMS) {
+    const { isShowModal, idLoaiTin, arrIdCustomerChosed, idUpdate, onClose, onOK } = props;
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
     const idChiNhanh = chinhanh.id;
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [newSMS, setNewSMS] = useState<CreateOrEditSMSDto>(new CreateOrEditSMSDto({}) as CreateOrEditSMSDto);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
-    const [lstCustomerChosed, setLstCustomerChosed] = useState<IDataAutocomplete[]>([]);
+    const [lstCustomerChosed, setLstCustomerChosed] = useState<CustomerSMSDto[]>([]);
+
     const [txtFromTo, setTextFromTo] = useState('');
     const [lblLoaiKhach, setLblLoaiKhach] = useState(`Khách sinh nhật`);
     const [fromDate, setFromDate] = useState(format(new Date(), 'yyyy-MM-dd'));
@@ -56,33 +64,25 @@ export default function ModalGuiTinNhan({
     const [dateType, setDateType] = useState<string>(DateType.HOM_NAY);
     const [dateTypeText, setDateTypeText] = useState<string>('Hôm nay');
     const [soduTaiKhoan, setSoDuTaiKhoan] = useState(0);
-    const [lstIdCustomer, setLstIdCustomer] = useState<any[]>([]);
+    const [lstAllMauTinSMS, setLstAllMauTinSMS] = useState<MauTinSMSDto[]>([]);
+    const [lstBrandname, setLstBrandname] = useState<BrandnameDto[]>([]);
 
     useEffect(() => {
-        if (isShow) {
-            if (utils.checkNull(idTinNhan)) {
+        if (isShowModal) {
+            if (utils.checkNull(idUpdate)) {
                 setNewSMS({ ...newSMS, id: '', idLoaiTin: idLoaiTin ?? 1, soTinGui: 0 });
             } else {
                 // get data from db
             }
-            GetBrandnameBalance_byUserLogin();
-            if (lstRowSelect != null && lstRowSelect !== undefined) {
-                const arrIdCustomer = lstRowSelect.map((x: CustomerSMSDto) => {
-                    return x.idKhachHang;
-                });
-                const arrUnique = Array.from(new Set(arrIdCustomer));
-                setLstIdCustomer(arrUnique);
-            } else {
-                setLstIdCustomer([]);
-            }
         }
-        console.log('modetinnhan');
-    }, [isShow]);
+        PageLoad();
+    }, [isShowModal]);
 
-    const rules = yup.object().shape({
-        noiDungTin: yup.string().required('Vui lòng nhập nội dung tin nhắn'),
-        lstCustomer: yup.array().min(1, 'Vui lòng chọn ít nhất một khách hàng').required('Vui lòng chọn khách hàng')
-    });
+    const PageLoad = async () => {
+        await GetAllMauTinSMS();
+        await GetListBrandname();
+        await GetBrandnameBalance_byUserLogin();
+    };
 
     const GetBrandnameBalance_byUserLogin = async () => {
         const data = await LichSuNap_ChuyenTienService.GetBrandnameBalance_byUserLogin();
@@ -91,8 +91,43 @@ export default function ModalGuiTinNhan({
         }
     };
 
-    const choseCustomer = (lstCustomer: IDataAutocomplete[]) => {
+    const GetListBrandname = async () => {
+        let tenantId = parseInt(Cookies.get('Abp.TenantId') ?? '1') ?? 1;
+        tenantId = isNaN(tenantId) ? 1 : tenantId;
+        const param = {
+            keyword: ''
+        } as IParamSearchBrandname;
+        const data = await BrandnameService.GetListBandname(param, tenantId);
+        if (data !== null) {
+            // HOST: đang get all brandname, nên nếu gửi SMS từ HOST thì filter
+            const arrByTenantId = data.items?.filter((x) => x.tenantId == tenantId);
+            setLstBrandname(arrByTenantId);
+        }
+    };
+
+    const GetAllMauTinSMS = async () => {
+        const data = await MauTinSMSService.GetAllMauTinSMS();
+        if (data !== null) {
+            setLstAllMauTinSMS(data);
+        }
+    };
+
+    const choseCustomer = (lstCustomer: CustomerSMSDto[]) => {
         setLstCustomerChosed(lstCustomer);
+    };
+
+    const propsDataCustomerZalo: IPropsZalo_AutocompleteMultipleCustomer = {
+        paramFilter: {
+            idLoaiTin: newSMS.idLoaiTin,
+            IdChiNhanhs: [idChiNhanh],
+            fromDate: fromDate,
+            toDate: toDate,
+            hinhThucGuiTins: [SMS_HinhThucGuiTin.SMS],
+            // nếu gửi tin từ mẫu tin của PM (không phải ZNS) ---> chỉ lấy khách có tài khoản zoaId (2)
+            loaiUser_CoTheGuiTin: 0
+        } as ParamSearchSMS,
+        arrIdChosed: arrIdCustomerChosed,
+        handleChoseItem: choseCustomer
     };
     const [anchorDateEl, setAnchorDateEl] = useState<HTMLDivElement | null>(null);
     const openDateFilter = Boolean(anchorDateEl);
@@ -237,29 +272,50 @@ export default function ModalGuiTinNhan({
         }
     };
 
-    const saveDraft = async (params: CreateOrEditSMSDto) => {
-        const noiDungTin = params.noiDungTin;
+    const checkSave = async (): Promise<boolean> => {
+        if (lstBrandname?.length === 0) {
+            setObjAlert({ ...objAlert, show: true, type: 2, mes: 'Chưa đăng ký brandname' });
+            return false;
+        }
+        if (utils.checkNull(newSMS.noiDungTin)) {
+            setObjAlert({ ...objAlert, show: true, type: 2, mes: 'Vui lòng nhập nội dung tin nhắn' });
+            return false;
+        }
+        if ((lstCustomerChosed?.length ?? 0) == 0) {
+            setObjAlert({ ...objAlert, show: true, type: 2, mes: 'Vui lòng chọn khách hàng' });
+            return false;
+        }
+        return true;
+    };
+
+    const saveDraft = async () => {
+        const noiDungTin = newSMS.noiDungTin;
         // lưu nháp: không bắt buộc chọn khách hàng
         if (lstCustomerChosed.length > 0) {
             for (let i = 0; i < lstCustomerChosed.length; i++) {
                 const itFor = lstCustomerChosed[i];
+                CaiDatNhacNhoService.objSMS = itFor;
                 const objSMS = new CreateOrEditSMSDto({
-                    idLoaiTin: params?.idLoaiTin,
+                    idLoaiTin: newSMS?.idLoaiTin,
                     idChiNhanh: idChiNhanh,
-                    idKhachHang: itFor.id,
-                    noiDungTin: noiDungTin,
+                    idKhachHang: itFor.idKhachHang,
+                    noiDungTin: CaiDatNhacNhoService.ReplaceBienSMS(noiDungTin),
                     soTinGui: 0,
-                    soDienThoai: itFor.text2
+                    soDienThoai: itFor.soDienThoai
                 });
                 objSMS.trangThai = TrangThaiSMS.DRAFT;
                 objSMS.giaTienMoiTinNhan = 950;
+                objSMS.idHoaDon = itFor?.idHoaDon;
+                objSMS.idBooking = itFor?.idBooking;
+                objSMS.idBooking = itFor?.idBooking;
                 const htSMS = await HeThongSMSServices.Insert_HeThongSMS(objSMS);
-                await saveNhatKyGuiTin(htSMS.id, htSMS.idKhachHang, htSMS?.idLoaiTin);
+                objSMS.id = htSMS?.id;
+                await saveNhatKyGuiTin(objSMS);
             }
         } else {
             // only save hethong sms
             const objSMS = new CreateOrEditSMSDto({
-                idLoaiTin: params?.idLoaiTin,
+                idLoaiTin: newSMS?.idLoaiTin,
                 idChiNhanh: idChiNhanh,
                 noiDungTin: noiDungTin,
                 soTinGui: 0,
@@ -269,84 +325,48 @@ export default function ModalGuiTinNhan({
             await HeThongSMSServices.Insert_HeThongSMS(objSMS);
         }
         setObjAlert({ ...objAlert, show: true, type: 1, mes: 'Lưu nháp thành công' });
-        onSaveOK(1);
+        onOK(1);
     };
 
-    const saveNhatKyGuiTin = async (idHeThongSMS: string, idKhachHang: string, idLoaiTin: number) => {
-        let idHoaDon = null,
-            idBooking = null;
-        let from = '',
-            to = '';
-
-        const nkyGuiTin = new NhatKyGuiTinSMSDto({
-            idHeThongSMS: idHeThongSMS,
-            idKhachHang: idKhachHang,
-            idChiNhanh: idChiNhanh,
-            idLoaiTin: idLoaiTin,
-            thoiGianTu: fromDate,
-            thoiGianDen: toDate
-        });
-
-        if (lstRowSelect != null && lstRowSelect !== undefined) {
-            // find customer has chosed
-            const rowChosed = lstRowSelect.filter((x: CustomerSMSDto) => x.idKhachHang === idKhachHang);
-            if (rowChosed.length > 0) {
-                switch (idLoaiTin) {
-                    case 2: // sinhnhat
-                        break;
-                    case 3: // lichhhen
-                        {
-                            idBooking = rowChosed[0].id;
-                            from = format(new Date(rowChosed[0].bookingDate), 'yyyy-MM-dd');
-                            to = format(new Date(rowChosed[0].bookingDate), 'yyyy-MM-dd');
-                        }
-                        break;
-                    case 4: // giaodich
-                        {
-                            idHoaDon = rowChosed[0].id;
-                            from = format(new Date(rowChosed[0].ngayLapHoaDon), 'yyyy-MM-dd');
-                            to = format(new Date(rowChosed[0].ngayLapHoaDon), 'yyyy-MM-dd');
-                        }
-                        break;
-                }
-            }
-            nkyGuiTin.idHoaDon = idHoaDon;
-            nkyGuiTin.idBooking = idBooking;
-            nkyGuiTin.thoiGianTu = from;
-            nkyGuiTin.thoiGianDen = to;
-            await HeThongSMSServices.ThemMoi_NhatKyGuiTinSMS(nkyGuiTin);
-        } else {
-            await HeThongSMSServices.ThemMoi_NhatKyGuiTin_TrongKhoangThoiGian(nkyGuiTin);
+    const saveSMS = async () => {
+        const check = await checkSave();
+        if (!check) {
+            return;
         }
-    };
+        if (isSubmitting) {
+            return;
+        }
+        setIsSubmitting(true);
 
-    const saveSMS = async (params: CreateOrEditSMSDto) => {
         if (lstBrandname.length > 0) {
-            const tenBranname = lstBrandname[0].text;
-            const noiDungTin = params.noiDungTin;
+            const tenBranname = lstBrandname[0].brandname;
+            const noiDungTin = newSMS.noiDungTin;
             // only get customer has phone
-            const lstCusHasPhone = lstCustomerChosed?.filter((x: IDataAutocomplete) => !utils.checkNull(x.text2));
+            const lstCusHasPhone = lstCustomerChosed?.filter((x: CustomerSMSDto) => !utils.checkNull(x.soDienThoai));
             for (let i = 0; i < lstCusHasPhone.length; i++) {
                 const itFor = lstCusHasPhone[i];
+                CaiDatNhacNhoService.objSMS = itFor;
                 const objEsms = new ESMSDto({
-                    sdtKhachhang: itFor.text2,
+                    sdtKhachhang: itFor.soDienThoai,
                     tenBranname: tenBranname,
-                    noiDungTin: params.noiDungTin
+                    noiDungTin: CaiDatNhacNhoService.ReplaceBienSMS(noiDungTin)
                 });
                 const sendSMS = await HeThongSMSServices.SendSMS_Json(objEsms);
 
                 const objSMS = new CreateOrEditSMSDto({
-                    idLoaiTin: params?.idLoaiTin,
+                    idLoaiTin: newSMS?.idLoaiTin,
                     idChiNhanh: idChiNhanh,
-                    idKhachHang: itFor.id,
-                    noiDungTin: noiDungTin,
+                    idKhachHang: itFor.idKhachHang,
+                    noiDungTin: objEsms.content ?? '',
                     soTinGui: Math.ceil(noiDungTin?.length / 160),
-                    soDienThoai: itFor.text2
+                    soDienThoai: itFor.soDienThoai
                 });
                 objSMS.giaTienMoiTinNhan = 950;
                 objSMS.idTinNhan = sendSMS.messageId;
                 objSMS.trangThai = sendSMS.messageStatus;
-                objSMS.tenKhachHang = itFor.text1;
+                objSMS.tenKhachHang = itFor.tenKhachHang ?? '';
+                objSMS.idHoaDon = itFor?.idHoaDon;
+                objSMS.idBooking = itFor?.idBooking;
 
                 const loaiTin = AppConsts.smsLoaiTin.filter((x: ISelect) => x.value == objSMS?.idLoaiTin);
                 objSMS.loaiTinNhan = loaiTin.length > 0 ? loaiTin[0].text : '';
@@ -357,7 +377,8 @@ export default function ModalGuiTinNhan({
                 objSMS.sTrangThaiGuiTinNhan = trangThaiTin.length > 0 ? trangThaiTin[0].text : '';
 
                 const htSMS = await HeThongSMSServices.Insert_HeThongSMS(objSMS);
-                await saveNhatKyGuiTin(htSMS.id, htSMS.idKhachHang, htSMS?.idLoaiTin);
+                objSMS.id = htSMS?.id;
+                await saveNhatKyGuiTin(objSMS);
 
                 switch (sendSMS.messageStatus) {
                     case TrangThaiSMS.SUCCESS:
@@ -376,8 +397,47 @@ export default function ModalGuiTinNhan({
                         }
                         break;
                 }
-                onSaveOK(1);
+                onOK(1);
             }
+        }
+    };
+    const saveNhatKyGuiTin = async (objSMS: CreateOrEditSMSDto) => {
+        const nkyGuiTin = new NhatKyGuiTinSMSDto({
+            idHeThongSMS: objSMS?.id,
+            idKhachHang: objSMS?.idKhachHang,
+            idChiNhanh: idChiNhanh,
+            idLoaiTin: objSMS?.idLoaiTin,
+            thoiGianTu: fromDate,
+            thoiGianDen: toDate
+        });
+
+        if (arrIdCustomerChosed?.length ?? 0 > 0) {
+            switch (idLoaiTin ?? LoaiTin.TIN_THUONG) {
+                case LoaiTin.TIN_GIAO_DICH:
+                    {
+                        // get list hoadon by arrId
+                        // nkyGuiTin.idHoaDon = idHoaDon;
+                        // nkyGuiTin.idBooking = idBooking;
+                        // nkyGuiTin.thoiGianTu = from;
+                        // nkyGuiTin.thoiGianDen = to;
+                        // await HeThongSMSServices.ThemMoi_NhatKyGuiTinSMS(nkyGuiTin);
+                    }
+                    break;
+                case LoaiTin.TIN_LICH_HEN:
+                    {
+                        // get list hoadon by arrId
+                        // nkyGuiTin.idHoaDon = idHoaDon;
+                        // nkyGuiTin.idBooking = idBooking;
+                        // nkyGuiTin.thoiGianTu = from;
+                        // nkyGuiTin.thoiGianDen = to;
+                        // await HeThongSMSServices.ThemMoi_NhatKyGuiTinSMS(nkyGuiTin);
+                    }
+                    break;
+            }
+        } else {
+            nkyGuiTin.idHoaDon = objSMS?.idHoaDon ?? null;
+            nkyGuiTin.idBooking = objSMS?.idBooking ?? null;
+            await HeThongSMSServices.ThemMoi_NhatKyGuiTinSMS(nkyGuiTin);
         }
     };
     return (
@@ -387,177 +447,151 @@ export default function ModalGuiTinNhan({
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
-            <Dialog open={isShow} onClose={onClose} aria-labelledby="draggable-dialog-title" maxWidth="sm">
+            <Dialog open={isShowModal} onClose={onClose} aria-labelledby="draggable-dialog-title" maxWidth="sm">
                 <DialogTitle className="modal-title" id="draggable-dialog-title">
-                    {utils.checkNull(idTinNhan) ? 'Thêm mới' : 'Cập nhật'} SMS
+                    {utils.checkNull(idUpdate) ? 'Thêm mới' : 'Cập nhật'} SMS
                 </DialogTitle>
                 <DialogButtonClose onClose={onClose} />
-                <Formik initialValues={newSMS} validationSchema={rules} onSubmit={saveSMS} enableReinitialize>
-                    {({ isSubmitting, values, errors, touched, setFieldValue }: any) => (
-                        <Form>
-                            <DialogContent sx={{ overflow: 'unset' }}>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12}>
-                                        <SelectWithData
-                                            label="Brandname"
-                                            data={lstBrandname}
-                                            idChosed={lstBrandname.length > 0 ? lstBrandname[0].value : ''}
-                                            handleChange={(item: ISelect) => setFieldValue('idBrandname', item?.value)}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <SelectWithData
-                                            label="Loại tin"
-                                            data={AppConsts.smsLoaiTin}
-                                            idChosed={values.idLoaiTin}
-                                            handleChange={(item: ISelect) => {
-                                                setFieldValue('idLoaiTin', item.value);
-                                                setNewSMS({ ...newSMS, idLoaiTin: item.value as number });
-                                                // set default mautin macdinh?? why not set?
-                                                const maumacdinh = lstMauTinSMS?.filter(
-                                                    (x: MauTinSMSDto) => x.idLoaiTin === item.value && x.laMacDinh
-                                                );
-                                                if (maumacdinh.length > 0) {
-                                                    setFieldValue('idMauTin', maumacdinh[0].id);
-                                                    setFieldValue('noiDungTin', maumacdinh[0].noiDungTinMau);
-                                                }
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={12} md={12} lg={12}>
-                                        {values?.idLoaiTin == 1 ? (
-                                            <Stack direction={'row'}>
-                                                <AutocompleteMultipleCustomerFromDB
-                                                    type={values?.idLoaiTin}
-                                                    label="Gửi đến"
-                                                    paramFilter={{ idLoaiTin: values?.idLoaiTin }}
-                                                    arrIdChosed={lstIdCustomer}
-                                                    handleChoseItem={(lst: IDataAutocomplete[]) => {
-                                                        choseCustomer(lst);
-                                                        setFieldValue('lstCustomer', lst);
-                                                    }}
-                                                    error={touched.lstCustomer && Boolean(errors.lstCustomer)}
-                                                    helperText={touched.lstCustomer && errors.lstCustomer}
-                                                />
-                                                {/* <MenuIcon className="btnIcon" /> */}
-                                            </Stack>
-                                        ) : (
-                                            <Stack spacing={2}>
-                                                <TextField
-                                                    size="small"
-                                                    label={lblLoaiKhach}
-                                                    value={txtFromTo}
-                                                    onClick={(event) => setAnchorDateEl(event.currentTarget)}
-                                                />
-                                                <DateFilterCustom
-                                                    id="popover-date-filter"
-                                                    isFuture={isDateFuture}
-                                                    dateTypeDefault={DateType.HOM_NAY}
-                                                    open={openDateFilter}
-                                                    anchorEl={anchorDateEl}
-                                                    onClose={() => setAnchorDateEl(null)}
-                                                    onApplyDate={onApplyFilterDate}
-                                                />
+                <DialogContent sx={{ overflow: 'unset' }}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <SelectWithData
+                                label="Brandname"
+                                data={lstBrandname?.map((x) => {
+                                    return {
+                                        value: x.id as string,
+                                        text: x.brandname
+                                    } as ISelect;
+                                })}
+                                idChosed={lstBrandname.length > 0 ? lstBrandname[0].id : ''}
+                                handleChange={(item: ISelect) =>
+                                    setNewSMS({ ...newSMS, idBrandname: item?.value as string })
+                                }
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <SelectWithData
+                                label="Loại tin"
+                                data={AppConsts.smsLoaiTin}
+                                idChosed={newSMS.idLoaiTin}
+                                handleChange={(item: ISelect) => {
+                                    // set default mautin macdinh
+                                    const maumacdinh = lstAllMauTinSMS?.filter(
+                                        (x: MauTinSMSDto) => x.idLoaiTin === item.value && x.laMacDinh
+                                    );
+                                    if (maumacdinh.length > 0) {
+                                        setNewSMS({
+                                            ...newSMS,
+                                            idLoaiTin: item.value as number,
+                                            idMauTin: maumacdinh[0].id,
+                                            noiDungTin: maumacdinh[0].noiDungTinMau ?? ''
+                                        });
+                                    } else {
+                                        setNewSMS({ ...newSMS, idLoaiTin: item.value as number, idMauTin: null });
+                                    }
+                                }}
+                            />
+                        </Grid>
 
-                                                <AutocompleteMultipleCustomerFromDB
-                                                    type={values?.idLoaiTin}
-                                                    label="Gửi đến"
-                                                    arrIdChosed={lstIdCustomer}
-                                                    paramFilter={{
-                                                        idLoaiTin: values?.idLoaiTin,
-                                                        IdChiNhanhs: [idChiNhanh],
-                                                        fromDate: fromDate,
-                                                        toDate: toDate
-                                                    }}
-                                                    handleChoseItem={(lst: IDataAutocomplete[]) => {
-                                                        choseCustomer(lst);
-                                                        setFieldValue('lstCustomer', lst);
-                                                    }}
-                                                    error={touched.lstCustomer && Boolean(errors?.lstCustomer)}
-                                                    helperText={touched.lstCustomer && errors.lstCustomer}
-                                                />
-                                            </Stack>
-                                        )}
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <AutocompleteWithData
-                                            label="Mẫu tin"
-                                            idChosed={values?.idMauTin}
-                                            lstData={lstMauTinSMS
-                                                ?.filter((x: MauTinSMSDto) => x.idLoaiTin === values?.idLoaiTin)
-                                                .map((x: MauTinSMSDto) => {
-                                                    return { id: x.id, text1: x.tenMauTin, text2: x.noiDungTinMau };
-                                                })}
-                                            handleChoseItem={(item: IDataAutocomplete) => {
-                                                setFieldValue('idMauTin', item?.id);
-                                                setFieldValue('noiDungTin', item?.text2);
-                                            }}
-                                        />
-                                    </Grid>
+                        {newSMS?.idLoaiTin !== LoaiTin.TIN_THUONG && (
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                                <Stack spacing={2}>
+                                    <TextField
+                                        size="small"
+                                        label={lblLoaiKhach}
+                                        value={txtFromTo}
+                                        onClick={(event) => setAnchorDateEl(event.currentTarget)}
+                                    />
+                                    <DateFilterCustom
+                                        id="popover-date-filter"
+                                        isFuture={isDateFuture}
+                                        dateTypeDefault={DateType.HOM_NAY}
+                                        open={openDateFilter}
+                                        anchorEl={anchorDateEl}
+                                        onClose={() => setAnchorDateEl(null)}
+                                        onApplyDate={onApplyFilterDate}
+                                    />
+                                </Stack>
+                            </Grid>
+                        )}
+                        <Grid item xs={12}>
+                            <Zalo_MultipleAutoComplete_WithSDT {...propsDataCustomerZalo} />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <AutocompleteWithData
+                                label="Mẫu tin"
+                                idChosed={newSMS?.idMauTin ?? ''}
+                                lstData={lstAllMauTinSMS
+                                    ?.filter((x: MauTinSMSDto) => x.idLoaiTin === newSMS?.idLoaiTin)
+                                    .map((x: MauTinSMSDto) => {
+                                        return { id: x.id, text1: x.tenMauTin, text2: x.noiDungTinMau };
+                                    })}
+                                handleChoseItem={(item: IDataAutocomplete) => {
+                                    setNewSMS({
+                                        ...newSMS,
+                                        idMauTin: item?.id as string,
+                                        noiDungTin: item?.text2 ?? ''
+                                    });
+                                }}
+                            />
+                        </Grid>
 
-                                    <Grid item xs={12} sm={12} md={12} lg={12}>
-                                        <Stack spacing={1}>
-                                            <TextField
-                                                variant="outlined"
-                                                size="small"
-                                                name="noiDungTin"
-                                                fullWidth
-                                                multiline
-                                                rows={3}
-                                                label={`Nội dung tin`}
-                                                onChange={(e) => {
-                                                    setFieldValue('noiDungTin', e.target.value);
-                                                    setFieldValue(
-                                                        'soTinGui',
-                                                        Math.ceil(values?.noiDungTin?.length / 160)
-                                                    );
-                                                }}
-                                                value={values?.noiDungTin}
-                                                helperText={
-                                                    touched.noiDungTin &&
-                                                    errors.noiDungTin && <span>{errors.noiDungTin}</span>
-                                                }
-                                            />
-                                            <Stack justifyContent={'space-between'} direction={'row'}>
-                                                <Typography
-                                                    variant="caption"
-                                                    color={
-                                                        '#9b9090'
-                                                    }>{`${values?.noiDungTin?.length}/160 (${values?.soTinGui} tin nhắn)`}</Typography>
-                                                <Typography fontSize={'14px'}>
-                                                    {new Intl.NumberFormat('vi-VN').format(soduTaiKhoan)}
-                                                </Typography>
-                                            </Stack>
-                                        </Stack>
-                                    </Grid>
-                                </Grid>
-                            </DialogContent>
-                            <DialogActions style={{ paddingBottom: '20px' }}>
-                                <Button
+                        <Grid item xs={12} sm={12} md={12} lg={12}>
+                            <Stack spacing={1}>
+                                <TextField
                                     variant="outlined"
-                                    sx={{
-                                        color: 'var(--color-main)'
+                                    size="small"
+                                    name="noiDungTin"
+                                    fullWidth
+                                    multiline
+                                    rows={3}
+                                    label={`Nội dung tin`}
+                                    onChange={(e) => {
+                                        setNewSMS({
+                                            ...newSMS,
+                                            soTinGui: Math.ceil(e.target.value?.length / 160),
+                                            noiDungTin: e.target.value
+                                        });
                                     }}
-                                    onClick={onClose}
-                                    className="btn-outline-hover">
-                                    Hủy
-                                </Button>
-                                {isSubmitting ? (
-                                    <Button variant="contained">Đang lưu</Button>
-                                ) : (
-                                    <>
-                                        <Button variant="contained" onClick={() => saveDraft(values)}>
-                                            Lưu nháp
-                                        </Button>
-                                        <Button variant="contained" type="submit">
-                                            Lưu
-                                        </Button>
-                                    </>
-                                )}
-                            </DialogActions>
-                        </Form>
+                                    value={newSMS?.noiDungTin}
+                                />
+                                <Stack justifyContent={'space-between'} direction={'row'}>
+                                    <Typography
+                                        variant="caption"
+                                        color={
+                                            '#9b9090'
+                                        }>{`${newSMS?.noiDungTin?.length}/160 (${newSMS?.soTinGui} tin nhắn)`}</Typography>
+                                    <Typography fontSize={'14px'}>
+                                        {new Intl.NumberFormat('vi-VN').format(soduTaiKhoan)}
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+                <DialogActions style={{ paddingBottom: '20px' }}>
+                    <Button
+                        variant="outlined"
+                        sx={{
+                            color: 'var(--color-main)'
+                        }}
+                        onClick={onClose}
+                        className="btn-outline-hover">
+                        Hủy
+                    </Button>
+                    {isSubmitting ? (
+                        <Button variant="contained">Đang lưu</Button>
+                    ) : (
+                        <>
+                            <Button variant="contained" onClick={saveDraft}>
+                                Lưu nháp
+                            </Button>
+                            <Button variant="contained" type="submit" onClick={saveSMS}>
+                                Lưu
+                            </Button>
+                        </>
                     )}
-                </Formik>
+                </DialogActions>
             </Dialog>
         </>
     );
