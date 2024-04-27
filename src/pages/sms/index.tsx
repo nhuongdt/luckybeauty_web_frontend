@@ -234,6 +234,15 @@ const TinNhanPage = () => {
         GetZaloTokenfromDB();
     }, []);
 
+    const ConstTabActive = {
+        TIN_DA_GUI: 0,
+        TIN_NHAP: 1,
+        TIN_THAT_BAI: 2,
+        GIAO_DICH: 3,
+        LICH_HEN: 4,
+        SINH_NHAT: 5
+    };
+
     const GetZaloTokenfromDB = async () => {
         // todo: sau này phải có hàm chạy tự động: check  hết hạn accestoken
         const objAuthen = await ZaloService.Innit_orGetToken();
@@ -321,22 +330,22 @@ const TinNhanPage = () => {
 
     const LoadData_byTabActive = async () => {
         switch (tabActive) {
-            case 0:
-            case 1:
-            case 2:
+            case ConstTabActive.TIN_DA_GUI:
+            case ConstTabActive.TIN_NHAP:
+            case ConstTabActive.TIN_THAT_BAI:
                 GetListSMS();
                 break;
-            case 3:
+            case ConstTabActive.GIAO_DICH:
                 {
                     await GetListCustomer_byLoaiTin(LoaiTin.TIN_GIAO_DICH);
                 }
                 break;
-            case 4:
+            case ConstTabActive.LICH_HEN:
                 {
                     await GetListCustomer_byLoaiTin(LoaiTin.TIN_LICH_HEN);
                 }
                 break;
-            case 5:
+            case ConstTabActive.SINH_NHAT:
                 {
                     await GetListCustomer_byLoaiTin(LoaiTin.TIN_SINH_NHAT);
                 }
@@ -456,13 +465,13 @@ const TinNhanPage = () => {
 
     const onClickGuiLai = async () => {
         switch (tabActive) {
-            case 0: // tin nhan da gui
+            case ConstTabActive.TIN_DA_GUI: // tin nhan da gui
                 {
                     // xuat excel
                 }
                 break;
-            case 1: // tin nhap
-            case 2: // gui that bai
+            case ConstTabActive.TIN_NHAP: // tin nhap
+            case ConstTabActive.TIN_THAT_BAI: // gui that bai
                 {
                     if (lstBrandname.length > 0) {
                         const data = await HeThongSMServices.GuiLai_TinNhan_ThatBai(
@@ -493,14 +502,14 @@ const TinNhanPage = () => {
         setIsShowModalAdd(true);
 
         switch (tabActive) {
-            case 3:
-                setIdLoaiTin(4);
+            case ConstTabActive.GIAO_DICH:
+                setIdLoaiTin(LoaiTin.TIN_GIAO_DICH);
                 break;
-            case 4:
-                setIdLoaiTin(3);
+            case ConstTabActive.LICH_HEN:
+                setIdLoaiTin(LoaiTin.TIN_KHUYEN_MAI);
                 break;
-            case 5:
-                setIdLoaiTin(2);
+            case ConstTabActive.SINH_NHAT:
+                setIdLoaiTin(LoaiTin.TIN_SINH_NHAT);
                 break;
         }
     };
@@ -589,15 +598,15 @@ const TinNhanPage = () => {
     const GetListColumn_DataGrid = () => {
         let arr: GridColDef[] = [];
         switch (tabActive) {
-            case 0:
-            case 1:
-            case 2:
+            case ConstTabActive.TIN_DA_GUI:
+            case ConstTabActive.TIN_NHAP:
+            case ConstTabActive.TIN_THAT_BAI:
                 {
                     arr = columns;
                 }
                 break;
 
-            case 3:
+            case ConstTabActive.GIAO_DICH:
                 arr = [
                     {
                         field: 'tenKhachHang',
@@ -657,7 +666,7 @@ const TinNhanPage = () => {
                     }
                 ];
                 break;
-            case 4:
+            case ConstTabActive.LICH_HEN:
                 arr = [
                     {
                         field: 'tenKhachHang',
@@ -729,7 +738,7 @@ const TinNhanPage = () => {
                     }
                 ];
                 break;
-            case 5:
+            case ConstTabActive.SINH_NHAT:
                 arr = [
                     {
                         field: 'tenKhachHang',
@@ -775,15 +784,13 @@ const TinNhanPage = () => {
     return (
         <>
             <ModalGuiTinNhan
-                lstBrandname={lstBrandname.map((x: BrandnameDto) => {
-                    return { value: x.id, text: x.brandname };
-                })}
-                lstMauTinSMS={lstAllMauTinSMS}
-                isShow={isShowModalAdd}
-                idTinNhan={''}
+                isShowModal={isShowModalAdd}
+                idUpdate={''}
                 onClose={() => setIsShowModalAdd(false)}
-                onSaveOK={saveSMSOK}
-                lstRowSelect={lstRowSelect}
+                onOK={saveSMSOK}
+                arrIdCustomerChosed={lstRowSelect?.map((x) => {
+                    return x?.idKhachHang ?? '';
+                })}
                 idLoaiTin={idLoaiTin}
             />
             <ModalGuiTinNhanZalo
@@ -889,18 +896,6 @@ const TinNhanPage = () => {
                                 onClick={() => setIsShowModalGuiTinZalo(true)}>
                                 Gửi tin Zalo
                             </Button>
-                            {/* <Button
-                                size="small"
-                                variant="contained"
-                                sx={{
-                                    minWidth: '143px',
-                                    fontSize: '14px',
-                                    display: abpCustom.isGrandPermission('Pages.SMS_Template.Create') ? '' : 'none'
-                                }}
-                                startIcon={<Add />}
-                                onClick={() => setIsShowModalAddMauTin(true)}>
-                                Thêm mẫu tin
-                            </Button> */}
                         </Grid>
                     </Grid>
                 </Grid>
@@ -930,17 +925,17 @@ const TinNhanPage = () => {
                                             listItem={
                                                 [
                                                     {
-                                                        index: 0,
+                                                        index: ConstTabActive.TIN_DA_GUI,
                                                         text: 'Đã gửi',
                                                         icon: <SendIcon />
                                                     },
                                                     {
-                                                        index: 1,
+                                                        index: ConstTabActive.TIN_NHAP,
                                                         text: 'Nháp',
                                                         icon: <ArticleOutlinedIcon />
                                                     },
                                                     {
-                                                        index: 2,
+                                                        index: ConstTabActive.TIN_THAT_BAI,
                                                         text: 'Thất bại',
                                                         icon: <DeleteSweepOutlinedIcon />
                                                     }
@@ -988,7 +983,11 @@ const TinNhanPage = () => {
                         </Grid>
                         <Grid item xs={8} sm={8} md={9.5}>
                             <Box bgcolor={'#FFF'} height={'100%'} borderRadius={'8px'}>
-                                {[0, 1, 2].includes(tabActive) ? (
+                                {[
+                                    ConstTabActive.TIN_DA_GUI,
+                                    ConstTabActive.TIN_NHAP,
+                                    ConstTabActive.TIN_THAT_BAI
+                                ].includes(tabActive) ? (
                                     <>
                                         {rowSelectionModel.length > 0 && (
                                             <Button
@@ -996,11 +995,11 @@ const TinNhanPage = () => {
                                                 onClick={onClickGuiLai}
                                                 sx={{
                                                     display:
-                                                        tabActive == 1
+                                                        tabActive == ConstTabActive.TIN_NHAP
                                                             ? abpCustom.isGrandPermission('Pages.HeThongSMS.Create')
                                                                 ? ''
                                                                 : 'none'
-                                                            : tabActive == 2
+                                                            : tabActive == ConstTabActive.TIN_THAT_BAI
                                                             ? abpCustom.isGrandPermission('Pages.HeThongSMS.Resend')
                                                                 ? ''
                                                                 : 'none'
@@ -1015,7 +1014,11 @@ const TinNhanPage = () => {
                                                         <UploadIcon />
                                                     )
                                                 }>
-                                                {tabActive == 1 ? 'Gửi tin' : tabActive == 2 ? 'Gửi lại' : 'Xuất excel'}
+                                                {tabActive == ConstTabActive.TIN_NHAP
+                                                    ? 'Gửi tin'
+                                                    : tabActive == ConstTabActive.TIN_THAT_BAI
+                                                    ? 'Gửi lại'
+                                                    : 'Xuất excel'}
                                             </Button>
                                         )}
                                         <DataGrid
@@ -1032,6 +1035,7 @@ const TinNhanPage = () => {
                                             onRowClick={(item) => choseRow(item)}
                                             localeText={TextTranslate}
                                             onRowSelectionModelChange={(newRowSelectionModel) => {
+                                                console.log('newRowSelectionModel ', newRowSelectionModel);
                                                 setRowSelectionModel(newRowSelectionModel);
                                             }}
                                             rowSelectionModel={rowSelectionModel}
