@@ -193,14 +193,18 @@ const AppConsts = {
         { value: TimeType.MONTH, text: 'Tháng' }
     ] as ISelect[],
     DanhSachBienSMS: [
+        { value: '{XungHo}', text: 'Xưng hô' },
         { value: '{TenKhachHang}', text: 'Tên khách hàng' },
+        { value: '{BookingCode}', text: 'Mã booking' },
         { value: '{BookingDate}', text: 'Ngày hẹn' },
-        { value: '{ThoiGianHen}', text: 'Thời gian hẹn' },
         { value: '{MaHoaDon}', text: 'Mã giao dịch' },
         { value: '{NgayLapHoaDon}', text: 'Ngày giao dịch' },
         { value: '{TenHangHoa}', text: 'Dịch vụ hẹn' },
         { value: '{TenCuaHang}', text: 'Tên cửa hàng' },
-        { value: '{SDTCuaHang}', text: 'Số điện thoại của hàng' }
+        { value: '{SDTCuaHang}', text: 'Số điện thoại của hàng' },
+        { value: '{TongTienHang}', text: 'Tổng tiền hàng' },
+        { value: '{DaThanhToan}', text: 'Tiền khách đưa' },
+        { value: '{PTThanhToan}', text: 'Phương thức thanh toán' }
     ] as ISelect[],
 
     smsLoaiTin: [
