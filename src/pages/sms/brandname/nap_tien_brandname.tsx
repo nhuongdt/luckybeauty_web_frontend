@@ -318,9 +318,13 @@ const NapTienBrandname = ({ visiable = false, idQuyHD = null, onClose, onOk }: a
                                             label="Hình thức"
                                             data={AppConsts.hinhThucThanhToan}
                                             idChosed={quyHoaDon?.hinhThucThanhToan}
-                                            handleChange={(item: ISelect) =>
-                                                setFieldValue('hinhThucThanhToan', item.value)
-                                            }
+                                            handleChange={(item: ISelect) => {
+                                                setFieldValue('hinhThucThanhToan', item.value as number);
+                                                setQuyHoaDon({
+                                                    ...quyHoaDon,
+                                                    hinhThucThanhToan: item.value as number
+                                                });
+                                            }}
                                         />
                                     </Grid>
                                     <Grid item xs={6} sm={6}>

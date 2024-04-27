@@ -13,7 +13,7 @@ export class BrandnameDto {
     conLai = 0;
 
     txtTrangThai = '';
-    tenantName = '';
+    tenancyName = '';
     displayTenantName = '';
 }
 

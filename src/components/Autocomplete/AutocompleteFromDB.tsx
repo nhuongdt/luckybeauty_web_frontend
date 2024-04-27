@@ -57,7 +57,7 @@ export default function AutocompleteFromDB({
                                 ...itemChosed,
                                 id: data.id,
                                 text1: data.brandname,
-                                text2: data.sdtCuaHang
+                                text2: data.tenancyName
                             });
                         }
                     }
@@ -97,7 +97,7 @@ export default function AutocompleteFromDB({
                                 return {
                                     id: xx.id,
                                     text1: xx.brandname,
-                                    text2: xx.sdtCuaHang
+                                    text2: xx.tenancyName
                                 };
                             });
                             setLstOption(dataMap);

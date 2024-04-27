@@ -158,6 +158,10 @@ export default function PageNhatKyChuyenTien({ isShowModalAdd, txtSearch, onClos
         if (data) {
             setObjAlert({ ...objAlert, show: true, mes: 'Xóa thành công', type: 1 });
         }
+        setObjConfirmDelete({
+            ...objConfirmDelete,
+            show: false
+        });
         const lstSearchNew = lstSearch.filter((x) => x.id !== idNhatKyNapTien);
         setAllNhatKy(allNhatKy.filter((x) => x.id !== idNhatKyNapTien));
         setLstSearch([...lstSearchNew]);
