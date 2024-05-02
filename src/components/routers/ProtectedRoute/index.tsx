@@ -23,7 +23,7 @@ const ProtectedRoute = ({ path, component: Component, permission }: any) => {
             key={path}
             path={path}
             element={
-                !Cookies.get('userId') ? (
+                !Cookies.get('authenticated') ? (
                     <Navigate to="/user/login" />
                 ) : permission && !isGranted(permission) ? (
                     <Navigate to="/exception?type=401" />

@@ -68,6 +68,9 @@ class LoginService {
         Cookies.set('refreshToken', apiResult.data.result['refreshToken'], {
             expires: tokenExpireDate
         });
+        Cookies.set('authenticated', apiResult.data.success, {
+            expires: tokenExpireDate
+        });
         const sessionResult = await sessionStore.getCurrentLoginInformations();
         Cookies.set('userId', sessionResult.user.id.toString(), {
             expires: tokenExpireDate
