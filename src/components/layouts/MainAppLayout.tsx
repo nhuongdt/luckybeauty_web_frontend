@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import AppSiderMenu from '../SiderMenu/index';
 import Cookies from 'js-cookie';
 import LoginAlertDialog from '../AlertDialog/LoginAlert';
 import { Container } from '@mui/system';
 import Box from '@mui/material/Box';
-import { AppContext, ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
 import http from '../../services/httpService';
 import sessionStore from '../../stores/sessionStore';
@@ -14,7 +14,6 @@ import Header from '../Header';
 import { CuaHangDto } from '../../services/cua_hang/Dto/CuaHangDto';
 import cuaHangService from '../../services/cua_hang/cuaHangService';
 import { PagedRequestDto } from '../../services/dto/pagedRequestDto';
-import TawkMessenger from '../../lib/tawk_chat';
 
 const isAuthenticated = (): boolean => {
     const accessToken = Cookies.get('accessToken');

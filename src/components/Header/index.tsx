@@ -23,10 +23,10 @@ import {
     List,
     ListItemButton,
     ListItemIcon,
-    ListItemText
+    ListItemText,
+    Tooltip
 } from '@mui/material';
 import './header.css';
-import { ReactComponent as LogoNew } from '../../images/Logo_Lucky_Beauty.svg';
 import LuckybeautyLogo from '../../images/luckybeautylogo.png';
 // import { ReactComponent as ToggleIcon } from '../../images/btntoggle.svg';
 //import { ReactComponent as SuportIcon } from '../../images/messageChat.svg';
@@ -43,6 +43,7 @@ import { ReactComponent as LogoutIcon } from '../../images/logoutInner.svg';
 import { ReactComponent as BackIcon } from '../../images/back_linear_icon.svg';
 import { ReactComponent as RestartIcon } from '../../images/restart_alt.svg';
 import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
+import { ReactComponent as ChatIcon } from '../../images/icons/chat_message.svg';
 import useWindowWidth from '../StateWidth';
 import notificationStore from '../../stores/notificationStore';
 import { observer } from 'mobx-react';
@@ -52,7 +53,7 @@ import NotificationService from '../../services/notification/NotificationService
 import utils from '../../utils/utils';
 import suggestStore from '../../stores/suggestStore';
 import impersonationService, { Impersonation } from '../../services/impersonation/impersonationService';
-import { Guid } from 'guid-typescript';
+import TawkMessenger from '../../lib/tawk_chat';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -66,6 +67,7 @@ const Header: React.FC<HeaderProps> = (
     { collapsed, toggle, isChildHovered, handleChangeChiNhanh },
     props: HeaderProps
 ) => {
+    const tawkChatRef = React.useRef<any>();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [ThongBaoAnchorEl, setThongBaoAnchorEl] = React.useState<null | HTMLElement>(null);
     const [settingThongBao, setSettingThongBao] = React.useState<null | HTMLElement>(null);
@@ -282,6 +284,15 @@ const Header: React.FC<HeaderProps> = (
                 </Grid>
                 <Grid item xs={6} sx={{ textAlign: 'right', float: 'right' }}>
                     <Box display="flex" sx={{ marginRight: '30px', alignItems: 'center', justifyContent: 'end' }}>
+                        <Tooltip title={'Hỗ trợ'}>
+                            <ChatIcon
+                                onClick={() => {
+                                    tawkChatRef.current.toggle();
+                                }}
+                                style={{ marginRight: 16 }}
+                            />
+                        </Tooltip>
+
                         <Box display="flex">
                             <LocationIcon />
                             <Select
@@ -745,6 +756,22 @@ const Header: React.FC<HeaderProps> = (
                             </MenuItem>
                             <MenuItem
                                 onClick={() => {
+                                    tawkChatRef.current.toggle();
+                                }}>
+                                <Box
+                                    display={'flex'}
+                                    flexDirection={'row'}
+                                    gap={2}
+                                    alignItems={'center'}
+                                    justifyContent={'start'}>
+                                    <ChatIcon />
+                                    <Box component="button" className="typo">
+                                        Hỗ trợ
+                                    </Box>
+                                </Box>
+                            </MenuItem>
+                            <MenuItem
+                                onClick={() => {
                                     handleClose();
                                     navigate('/account/profile');
                                 }}
@@ -788,6 +815,14 @@ const Header: React.FC<HeaderProps> = (
                     </Box>
                 </Grid>
             </Grid>
+            <TawkMessenger
+                propertyId={'6629be0b1ec1082f04e68f36'}
+                widgetId="1hs9gso7p"
+                ref={tawkChatRef}
+                onLoad={() => {
+                    tawkChatRef.current.hideWidget();
+                }}
+            />
         </Box>
     );
 };
