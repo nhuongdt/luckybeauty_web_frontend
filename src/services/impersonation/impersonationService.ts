@@ -17,6 +17,7 @@ class ImpersonationService {
                         Cookies.set('accessToken', res.accessToken, { expires: 1 });
                         Cookies.set('encryptedAccessToken', res.encryptedAccessToken, { expires: 1 });
                         Cookies.set('refreshToken', res.refreshToken, { expires: 365 });
+                        Cookies.set('authenticated', 'true', { expires: 1 });
                         if (tenantId) {
                             Cookies.set('Abp.TenantId', tenantId.toString(), { expires: 1 });
                         }
@@ -69,6 +70,7 @@ class ImpersonationService {
                 Cookies.set('accessToken', impersonateTenantResult.accessToken, { expires: 1 });
                 Cookies.set('encryptedAccessToken', impersonateTenantResult.encryptedAccessToken, { expires: 1 });
                 Cookies.set('refreshToken', impersonateTenantResult.encryptedAccessToken, { expires: 365 });
+                Cookies.set('authenticated', 'true', { expires: 1 });
                 await sessionStore.getCurrentLoginInformations().then(async (result) => {
                     Cookies.set('userId', result.user.id.toString(), {
                         expires: 1
