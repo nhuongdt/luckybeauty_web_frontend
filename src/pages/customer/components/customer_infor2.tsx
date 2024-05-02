@@ -19,6 +19,7 @@ import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import uploadFileService from '../../../services/uploadFileService';
+import TabAnhLieuTrinh from './TabAnhLieuTrinh';
 
 export interface IScreenCustomerInfor {
     khachHangId?: string;
@@ -318,6 +319,7 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
                                     <TabList onChange={handleChangeTab}>
                                         <Tab label="Cuộc hẹn" value="1" />
                                         <Tab label="Mua hàng" value="2" />
+                                        <Tab label="Ảnh liệu trình" value="3" />
                                     </TabList>
                                 </Grid>
                                 <Grid item lg={6}>
@@ -339,6 +341,9 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
                             </TabPanel>
                             <TabPanel value="2" sx={{ padding: 0 }}>
                                 <TabMuaHang khachHangId={khachHangId} />
+                            </TabPanel>
+                            <TabPanel value="3" sx={{ padding: 0 }}>
+                                <TabAnhLieuTrinh khachHangId={khachHangId ?? ''} />
                             </TabPanel>
                         </TabContext>
                     </Stack>

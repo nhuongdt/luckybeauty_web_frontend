@@ -74,6 +74,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
         }
         const createResult = await bookingStore.onCreateOrEditBooking({
             id: values.id,
+            bookingCode: values?.bookingCode ?? '',
             idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
             idDonViQuiDoi: values.idDonViQuiDoi,
             idKhachHang: values.idKhachHang,

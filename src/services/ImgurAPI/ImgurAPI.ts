@@ -85,6 +85,17 @@ class ImgurAPI {
         });
         return response.data?.data;
     };
+    FindAlbumIdExists_InImgur = async (albumName: string): Promise<string> => {
+        if (utils.checkNull(albumName)) return '';
+        const allAlbums = await this.GetAllAlbum_WithAccount();
+        if (allAlbums !== undefined && allAlbums?.length > 0) {
+            const albumItem = allAlbums?.filter((x) => x.title === `${albumName}`);
+            if (albumItem?.length > 0) {
+                return albumItem[0]?.id;
+            }
+        }
+        return '';
+    };
     GetFile_fromId = async (fileId = 'mVu3TZz'): Promise<Imgur_ImageDetailDto | null> => {
         if (utils.checkNull(fileId) || fileId?.includes(`http`)) return null;
         try {
@@ -112,14 +123,14 @@ class ImgurAPI {
         }
         return null;
     };
-    UploadImage = async (imageFile: File): Promise<Imgur_ImageDetailDto | null> => {
+    UploadImage = async (imageFile: File, description = ''): Promise<Imgur_ImageDetailDto | null> => {
         const accessToken = await this.GetAccessToken();
 
         const formData = new FormData();
         formData.append('image', imageFile, imageFile?.name);
         formData.append('type', 'image');
         formData.append('title', imageFile?.name);
-        formData.append('description', `#${imageFile?.name}`);
+        formData.append('description', utils.checkNull(description) ? `#${imageFile?.name}` : description);
 
         const response = await axios.post(`${Imgur_URLApi}image`, formData, {
             headers: {
@@ -158,14 +169,14 @@ class ImgurAPI {
             return [];
         }
     };
-    CreateNewAlbum = async (alBumTitle: string): Promise<Imgur_ModelBasic | null> => {
+    CreateNewAlbum = async (alBumTitle: string, description = ''): Promise<Imgur_ModelBasic | null> => {
         const accessToken = await this.GetAccessToken();
         try {
             const response = await axios.post(
                 `${Imgur_URLApi}album`,
                 {
                     title: alBumTitle,
-                    description: alBumTitle
+                    description: utils.checkNull(description) ? `#${alBumTitle}` : `${description}`
                 },
                 {
                     headers: {
@@ -198,12 +209,17 @@ class ImgurAPI {
 
     AddImageToAlbum_WithImageId = async (albumId: string, imageId: string): Promise<Imgur_ImageDetailDto | null> => {
         const accessToken = await this.GetAccessToken();
+        let coverImg = imageId;
+        // nếu add nhiều ảnh
+        if (imageId.split(',')?.length > 0) {
+            coverImg = imageId.split(',')[0];
+        }
         try {
             const response = await axios.put(
                 `${Imgur_URLApi}album/${albumId}/add`,
                 {
                     ids: imageId,
-                    cover: imageId
+                    cover: coverImg
                 },
                 {
                     headers: {
