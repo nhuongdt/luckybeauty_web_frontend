@@ -29,7 +29,7 @@ const renderRoutesRecursive = (routes: RouteProps[]) => {
                 <Route
                     key={name}
                     element={
-                        !Cookies.get('userId') ? (
+                        !Cookies.get('authenticated') ? (
                             <Navigate to="/login" />
                         ) : !abpCustom.isGrandPermission(permission) ? (
                             <Navigate to="/exception401" />
