@@ -1,5 +1,6 @@
 export interface CreateBookingDto {
     id: string;
+    bookingCode?: string;
     startHours: string;
     startTime: string;
     trangThai: number;

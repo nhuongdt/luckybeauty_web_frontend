@@ -27,6 +27,7 @@ export const ListZaloToken_HoaDon: ISelect[] = [
     { value: '{PTThanhToan}', text: 'Phương thức thanh toán' }
 ];
 export const ListZaloToken_LichHen: ISelect[] = [
+    { value: '{BookingCode}', text: 'Mã đặt hẹn' },
     { value: '{BookingDate}', text: 'Ngày đặt lịch hẹn' },
     { value: '{TenDichVu}', text: 'Tên dịch vụ đặt hẹn' }
 ];
