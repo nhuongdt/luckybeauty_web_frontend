@@ -13,6 +13,7 @@ import suggestStore from '../../stores/suggestStore';
 import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 import utils from '../../utils/utils';
 import abpCustom from '../../components/abp-custom';
+import TrangThaiBooking from '../../enum/TrangThaiBooking';
 const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     const arrTrangThaiBook = [
         {
@@ -87,7 +88,12 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
         setIsShowModalLichHen(false);
         const newBooking = await datLichService.GetInforBooking_byID(idBooking);
         if (newBooking != null && newBooking.length > 0) {
-            setListCusBooking([newBooking[0], ...listCusBooking]);
+            // nếu trạng thái = checkin: đóng modal checkin và thêm vào thungan
+            if (newBooking[0].trangThai === TrangThaiBooking.CheckIn) {
+                choseBooking(newBooking[0]);
+            } else {
+                setListCusBooking([newBooking[0], ...listCusBooking]);
+            }
         }
     };
 

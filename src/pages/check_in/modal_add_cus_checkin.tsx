@@ -25,13 +25,17 @@ export const CheckIn_TabName = {
     CUSTOMER: 0,
     BOOKING: 1
 };
+export const ModalCheckin_FormType = {
+    CHECK_IN: 1,
+    OTHER: 0
+};
 
 export interface IPropModalCheckIn extends IPropModal<PageKhachHangCheckInDto> {
     isNew: boolean; // dùng ở Thu ngân: khi muốn thay đổi khách hàng (vì: idChekIn của khách lẻ = empty)
 }
 
 export default function ModalAddCustomerCheckIn(props: IPropModalCheckIn) {
-    const { idUpdate, isShowModal, isNew, onClose, onOK } = props;
+    const { idUpdate, isShowModal, typeForm, isNew, onClose, onOK } = props;
     const appContext = useContext(AppContext);
     const chiNhanhCurrent = appContext.chinhanhCurrent;
     const idChiNhanh = chiNhanhCurrent?.id ?? Cookies.get('IdChiNhanh');
@@ -48,7 +52,6 @@ export default function ModalAddCustomerCheckIn(props: IPropModalCheckIn) {
                 setCurrentTab(CheckIn_TabName.CUSTOMER);
                 getInforCheckIn();
             }
-            console.log('idUpdate ', idUpdate);
         }
     }, [isShowModal]);
 
@@ -58,16 +61,18 @@ export default function ModalAddCustomerCheckIn(props: IPropModalCheckIn) {
     };
 
     const checkSaveCheckin = async (idCus: string) => {
-        const exists = await CheckinService.CheckExistCusCheckin(idCus);
-        if (exists) {
-            setObjAlert({ ...objAlert, show: true, mes: 'Khách hàng đã check in' });
-            return false;
+        if (typeForm == ModalCheckin_FormType.CHECK_IN) {
+            const exists = await CheckinService.CheckExistCusCheckin(idCus);
+            if (exists) {
+                setObjAlert({ ...objAlert, show: true, mes: 'Khách hàng đang check in' });
+                return false;
+            }
         }
+
         return true;
     };
 
     const choseCustomer_fromBooking = async (itemBook: BookingDetail_ofCustomerDto) => {
-        // todo check trangthai= checkin: hide modal
         const dataChosed: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
             idCheckIn: '',
             idChiNhanh: idChiNhanh as unknown as null,

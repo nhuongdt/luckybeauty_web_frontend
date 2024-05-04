@@ -142,6 +142,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         <Box padding={2} width={'100%'}>
             <ListNhanVienDataContext.Provider value={lstNhanVien}>
                 <ModalAddCustomerCheckIn
+                    typeForm={1}
                     isNew={true}
                     isShowModal={isShowModalCheckIn}
                     onOK={saveCheckInOK}
