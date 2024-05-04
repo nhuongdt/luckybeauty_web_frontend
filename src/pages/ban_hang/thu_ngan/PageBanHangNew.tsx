@@ -23,6 +23,7 @@ import { Add } from '@mui/icons-material';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { debounce } from '@mui/material/utils';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+
 import DetailHoaDon from './DetailHoaDon';
 import ProductService from '../../../services/product/ProductService';
 import GroupProductService from '../../../services/product/GroupProductService';
@@ -48,7 +49,6 @@ import { IHangHoaGroupTheoNhomDto, ModelNhomHangHoa } from '../../../services/pr
 import { PropConfirmOKCancel, PropModal } from '../../../utils/PropParentToChild';
 import ModalEditChiTietGioHang from './modal_edit_chitiet';
 import Cookies from 'js-cookie';
-import { ReactComponent as IconDv } from '../../../images/icon-DV.svg';
 
 import { ReactComponent as DeleteIcon } from '../../../images/trash.svg';
 import { ReactComponent as VoucherIcon } from '../../../images/voucherIcon.svg';
@@ -89,13 +89,13 @@ import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import { handleClickOutside } from '../../../utils/customReactHook';
 import abpCustom from '../../../components/abp-custom';
-import BankAccount from '../../../components/Switch/BankAccount';
 import HoaHongNhanVienDichVu from '../../nhan_vien_thuc_hien/hoa_hong_nhan_vien_dich_vu';
-import DateTimePickerCustom from '../../../components/DatetimePicker/DateTimePickerCustom';
 import DatePickerRequireCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
 import { format } from 'date-fns';
 import nhatKyHoatDongService from '../../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
 import { CreateNhatKyThaoTacDto } from '../../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
+import { SuggestChiNhanhDto } from '../../../services/suggests/dto/SuggestChiNhanhDto';
+import uploadFileService from '../../../services/uploadFileService';
 
 const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const appContext = useContext(AppContext);
@@ -110,6 +110,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const [allNhomHangHoa, setAllNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
     const [listProduct, setListProduct] = useState<IHangHoaGroupTheoNhomDto[]>([]);
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
+    const [allChiNhanh_byUser, setAllChiNhanh_byUser] = useState<SuggestChiNhanhDto[]>([]);
     const [dateDefault, setDateDefault] = useState('');
 
     const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
@@ -129,7 +130,10 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(new PropModal({ isShow: false, isNew: true }));
-    const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(new PropModal({ isShow: false }));
+    const [isShowModalCheckIn, setIsShowModalCheckIn] = useState(false);
+    const [isAddNewCheckIn, setIsAddNewCheckIn] = useState(false);
+    const [idCheckInUpdate, setIdCheckInUpdate] = useState('');
+
     const ref = handleClickOutside(() => setIsExpandShoppingCart(false));
 
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
@@ -175,7 +179,12 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         setAllMauIn(data);
     };
 
-    const getInforChiNhanh_byID = async () => {
+    const GetChiNhanhByUser = async () => {
+        const data = await chiNhanhService.GetChiNhanhByUser();
+        setAllChiNhanh_byUser(data);
+    };
+
+    const getInforChiNhanh_byID = async (idChiNhanh: string) => {
         const data = await chiNhanhService.GetDetail(idChiNhanh ?? '');
         return data;
     };
@@ -186,8 +195,27 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             .where('idChiNhanh')
             .equals(idChiNhanh as string)
             .sortBy('ngayLapHoaDon');
-        setAllInvoiceWaiting(allHD);
-        setLstSearchInvoiceWaiting([...allHD]);
+
+        for (let i = 0; i < allHD?.length; i++) {
+            if (!utils.checkNull_OrEmpty(allHD[i]?.idKhachHang)) {
+                const customer = await khachHangService.getKhachHang(allHD[i]?.idKhachHang ?? '');
+                if (customer != null && customer !== undefined) {
+                    // update infor customer to cache (if customer has change)
+                    await dbDexie.hoaDon.update(allHD[i]?.id, {
+                        tenKhachHang: customer?.tenKhachHang,
+                        maKhachHang: customer?.maKhachHang,
+                        soDienThoai: customer?.soDienThoai
+                    });
+                }
+            }
+        }
+        const allHDAfter = await dbDexie.hoaDon
+            .where('idChiNhanh')
+            .equals(idChiNhanh as string)
+            .sortBy('ngayLapHoaDon');
+
+        setAllInvoiceWaiting(allHDAfter);
+        setLstSearchInvoiceWaiting([...allHDAfter]);
     };
 
     let timmer: any;
@@ -243,6 +271,8 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         await GetListNhanVien();
         await GetAllMauIn_byChiNhanh();
         await GetAllInvoiceWaiting();
+        await GetChiNhanhByUser();
+
         afterRender.current = true;
     };
 
@@ -352,7 +382,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                 };
             });
         }
-        setTriggerAddCheckIn({ ...triggerAddCheckIn, id: customerChosed?.idCheckIn, isShow: false });
+        setIdCheckInUpdate(customerChosed?.idCheckIn);
         await GetSetCusChosing(customerChosed.idKhachHang);
     };
 
@@ -419,7 +449,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         if (itemHD !== undefined) {
             setHoaDon(itemHD);
             setHoaDonChiTiet(itemHD?.hoaDonChiTiet ?? []);
-            setTriggerAddCheckIn({ ...triggerAddCheckIn, id: itemHD?.idCheckIn, isShow: false });
+            setIdCheckInUpdate(itemHD?.idCheckIn);
             await GetSetCusChosing(itemHD?.idKhachHang as unknown as string);
         }
     };
@@ -524,7 +554,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
 
         if (arrCTnew.length === 0) {
             // reset again trangthai check in = dang cho
-            await CheckinService.UpdateTrangThaiCheckin(triggerAddCheckIn.id as string, TrangThaiCheckin.WAITING);
+            await CheckinService.UpdateTrangThaiCheckin(idCheckInUpdate, TrangThaiCheckin.WAITING);
         }
     };
 
@@ -561,7 +591,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
 
         // update trangThaiCheckin = Dang thuc hien
         // chỉ cập nhật nếu add chi tiết lần đầu tiên
-        await CheckinService.UpdateTrangThaiCheckin(triggerAddCheckIn.id as string, TrangThaiCheckin.DOING);
+        await CheckinService.UpdateTrangThaiCheckin(idCheckInUpdate, TrangThaiCheckin.DOING);
     };
 
     // auto update cthd
@@ -731,7 +761,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             cusChecking.idCheckIn = dataCheckIn.id;
             cusChecking.dateTimeCheckIn = dataCheckIn.dateTimeCheckIn;
 
-            setTriggerAddCheckIn({ ...triggerAddCheckIn, id: dataCheckIn.id, isShow: false });
+            setIdCheckInUpdate(dataCheckIn.id);
 
             setCusChosing({
                 ...cusChosing,
@@ -791,8 +821,8 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         setIsShowModalAddCus(true);
     };
 
-    const updateCache_IfChangeCus = async (dataCheckIn: any, idHoaDon: string) => {
-        const action = triggerAddCheckIn?.isNew ? TypeAction.INSEART : TypeAction.UPDATE;
+    const updateCache_IfChangeCus = async (dataCheckIn: PageKhachHangCheckInDto, idHoaDon: string) => {
+        const action = isAddNewCheckIn ? TypeAction.INSEART : TypeAction.UPDATE;
         switch (action) {
             case TypeAction.INSEART:
                 {
@@ -838,63 +868,80 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                 break;
             case TypeAction.DELETE:
                 {
-                    const idCheckInOld = triggerAddCheckIn.id as string;
-                    await dbDexie.hoaDon.where('idCheckIn').equals(idCheckInOld).delete();
+                    await dbDexie.hoaDon.where('idCheckIn').equals(idCheckInUpdate).delete();
                 }
                 break;
         }
     };
 
     const showModalCheckIn = async (isNew = true) => {
-        setTriggerAddCheckIn({ ...triggerAddCheckIn, isShow: true, isNew: isNew });
+        setIsAddNewCheckIn(isNew);
+        setIsShowModalCheckIn(true);
+        if (isNew) {
+            setIdCheckInUpdate('');
+        } else {
+            setIdCheckInUpdate(hoadon?.idCheckIn);
+        }
     };
 
-    const saveCheckInOK = async (dataCheckIn: any, typeAction = TypeAction.INSEART) => {
-        setTriggerAddCheckIn({ ...triggerAddCheckIn, id: dataCheckIn.idCheckIn, isShow: false });
+    const saveCheckInOK = async (typeAction = TypeAction.INSEART, dataCheckIn: PageKhachHangCheckInDto | undefined) => {
+        if (dataCheckIn !== undefined) {
+            setIdCheckInUpdate(dataCheckIn.idCheckIn);
+            setIsShowModalCheckIn(false);
 
-        // get dataHoaDon if khach was booking
-        const data = await dbDexie.hoaDon.where('idCheckIn').equals(dataCheckIn.idCheckIn).toArray();
-        if (data != null && data.length > 0) {
-            const hdctCache = data[0].hoaDonChiTiet ?? [];
-            setHoaDon({
-                ...hoadon,
-                id: data[0].id, // vì sau khi booking, đã gán lại id mới cho hóa đơn
-                idKhachHang: dataCheckIn.idKhachHang,
-                idCheckIn: dataCheckIn.idCheckIn,
-                maKhachHang: dataCheckIn.maKhachHang,
-                soDienThoai: dataCheckIn?.soDienThoai,
-                tenKhachHang: dataCheckIn.tenKhachHang,
-                tongTienHang: data[0].tongTienHang,
-                tongTienHDSauVAT: data[0].tongTienHDSauVAT,
-                tongThanhToan: data[0].tongThanhToan,
-                tongTienHangChuaChietKhau: data[0].tongTienHangChuaChietKhau
-            });
-            setHoaDonChiTiet(hdctCache);
-        } else {
-            const action = triggerAddCheckIn?.isNew ? TypeAction.INSEART : TypeAction.UPDATE;
-            let idHoaDon = hoadon?.id;
-            let hdCT: PageHoaDonChiTietDto[] = hoadon?.hoaDonChiTiet ?? [];
-
+            const action = isAddNewCheckIn ? TypeAction.INSEART : TypeAction.UPDATE;
             if (action === TypeAction.INSEART) {
-                idHoaDon = Guid.create().toString();
-                hdCT = [];
+                // check khachhang was booking
+                const data = await dbDexie.hoaDon.where('idCheckIn').equals(dataCheckIn.idCheckIn).toArray();
+                if (data != null && data.length > 0) {
+                    const hdctCache = data[0].hoaDonChiTiet ?? [];
+                    setHoaDon({
+                        ...hoadon,
+                        id: data[0].id, // vì sau khi booking, đã gán lại id mới cho hóa đơn
+                        idKhachHang: dataCheckIn?.idKhachHang,
+                        idCheckIn: dataCheckIn?.idCheckIn,
+                        maKhachHang: dataCheckIn?.maKhachHang,
+                        soDienThoai: dataCheckIn?.soDienThoai,
+                        tenKhachHang: dataCheckIn?.tenKhachHang,
+                        tongTienHang: data[0].tongTienHang,
+                        tongTienHDSauVAT: data[0].tongTienHDSauVAT,
+                        tongThanhToan: data[0].tongThanhToan,
+                        tongTienHangChuaChietKhau: data[0].tongTienHangChuaChietKhau
+                    });
+                    setHoaDonChiTiet(hdctCache);
+                } else {
+                    setHoaDon({
+                        ...hoadon,
+                        id: Guid.create().toString(), // create new hd
+                        idKhachHang: dataCheckIn?.idKhachHang,
+                        idCheckIn: dataCheckIn?.idCheckIn,
+                        maKhachHang: dataCheckIn?.maKhachHang,
+                        soDienThoai: dataCheckIn?.soDienThoai,
+                        tenKhachHang: dataCheckIn?.tenKhachHang,
+                        tongTienHang: 0,
+                        tongTienHDSauVAT: 0,
+                        tongThanhToan: 0,
+                        tongTienHangChuaChietKhau: 0
+                    });
+                    setHoaDonChiTiet([]);
+                }
+            } else {
+                // update
+                const dataHD: PageHoaDonDto = {
+                    ...hoadon,
+                    idChiNhanh: idChiNhanh,
+                    idCheckIn: dataCheckIn?.idCheckIn ?? '',
+                    idKhachHang: dataCheckIn?.idKhachHang ?? null,
+                    maKhachHang: dataCheckIn?.maKhachHang ?? 'KL',
+                    tenKhachHang: dataCheckIn?.tenKhachHang ?? 'Khách lẻ',
+                    soDienThoai: dataCheckIn?.soDienThoai ?? ''
+                };
+                setHoaDon(dataHD);
+                await updateCache_IfChangeCus(dataCheckIn, hoadon?.id);
             }
-            const dataHD: PageHoaDonDto = {
-                ...hoadon,
-                id: idHoaDon,
-                idChiNhanh: idChiNhanh,
-                idCheckIn: dataCheckIn?.idCheckIn,
-                idKhachHang: dataCheckIn?.idKhachHang,
-                maKhachHang: dataCheckIn?.maKhachHang,
-                tenKhachHang: dataCheckIn?.tenKhachHang ?? 'Khách lẻ',
-                soDienThoai: dataCheckIn?.soDienThoai
-            };
-            setHoaDon(dataHD);
-            setHoaDonChiTiet(hdCT);
-            await updateCache_IfChangeCus(dataCheckIn, idHoaDon);
             await GetAllInvoiceWaiting();
+            await GetSetCusChosing(dataCheckIn.idKhachHang ?? '');
         }
-        await GetSetCusChosing(dataCheckIn.idKhachHang);
     };
 
     const checkSave = async () => {
@@ -1103,7 +1150,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
 
         // update again KH_Checkin: vì có thể ngayLapHoaDon bị thay đổi --> cập nhật lại ngày checkin
         const inputCheckIn: KHCheckInDto = {
-            id: triggerAddCheckIn?.id as string,
+            id: idCheckInUpdate,
             idKhachHang: hoadon?.idKhachHang as unknown as string,
             dateTimeCheckIn: hoadon?.ngayLapHoaDon,
             idChiNhanh: hoadon?.idChiNhanh as unknown as string,
@@ -1116,7 +1163,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             inputCheckIn.idKhachHang !== Guid.EMPTY
         ) {
             await CheckinService.UpdateCustomerCheckIn(inputCheckIn);
-            await CheckinService.Update_IdHoaDon_toCheckInHoaDon(triggerAddCheckIn.id as string, hodaDonDB.id);
+            await CheckinService.Update_IdHoaDon_toCheckInHoaDon(idCheckInUpdate, hodaDonDB.id);
         }
 
         await saveDiaryHoaDon(hodaDonDB?.maHoaDon, hodaDonDB?.ngayLapHoaDon);
@@ -1167,6 +1214,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
 
     const ResetState_AfterSave = () => {
         setClickSave(false);
+        setIdCheckInUpdate('');
 
         setHoaDonChiTiet([]);
         setLstQuyCT([new QuyChiTietDto({ hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT })]);
@@ -1178,7 +1226,6 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                 tenKhachHang: 'Khách lẻ'
             })
         );
-        setTriggerAddCheckIn({ ...triggerAddCheckIn, id: '', isShow: false });
         setCusChosing({
             ...cusChosing,
             id: '',
@@ -1190,7 +1237,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     };
 
     const GetDataPrint = async (mahoadon = '', ngayLapHD = '', quyHD: QuyHoaDonDto) => {
-        const chinhanhPrint = await getInforChiNhanh_byID();
+        const chinhanhPrint = await getInforChiNhanh_byID(idChiNhanh ?? '');
         const tempMauIn = await MauInServices.GetContentMauInMacDinh(1, 1);
         const allCongTy = await cuaHangService.GetAllCongTy({} as PagedRequestDto);
         let congty = {} as CuaHangDto;
@@ -1199,6 +1246,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         }
         DataMauIn.chinhanh = chinhanhPrint;
         DataMauIn.congty = congty;
+        DataMauIn.congty.logo = uploadFileService.GoogleApi_NewLink(congty?.logo);
         DataMauIn.hoadon = hoadon;
         DataMauIn.hoadon.maHoaDon = mahoadon;
         DataMauIn.hoadon.ngayLapHoaDon = ngayLapHD; // get ngaylapHD from DB (after add hours/minutes/seconds)
@@ -1419,7 +1467,13 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     return (
         <>
             <ListNhanVienDataContext.Provider value={allNhanVien}>
-                <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
+                <ModalAddCustomerCheckIn
+                    idUpdate={idCheckInUpdate}
+                    isNew={isAddNewCheckIn}
+                    isShowModal={isShowModalCheckIn}
+                    onOK={saveCheckInOK}
+                    onClose={() => setIsShowModalCheckIn(false)}
+                />
             </ListNhanVienDataContext.Provider>
             <CreateOrEditCustomerDialog
                 visible={isShowModalAddCus}
