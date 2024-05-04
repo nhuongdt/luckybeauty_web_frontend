@@ -31,6 +31,12 @@ class SoQuyServices {
         const result = await http.get('api/services/app/QuyHoaDon/KhoiPhucSoQuy?idQuyHoaDon=' + id);
         return result.data.result;
     };
+    UpdateCustomer_toQuyChiTiet = async (idHoaDonLienQuan: string, idKhachHangnew: string): Promise<QuyHoaDonDto> => {
+        const result = await http.get(
+            `api/services/app/QuyHoaDon/UpdateCustomer_toQuyChiTiet?idHoaDonLienQuan=${idHoaDonLienQuan}&idKhachHangnew=${idKhachHangnew}`
+        );
+        return result.data.result;
+    };
     DeleteMultiple_QuyHoaDon = async (lstId: any) => {
         const result = await http.post('api/services/app/QuyHoaDon/DeleteMultiple_QuyHoaDon', lstId);
         return result.data.success;
