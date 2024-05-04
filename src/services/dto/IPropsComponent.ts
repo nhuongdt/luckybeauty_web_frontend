@@ -20,10 +20,11 @@ export interface IPropsListRadioFilter {
 }
 
 export interface IPropModal<T> {
+    typeForm?: number;
     idUpdate?: string;
     isShowModal: boolean;
     lstData?: T[];
     objUpDate?: T;
     onClose: () => void;
-    onOK: (typeAction: number) => void;
+    onOK: (typeAction: number, objAfterSave?: T) => void;
 }
