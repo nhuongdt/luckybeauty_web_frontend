@@ -27,7 +27,8 @@ import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 import utils from '../../utils/utils';
 import abpCustom from '../../components/abp-custom';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
-const TabKhachHang = ({ handleChoseCus }: any) => {
+import { KhachHangDto } from '../../services/khach-hang/dto/KhachHangDto';
+const TabKhachHang = ({ handleChoseCus, isShowKhachLe = false }: any) => {
     const firsLoad = useRef(true);
     const windowWidth = useWindowWidth();
 
@@ -37,7 +38,7 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
 
     const [paramSearch, setParamSearch] = useState<PagedKhachHangResultRequestDto>({
         keyword: '',
-        maxResultCount: 9,
+        maxResultCount: isShowKhachLe ? 8 : 9, // nếu hiện khachle --> get 8 khachhang
         skipCount: 1
     } as PagedKhachHangResultRequestDto);
 
@@ -78,9 +79,26 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
         GetKhachHang_noBooking(paramSearch);
     }, [paramSearch.skipCount]);
 
-    const saveOKCustomer = (dataSave: any) => {
+    const changeCustomer = (dataSave: KhachHangItemDto | null) => {
         setIsShowModalAddCus(false);
         handleChoseCus(dataSave, 0);
+    };
+
+    const saveOKCustomer = (cusNew: KhachHangDto) => {
+        setIsShowModalAddCus(false);
+
+        const data: KhachHangItemDto = {
+            id: cusNew?.id,
+            maKhachHang: cusNew?.maKhachHang,
+            tenKhachHang: cusNew?.tenKhachHang,
+            avatar: cusNew?.avatar,
+            soDienThoai: cusNew?.soDienThoai,
+            diaChi: cusNew?.diaChi,
+            tongTichDiem: 0,
+            cuocHenGanNhat: new Date()
+        };
+
+        handleChoseCus(data, 0);
     };
 
     const showModalAddCus = () => {
@@ -146,10 +164,40 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
             </Grid>
 
             <Grid container spacing={2} mt="0">
+                {isShowKhachLe && (
+                    <Grid item sm={6} md={4} xs={12}>
+                        <Stack
+                            onClick={() => changeCustomer(null)}
+                            justifyContent="space-between"
+                            height={'100%'}
+                            spacing={1}
+                            sx={{
+                                padding: '18px',
+                                border: '1px solid #E6E1E6',
+                                borderRadius: '8px',
+                                boxShadow: '0px 7px 20px 0px #28293D14',
+                                transition: '.4s',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    borderColor: 'var(--color-main)'
+                                }
+                            }}>
+                            <Stack spacing={2} direction={'row'}>
+                                <Avatar sx={{ width: 40, height: 40 }} />
+                                <Stack justifyContent={'space-evenly'} maxWidth={'calc(100% - 44px)'}>
+                                    <Typography variant="subtitle2" className="lableOverflow">
+                                        {'Khách lẻ'}
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                        </Stack>
+                    </Grid>
+                )}
+
                 {pageDataCustomer?.items?.map((item, index) => (
                     <Grid item key={index} sm={6} md={4} xs={12}>
                         <Stack
-                            onClick={() => saveOKCustomer(item)}
+                            onClick={() => changeCustomer(item)}
                             justifyContent="space-between"
                             height={'100%'}
                             spacing={1}

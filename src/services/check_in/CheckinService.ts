@@ -5,19 +5,20 @@ import utils from '../../utils/utils';
 import { PagedRequestDto } from '../dto/pagedRequestDto';
 
 class CheckinService {
-    CheckExistCusCheckin = async (idCus: string, idCheckIn?: string) => {
-        if (utils.checkNull(idCheckIn)) {
+    CheckExistCusCheckin = async (idCus: string, idCheckIn?: string): Promise<boolean> => {
+        if (utils.checkNull_OrEmpty(idCus)) {
+            return false;
+        }
+        if (utils.checkNull_OrEmpty(idCheckIn)) {
             idCheckIn = Guid.EMPTY;
         }
-        const xx = await http
-            .post(`api/services/app/CheckIn/CheckExistCusCheckin?idCus=${idCus}&idCheckIn=${idCheckIn}`)
-            .then((res: { data: { result: boolean } }) => {
-                return res.data.result;
-            });
-        return xx;
+        const xx = await http.get(
+            `api/services/app/CheckIn/CheckExistCusCheckin?idCus=${idCus}&idCheckIn=${idCheckIn}`
+        );
+        return xx.data.result;
     };
     GetInforCheckIn_byId = async (idCheckIn: string) => {
-        if (utils.checkNull(idCheckIn) || idCheckIn == Guid.EMPTY) {
+        if (utils.checkNull_OrEmpty(idCheckIn)) {
             return new KHCheckInDto({ id: Guid.EMPTY });
         }
         const xx = await http

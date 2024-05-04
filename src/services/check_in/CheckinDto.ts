@@ -33,18 +33,22 @@ export interface ICheckInHoaDonto {
 
 export class PageKhachHangCheckInDto {
     idKhachHang: string | null = null;
-    idChiNhanh = null;
+    idChiNhanh: string | null = null;
     idCheckIn = Guid.EMPTY;
     maKhachHang = '';
     tenKhachHang = '';
     soDienThoai = '';
-    avatar = '';
-    tongTichDiem = 0;
+    avatar? = '';
+    tongTichDiem? = 0;
     dateTimeCheckIn = new Date().toLocaleString();
     ghiChu? = '';
-    trangThaiCheckIn = 1;
+    trangThaiCheckIn? = 1;
     txtTrangThaiCheckIn? = '';
-    tongThanhToan = 0; // mục đích để chỉ lấy ra ở DS khách hàng checking (get TongThanhToan from cache hoadon)
+    tongThanhToan? = 0; // mục đích để chỉ lấy ra ở DS khách hàng checking (get TongThanhToan from cache hoadon)
+
+    dateCheckIn? = '';
+    timeCheckIn? = '';
+    tenKhach_KiTuDau? = '';
 
     constructor({
         idKhachHang = Guid.EMPTY,
@@ -68,14 +72,36 @@ export class PageKhachHangCheckInDto {
         this.dateTimeCheckIn = dateTimeCheckIn.toLocaleString();
         this.ghiChu = ghiChu;
         this.txtTrangThaiCheckIn = txtTrangThaiCheckIn;
+
+        this._tenKhach_KiTuDau = utils.getFirstLetter(this.tenKhachHang);
+        this._dateCheckIn = format(new Date(this.dateTimeCheckIn), 'dd/MM/yyyy');
+        this._timeCheckIn = format(new Date(this.dateTimeCheckIn), 'hh:mm a');
     }
-    get dateCheckIn() {
+
+    get _dateCheckIn() {
         return format(new Date(this.dateTimeCheckIn), 'dd/MM/yyyy');
     }
-    get timeCheckIn() {
+    set _dateCheckIn(value: string) {
+        this.dateCheckIn = value;
+    }
+    get _timeCheckIn() {
         return format(new Date(this.dateTimeCheckIn), 'hh:mm a');
     }
-    get tenKhach_KiTuDau() {
+    set _timeCheckIn(value: string) {
+        this.timeCheckIn = value;
+    }
+    get _tenKhach_KiTuDau() {
         return utils.getFirstLetter(this.tenKhachHang);
+    }
+    set _tenKhach_KiTuDau(value: string) {
+        this.tenKhach_KiTuDau = value;
+    }
+    get _dateTimeCheckIn(): string {
+        return this.dateTimeCheckIn;
+    }
+    set _dateTimeCheckIn(value: string) {
+        this.dateTimeCheckIn = value;
+        this._dateCheckIn = format(new Date(this.dateTimeCheckIn), 'dd/MM/yyyy');
+        this._timeCheckIn = format(new Date(this.dateTimeCheckIn), 'hh:mm a');
     }
 }
