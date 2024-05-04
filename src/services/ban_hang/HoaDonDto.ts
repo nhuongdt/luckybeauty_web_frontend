@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 
 export default class HoaDonDto {
     id = Guid.create().toString();
-    idKhachHang = null;
+    idKhachHang: string | null = null;
     idChiNhanh?: string;
     idNhanVien? = null;
     idLoaiChungTu = 1;

@@ -228,7 +228,7 @@ export default function ModalAnhLieuTrinh(props: IPropModal<AnhLieuTrinhDto>) {
                                     position: 'relative'
                                 }}>
                                 <Stack spacing={1}>
-                                    <Stack spacing={1} paddingTop={2}>
+                                    <Stack spacing={1} paddingTop={2} alignItems={'center'}>
                                         <Stack>
                                             <FileUploadSharpIcon className="icon-size" />
                                         </Stack>

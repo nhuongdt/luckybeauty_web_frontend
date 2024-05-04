@@ -26,7 +26,6 @@ export class SubClassDexie extends Dexie {
                 const appContext = useContext(AppContext);
                 const chinhanh = appContext.chinhanhCurrent;
                 const idChiNhanh = chinhanh.id ?? Cookies.get('IdChiNhanh');
-                console.log('dexie ', idChiNhanh);
                 return x
                     .table('hoaDon')
                     .filter((o) => utils.checkNull(o.idChiNhanh))
