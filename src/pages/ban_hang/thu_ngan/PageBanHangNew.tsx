@@ -1468,6 +1468,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         <>
             <ListNhanVienDataContext.Provider value={allNhanVien}>
                 <ModalAddCustomerCheckIn
+                    typeForm={1}
                     idUpdate={idCheckInUpdate}
                     isNew={isAddNewCheckIn}
                     isShowModal={isShowModalCheckIn}

@@ -37,6 +37,7 @@ import PopoverFilterHoaDon from './PopoverFilterHoaDon';
 import Cookies from 'js-cookie';
 import { TrangThaiHoaDon } from '../../../services/ban_hang/HoaDonConst';
 import suggestStore from '../../../stores/suggestStore';
+import uploadFileService from '../../../services/uploadFileService';
 
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
@@ -279,6 +280,7 @@ const GiaoDichThanhToan: React.FC = () => {
                                 tenChiNhanh: hoadon?.tenChiNhanh
                             } as ChiNhanhDto;
                             DataMauIn.congty = appContext.congty;
+                            DataMauIn.congty.logo = uploadFileService.GoogleApi_NewLink(DataMauIn.congty?.logo);
                             const tempMauIn = await MauInServices.GetContentMauInMacDinh(1, 1);
                             let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
                             newHtml = DataMauIn.replaceChiNhanh(newHtml);
