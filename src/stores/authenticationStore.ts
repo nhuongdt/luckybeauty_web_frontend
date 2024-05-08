@@ -1,4 +1,4 @@
-import { action, makeAutoObservable, makeObservable, observable, observe } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 
 // import AppConsts from './../lib/appconst'
 import LoginModel from '../models/Login/loginModel';

@@ -1,35 +1,24 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useContext } from 'react';
-import { Box, Grid, Tabs, Tab, Stack, Button, Select, IconButton } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
-import TabPanel from '../../../../components/TabPanel/TabPanel';
-import { OpenInNew, LocalOffer } from '@mui/icons-material';
-import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
-
+import { Box, Grid, Tabs, Tab, Stack, Button } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { OpenInNew } from '@mui/icons-material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import MauInServices from '../../../../services/mau_in/MauInServices';
-import PageHoaDonDto from '../../../../services/ban_hang/PageHoaDonDto';
-import PageHoaDonChiTietDto from '../../../../services/ban_hang/PageHoaDonChiTietDto';
-import { ChiNhanhDto } from '../../../../services/chi_nhanh/Dto/chiNhanhDto';
-import { KhachHangItemDto } from '../../../../services/khach-hang/dto/KhachHangItemDto';
-import logoChiNhanh from '../../../../images/Lucky_beauty.jpg';
-
 import { MauInDto } from '../../../../services/mau_in/MauInDto';
-import AppConsts, { ISelect } from '../../../../lib/appconst';
 import ModalAddMauIn from './modal_add_mau_in';
 import utils from '../../../../utils/utils';
 import { AppContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
 import DataMauIn from './DataMauIn';
 import SelectMauIn from '../../../../components/Select/SelectMauIn';
-import { number } from 'yup';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
-
 import CustomCkeditor from '../../../../components/ckeditor/CustomCkeditor';
 import { Guid } from 'guid-typescript';
 import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import TokenMauIn from './TokenMauIn';
 import abpCustom from '../../../../components/abp-custom';
-import { useNavigate } from 'react-router-dom';
 import { ButtonNavigate } from '../../../../components/Button/ButtonNavigate';
 
 export default function PageMauIn({ xx }: any) {

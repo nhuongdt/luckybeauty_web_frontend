@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     Autocomplete,
     Checkbox,
@@ -14,7 +16,6 @@ import {
     Switch,
     TextField,
     Typography,
-    Stack,
     ToggleButtonGroup,
     ToggleButton,
     Radio,
@@ -28,7 +29,7 @@ import {
     FormHelperText
 } from '@mui/material';
 import { ReactComponent as CloseIcon } from '../../../../../images/close-square.svg';
-import { ErrorMessage, FieldArray, Form, Formik, FormikErrors } from 'formik';
+import { FieldArray, Form, Formik, FormikErrors } from 'formik';
 import { format as formatDate } from 'date-fns';
 import DatePickerRequiredCustom from '../../../../../components/DatetimePicker/DatePickerRequiredCustom';
 import suggestStore from '../../../../../stores/suggestStore';
@@ -41,11 +42,7 @@ import ThoiGianConst from '../../../../../lib/thoiGianConst';
 import khuyenMaiStore from '../../../../../stores/khuyenMaiStore';
 import { NumericFormat } from 'react-number-format';
 import rules from './create-or-edit-khuyen-mai.validate';
-import {
-    CreateOrEditKhuyenMaiDto,
-    KhuyenMaiChiTiet
-} from '../../../../../services/khuyen_mai/dto/CreateOrEditKhuyenMaiDto';
-import { StringFormat } from '@firebase/storage';
+import { KhuyenMaiChiTiet } from '../../../../../services/khuyen_mai/dto/CreateOrEditKhuyenMaiDto';
 function a11yProps(index: number) {
     return {
         id: `vertical-tab-${index}`,

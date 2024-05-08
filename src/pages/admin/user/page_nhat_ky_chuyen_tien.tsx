@@ -1,23 +1,13 @@
-import { Grid, Box, Typography, Button, SelectChangeEvent } from '@mui/material';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Grid, Box, Typography, SelectChangeEvent } from '@mui/material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { useEffect, useState, useRef } from 'react';
 import { Edit, DeleteForever } from '@mui/icons-material';
-
-import { GetAllUserOutput } from '../../../services/user/dto/getAllUserOutput';
 import { TextTranslate } from '../../../components/TableLanguage';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { ParamSearchDto } from '../../../services/dto/ParamSearchDto';
-import { PagedResultDto } from '../../../services/dto/pagedResultDto';
-import ModalAddUser from './components/modal_add_user';
-import { SuggestNhanSuDto } from '../../../services/suggests/dto/SuggestNhanSuDto';
-import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
-import { GetRoles } from '../../../services/user/dto/getRolesOuput';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
-import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
-import { PagedRequestDto } from '../../../services/dto/pagedRequestDto';
-import userService from '../../../services/user/userService';
-import SuggestService from '../../../services/suggests/SuggestService';
 import ModalChuyenTienSMS from './components/modal_chuyen_tien_sms';
 import LichSuNap_ChuyenTienService from '../../../services/sms/lich_su_nap_tien/LichSuNap_ChuyenTienService';
 import { INhatKyChuyenTienDto } from '../../../services/sms/lich_su_nap_tien/ILichSuNap_ChuyenTienDto';
@@ -181,15 +171,15 @@ export default function PageNhatKyChuyenTien({ isShowModalAdd, txtSearch, onClos
             field: 'userChuyenTien',
             headerName: 'User chuyển tiền',
             flex: 1,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box>{params.value}</Box>
+            renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
+            renderCell: (params) => <Box>{params.value}</Box>
         },
         {
             field: 'userNhanTien',
             headerName: 'User nhận tiền',
             flex: 1,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box>{params.value}</Box>
+            renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
+            renderCell: (params) => <Box>{params.value}</Box>
         },
         {
             field: 'soTienChuyen_Nhan',
@@ -197,22 +187,22 @@ export default function PageNhatKyChuyenTien({ isShowModalAdd, txtSearch, onClos
             headerAlign: 'right',
             align: 'right',
             flex: 0.6,
-            renderHeader: (params: any) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
+            renderCell: (params) => <Box>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
         },
         {
             field: 'loaiPhieu',
             headerName: 'Loại phiếu',
             flex: 1,
-            renderHeader: (params: any) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box>{params.value}</Box>
+            renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
+            renderCell: (params) => <Box>{params.value}</Box>
         },
         {
             field: 'noiDungChuyen_Nhan',
             headerName: 'Ghi chú',
             flex: 1,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
+            renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
+            renderCell: (params) => (
                 <Box
                     sx={{
                         width: '100%',
@@ -230,8 +220,8 @@ export default function PageNhatKyChuyenTien({ isShowModalAdd, txtSearch, onClos
             headerName: 'Ngày tạo',
             headerAlign: 'center',
             flex: 0.6,
-            renderHeader: (params: any) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
+            renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
+            renderCell: (params) => (
                 <Box
                     sx={{
                         display: 'flex',
@@ -251,7 +241,7 @@ export default function PageNhatKyChuyenTien({ isShowModalAdd, txtSearch, onClos
             flex: 0.4,
             sortable: false,
             disableColumnMenu: true,
-            renderCell: (params: any) =>
+            renderCell: (params) =>
                 params.row.idPhieuNapTien == null && (
                     <ActionViewEditDelete
                         lstOption={
@@ -274,7 +264,7 @@ export default function PageNhatKyChuyenTien({ isShowModalAdd, txtSearch, onClos
                         handleAction={(action: number) => doActionRow(action, params.row)}
                     />
                 ),
-            renderHeader: (params: any) => <Box>{params.colDef.headerName}</Box>
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         }
     ] as GridColDef[];
 

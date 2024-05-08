@@ -276,7 +276,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
             minWidth: 120,
             flex: 0.8,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
+            renderCell: (params) => (
                 <Stack direction={'row'} spacing={1}>
                     <Avatar src={params.row.avatar} alt="Avatar" style={{ width: 24, height: 24, marginRight: 8 }} />
                     <Typography
@@ -297,7 +297,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
             headerName: 'Tên nhân viên',
             flex: 1,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box>{params.value}</Box>
+            renderCell: (params) => <Box>{params.value}</Box>
         },
         {
             field: 'roleNames',
@@ -305,7 +305,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
             minWidth: 100,
             flex: 0.8,
             renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box>{utils.Remove_LastComma(params.value)}</Box>
+            renderCell: (params) => <Box>{utils.Remove_LastComma(params.value)}</Box>
         },
         {
             field: 'emailAddress',
@@ -313,7 +313,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
             minWidth: 150,
             flex: 1,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box>{params.value}</Box>
+            renderCell: (params) => <Box>{params.value}</Box>
         },
         {
             field: 'tenChiNhanh',
@@ -321,7 +321,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
             minWidth: 120,
             flex: 1,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box>{params.value}</Box>
+            renderCell: (params) => <Box>{params.value}</Box>
         },
         {
             field: 'isActive',
@@ -347,7 +347,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
             minWidth: 120,
             flex: 0.6,
             renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
+            renderCell: (params) => (
                 <Box
                     sx={{
                         display: 'flex',
@@ -367,7 +367,7 @@ export default function PageUser({ isShowModalAdd, txtSearch, onCloseModal }: an
             sortable: false,
             disableColumnMenu: true,
             flex: 0.5,
-            renderCell: (params: any) => (
+            renderCell: (params) => (
                 <ActionViewEditDelete
                     lstOption={
                         [

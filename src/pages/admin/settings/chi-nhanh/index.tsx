@@ -1,21 +1,11 @@
-import {
-    Box,
-    Button,
-    Checkbox,
-    Grid,
-    IconButton,
-    SelectChangeEvent,
-    Stack,
-    TextField,
-    Typography
-} from '@mui/material';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Box, Button, Checkbox, Grid, IconButton, SelectChangeEvent, TextField, Typography } from '@mui/material';
 import React, { RefObject } from 'react';
 import DownloadIcon from '../../../../images/download.svg';
 import UploadIcon from '../../../../images/upload.svg';
 import AddIcon from '../../../../images/add.svg';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { ReactComponent as DateIcon } from '../../../../images/calendar-5.svg';
 import { Component, ReactNode } from 'react';
 import { ChiNhanhDto } from '../../../../services/chi_nhanh/Dto/chiNhanhDto';
 import chiNhanhService from '../../../../services/chi_nhanh/chiNhanhService';

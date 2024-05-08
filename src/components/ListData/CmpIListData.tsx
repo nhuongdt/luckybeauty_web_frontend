@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Stack, Typography, TextField } from '@mui/material';
-import { OpenInNew, Search } from '@mui/icons-material';
+import { Search } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import { IList } from '../../services/dto/IList';
 import utils from '../../utils/utils';
