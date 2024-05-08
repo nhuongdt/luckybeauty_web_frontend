@@ -4,14 +4,13 @@ import utils from '../../utils/utils';
 
 import { Add, QueryBuilder } from '@mui/icons-material';
 import ModalAddCustomerCheckIn from './modal_add_cus_checkin';
-import { PropConfirmOKCancel, PropModal } from '../../utils/PropParentToChild';
+import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import { PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckinService from '../../services/check_in/CheckinService';
 
 import { dbDexie } from '../../lib/dexie/dexieDB';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import EventIcon from '@mui/icons-material/Event';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
 import { PagedNhanSuRequestDto } from '../../services/nhan-vien/dto/PagedNhanSuRequestDto';
@@ -21,13 +20,14 @@ import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 import Cookies from 'js-cookie';
 import { TrangThaiCheckin } from '../../lib/appconst';
 import abpCustom from '../../components/abp-custom';
-import datLichService from '../../services/dat-lich/datLichService';
 import TrangThaiBooking from '../../enum/TrangThaiBooking';
 
 export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const [txtSearch, setTextSeach] = useState('');
     const [allCusChecking, setAllCusChecking] = useState<PageKhachHangCheckInDto[]>([]);
     const [idCheckinDelete, setIdCheckinDelete] = useState('');
+    const [isShowModalCheckIn, setIsShowModalCheckIn] = useState(false);
+    const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
 
     const [inforDelete, setinforDelete] = useState<PropConfirmOKCancel>({
         show: false,
@@ -35,11 +35,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         type: 1,
         mes: ''
     });
-
-    const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(
-        new PropModal({ isShow: false, isNew: true })
-    );
-    const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
 
     const GetListCustomerChecking = async () => {
         const input = { keyword: '', skipCount: 0, maxResultCount: 50, idChiNhanh: Cookies.get('IdChiNhanh') };
@@ -116,19 +111,23 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
 
     const listCusChecking = SearhCusChecking();
 
-    const saveCheckInOK = async (dataCheckIn: any) => {
+    const saveCheckInOK = async (typeAction: number, dataCheckIn: PageKhachHangCheckInDto | undefined) => {
+        setIsShowModalCheckIn(false);
         const cusChecking: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
-            idKhachHang: dataCheckIn.idKhachHang,
-            idCheckIn: dataCheckIn.idCheckIn,
-            maKhachHang: dataCheckIn.maKhachHang,
-            tenKhachHang: dataCheckIn.tenKhachHang,
-            soDienThoai: dataCheckIn.soDienThoai,
-            tongTichDiem: dataCheckIn.tongTichDiem,
-            dateTimeCheckIn: dataCheckIn.dateTimeCheckIn
+            idKhachHang: dataCheckIn?.idKhachHang ?? '',
+            idCheckIn: dataCheckIn?.idCheckIn,
+            maKhachHang: dataCheckIn?.maKhachHang,
+            tenKhachHang: dataCheckIn?.tenKhachHang,
+            soDienThoai: dataCheckIn?.soDienThoai,
+            tongTichDiem: dataCheckIn?.tongTichDiem,
+            dateTimeCheckIn: dataCheckIn?.dateTimeCheckIn
         });
 
         // asiign TongThanhToan if checkin from booking
-        const hdCache = await dbDexie.hoaDon.where('idCheckIn').equals(dataCheckIn.idCheckIn).toArray();
+        const hdCache = await dbDexie.hoaDon
+            .where('idCheckIn')
+            .equals(dataCheckIn?.idCheckIn ?? '')
+            .toArray();
         if (hdCache.length > 0) {
             cusChecking.tongThanhToan = hdCache[0].tongThanhToan;
         }
@@ -142,7 +141,13 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     return (
         <Box padding={2} width={'100%'}>
             <ListNhanVienDataContext.Provider value={lstNhanVien}>
-                <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
+                <ModalAddCustomerCheckIn
+                    typeForm={1}
+                    isNew={true}
+                    isShowModal={isShowModalCheckIn}
+                    onOK={saveCheckInOK}
+                    onClose={() => setIsShowModalCheckIn(false)}
+                />
             </ListNhanVienDataContext.Provider>
             <ConfirmDelete
                 isShow={inforDelete.show}
@@ -211,12 +216,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 }}
                                 title="Thêm khách"
                                 startIcon={window.screen.width < 768 ? null : <Add />}
-                                onClick={() =>
-                                    setTriggerAddCheckIn({
-                                        ...triggerAddCheckIn,
-                                        isShow: true
-                                    })
-                                }>
+                                onClick={() => setIsShowModalCheckIn(true)}>
                                 {window.screen.width < 768 ? <Add /> : 'Thêm khách'}
                             </Button>
                         </Stack>
@@ -299,7 +299,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                             Tổng mua:
                                         </Typography>
                                         <Typography variant="body2" fontWeight="700">
-                                            {Intl.NumberFormat('vi-VN').format(item.tongThanhToan)}
+                                            {Intl.NumberFormat('vi-VN').format(item.tongThanhToan ?? 0)}
                                         </Typography>
                                     </Stack>
                                 </Stack>

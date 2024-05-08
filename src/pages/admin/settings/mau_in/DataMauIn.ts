@@ -2,7 +2,7 @@ import PageHoaDonChiTietDto from '../../../../services/ban_hang/PageHoaDonChiTie
 import PageHoaDonDto from '../../../../services/ban_hang/PageHoaDonDto';
 import { ChiNhanhDto } from '../../../../services/chi_nhanh/Dto/chiNhanhDto';
 import { KhachHangItemDto } from '../../../../services/khach-hang/dto/KhachHangItemDto';
-import logoChiNhanh from '../../../../images/Lucky_beauty.jpg';
+import logoChiNhanh from '../../../../images/logo_Luckybeauty_full.png';
 import { CuaHangDto } from '../../../../services/cua_hang/Dto/CuaHangDto';
 import utils from '../../../../utils/utils';
 import { format } from 'date-fns';
@@ -105,11 +105,18 @@ class DataMauIn {
     hoadonChiTiet = [dv1, dv2];
     replaceChiNhanh = (shtml: string) => {
         let data = shtml;
+        console.log('logocuahang ', this.congty.logo);
         data = data.replaceAll('{TenCuaHang}', this.congty.tenCongTy.toUpperCase());
-        data = data.replaceAll('{LogoCuaHang}', `<img src=${this.congty.logo ?? congty.logo} />`);
+        data = data.replaceAll(
+            '{LogoCuaHang}',
+            `<img style="width: 100%" src=${utils.checkNull(this.congty.logo) ? logoChiNhanh : this.congty.logo} />`
+        );
         data = data.replaceAll('{DiaChiCuaHang}', this.congty.diaChi);
         data = data.replaceAll('{DienThoaiCuaHang}', this.congty.soDienThoai);
-        data = data.replaceAll('{LogoChiNhanh}', `<img src=${this.chinhanh.logo ?? chinhanh.logo} />`);
+        data = data.replaceAll(
+            '{LogoChiNhanh}',
+            `<img style="width: 100%" src=${utils.checkNull(this.chinhanh.logo) ? logoChiNhanh : this.chinhanh.logo} />`
+        );
         data = data.replaceAll('{TenChiNhanh}', this.chinhanh.tenChiNhanh.toUpperCase());
         data = data.replaceAll('{DienThoaiChiNhanh}', this.chinhanh.soDienThoai ?? '');
         data = data.replaceAll('{DiaChiChiNhanh}', this.chinhanh.diaChi ?? '');

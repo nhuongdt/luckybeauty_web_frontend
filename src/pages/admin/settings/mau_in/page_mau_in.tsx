@@ -21,7 +21,7 @@ import TokenMauIn from './TokenMauIn';
 import abpCustom from '../../../../components/abp-custom';
 import { ButtonNavigate } from '../../../../components/Button/ButtonNavigate';
 
-export default function PageMauIn({ xx }: any) {
+export default function PageMauIn() {
     const [html, setHtml] = useState('');
     const [dataPrint, setdataPrint] = useState('');
     const [allMauIn, setAllMauIn] = useState<MauInDto[]>([]);
@@ -160,6 +160,12 @@ export default function PageMauIn({ xx }: any) {
     }, [idMauInChosed, idLoaiChungTu]);
 
     const AssignAgainListMauIn_afterSave = (objMauIn: MauInDto) => {
+        setNewMauIn({
+            ...newMauIn,
+            laMacDinh: objMauIn.laMacDinh,
+            tenMauIn: objMauIn.tenMauIn,
+            noiDungMauIn: objMauIn.noiDungMauIn
+        });
         setListMauIn(() =>
             lstMauIn.map((x: MauInDto) => {
                 if (x.id === objMauIn.id) {

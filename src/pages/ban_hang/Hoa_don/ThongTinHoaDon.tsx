@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Box, Typography, Button, Tabs, Tab, TextField, Dialog, IconButton } from '@mui/material';
+import { Grid, Box, Typography, Button, Tabs, Tab, TextField, Dialog, IconButton, Link, Tooltip } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import AddLogoIcon from '../../../images/add-logo.svg';
+import PersonIcon from '@mui/icons-material/Person';
 
 import PrintIcon from '@mui/icons-material/Print';
 import TabInfo from './Tab_info';
@@ -36,7 +35,14 @@ import suggestStore from '../../../stores/suggestStore';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import { TrangThaiHoaDon } from '../../../services/ban_hang/HoaDonConst';
-import { TypeAction } from '../../../lib/appconst';
+import { LoaiNhatKyThaoTac, TypeAction } from '../../../lib/appconst';
+import { CreateNhatKyThaoTacDto } from '../../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
+import nhatKyHoatDongService from '../../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
+import Cookies from 'js-cookie';
+import uploadFileService from '../../../services/uploadFileService';
+import ModalAddCustomerCheckIn from '../../check_in/modal_add_cus_checkin';
+import { PageKhachHangCheckInDto } from '../../../services/check_in/CheckinDto';
+import { Guid } from 'guid-typescript';
 const themOutlineInput = createTheme({
     components: {
         MuiOutlinedInput: {
@@ -57,6 +63,11 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
 
     const [hoadonChosed, setHoaDonChosed] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
     const [chitietHoaDon, setChiTietHoaDon] = useState<PageHoaDonChiTietDto[]>([]);
+
+    const [ptGiamGia, setPTGiamGia] = useState(0);
+    const [giaTriGiamGia, setGiaTriGiamGia] = useState(0);
+
+    const [isShowModalCheckIn, setIsShowModalCheckIn] = useState(false);
 
     const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
     const [idCTHDChosing, setIdCTHDChosing] = useState('');
@@ -107,9 +118,6 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
     const changeChiNhanh = (item: ChiNhanhDto) => {
         setHoaDonChosed({ ...hoadonChosed, idChiNhanh: item?.id });
     };
-    const changeCustomer = (item: any) => {
-        setHoaDonChosed({ ...hoadonChosed, idKhachHang: item?.id });
-    };
 
     const gotoBack = () => {
         // chi dong hoadon thoi
@@ -134,11 +142,57 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
         setHoaDonChosed({ ...hoadonChosed, trangThai: TrangThaiHoaDon.HUY });
         setTypeAction(TypeAction.DELETE);
         handleGotoBack(objUpdate, TypeAction.DELETE);
+
+        const diary = {
+            idChiNhanh: appContext?.chinhanhCurrent?.id ?? hoadon?.idChiNhanh,
+            chucNang: `Danh mục hóa đơn`,
+            noiDung: `Xóa hóa đơn ${hoadonChosed?.maHoaDon}`,
+            noiDungChiTiet: `Xóa hóa đơn ${hoadonChosed?.maHoaDon} của khách hàng ${hoadonChosed?.tenKhachHang} (${hoadonChosed?.maKhachHang}) `,
+            loaiNhatKy: LoaiNhatKyThaoTac.DELETE
+        } as CreateNhatKyThaoTacDto;
+        await nhatKyHoatDongService.createNhatKyThaoTac(diary);
     };
 
     const showModalEditGioHang = () => {
         setIsShowEditGioHang(true);
         setIdCTHDChosing('');
+    };
+
+    const tabInfor_onChangeGiamGia = (ptGiamGia: number, giaTriGiamGia: number) => {
+        // why this is rerender
+        //setPTGiamGia(ptGiamGia);
+        // setGiaTriGiamGia(giaTriGiamGia);
+        // setTongThanhToan(0);
+    };
+
+    const saveDiaryCTHD = async (arCTnew: PageHoaDonChiTietDto[]) => {
+        let sDetailsOld = '';
+        for (let i = 0; i < chitietHoaDon?.length; i++) {
+            const itFor = chitietHoaDon[i];
+            sDetailsOld += ` <br /> ${i + 1}. ${itFor?.tenHangHoa} (${itFor?.maHangHoa}): ${
+                itFor?.soLuong
+            } x  ${Intl.NumberFormat('vi-VN').format(itFor?.donGiaTruocCK)}  =  ${Intl.NumberFormat('vi-VN').format(
+                itFor?.thanhTienSauCK ?? 0
+            )}`;
+        }
+        let sDetailsNew = '';
+        for (let i = 0; i < arCTnew?.length; i++) {
+            const itFor = arCTnew[i];
+            sDetailsNew += ` <br /> ${i + 1}. ${itFor?.tenHangHoa} (${itFor?.maHangHoa}): ${
+                itFor?.soLuong
+            } x  ${Intl.NumberFormat('vi-VN').format(itFor?.donGiaTruocCK)}  =  ${Intl.NumberFormat('vi-VN').format(
+                itFor?.thanhTienSauCK ?? 0
+            )}`;
+        }
+
+        const diary = {
+            idChiNhanh: Cookies.get('IdChiNhanh') ?? hoadon?.idChiNhanh,
+            chucNang: `Danh mục hóa đơn`,
+            noiDung: `Cập nhật chi tiết hóa đơn ${hoadon?.maHoaDon}`,
+            noiDungChiTiet: `<b> Thông tin mới: </b>  ${sDetailsNew} <br /> <b> Thông tin cũ: </b> ${sDetailsOld}`,
+            loaiNhatKy: LoaiNhatKyThaoTac.UPDATE
+        } as CreateNhatKyThaoTacDto;
+        await nhatKyHoatDongService.createNhatKyThaoTac(diary);
     };
 
     const AgreeGioHang = async (lstCTAfter: PageHoaDonChiTietDto[]) => {
@@ -185,8 +239,12 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
             maHoaDon: data?.maHoaDon,
             conNo: tongThanhToan - (hoadonChosed?.daThanhToan ?? 0)
         });
+        await saveDiaryCTHD(lstCTAfter);
     };
     const updateHoaDon = async () => {
+        hoadonChosed.pTGiamGiaHD = ptGiamGia;
+        hoadonChosed.tongGiamGiaHD = giaTriGiamGia;
+        hoadonChosed.tongThanhToan = hoadonChosed?.tongTienHang - giaTriGiamGia;
         const data = await HoaDonService.Update_InforHoaDon(hoadonChosed);
         setHoaDonChosed({ ...hoadonChosed, maHoaDon: data?.maHoaDon });
         setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật thông tin hóa đơn thành công' });
@@ -223,6 +281,15 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
         handleGotoBack(objUpdate, TypeAction.RESTORE);
         setObjAlert({ ...objAlert, show: true, mes: 'Khôi phục hóa đơn thành công' });
         setinforConfirm({ ...inforConfirm, show: false });
+
+        const diary = {
+            idChiNhanh: appContext?.chinhanhCurrent?.id ?? hoadon?.idChiNhanh,
+            chucNang: `Danh mục hóa đơn`,
+            noiDung: `Khôi phục hóa đơn ${hoadonChosed?.maHoaDon}`,
+            noiDungChiTiet: `Khôi phục hóa đơn ${hoadonChosed?.maHoaDon} của khách hàng ${hoadonChosed?.tenKhachHang} (${hoadonChosed?.maKhachHang}) `,
+            loaiNhatKy: LoaiNhatKyThaoTac.RESTORE
+        } as CreateNhatKyThaoTacDto;
+        await nhatKyHoatDongService.createNhatKyThaoTac(diary);
     };
 
     const InHoaDon = async () => {
@@ -235,6 +302,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
         } as KhachHangItemDto;
         DataMauIn.chinhanh = { tenChiNhanh: hoadon?.tenChiNhanh } as ChiNhanhDto;
         DataMauIn.congty = appContext.congty;
+        DataMauIn.congty.logo = uploadFileService.GoogleApi_NewLink(DataMauIn.congty?.logo);
         const tempMauIn = await MauInServices.GetContentMauInMacDinh(1, 1);
         let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
         newHtml = DataMauIn.replaceChiNhanh(newHtml);
@@ -261,6 +329,37 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
             newHtml = newHtml.replace('{QRCode}', `<img style="width: 100%" src=${qrCode} />`);
         }
         DataMauIn.Print(newHtml);
+    };
+
+    const showModalChangeCustomer = () => {
+        setIsShowModalCheckIn(true);
+    };
+
+    const onChangeCustomer = async (typeAction: number, item: PageKhachHangCheckInDto | undefined) => {
+        // todo: update again to KH_Checkin ??  có nên không?
+        const dataHD = await HoaDonService.UpdateCustomer_toHoaDon(hoadonChosed.id, item?.idKhachHang ?? Guid.EMPTY);
+        await SoQuyServices.UpdateCustomer_toQuyChiTiet(hoadonChosed.id, item?.idKhachHang ?? Guid.EMPTY);
+        if (dataHD) {
+            const diary = {
+                idChiNhanh: Cookies.get('IdChiNhanh') ?? hoadon?.idChiNhanh,
+                chucNang: `Danh mục hóa đơn`,
+                noiDung: `Thay đổi khách hàng cho hóa đơn ${hoadon?.maHoaDon}`,
+                noiDungChiTiet: `Khách hàng mới:  ${item?.tenKhachHang} (${item?.maKhachHang}) <br /> Khách hàng cũ: ${hoadon?.tenKhachHang} (${hoadon?.maKhachHang}) `,
+                loaiNhatKy: LoaiNhatKyThaoTac.UPDATE
+            } as CreateNhatKyThaoTacDto;
+            await nhatKyHoatDongService.createNhatKyThaoTac(diary);
+
+            setHoaDonChosed({
+                ...hoadonChosed,
+                idKhachHang: item?.idKhachHang ?? null,
+                maKhachHang: item?.maKhachHang ?? 'KL',
+                tenKhachHang: item?.tenKhachHang ?? 'Khách lẻ',
+                soDienThoai: item?.soDienThoai ?? ''
+            });
+            setObjAlert({ ...objAlert, mes: 'Bạn vừa thay đổi khách hàng', show: true, type: 1 });
+            setTypeAction(TypeAction.UPDATE);
+            setIsShowModalCheckIn(false);
+        }
     };
 
     const [activeTab, setActiveTab] = useState(0);
@@ -305,6 +404,13 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                 doanhThu={hoadonChosed?.tongTienHang}
                 thucThu={hoadonChosed?.daThanhToan}
                 idHoaDon={hoadonChosed?.id}
+            />
+            <ModalAddCustomerCheckIn
+                typeForm={0}
+                isNew={false}
+                isShowModal={isShowModalCheckIn}
+                onOK={onChangeCustomer}
+                onClose={() => setIsShowModalCheckIn(false)}
             />
             <Dialog open={open} onClose={gotoBack} maxWidth="xl" fullWidth>
                 <SnackbarAlert
@@ -359,39 +465,6 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                 </Stack>
                             </Grid>
                             <Grid item xs="auto">
-                                {/* <Box display="flex" gap="8px">
-                                <Button
-                                    className="btn-outline-hover"
-                                    startIcon={<InIcon />}
-                                    variant="outlined"
-                                    sx={{
-                                        bgcolor: '#fff!important',
-                                        color: '#666466',
-                                        borderColor: '#E6E1E6!important'
-                                    }}>
-                                    In
-                                </Button>
-                                <Button
-                                    className="btn-outline-hover"
-                                    startIcon={<UploadIcon />}
-                                    variant="outlined"
-                                    sx={{
-                                        bgcolor: '#fff!important',
-                                        color: '#666466',
-                                        borderColor: '#E6E1E6!important'
-                                    }}>
-                                    Xuất
-                                </Button>
-                                <Button
-                                    className="btn-container-hover"
-                                    variant="contained"
-                                    sx={{
-                                        bgcolor: '#7C3367!important',
-                                        color: '#fff'
-                                    }}>
-                                    Sao chép
-                                </Button>
-                            </Box> */}
                                 <IconButton
                                     onClick={gotoBack}
                                     sx={{
@@ -413,39 +486,9 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                 bgcolor: '#fff',
                                 alignItems: 'center'
                             }}>
-                            <Grid item xs={1.5}>
-                                <Box
-                                    sx={{
-                                        borderRadius: '6px',
-                                        '& img': {
-                                            maxWidth: '100%',
-                                            maxHeight: '100%',
-                                            objectFit: 'cover'
-                                        }
-                                    }}>
-                                    {utils.checkNull(hoadonChosed?.avatar) ? (
-                                        <img
-                                            width={100}
-                                            src={AddLogoIcon}
-                                            alt="avatar"
-                                            style={{
-                                                border: '1px solid #cccc',
-                                                padding: '20px'
-                                            }}
-                                        />
-                                    ) : (
-                                        <img
-                                            width={100}
-                                            style={{ backgroundColor: 'var(--color-bg)' }}
-                                            src={hoadonChosed?.avatar}
-                                            alt="avatar"
-                                        />
-                                    )}
-                                </Box>
-                            </Grid>
                             <Grid
                                 item
-                                xs={10.5}
+                                xs={12}
                                 sx={{
                                     '& .MuiFormLabel-root, & legend': {
                                         display: 'none'
@@ -454,23 +497,38 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                         height: '100%'
                                     }
                                 }}>
-                                <Box display="flex" gap="23px" mb="12px">
-                                    <Stack direction="row" gap={1}>
-                                        <Typography variant="h4" color="#3B4758" fontWeight="700" fontSize="24px">
-                                            {hoadonChosed?.tenKhachHang}
-                                        </Typography>
-                                        <ModeEditIcon style={{ color: '#999699', display: 'none' }} />
-                                    </Stack>
-                                </Box>
+                                <Stack direction="row" gap={1} alignItems={'center'} spacing={1}>
+                                    <PersonIcon sx={{ color: '#b3adad' }} />
+                                    <Typography
+                                        variant="h4"
+                                        color="#3B4758"
+                                        fontWeight="700"
+                                        fontSize="24px"
+                                        title="Thay đổi khách hàng"
+                                        sx={{
+                                            textDecoration: 'underline',
+                                            cursor: 'pointer'
+                                        }}
+                                        onClick={showModalChangeCustomer}>
+                                        {hoadonChosed?.tenKhachHang}
+                                    </Typography>
+                                    {hoadonChosed?.soDienThoai && (
+                                        <Typography
+                                            variant="body2"
+                                            color={'#b3adad'}>{`(${hoadonChosed?.soDienThoai})`}</Typography>
+                                    )}
+                                </Stack>
+                            </Grid>
+                            <Grid item xs={12} marginTop={2}>
                                 <Grid
                                     container
+                                    spacing={3}
                                     sx={{
                                         '& .MuiFormControl-root': {
                                             width: '100%'
                                         }
-                                    }}
-                                    spacing="2.7vw">
-                                    <Grid item xs={3}>
+                                    }}>
+                                    <Grid item xs={12} md={6} lg={3}>
                                         <Typography
                                             variant="h5"
                                             fontSize="12px"
@@ -492,7 +550,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                             value={hoadonChosed?.maHoaDon}
                                         />
                                     </Grid>
-                                    <Grid item xs={3}>
+                                    <Grid item xs={12} md={6} lg={3}>
                                         <Typography
                                             variant="h5"
                                             fontSize="12px"
@@ -509,7 +567,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                             />
                                         </ThemeProvider>
                                     </Grid>
-                                    <Grid item xs={3}>
+                                    <Grid item xs={12} md={6} lg={3}>
                                         <Typography
                                             variant="h5"
                                             fontSize="12px"
@@ -526,7 +584,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                             />
                                         </ThemeProvider>
                                     </Grid>
-                                    <Grid item xs={3}>
+                                    <Grid item xs={12} md={6} lg={3}>
                                         <Typography
                                             variant="h5"
                                             fontSize="12px"
@@ -547,6 +605,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                     </Grid>
                                 </Grid>
                             </Grid>
+
                             <Grid xs={12} item>
                                 <Tabs
                                     value={activeTab}
@@ -585,6 +644,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                     hoadon={hoadonChosed}
                                     chitietHoaDon={chitietHoaDon}
                                     onSaveOKNVThucHienDV={GetChiTietHoaDon_byIdHoaDon}
+                                    onChangeGiamGia={tabInfor_onChangeGiamGia}
                                 />
                             </TabPanel>
                             <TabPanel value={activeTab} index={1}>

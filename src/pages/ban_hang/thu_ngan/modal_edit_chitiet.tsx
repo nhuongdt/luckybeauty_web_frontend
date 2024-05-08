@@ -11,34 +11,19 @@ import {
     Stack,
     Button,
     Radio,
-    DialogActions,
-    Autocomplete,
-    Avatar,
-    Popover,
     FormControlLabel,
-    ToggleButton,
-    RadioGroup,
-    AccordionSummary,
     Box,
-    AccordionDetails,
     Link,
     IconButton,
     ButtonGroup
 } from '@mui/material';
-import { Percent, Add, Remove, MoreHoriz, ExpandMore, ExpandLess, Close } from '@mui/icons-material';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { Add, Remove, ExpandMore, ExpandLess, Close } from '@mui/icons-material';
+import { createTheme } from '@mui/material/styles';
 import PageHoaDonChiTietDto from '../../../services/ban_hang/PageHoaDonChiTietDto';
 import Utils from '../../../utils/utils'; // func common
-import AutocompleteProduct from '../../../components/Autocomplete/Product';
 import { NumericFormat } from 'react-number-format';
-import { Guid } from 'guid-typescript';
 import HoaDonService from '../../../services/ban_hang/HoaDonService';
-import RemoveIcon from '@mui/icons-material/Remove';
-import AddIcon from '@mui/icons-material/Add';
-import { width } from '@mui/system';
-import ProductService from '../../../services/product/ProductService';
 import ModalSearchProduct from '../../product/modal_search_product';
-import { cursorTo } from 'readline';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 const themInputChietKhau = createTheme({
     components: {
@@ -52,6 +37,11 @@ const themInputChietKhau = createTheme({
     }
 });
 
+export const ConstFormNumber = {
+    BAN_HANG: 1,
+    OTHER: 0
+};
+
 export default function ModalEditChiTietGioHang({
     isShow,
     formType = 0, // 1.form banhang, 0.other
@@ -60,14 +50,10 @@ export default function ModalEditChiTietGioHang({
     handleClose
 }: any) {
     const [isSave, setIsSave] = useState(false);
-    const [popover, setPopover] = useState({
-        anchorEl: null,
-        open: false,
-        item: { id: '', ptChietKhau: 0, tienChietKhau: 0, donGiaTruocCK: 0 }
-    });
+
     const [idCTHD, setIdCTHD] = useState('');
     const [lstCTHoaDon, setLstCTHoaDon] = useState<PageHoaDonChiTietDto[]>([]);
-    const displayComponent = formType === 1 ? 'none' : '';
+    const displayComponent = formType === ConstFormNumber.BAN_HANG ? 'none' : '';
     const [itemVisibility, setItemVisibility] = useState<boolean[]>(lstCTHoaDon.map(() => false)); //expaned cthd
     const [showModalSeachProduct, setShowModalSeachProduct] = useState(false);
 
@@ -87,7 +73,7 @@ export default function ModalEditChiTietGioHang({
         });
         setLstCTHoaDon(arr);
 
-        if (formType === 0) {
+        if (formType === ConstFormNumber.OTHER) {
             setLstCTHoaDon(
                 hoadonChiTiet.map((item: PageHoaDonChiTietDto) => {
                     return {
@@ -103,13 +89,13 @@ export default function ModalEditChiTietGioHang({
 
     const handleChangeGiaBan = (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
         setLstCTHoaDon(
-            lstCTHoaDon.map((item: any) => {
+            lstCTHoaDon.map((item) => {
                 if (item.id === id) {
                     const giaBanNew = Utils.formatNumberToFloat(event.target.value);
                     let dongiaSauCK = item.donGiaSauCK;
                     let tienCK = item.tienChietKhau;
-                    if (item.ptChietKhau > 0) {
-                        tienCK = (item.ptChietKhau * giaBanNew) / 100;
+                    if ((item?.ptChietKhau ?? 0) > 0) {
+                        tienCK = ((item?.ptChietKhau ?? 0) * giaBanNew) / 100;
                         dongiaSauCK = giaBanNew - tienCK;
                     } else {
                         tienCK = 0; // reset tienCK if change dongia
@@ -133,17 +119,17 @@ export default function ModalEditChiTietGioHang({
         );
     };
 
-    const handleChangeSoLuong = (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
+    const handleChangeSoLuong = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, id: string) => {
         setLstCTHoaDon(
-            lstCTHoaDon.map((item: any, index: number) => {
+            lstCTHoaDon.map((item) => {
                 if (item.id === id) {
                     const sluongNew = Utils.formatNumberToFloat(event.target.value);
                     return {
                         ...item,
                         soLuong: sluongNew,
                         thanhTienTruocCK: sluongNew * item.donGiaTruocCK,
-                        thanhTienSauCK: sluongNew * item.donGiaSauCK,
-                        thanhTienSauVAT: sluongNew * item.donGiaSauVAT
+                        thanhTienSauCK: sluongNew * (item?.donGiaSauCK ?? 0),
+                        thanhTienSauVAT: sluongNew * (item?.donGiaSauVAT ?? 0)
                     };
                 } else {
                     return item;
@@ -154,15 +140,15 @@ export default function ModalEditChiTietGioHang({
 
     const tangSoLuong = (id: string) => {
         setLstCTHoaDon(
-            lstCTHoaDon.map((item: any) => {
+            lstCTHoaDon.map((item) => {
                 if (item.id === id) {
                     const sluongNew = item.soLuong + 1;
                     return {
                         ...item,
                         soLuong: sluongNew,
-                        thanhTienTruocCK: sluongNew * item.donGiaTruocCK,
-                        thanhTienSauCK: sluongNew * item.donGiaSauCK,
-                        thanhTienSauVAT: sluongNew * item.donGiaSauVAT
+                        thanhTienTruocCK: sluongNew * (item?.donGiaTruocCK ?? 0),
+                        thanhTienSauCK: sluongNew * (item?.donGiaSauCK ?? 0),
+                        thanhTienSauVAT: sluongNew * (item?.donGiaSauVAT ?? 0)
                     };
                 } else {
                     return item;
@@ -172,15 +158,15 @@ export default function ModalEditChiTietGioHang({
     };
     const giamSoLuong = (id: string) => {
         setLstCTHoaDon(
-            lstCTHoaDon.map((item: any, index: number) => {
+            lstCTHoaDon.map((item) => {
                 if (item.id === id) {
                     const sluongNew = item.soLuong > 0 ? item.soLuong - 1 : 0;
                     return {
                         ...item,
                         soLuong: sluongNew,
-                        thanhTienTruocCK: sluongNew * item.donGiaTruocCK,
-                        thanhTienSauCK: sluongNew * item.donGiaSauCK,
-                        thanhTienSauVAT: sluongNew * item.donGiaSauVAT
+                        thanhTienTruocCK: sluongNew * (item?.donGiaTruocCK ?? 0),
+                        thanhTienSauCK: sluongNew * (item?.donGiaSauCK ?? 0),
+                        thanhTienSauVAT: sluongNew * (item?.donGiaSauVAT ?? 0)
                     };
                 } else {
                     return item;
@@ -323,7 +309,7 @@ export default function ModalEditChiTietGioHang({
 
     const addNewChiTiet = (item: any) => {
         const ctNew = new PageHoaDonChiTietDto({
-            maHangHoa: item.mahangHoa,
+            maHangHoa: item?.maHangHoa,
             tenHangHoa: item.tenHangHoa,
             idDonViQuyDoi: item.idDonViQuyDoi,
             idHangHoa: item.idHangHoa,
@@ -362,7 +348,7 @@ export default function ModalEditChiTietGioHang({
 
     const agrreGioHang = async () => {
         setIsSave(true);
-        if (formType === 1) {
+        if (formType === ConstFormNumber.BAN_HANG) {
             handleSave(lstCTHoaDon[0]); // object
         } else {
             // update Db
@@ -425,20 +411,20 @@ export default function ModalEditChiTietGioHang({
                 </IconButton>
                 <DialogContent sx={{ paddingTop: 0 }}>
                     {/* 1 row */}
-                    {lstCTHoaDon.map((ct: any, index: number) => (
+                    {lstCTHoaDon.map((ct: PageHoaDonChiTietDto, index: number) => (
                         <Grid
                             container
                             key={index}
                             padding="16px 0px"
-                            borderBottom={formType === 1 ? '' : '1px dashed green'}
+                            borderBottom={formType === ConstFormNumber.BAN_HANG ? '' : '1px dashed green'}
                             borderRadius={1}
-                            marginBottom={formType === 1 ? 0 : '10px'}>
+                            marginBottom={formType === ConstFormNumber.BAN_HANG ? 0 : '10px'}>
                             <Grid
                                 item
-                                xs={formType === 1 ? 0 : 2}
-                                sm={formType === 1 ? 0 : 1}
-                                md={formType === 1 ? 0 : 1}
-                                lg={formType === 1 ? 0 : 1}
+                                xs={formType === ConstFormNumber.BAN_HANG ? 0 : 2}
+                                sm={formType === ConstFormNumber.BAN_HANG ? 0 : 1}
+                                md={formType === ConstFormNumber.BAN_HANG ? 0 : 1}
+                                lg={formType === ConstFormNumber.BAN_HANG ? 0 : 1}
                                 sx={{
                                     display: displayComponent
                                 }}>
@@ -455,10 +441,10 @@ export default function ModalEditChiTietGioHang({
                             </Grid>
                             <Grid
                                 item
-                                xs={formType === 1 ? 12 : 10}
-                                sm={formType === 1 ? 12 : 11}
-                                md={formType === 1 ? 12 : 11}
-                                lg={formType === 1 ? 12 : 11}>
+                                xs={formType === ConstFormNumber.BAN_HANG ? 12 : 10}
+                                sm={formType === ConstFormNumber.BAN_HANG ? 12 : 11}
+                                md={formType === ConstFormNumber.BAN_HANG ? 12 : 11}
+                                lg={formType === ConstFormNumber.BAN_HANG ? 12 : 11}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={9} md={9} lg={9}>
                                         <Box
@@ -492,10 +478,10 @@ export default function ModalEditChiTietGioHang({
                                     </Grid>
                                     <Grid
                                         item
-                                        xs={formType === 1 ? 12 : 10}
-                                        sm={formType === 1 ? 3 : 1}
-                                        md={formType === 1 ? 3 : 2}
-                                        lg={formType === 1 ? 3 : 2}>
+                                        xs={formType === ConstFormNumber.BAN_HANG ? 12 : 10}
+                                        sm={formType === ConstFormNumber.BAN_HANG ? 3 : 1}
+                                        md={formType === ConstFormNumber.BAN_HANG ? 3 : 2}
+                                        lg={formType === ConstFormNumber.BAN_HANG ? 3 : 2}>
                                         <Stack
                                             direction="row"
                                             spacing={1}
@@ -508,22 +494,30 @@ export default function ModalEditChiTietGioHang({
                                                     textAlign: 'right',
                                                     color: 'var(--color-main)'
                                                 }}>
-                                                {new Intl.NumberFormat('vi-VN').format(ct?.thanhTienSauVAT)}
+                                                {new Intl.NumberFormat('vi-VN').format(ct?.thanhTienSauVAT ?? 0)}
                                             </Typography>
                                         </Stack>
                                     </Grid>
                                     {/* // man hinh thu ngan: khong hien icon toogle  */}
-                                    {formType !== 1 && (
+                                    {formType !== ConstFormNumber.BAN_HANG && (
                                         <Grid item xs={2} sm={1} md={1} lg={1}>
                                             <Box onClick={() => toggleVisibility(index)} sx={{ cursor: 'pointer' }}>
                                                 <ExpandMore
                                                     sx={{
-                                                        display: formType !== 1 && !itemVisibility[index] ? '' : 'none'
+                                                        display:
+                                                            formType !== ConstFormNumber.BAN_HANG &&
+                                                            !itemVisibility[index]
+                                                                ? ''
+                                                                : 'none'
                                                     }}
                                                 />
                                                 <ExpandLess
                                                     sx={{
-                                                        display: formType !== 1 && itemVisibility[index] ? '' : 'none'
+                                                        display:
+                                                            formType !== ConstFormNumber.BAN_HANG &&
+                                                            itemVisibility[index]
+                                                                ? ''
+                                                                : 'none'
                                                     }}
                                                 />
                                             </Box>
@@ -541,7 +535,7 @@ export default function ModalEditChiTietGioHang({
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 customInput={TextField}
-                                                onChange={(event: any) => handleChangeGiaBan(event, ct.id)}
+                                                onChange={(event) => handleChangeGiaBan(event, ct.id)}
                                             />
                                         </Stack>
                                     </Grid>
@@ -567,9 +561,7 @@ export default function ModalEditChiTietGioHang({
                                                     size="small"
                                                     fullWidth
                                                     value={ct.soLuong}
-                                                    onChange={(event: any) =>
-                                                        handleChangeSoLuong(event, ct.id)
-                                                    }></TextField>
+                                                    onChange={(event) => handleChangeSoLuong(event, ct.id)}></TextField>
                                                 <Add className="btnIcon" onClick={() => tangSoLuong(ct.id)} />
                                             </Stack>
                                         </Stack>
@@ -595,7 +587,7 @@ export default function ModalEditChiTietGioHang({
                                                             color: 'red',
                                                             display: 'none'
                                                         }}>
-                                                        -{new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau)}
+                                                        -{new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau ?? 0)}
                                                     </span>
                                                 </Stack>
                                                 <Stack
@@ -606,22 +598,20 @@ export default function ModalEditChiTietGioHang({
                                                         textAlign: 'right',
                                                         float: 'right',
                                                         color: 'red',
-                                                        display: ct?.tienChietKhau > 0 ? '' : 'none'
+                                                        display: (ct?.tienChietKhau ?? 0) > 0 ? '' : 'none'
                                                     }}>
-                                                    -{new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau)}
+                                                    -{new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau ?? 0)}
                                                 </Stack>
                                             </Stack>
 
                                             <NumericFormat
                                                 size="small"
                                                 fullWidth
-                                                value={ct.ptChietKhau > 0 ? ct.ptChietKhau : ct.tienChietKhau}
+                                                value={(ct.ptChietKhau ?? 0) > 0 ? ct.ptChietKhau : ct.tienChietKhau}
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 customInput={TextField}
-                                                onChange={(event: any) =>
-                                                    changeGtriChietKhau(event.target.value, ct.id)
-                                                }
+                                                onChange={(event) => changeGtriChietKhau(event.target.value, ct.id)}
                                             />
                                         </Stack>
                                     </Grid>
@@ -670,7 +660,7 @@ export default function ModalEditChiTietGioHang({
                                             </Button>
                                         </ButtonGroup>
                                     </Grid>
-                                    {formType === 1 && ct.laPTChietKhau && (
+                                    {formType === ConstFormNumber.BAN_HANG && ct.laPTChietKhau && (
                                         <Grid item xs={12} md={12}>
                                             <Stack spacing={1} direction={'row'} flexWrap="wrap" useFlexGap>
                                                 {chietKhau.map((item, index) => (
@@ -712,7 +702,8 @@ export default function ModalEditChiTietGioHang({
                                                             color: 'red',
                                                             display: 'none'
                                                         }}>
-                                                        - {new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau)}
+                                                        -{' '}
+                                                        {new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau ?? 0)}
                                                     </span>
                                                 </Stack>
                                                 <Stack
@@ -723,10 +714,10 @@ export default function ModalEditChiTietGioHang({
                                                         textAlign: 'right',
                                                         float: 'right',
                                                         color: 'red',
-                                                        display: ct?.tienChietKhau > 0 ? '' : 'none'
+                                                        display: (ct?.tienChietKhau ?? 0) > 0 ? '' : 'none'
                                                     }}>
                                                     <span>
-                                                        -{new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau)}
+                                                        -{new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau ?? 0)}
                                                     </span>
                                                 </Stack>
                                             </Stack>
@@ -734,13 +725,11 @@ export default function ModalEditChiTietGioHang({
                                             <NumericFormat
                                                 size="small"
                                                 fullWidth
-                                                value={ct.ptChietKhau > 0 ? ct.ptChietKhau : ct.tienChietKhau}
+                                                value={(ct?.ptChietKhau ?? 0) > 0 ? ct.ptChietKhau : ct.tienChietKhau}
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 customInput={TextField}
-                                                onChange={(event: any) =>
-                                                    changeGtriChietKhau(event.target.value, ct.id)
-                                                }
+                                                onChange={(event) => changeGtriChietKhau(event.target.value, ct.id)}
                                             />
                                         </Stack>
                                     </Grid>

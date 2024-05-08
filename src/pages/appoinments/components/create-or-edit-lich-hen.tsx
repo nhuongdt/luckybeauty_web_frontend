@@ -98,28 +98,6 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                   autoHideDuration: 3000
               });
 
-        // insert to kh_checkin (thungan)
-        if (values.trangThai === TrangThaiBooking.CheckIn) {
-            const idBooking = createResult.id;
-            const itemBooking = await datLichService.GetInforBooking_byID(idBooking);
-            if (itemBooking.length > 0) {
-                const idChiNhanh = Cookies.get('IdChiNhanh')?.toString() as string;
-                const objCheckIn: KHCheckInDto = new KHCheckInDto({
-                    idKhachHang: itemBooking[0].idKhachHang,
-                    idChiNhanh: idChiNhanh,
-                    trangThai: TrangThaiCheckin.DOING
-                });
-                const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
-                // save to Booking_Checkin_HD
-                await CheckinService.InsertCheckInHoaDon({
-                    idCheckIn: dataCheckIn.id,
-                    idBooking: itemBooking[0].idBooking
-                } as ICheckInHoaDonto);
-
-                // save to cache HoaDon (indexDB)
-                await bookingStore.addDataBooking_toCacheHD(itemBooking[0], dataCheckIn.id);
-            }
-        }
         this.props.onOk(createResult.id);
     };
 

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Box, TextField, Button, Typography, Grid, InputAdornment, Stack, debounce } from '@mui/material';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as AddIcon } from '../../images/add.svg';
@@ -9,17 +9,11 @@ import CreateOrEditLichHenModal from '../appoinments/components/create-or-edit-l
 import datLichService from '../../services/dat-lich/datLichService';
 import { BookingRequestDto } from '../../services/dat-lich/dto/PagedBookingResultRequestDto';
 import { format } from 'date-fns';
-import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
-import { SuggestKhachHangDto } from '../../services/suggests/dto/SuggestKhachHangDto';
-import { SuggestDichVuDto } from '../../services/suggests/dto/SuggestDichVuDto';
-import SuggestService from '../../services/suggests/SuggestService';
 import suggestStore from '../../stores/suggestStore';
 import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 import utils from '../../utils/utils';
-import Cookies from 'js-cookie';
-import { SuggestNhanVienDichVuDto } from '../../services/suggests/dto/SuggestNhanVienDichVuDto';
-import { ListNhanVienDataContext } from '../../services/nhan-vien/dto/NhanVienDataContext';
 import abpCustom from '../../components/abp-custom';
+import TrangThaiBooking from '../../enum/TrangThaiBooking';
 const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     const arrTrangThaiBook = [
         {
@@ -36,22 +30,13 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
         }
     ];
 
-    const appContext = useContext(AppContext);
-    const chiNhanhCurrent = appContext.chinhanhCurrent;
-    const idChiNhanh = chiNhanhCurrent?.id ?? Cookies.get('IdChiNhanh');
-    const lstNhanVien = useContext(ListNhanVienDataContext) as unknown as SuggestNhanVienDichVuDto;
-
     const [isShowModalLichHen, setIsShowModalLichHen] = useState(false);
-    const [suggestKhachHang, setSuggestKhachHang] = useState<SuggestKhachHangDto[]>([]);
-    const [suggestDichVu, setSuggestDichVu] = useState<SuggestDichVuDto[]>([]);
-
+    const [listCusBooking, setListCusBooking] = useState<BookingDetail_ofCustomerDto[]>([]);
     const [paramSearch, setParamSearch] = useState<BookingRequestDto>(
         new BookingRequestDto(
             { currentPage: 0, trangThaiBook: 3, pageSize: 1000 } // 0.xoa 1.chua xacnhan, 2.da xacnhan, 3.all
         )
     );
-
-    const [listCusBooking, setListCusBooking] = useState<BookingDetail_ofCustomerDto[]>([]);
 
     const GetListCustomer_wasBooking = async (paramSearch: BookingRequestDto) => {
         const data = await datLichService.GetKhachHang_Booking(paramSearch);
@@ -59,15 +44,11 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     };
 
     const GetAllDichVu = async () => {
-        const data = await SuggestService.SuggestDichVu();
         await suggestStore.getSuggestDichVu();
-        setSuggestDichVu(data);
     };
 
     const GetAllListCustomer = async () => {
-        const data = await SuggestService.SuggestKhachHang();
         await suggestStore.getSuggestKhachHang();
-        setSuggestKhachHang(data);
     };
     const GetAllKyThuatVien = async () => {
         await suggestStore.getSuggestKyThuatVien();
@@ -107,7 +88,12 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
         setIsShowModalLichHen(false);
         const newBooking = await datLichService.GetInforBooking_byID(idBooking);
         if (newBooking != null && newBooking.length > 0) {
-            setListCusBooking([newBooking[0], ...listCusBooking]);
+            // nếu trạng thái = checkin: đóng modal checkin và thêm vào thungan
+            if (newBooking[0].trangThai === TrangThaiBooking.CheckIn) {
+                choseBooking(newBooking[0]);
+            } else {
+                setListCusBooking([newBooking[0], ...listCusBooking]);
+            }
         }
     };
 
