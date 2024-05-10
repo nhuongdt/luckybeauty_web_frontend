@@ -34,15 +34,28 @@ const LineChartNew: React.FC = () => {
         dashboardStore.thongKeLichHen !== undefined &&
         dashboardStore.thongKeLichHen !== ([] as ThongKeLichHen[]) &&
         dashboardStore.thongKeLichHen.length > 0
-            ? dashboardStore.thongKeLichHen
+            ? dashboardStore.thongKeLichHen.map((item) => {
+                  return {
+                      tuan:
+                          item.tuan === '0'
+                              ? window.screen.width <= 768
+                                  ? 'CN'
+                                  : 'Chủ nhật'
+                              : window.screen.width <= 768
+                              ? 'T' + item.tuan
+                              : 'Thứ ' + item.tuan,
+                      tuanNay: item.tuanNay,
+                      tuanTruoc: item.tuanTruoc
+                  };
+              })
             : [
-                  { tuan: 'Thứ 2', tuanNay: 0, tuanTruoc: 0 },
-                  { tuan: 'Thứ 3', tuanNay: 0, tuanTruoc: 0 },
-                  { tuan: 'Thứ 4', tuanNay: 0, tuanTruoc: 0 },
-                  { tuan: 'Thứ 5', tuanNay: 0, tuanTruoc: 0 },
-                  { tuan: 'Thứ 6', tuanNay: 0, tuanTruoc: 0 },
-                  { tuan: 'Thứ 7', tuanNay: 0, tuanTruoc: 0 },
-                  { tuan: 'Chủ nhật', tuanNay: 0, tuanTruoc: 0 }
+                  { tuan: window.screen.width <= 768 ? 'T2' : 'Thứ 2', tuanNay: 0, tuanTruoc: 0 },
+                  { tuan: window.screen.width <= 768 ? 'T3' : 'Thứ 3', tuanNay: 0, tuanTruoc: 0 },
+                  { tuan: window.screen.width <= 768 ? 'T4' : 'Thứ 4', tuanNay: 0, tuanTruoc: 0 },
+                  { tuan: window.screen.width <= 768 ? 'T5' : 'Thứ 5', tuanNay: 0, tuanTruoc: 0 },
+                  { tuan: window.screen.width <= 768 ? 'T6' : 'Thứ 6', tuanNay: 0, tuanTruoc: 0 },
+                  { tuan: window.screen.width <= 768 ? 'T7' : 'Thứ 7', tuanNay: 0, tuanTruoc: 0 },
+                  { tuan: window.screen.width <= 768 ? 'CN' : 'Chủ nhật', tuanNay: 0, tuanTruoc: 0 }
               ];
 
     const hideZeroFormatter = (value: any) => (value === 0 ? '' : value);

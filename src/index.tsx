@@ -9,7 +9,6 @@ import reportWebVitals from './reportWebVitals';
 import initializeStores from './stores/storeInitializer';
 import registerServiceWorker from './registerServiceWorker';
 import { Provider } from 'mobx-react';
-import '@babel/polyfill';
 import 'core-js';
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 const stores = initializeStores();
