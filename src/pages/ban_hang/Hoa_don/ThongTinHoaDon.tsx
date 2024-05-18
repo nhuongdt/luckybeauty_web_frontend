@@ -216,7 +216,12 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
             tongTienThue += (ctFor?.soLuong ?? 0) * (ctFor?.tienThue ?? 0);
             tongTienHDSauVAT += ctFor?.thanhTienSauVAT ?? 0;
         }
-        tongThanhToan = tongTienHDSauVAT - (hoadon?.tongGiamGiaHD ?? 0);
+
+        let giamGiaHD = hoadon?.tongGiamGiaHD ?? 0;
+        if (hoadon?.ptGiamGiaHD > 0) {
+            giamGiaHD = (tongTienHang * hoadon?.ptGiamGiaHD) / 100;
+        }
+        tongThanhToan = tongTienHDSauVAT - giamGiaHD;
 
         const objHDAfter = { ...hoadonChosed };
         objHDAfter.tongTienHangChuaChietKhau = tongTienHangChuaChietKhau;
@@ -225,6 +230,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
         objHDAfter.tongTienThue = tongTienThue;
         objHDAfter.tongTienHDSauVAT = tongTienHDSauVAT;
         objHDAfter.tongThanhToan = tongThanhToan;
+        objHDAfter.tongGiamGiaHD = giamGiaHD;
 
         console.log('objHDAfter ', objHDAfter);
         const data = await HoaDonService.Update_InforHoaDon(objHDAfter);
@@ -235,6 +241,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
             tongTienHang: tongTienHang,
             tongTienThue: tongTienThue,
             tongTienHDSauVAT: tongTienHDSauVAT,
+            tongGiamGiaHD: giamGiaHD,
             tongThanhToan: tongThanhToan,
             maHoaDon: data?.maHoaDon,
             conNo: tongThanhToan - (hoadonChosed?.daThanhToan ?? 0)
