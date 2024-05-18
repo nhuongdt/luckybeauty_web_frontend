@@ -6,8 +6,9 @@ import { HoaDonRequestDto } from '../dto/ParamSearchDto';
 import { PagedResultDto } from '../dto/pagedResultDto';
 import utils from '../../utils/utils';
 import { IFileDto } from '../dto/FileDto';
+import HoaDonDto from './HoaDonDto';
 class HoaDonService {
-    CreateHoaDon = async (input: any) => {
+    CreateHoaDon = async (input: any): Promise<HoaDonDto | null> => {
         if (input.idKhachHang === '' || input.idKhachHang === Guid.EMPTY.toString()) {
             input.idKhachHang = null;
         }
