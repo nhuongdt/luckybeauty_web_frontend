@@ -1,20 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ChangeEventHandler } from 'react';
-import { GetAllTenantOutput } from '../../../services/tenant/dto/getAllTenantOutput';
-import { Box, Grid, Typography, TextField, Button, IconButton, SelectChangeEvent } from '@mui/material';
+import { Box, Grid, Typography, TextField, Button, SelectChangeEvent } from '@mui/material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import AppComponentBase from '../../../components/AppComponentBase';
 import tenantService from '../../../services/tenant/tenantService';
 import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
-import '../../../custom.css';
 import AddIcon from '../../../images/add.svg';
 import CreateOrEditTenant from './components/create-or-edit-tenant';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import CreateTenantInput from '../../../services/tenant/dto/createTenantInput';
 import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Info, Edit, DeleteForever, MoreHoriz } from '@mui/icons-material';
+import { Info, Edit, DeleteForever } from '@mui/icons-material';
 import { TextTranslate } from '../../../components/TableLanguage';
-import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { enqueueSnackbar } from 'notistack';
 import abpCustom from '../../../components/abp-custom';
@@ -426,7 +423,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                         }}
                     />
                 ),
-                renderHeader: (params: any) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
+                renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
             }
             // {
             //     field: 'action',

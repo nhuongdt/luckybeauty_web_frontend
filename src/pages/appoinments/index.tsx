@@ -8,7 +8,7 @@ import Cookies from 'js-cookie';
 import CreateOrEditLichHenModal from './components/create-or-edit-lich-hen';
 import abpCustom from '../../components/abp-custom';
 import LichhenDetail from './components/lich-hen-detail';
-import { observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import '../customer/customerPage.css';
 import suggestStore from '../../stores/suggestStore';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
@@ -36,8 +36,13 @@ import { format as formatDateFns, parseISO } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import './appointment.css';
 import { QueryBuilder } from '@mui/icons-material';
-import { ResourceLabelContentArg } from '@fullcalendar/resource';
-const LichHen: React.FC = () => {
+import NotificationStore from '../../stores/notificationStore';
+import Stores from '../../stores/storeIdentifier';
+interface ILichHenProps {
+    notificationStore: NotificationStore;
+}
+const LichHen: React.FC<ILichHenProps> = (props) => {
+    const { notificationStore } = props;
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
     const [modalVisible, setModalVisible] = useState(false);
@@ -384,7 +389,7 @@ const LichHen: React.FC = () => {
         </Box>
     );
 };
-export default observer(LichHen);
+export default inject(Stores.NotificationStore)(observer(LichHen));
 
 //lable header theo ngày của từng nhân viên
 function renderResourceLabelContent(args: any) {

@@ -1,41 +1,15 @@
-import {
-    Box,
-    Button,
-    Checkbox,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControlLabel,
-    FormGroup,
-    Grid,
-    Radio,
-    TextField,
-    Stack,
-    debounce
-} from '@mui/material';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { Formik, Form } from 'formik';
-import { useEffect, useState, useRef, useContext } from 'react';
-import { NumericFormat } from 'react-number-format';
-import QuyChiTietDto from '../../../../services/so_quy/QuyChiTietDto';
-import QuyHoaDonDto from '../../../../services/so_quy/QuyHoaDonDto';
-import SoQuyServices from '../../../../services/so_quy/SoQuyServices';
+import { useEffect, useState } from 'react';
 import utils from '../../../../utils/utils';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import * as yup from 'yup';
-import { useFormik, useFormikContext } from 'formik';
-import { addDays, format, isDate, parse } from 'date-fns';
-import AppConsts from '../../../../lib/appconst';
 import { Guid } from 'guid-typescript';
-
-import nhanVienService from '../../../../services/nhan-vien/nhanVienService';
-import NhanSuItemDto from '../../../../services/nhan-vien/dto/nhanSuItemDto';
-import AutocompleteNhanVien from '../../../../components/Autocomplete/NhanVien';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
-import { TrendingUpTwoTone } from '@mui/icons-material';
-import { PagedNhanSuRequestDto } from '../../../../services/nhan-vien/dto/PagedNhanSuRequestDto';
 import { TaiKhoanNganHangDto, NganHangDto } from '../../../../services/so_quy/Dto/TaiKhoanNganHangDto';
 import TaiKhoanNganHangServices from '../../../../services/so_quy/TaiKhoanNganHangServices';
 import AutocompleteBank from '../../../../components/Autocomplete/Bank';

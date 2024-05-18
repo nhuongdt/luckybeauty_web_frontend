@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     Box,
     Button,
     Checkbox,
     Dialog,
-    DialogActions,
     DialogContent,
     DialogTitle,
     FormControlLabel,
@@ -11,9 +12,7 @@ import {
     Grid,
     Radio,
     TextField,
-    Stack,
-    debounce,
-    Typography
+    Stack
 } from '@mui/material';
 
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
@@ -29,8 +28,7 @@ import DateTimePickerCustom from '../../../../components/DatetimePicker/DateTime
 import AutocompleteCustomer from '../../../../components/Autocomplete/Customer';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import * as yup from 'yup';
-import { useFormik, useFormikContext } from 'formik';
-import { addDays, format, isDate, parse } from 'date-fns';
+import { format } from 'date-fns';
 import AppConsts, {
     HINH_THUC_THANH_TOAN,
     ISelect,
@@ -40,7 +38,7 @@ import AppConsts, {
     TypeAction
 } from '../../../../lib/appconst';
 import { Guid } from 'guid-typescript';
-import { AppContext, ChiNhanhContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
 import nhanVienService from '../../../../services/nhan-vien/nhanVienService';
 import NhanSuItemDto from '../../../../services/nhan-vien/dto/nhanSuItemDto';
 import AutocompleteNhanVien from '../../../../components/Autocomplete/NhanVien';

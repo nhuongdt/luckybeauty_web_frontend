@@ -1,9 +1,10 @@
+/* eslint-disable prefer-const */
 import AppConsts from './appconst';
 
 declare let abp: any;
 
 export function L(key: string, sourceName?: string): string {
-    const localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
+    let localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
     return abp.localization.localize(key, sourceName ? sourceName : localizationSourceName);
 }
 

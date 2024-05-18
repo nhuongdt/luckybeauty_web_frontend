@@ -4,7 +4,7 @@ import qs from 'qs';
 import { enqueueSnackbar } from 'notistack';
 const http = axios.create({
     baseURL: process.env.REACT_APP_REMOTE_SERVICE_BASE_URL,
-    timeout: 60000,
+    timeout: 300000,
     paramsSerializer: function (params) {
         return qs.stringify(params, {
             encode: false
@@ -14,8 +14,8 @@ const http = axios.create({
 
 http.interceptors.request.use(
     (config) => {
-        if (Cookies.get('accessToken') !== null && Cookies.get('accessToken') !== undefined) {
-            config.headers.Authorization = 'Bearer ' + Cookies.get('accessToken');
+        if (Cookies.get('Abp.AuthToken') !== null && Cookies.get('Abp.AuthToken') !== undefined) {
+            config.headers.Authorization = 'Bearer ' + Cookies.get('Abp.AuthToken');
         }
 
         return config;

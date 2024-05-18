@@ -18,6 +18,11 @@
     "plugins": ["react", "@typescript-eslint"],
     "rules": {
         "react/react-in-jsx-scope": "off",
-        "react/jsx-key": "off"
+        "react/jsx-key": "off",
+        "no-var": "off", // Allow the use of `var`
+        "@typescript-eslint/no-unused-vars": "warn", // Warn for unused variables instead of error
+        "no-unused-vars": "off", //
+        "no-undef": "off",
+        "@typescript-eslint/no-var-requires": "off"
     }
 }

@@ -11,8 +11,6 @@ import dashboardStore from '../../stores/dashboardStore';
 import Cookies from 'js-cookie';
 import { observer } from 'mobx-react';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
-import TawkMessenger from '../../lib/tawk_chat';
-
 const Dashboard: React.FC = () => {
     const [dashboardDateView, setDashboardDateView] = useState('day');
     const appContext = useContext(AppContext);
@@ -244,7 +242,6 @@ const Dashboard: React.FC = () => {
                     </Grid>
                 </Box>
             </div>
-            <TawkMessenger propertyId={'6629be0b1ec1082f04e68f36'} widgetId="1hs9gso7p" />
         </div>
     );
 };

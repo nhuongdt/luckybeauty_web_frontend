@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
     Box,
     Grid,
@@ -16,21 +18,16 @@ import {
     Checkbox,
     TableFooter
 } from '@mui/material';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import ClearIcon from '@mui/icons-material/Clear';
 import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
 import CreateOrEditSoQuyDialog from './components/CreateOrEditSoQuyDialog';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
-
-import { TextTranslate } from '../../../components/TableLanguage';
-import { RequestFromToDto } from '../../../services/dto/ParamSearchDto';
 import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import { format, lastDayOfMonth } from 'date-fns';
-import { DataGrid, GridColDef, GridSortModel, GridRowSelectionModel } from '@mui/x-data-grid';
-import { PagedResultDto } from '../../../services/dto/pagedResultDto';
-import { GetAllQuyHoaDonItemDto } from '../../../services/so_quy/Dto/QuyHoaDonViewItemDto';
+import { GridColDef, GridSortModel, GridRowSelectionModel } from '@mui/x-data-grid';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import utils from '../../../utils/utils';
 import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
@@ -50,7 +47,6 @@ import NapTienBrandname from '../../sms/brandname/nap_tien_brandname';
 import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
 import ModalPhieuThuHoaDon from './components/modal_phieu_thu_hoa_don';
 import { IList } from '../../../services/dto/IList';
-import { Guid } from 'guid-typescript';
 import { ParamSearchSoQuyDto } from '../../../services/so_quy/Dto/ParamSearchSoQuyDto';
 import { HINH_THUC_THANH_TOAN, LoaiChungTu, LoaiMauIn, TrangThaiActive, TypeAction } from '../../../lib/appconst';
 import { IHeaderTable, MyHeaderTable } from '../../../components/Table/MyHeaderTable';

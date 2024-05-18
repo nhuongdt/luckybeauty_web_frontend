@@ -2,32 +2,43 @@ import { useEffect, useState } from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { format } from 'date-fns';
+import { format, parseISO, isValid } from 'date-fns';
 import vi from 'date-fns/locale/vi';
 import utils from '../../utils/utils';
 import React from 'react';
 import { ReactComponent as DateIcon } from '../../images/calendarMenu.svg';
 import { viVN } from '@mui/x-date-pickers/locales';
+
 export default function DatePickerRequireCustom({ defaultVal, handleChangeDate, props, maxDate = null }: any) {
     const today = new Date();
     const [open, setOpen] = useState<boolean>(false);
-    const [value, setValue] = useState<Date | null>(new Date(format(today, 'yyyy-MM-01')));
+    const [value, setValue] = useState<Date | null>(new Date(format(today, 'yyyy-MM-dd')));
+
     const changeDate = (newVal: any) => {
-        if (new Date(newVal).toString() === 'Invalid Date') return;
-        handleChangeDate(format(new Date(newVal), 'yyyy-MM-dd'));
-        setValue(newVal);
+        const parsedDate = parseISO(newVal);
+        if (!isValid(parsedDate)) return;
+        handleChangeDate(format(parsedDate, 'yyyy-MM-dd'));
+        setValue(parsedDate);
     };
+
     const onOpen = () => {
         setOpen(!open);
     };
+
     const onClose = () => {
         setOpen(false);
     };
+
     useEffect(() => {
         if (utils.checkNull(defaultVal)) {
-            setValue(null);
+            setValue(new Date());
         } else {
-            setValue(new Date(defaultVal));
+            const parsedDate = parseISO(defaultVal);
+            if (isValid(parsedDate)) {
+                setValue(parsedDate);
+            } else {
+                setValue(new Date());
+            }
         }
     }, [defaultVal]);
 

@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import AppSiderMenu from '../SiderMenu/index';
 import Cookies from 'js-cookie';
 import LoginAlertDialog from '../AlertDialog/LoginAlert';
 import { Container } from '@mui/system';
 import Box from '@mui/material/Box';
-import { AppContext, ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
 import http from '../../services/httpService';
 import sessionStore from '../../stores/sessionStore';
@@ -14,10 +14,12 @@ import Header from '../Header';
 import { CuaHangDto } from '../../services/cua_hang/Dto/CuaHangDto';
 import cuaHangService from '../../services/cua_hang/cuaHangService';
 import { PagedRequestDto } from '../../services/dto/pagedRequestDto';
-import TawkMessenger from '../../lib/tawk_chat';
+import { inject, observer } from 'mobx-react';
+import NotificationStore from '../../stores/notificationStore';
+import Stores from '../../stores/storeIdentifier';
 
 const isAuthenticated = (): boolean => {
-    const accessToken = Cookies.get('accessToken');
+    const accessToken = Cookies.get('Abp.AuthToken');
     if (accessToken && !accessToken.includes('error')) {
         try {
             return true;
@@ -27,12 +29,16 @@ const isAuthenticated = (): boolean => {
     }
     return false;
 };
-const MainAppLayout: React.FC = () => {
+interface IMainAppLayout {
+    notificationStore: NotificationStore;
+}
+
+const MainAppLayout: React.FC<IMainAppLayout> = (props) => {
     const [chinhanhCurrent, setChiNhanhCurrent] = React.useState<SuggestChiNhanhDto>({
         id: '',
         tenChiNhanh: ''
     });
-
+    const { notificationStore } = props;
     const [congty, setCongTy] = useState<CuaHangDto>({} as CuaHangDto);
     const GetAllCongTy = async () => {
         const data = await cuaHangService.GetAllCongTy({} as PagedRequestDto);
@@ -42,7 +48,7 @@ const MainAppLayout: React.FC = () => {
     };
     const getPermissions = () => {
         const userId = Cookies.get('userId');
-        const token = Cookies.get('accessToken');
+        const token = Cookies.get('Abp.AuthToken');
         const encryptedAccessToken = Cookies.get('encryptedAccessToken');
         if (userId !== undefined && userId !== null && token !== undefined && token !== null) {
             http.post(`api/services/app/Permission/GetAllPermissionByRole?UserId=${userId}`, {
@@ -62,6 +68,9 @@ const MainAppLayout: React.FC = () => {
                 .catch((error) => console.log(error));
         }
     };
+    useEffect(() => {
+        notificationStore.createHubConnection();
+    });
     useEffect(() => {
         // Call API to get list of permissions here
         getPermissions();
@@ -130,6 +139,7 @@ const MainAppLayout: React.FC = () => {
                             isChildHovered={isChildHovered}
                             CookieSidebar={CookieSidebar}
                             handleChangeChiNhanh={changeChiNhanh}
+                            notificationStore={notificationStore}
                         />
                         <Box
                             padding={2}
@@ -158,6 +168,7 @@ const MainAppLayout: React.FC = () => {
                         isChildHovered={isChildHovered}
                         CookieSidebar={CookieSidebar}
                         handleChangeChiNhanh={changeChiNhanh}
+                        notificationStore={notificationStore}
                     />
                     <Box>
                         <ResponsiveDrawer isOpen={!collapsed} onOpen={toggle} />
@@ -184,4 +195,4 @@ const MainAppLayout: React.FC = () => {
     );
 };
 
-export default MainAppLayout;
+export default inject(Stores.NotificationStore)(observer(MainAppLayout));

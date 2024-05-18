@@ -93,7 +93,7 @@ const Booking: React.FC = () => {
                     <TextField
                         fullWidth
                         size="small"
-                        defaultValue={`${process.env.REACT_APP_APP_BOOKING_URL}/booking/${
+                        defaultValue={`${process.env.REACT_APP_APP_BOOKING_URL}/${
                             Cookies.get('TenantName') == null || Cookies.get('TenantName') == undefined
                                 ? 'default'
                                 : Cookies.get('TenantName')

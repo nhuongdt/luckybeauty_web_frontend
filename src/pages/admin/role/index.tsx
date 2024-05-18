@@ -1,17 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ChangeEventHandler } from 'react';
 import { Button, Box, Typography, Grid, TextField, IconButton, SelectChangeEvent } from '@mui/material';
-import { DATA_GRID_PROPS_DEFAULT_VALUES, DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
+import { DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
 
 import roleService from '../../../services/role/roleService';
 import AddIcon from '../../../images/add.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { GetAllRoleOutput } from '../../../services/role/dto/getAllRoleOutput';
-import '../../../custom.css';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import CreateOrEditRoleModal from './components/create-or-edit-role';
 import { PermissionTree } from '../../../services/role/dto/permissionTree';
 import { CreateOrEditRoleDto } from '../../../services/role/dto/createOrEditRoleDto';
-import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
 import ActionMenuTable from '../../../components/Menu/ActionMenuTable';

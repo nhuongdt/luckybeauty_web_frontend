@@ -28,6 +28,7 @@ var abp = abp || {};
     };
 
     abp.multiTenancy.tenantIdCookieName = 'Abp.TenantId';
+    abp.multiTenancy.tenancyNameCookieName = 'Abp.TenancyName';
 
     abp.multiTenancy.setTenantIdCookie = function (tenantId) {
         if (tenantId) {
@@ -52,6 +53,27 @@ var abp = abp || {};
         return parseInt(value);
     };
 
+    abp.multiTenancy.setTenancyNameCookie = function (tenantName) {
+        if (tenantName) {
+            abp.utils.setCookieValue(
+                abp.multiTenancy.tenancyNameCookieName,
+                tenantName.toString(),
+                new Date(new Date().getTime() + 5 * 365 * 86400000), //5 years
+                abp.appPath,
+                abp.domain
+            );
+        } else {
+            abp.utils.deleteCookie(abp.multiTenancy.tenancyNameCookieName, abp.appPath);
+        }
+    };
+    abp.multiTenancy.getTenancyNameCookie = function () {
+        var value = abp.utils.getCookieValue(abp.multiTenancy.tenancyNameCookieName);
+        if (!value) {
+            return null;
+        }
+
+        return value;
+    };
     /* SESSION */
 
     abp.session = abp.session || {
@@ -171,7 +193,7 @@ var abp = abp || {};
         return true;
     };
 
-    abp.auth.tokenCookieName = 'Abp.AuthToken1';
+    abp.auth.tokenCookieName = 'Abp.AuthToken';
 
     abp.auth.setToken = function (authToken, expireDate) {
         abp.utils.setCookieValue(abp.auth.tokenCookieName, authToken, expireDate, abp.appPath, abp.domain);
@@ -724,23 +746,18 @@ var abp = abp || {};
      * @returns {string} Cookie value or null
      */
     abp.utils.getCookieValue = function (key) {
-        var equalities = document.cookie.split('; ');
-        for (var i = 0; i < equalities.length; i++) {
-            if (!equalities[i]) {
-                continue;
-            }
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim(); // Loại bỏ khoảng trắng từ cả hai phía của cookie
+            var delimiterIndex = cookie.indexOf('=');
+            var cookieKey = cookie.substring(0, delimiterIndex);
+            var cookieValue = cookie.substring(delimiterIndex + 1);
 
-            var splitted = equalities[i].split('=');
-            if (splitted.length != 2) {
-                continue;
-            }
-
-            if (decodeURIComponent(splitted[0]) === key) {
-                return decodeURIComponent(splitted[1] || '');
+            if (decodeURIComponent(cookieKey) === key) {
+                return decodeURIComponent(cookieValue);
             }
         }
-
-        return null;
+        return null; // Trả về null nếu không tìm thấy cookie với khóa đã cho
     };
 
     /**

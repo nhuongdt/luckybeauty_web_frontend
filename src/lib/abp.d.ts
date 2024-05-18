@@ -1,4 +1,4 @@
-export declare namespace abp {
+declare namespace abp {
     let appPath: string;
 
     let pageLoadTime: Date;
@@ -18,9 +18,15 @@ export declare namespace abp {
 
         let tenantIdCookieName: string;
 
+        let tenancyNameCookieName: string;
+
         function setTenantIdCookie(tenantId?: number): void;
 
         function getTenantIdCookie(): number;
+
+        function setTenancyNameCookie(tenancyName?: string): void;
+
+        function getTenancyNameCookie(): string;
     }
 
     interface IAbpSession {

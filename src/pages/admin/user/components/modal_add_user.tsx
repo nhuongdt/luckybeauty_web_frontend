@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     Dialog,
     DialogContent,
     DialogTitle,
-    Tabs,
     Tab,
     Grid,
     Stack,
@@ -10,7 +11,6 @@ import {
     FormControlLabel,
     Checkbox,
     FormGroup,
-    DialogActions,
     Button,
     InputAdornment,
     IconButton
@@ -37,7 +37,6 @@ import { IChiNhanhRoles, IUserRoleDto } from '../../../../models/Roles/userRoleD
 import { ChiNhanhDto } from '../../../../services/chi_nhanh/Dto/chiNhanhDto';
 import TableRoleChiNhanh from '../../../../components/Table/RoleChiNhanh';
 import roleService from '../../../../services/role/roleService';
-import { Guid } from 'guid-typescript';
 import authenticationStore from '../../../../stores/authenticationStore';
 import Cookies from 'js-cookie';
 
@@ -365,7 +364,7 @@ export default function ModalAddUser({
                         initialValues={initialValues}
                         validationSchema={rules}
                         onSubmit={(values) => saveUser(values)}>
-                        {({ isSubmitting, handleChange, values, errors, touched, setFieldValue }) => (
+                        {({ handleChange, values, errors, touched, setFieldValue }) => (
                             <Form>
                                 <TabContext value={tabIndex}>
                                     <TabList onChange={handleChangeTab}>

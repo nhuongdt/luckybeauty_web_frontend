@@ -14,7 +14,7 @@ class ImpersonationService {
                 const impersonateTenantResult = tokenAuthService.ImpersonatedAuthenticate(response.impersonationToken);
                 impersonateTenantResult
                     .then((res) => {
-                        Cookies.set('accessToken', res.accessToken, { expires: 1 });
+                        Cookies.set('Abp.AuthToken', res.accessToken, { expires: 1 });
                         Cookies.set('encryptedAccessToken', res.encryptedAccessToken, { expires: 1 });
                         Cookies.set('refreshToken', res.refreshToken, { expires: 365 });
                         Cookies.set('authenticated', 'true', { expires: 1 });
@@ -67,7 +67,7 @@ class ImpersonationService {
                 const impersonateTenantResult = await tokenAuthService.ImpersonatedAuthenticate(
                     response.impersonationToken
                 );
-                Cookies.set('accessToken', impersonateTenantResult.accessToken, { expires: 1 });
+                Cookies.set('Abp.AuthToken', impersonateTenantResult.accessToken, { expires: 1 });
                 Cookies.set('encryptedAccessToken', impersonateTenantResult.encryptedAccessToken, { expires: 1 });
                 Cookies.set('refreshToken', impersonateTenantResult.encryptedAccessToken, { expires: 365 });
                 Cookies.set('authenticated', 'true', { expires: 1 });

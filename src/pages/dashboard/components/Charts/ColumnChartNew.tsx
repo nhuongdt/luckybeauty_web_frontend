@@ -34,20 +34,26 @@ const ColumnChartNew: React.FC = () => {
         dashboardStore.thongKeDoanhThu !== undefined &&
         dashboardStore.thongKeDoanhThu != ([] as ThongKeDoanhThu[]) &&
         dashboardStore.thongKeDoanhThu.length > 0
-            ? dashboardStore.thongKeDoanhThu
+            ? dashboardStore.thongKeDoanhThu.map((item) => {
+                  return {
+                      month: window.screen.width <= 768 ? 'T' + item.month : 'Tháng ' + item.month,
+                      thangNay: item.thangNay,
+                      thangTruoc: item.thangTruoc
+                  };
+              })
             : [
-                  { month: 'Tháng 1', thangNay: 0, thangTruoc: 0 },
-                  { month: 'Tháng 2', thangNay: 0, thangTruoc: 0 },
-                  { month: 'Tháng 3', thangNay: 0, thangTruoc: 0 },
-                  { month: 'Tháng 4', thangNay: 0, thangTruoc: 0 },
-                  { month: 'Tháng 5', thangNay: 0, thangTruoc: 0 },
-                  { month: 'Tháng 6', thangNay: 0, thangTruoc: 0 },
-                  { month: 'Tháng 7', thangNay: 0, thangTruoc: 0 },
-                  { month: 'Tháng 8', thangNay: 0, thangTruoc: 0 },
-                  { month: 'Tháng 9', thangNay: 0, thangTruoc: 0 },
-                  { month: 'Tháng 10', thangNay: 0, thangTruoc: 0 },
-                  { month: 'Tháng 11', thangNay: 0, thangTruoc: 0 },
-                  { month: 'Tháng 12', thangNay: 0, thangTruoc: 0 }
+                  { month: window.screen.width <= 768 ? 'T1' : 'Tháng 1', thangNay: 0, thangTruoc: 0 },
+                  { month: window.screen.width <= 768 ? 'T2' : 'Tháng 2', thangNay: 0, thangTruoc: 0 },
+                  { month: window.screen.width <= 768 ? 'T3' : 'Tháng 3', thangNay: 0, thangTruoc: 0 },
+                  { month: window.screen.width <= 768 ? 'T4' : 'Tháng 4', thangNay: 0, thangTruoc: 0 },
+                  { month: window.screen.width <= 768 ? 'T5' : 'Tháng 5', thangNay: 0, thangTruoc: 0 },
+                  { month: window.screen.width <= 768 ? 'T6' : 'Tháng 6', thangNay: 0, thangTruoc: 0 },
+                  { month: window.screen.width <= 768 ? 'T7' : 'Tháng 7', thangNay: 0, thangTruoc: 0 },
+                  { month: window.screen.width <= 768 ? 'T8' : 'Tháng 8', thangNay: 0, thangTruoc: 0 },
+                  { month: window.screen.width <= 768 ? 'T9' : 'Tháng 9', thangNay: 0, thangTruoc: 0 },
+                  { month: window.screen.width <= 768 ? 'T10' : 'Tháng 10', thangNay: 0, thangTruoc: 0 },
+                  { month: window.screen.width <= 768 ? 'T11' : 'Tháng 11', thangNay: 0, thangTruoc: 0 },
+                  { month: window.screen.width <= 768 ? 'T12' : 'Tháng 12', thangNay: 0, thangTruoc: 0 }
               ];
     //const yTicks = [];
 

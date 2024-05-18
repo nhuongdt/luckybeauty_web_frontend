@@ -20,6 +20,7 @@ import utils from '../../utils/utils';
 import DialogDraggable from '../../components/Dialog/DialogDraggable';
 import { IPropModal } from '../../services/dto/IPropsComponent';
 import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
+import { format } from 'date-fns';
 
 export const CheckIn_TabName = {
     CUSTOMER: 0,
@@ -82,7 +83,7 @@ export default function ModalAddCustomerCheckIn(props: IPropModalCheckIn) {
             soDienThoai: itemBook.soDienThoai,
             tongTichDiem: 0,
             txtTrangThaiCheckIn: 'Đang thực hiện',
-            dateTimeCheckIn: new Date().toLocaleString()
+            dateTimeCheckIn: format(new Date(), 'yyyy-MM-dd')
         });
 
         const idCheckIn = await saveCheckIn(dataChosed, CheckIn_TabName.BOOKING);
@@ -107,7 +108,7 @@ export default function ModalAddCustomerCheckIn(props: IPropModalCheckIn) {
             idKhachHang: idKhachHang,
             idChiNhanh: idChiNhanh as unknown as null,
             idCheckIn: '',
-            dateTimeCheckIn: new Date().toLocaleString(),
+            dateTimeCheckIn: format(new Date(), 'yyyy-MM-dd'),
             maKhachHang: 'KL',
             tenKhachHang: 'Khách lẻ',
             soDienThoai: '',
@@ -211,7 +212,7 @@ export default function ModalAddCustomerCheckIn(props: IPropModalCheckIn) {
                 fullWidth
                 maxWidth="md"
                 aria-labelledby="dialogIdTitle"
-                PaperComponent={DialogDraggable}
+                //PaperComponent={DialogDraggable}
                 sx={{
                     '& .MuiDialog-paperScrollPaper': {
                         overflowX: 'hidden'

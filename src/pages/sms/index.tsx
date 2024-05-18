@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
     Box,
     Button,
@@ -15,7 +17,6 @@ import {
     Stack
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-
 import { ReactComponent as UploadIcon } from '../../images/upload.svg';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';

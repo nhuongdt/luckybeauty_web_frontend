@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     Dialog,
     DialogContent,
@@ -9,12 +10,9 @@ import {
     DialogTitle,
     Button,
     DialogActions,
-    Typography,
     Pagination
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
-import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
-
 import utils from '../../../../../utils/utils';
 import NhanSuItemDto from '../../../../../services/nhan-vien/dto/nhanSuItemDto';
 import { useState, useEffect, useRef } from 'react';
@@ -29,8 +27,6 @@ import { ChietKhauDichVuDto_AddMultiple } from '../../../../../services/hoa_hong
 import Cookies from 'js-cookie';
 import { Guid } from 'guid-typescript';
 import AppConsts, { LoaiHoaHongDichVu } from '../../../../../lib/appconst';
-import CustomTablePagination from '../../../../../components/Pagination/CustomTablePagination';
-import { ParamSearchDto } from '../../../../../services/dto/ParamSearchDto';
 import { LabelDisplayedRows } from '../../../../../components/Pagination/LabelDisplayedRows';
 
 export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNhanVien, onClose, onSaveOK }: any) {

@@ -50,4 +50,4 @@ class NotificationStore {
         await this.GetUserNotification();
     }
 }
-export default new NotificationStore();
+export default NotificationStore;

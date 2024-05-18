@@ -94,10 +94,10 @@ export default function TreeViewGroupProduct({ roleEdit, defaultId, lstData, cli
                                 )}
                             </Stack>
                         }
-                        onMouseLeave={(event) => {
+                        onMouseLeave={(event: any) => {
                             handleHover(event, item);
                         }}
-                        onMouseEnter={(event) => {
+                        onMouseEnter={(event: any) => {
                             handleHover(event, item);
                         }}
                         onClick={() => handleClickTreeItem(false)}>
@@ -115,10 +115,10 @@ export default function TreeViewGroupProduct({ roleEdit, defaultId, lstData, cli
                                         )}
                                     </Stack>
                                 }
-                                onMouseLeave={(event) => {
+                                onMouseLeave={(event: any) => {
                                     handleHover(event, child);
                                 }}
-                                onMouseEnter={(event) => {
+                                onMouseEnter={(event: any) => {
                                     handleHover(event, child);
                                 }}></TreeItem>
                         ))}

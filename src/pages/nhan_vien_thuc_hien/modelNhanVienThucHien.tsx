@@ -182,7 +182,8 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave, idChiNhanh }: any) =>
                 fullWidth
                 maxWidth="md"
                 aria-labelledby="dialogIdTitle"
-                PaperComponent={DialogDraggable}>
+                //PaperComponent={DialogDraggable}
+            >
                 <DialogTitle>
                     <Typography className="modal-title" id="dialogIdTitle">
                         Chọn kỹ thuật viên

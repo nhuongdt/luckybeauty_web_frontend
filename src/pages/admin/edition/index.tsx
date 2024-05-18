@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, TextField, Button, Typography, IconButton } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import abpCustom from '../../../components/abp-custom';
 import AddIcon from '../../../images/add.svg';
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid';
 import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import editionService from '../../../services/editions/editionService';
-import { da } from 'date-fns/locale';
 import { EditionListDto } from '../../../services/editions/dto/EditionListDto';
 import CreateOrEditEditionModal from './createOrEditEditionModal';
 import CreateOrEditEditionDto from '../../../services/editions/dto/CreateOrEditEditionDto';
@@ -109,8 +107,8 @@ const index = () => {
             headerName: 'Tên phiên bản',
             minWidth: 125,
             flex: 1,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
+            renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
+            renderCell: (params) => (
                 <Box
                     sx={{
                         width: '100%',
@@ -128,8 +126,8 @@ const index = () => {
             headerName: 'Giá',
             minWidth: 125,
             flex: 1,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
+            renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
+            renderCell: (params) => (
                 <Box
                     sx={{
                         width: '100%',
@@ -149,8 +147,8 @@ const index = () => {
             minWidth: 150,
             headerAlign: 'center',
             flex: 1,
-            renderHeader: (params: any) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => (
+            renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
+            renderCell: (params) => (
                 <Box
                     sx={{
                         display: 'flex',
@@ -169,10 +167,10 @@ const index = () => {
             maxWidth: 60,
             flex: 1,
             disableColumnMenu: true,
-            renderCell: (params: any) => (
+            renderCell: (params) => (
                 <ActionRow2Button handleClickAction={(type: number) => handleClickAction(type, params)} />
             ),
-            renderHeader: (params: any) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
+            renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
         }
     ] as GridColDef[];
     return (
