@@ -23,9 +23,6 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
 }));
 
 const App = () => {
-    useEffect(() => {
-        notificationStore.createHubConnection();
-    });
     return (
         <div>
             <BrowserRouter>{Routes}</BrowserRouter>

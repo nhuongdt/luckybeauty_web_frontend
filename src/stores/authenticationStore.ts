@@ -32,7 +32,7 @@ class AuthenticationStore {
         const tokenExpireDate = model.rememberMe
             ? new Date(new Date().getTime() + 1000 * LoginResult.expireInSeconds)
             : undefined;
-        Cookies.set('accessToken', LoginResult.accessToken, { expires: tokenExpireDate });
+        Cookies.set('Abp.AuthToken', LoginResult.accessToken, { expires: tokenExpireDate });
         Cookies.set('encryptedAccessToken', LoginResult.encryptedAccessToken, {
             expires: tokenExpireDate,
             path: '/'
@@ -64,7 +64,7 @@ class AuthenticationStore {
             .get('api/TokenAuth/LogOut', {
                 headers: {
                     'Abp.TenantId': Cookies.get('Abp.TenantId'),
-                    Authorization: 'Bearer ' + Cookies.get('accessToken')
+                    Authorization: 'Bearer ' + Cookies.get('Abp.AuthToken')
                 }
             })
             .then((result) => {

@@ -23,7 +23,6 @@ import { format as formatDate } from 'date-fns';
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
 import { ReactComponent as SearchIcon } from '../../../../images/search-normal.svg';
 import tenantService from '../../../../services/tenant/tenantService';
-import { abp } from '../../../../lib/abp';
 interface IProps {
     visible: boolean;
     onCancel: () => void;

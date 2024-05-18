@@ -12,4 +12,6 @@ export default class Stores {
     static AccountStore = 'accountStore';
 
     static NhanVienStore = 'nhanVienStore';
+
+    static NotificationStore = 'notificationStore';
 }

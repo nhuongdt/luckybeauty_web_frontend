@@ -62,7 +62,7 @@ class LoginService {
         loginModel.rememberMe
             ? Cookies.set('isRememberMe', 'true', { expires: tokenExpireDate })
             : Cookies.set('isRememberMe', 'false');
-        Cookies.set('accessToken', apiResult.data.result['accessToken'], {
+        Cookies.set('Abp.AuthToken', apiResult.data.result['accessToken'], {
             expires: tokenExpireDate
         });
         Cookies.set('refreshToken', apiResult.data.result['refreshToken'], {

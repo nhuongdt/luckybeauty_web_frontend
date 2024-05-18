@@ -13,7 +13,6 @@ import { SuggestChiNhanhDto } from '../services/suggests/dto/SuggestChiNhanhDto'
 import { SuggestDonViQuiDoiDto } from '../services/suggests/dto/SuggestDonViQuiDoi';
 import chiNhanhService from '../services/chi_nhanh/chiNhanhService';
 import { SuggestNganHangDto } from '../services/suggests/dto/SuggestNganHangDto';
-import { SuggestTaiKhoanNganHangQrDto } from '../services/suggests/dto/SuggestTaiKhoanNganHangQrDTo';
 import TaiKhoanNganHangServices from '../services/so_quy/TaiKhoanNganHangServices';
 import { TaiKhoanNganHangDto } from '../services/so_quy/Dto/TaiKhoanNganHangDto';
 import ZaloService from '../services/zalo/ZaloService';

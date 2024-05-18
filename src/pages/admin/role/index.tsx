@@ -7,7 +7,6 @@ import roleService from '../../../services/role/roleService';
 import AddIcon from '../../../images/add.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { GetAllRoleOutput } from '../../../services/role/dto/getAllRoleOutput';
-import '../../../custom.css';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import CreateOrEditRoleModal from './components/create-or-edit-role';
 import { PermissionTree } from '../../../services/role/dto/permissionTree';

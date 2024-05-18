@@ -55,7 +55,8 @@ import NotificationService from '../../services/notification/NotificationService
 import utils from '../../utils/utils';
 import suggestStore from '../../stores/suggestStore';
 import impersonationService, { Impersonation } from '../../services/impersonation/impersonationService';
-import TawkMessenger from '../../lib/tawk_chat';
+import NotificationStore from '../../stores/notificationStore';
+//import TawkMessenger from '../../lib/tawk_chat';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -63,13 +64,14 @@ interface HeaderProps {
     isChildHovered: boolean;
     CookieSidebar: boolean;
     handleChangeChiNhanh: (currentChiNhanh: SuggestChiNhanhDto) => void;
+    notificationStore: NotificationStore;
 }
 
 const Header: React.FC<HeaderProps> = (
-    { collapsed, toggle, isChildHovered, handleChangeChiNhanh },
+    { collapsed, toggle, isChildHovered, handleChangeChiNhanh, notificationStore },
     props: HeaderProps
 ) => {
-    const tawkChatRef = React.useRef<any>();
+    //const tawkChatRef = React.useRef<any>();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [ThongBaoAnchorEl, setThongBaoAnchorEl] = React.useState<null | HTMLElement>(null);
     const [settingThongBao, setSettingThongBao] = React.useState<null | HTMLElement>(null);
@@ -105,15 +107,11 @@ const Header: React.FC<HeaderProps> = (
         notificationStore.GetUserNotification();
     }, []);
 
-    // const getNotification = async () => {
-    //     await notificationStore.createHubConnection();
-    // };
-
     useEffect(() => {
         // Call API to get list of permissions here
 
         const getChiNhanhs = async () => {
-            if (Cookies.get('accessToken') !== null && Cookies.get('accessToken') !== undefined) {
+            if (Cookies.get('Abp.AuthToken') !== null && Cookies.get('Abp.AuthToken') !== undefined) {
                 await suggestStore.GetChiNhanhByUser();
                 const listChiNhanh = suggestStore?.suggestChiNhanh_byUserLogin;
                 if (listChiNhanh !== undefined && listChiNhanh != null && listChiNhanh.length > 0) {
@@ -286,14 +284,14 @@ const Header: React.FC<HeaderProps> = (
                 </Grid>
                 <Grid item xs={6} sx={{ textAlign: 'right', float: 'right' }}>
                     <Box display="flex" sx={{ marginRight: '30px', alignItems: 'center', justifyContent: 'end' }}>
-                        <Tooltip title={'Hỗ trợ'}>
+                        {/* <Tooltip title={'Hỗ trợ'}>
                             <ChatIcon
                                 onClick={() => {
                                     tawkChatRef.current.toggle();
                                 }}
                                 style={{ marginRight: 16 }}
                             />
-                        </Tooltip>
+                        </Tooltip> */}
 
                         <Box display="flex">
                             <LocationIcon />
@@ -756,7 +754,7 @@ const Header: React.FC<HeaderProps> = (
                                     </Box>
                                 </Box>
                             </MenuItem>
-                            <MenuItem
+                            {/* <MenuItem
                                 onClick={() => {
                                     tawkChatRef.current.toggle();
                                 }}>
@@ -771,7 +769,7 @@ const Header: React.FC<HeaderProps> = (
                                         Hỗ trợ
                                     </Box>
                                 </Box>
-                            </MenuItem>
+                            </MenuItem> */}
                             <MenuItem
                                 onClick={() => {
                                     handleClose();
@@ -817,14 +815,14 @@ const Header: React.FC<HeaderProps> = (
                     </Box>
                 </Grid>
             </Grid>
-            <TawkMessenger
+            {/* <TawkMessenger
                 propertyId={'6629be0b1ec1082f04e68f36'}
                 widgetId="1hs9gso7p"
                 ref={tawkChatRef}
                 onLoad={() => {
                     tawkChatRef.current.hideWidget();
                 }}
-            />
+            /> */}
         </Box>
     );
 };

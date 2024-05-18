@@ -5,7 +5,6 @@ import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import AppComponentBase from '../../../components/AppComponentBase';
 import tenantService from '../../../services/tenant/tenantService';
 import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
-import '../../../custom.css';
 import AddIcon from '../../../images/add.svg';
 import CreateOrEditTenant from './components/create-or-edit-tenant';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';

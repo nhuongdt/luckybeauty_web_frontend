@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-shadow */
-/* eslint-disable @typescript-eslint/no-this-alias */
 /* eslint-disable prefer-const */
-// import * as abpTypings from '../lib/abp'
+/* eslint-disable @typescript-eslint/no-this-alias */
+import * as abpTypings from '../lib/abp';
 
-// import { L } from '../lib/abpUtility'
+import { L } from '../lib/abpUtility';
 import { concat } from 'lodash';
 import { flatRoutes } from '../components/routers/index';
 import { Guid } from 'guid-typescript';
@@ -88,12 +86,12 @@ class Utils {
 
     getPageTitle = (pathname: string) => {
         const route = flatRoutes.filter((route: { path: string }) => route.path === pathname);
-        const localizedAppName = 'AppName';
+        const localizedAppName = L('AppName');
         if (!route || route.length === 0) {
             return localizedAppName;
         }
 
-        return route[0].title + ' | ' + localizedAppName;
+        return L(route[0].title) + ' | ' + localizedAppName;
     };
 
     getRoute = (path: string): any => {
@@ -111,6 +109,19 @@ class Utils {
             );
         }
     }
+
+    getCurrentClockProvider(currentProviderName: string): abpTypings.timing.IClockProvider {
+        if (currentProviderName === 'unspecifiedClockProvider') {
+            return abp.timing.unspecifiedClockProvider;
+        }
+
+        if (currentProviderName === 'utcClockProvider') {
+            return abp.timing.utcClockProvider;
+        }
+
+        return abp.timing.localClockProvider;
+    }
+
     strToEnglish = (word: string) => {
         if (!word) return '';
         let str = word.trim();
@@ -191,7 +202,7 @@ class Utils {
     RoundDecimal = (data: any, number = 2) => {
         data = Math.round(data * Math.pow(10, number)) / Math.pow(10, number);
         if (data !== null) {
-            let lastone = data.toString().split('').pop();
+            const lastone = data.toString().split('').pop();
             if (lastone !== '.') {
                 data = parseFloat(data);
             }
@@ -242,12 +253,12 @@ class Utils {
     };
     formatDatetime_AMPM(date: Date) {
         let hours = date.getHours();
-        let minutes = date.getMinutes();
-        let ampm = hours >= 12 ? 'PM' : 'AM';
+        const minutes = date.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12'
         const sMinutes = minutes < 10 ? '0' + minutes : minutes;
-        let strTime = hours + ':' + sMinutes + ' ' + ampm;
+        const strTime = hours + ':' + sMinutes + ' ' + ampm;
         return strTime;
     }
     Mui_GetDayOfWeekFormatter(day: string) {

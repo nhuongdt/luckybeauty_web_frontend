@@ -40,7 +40,7 @@ export class PageKhachHangCheckInDto {
     soDienThoai = '';
     avatar? = '';
     tongTichDiem? = 0;
-    dateTimeCheckIn = new Date().toLocaleString();
+    dateTimeCheckIn = format(new Date(), 'yyyy-MM-dd');
     ghiChu? = '';
     trangThaiCheckIn? = 1;
     txtTrangThaiCheckIn? = '';
@@ -54,7 +54,7 @@ export class PageKhachHangCheckInDto {
         idKhachHang = Guid.EMPTY,
         idChiNhanh = null,
         idCheckIn = Guid.EMPTY,
-        dateTimeCheckIn = new Date().toLocaleString(),
+        dateTimeCheckIn = format(new Date(), 'yyyy-MM-dd'),
         maKhachHang = '',
         tenKhachHang = '',
         soDienThoai = '',
@@ -69,17 +69,17 @@ export class PageKhachHangCheckInDto {
         this.tenKhachHang = tenKhachHang;
         this.soDienThoai = soDienThoai;
         this.tongTichDiem = tongTichDiem;
-        this.dateTimeCheckIn = dateTimeCheckIn.toLocaleString();
+        this.dateTimeCheckIn = dateTimeCheckIn;
         this.ghiChu = ghiChu;
         this.txtTrangThaiCheckIn = txtTrangThaiCheckIn;
 
         this._tenKhach_KiTuDau = utils.getFirstLetter(this.tenKhachHang);
-        this._dateCheckIn = format(new Date(this.dateTimeCheckIn), 'dd/MM/yyyy');
+        this._dateCheckIn = format(new Date(this.dateTimeCheckIn), 'yyyy-MM-dd');
         this._timeCheckIn = format(new Date(this.dateTimeCheckIn), 'hh:mm a');
     }
 
     get _dateCheckIn() {
-        return format(new Date(this.dateTimeCheckIn), 'dd/MM/yyyy');
+        return format(new Date(this.dateTimeCheckIn), 'yyyy-MM-dd');
     }
     set _dateCheckIn(value: string) {
         this.dateCheckIn = value;
@@ -101,7 +101,7 @@ export class PageKhachHangCheckInDto {
     }
     set _dateTimeCheckIn(value: string) {
         this.dateTimeCheckIn = value;
-        this._dateCheckIn = format(new Date(this.dateTimeCheckIn), 'dd/MM/yyyy');
+        this._dateCheckIn = format(new Date(this.dateTimeCheckIn), 'yyyy-MM-dd');
         this._timeCheckIn = format(new Date(this.dateTimeCheckIn), 'hh:mm a');
     }
 }
