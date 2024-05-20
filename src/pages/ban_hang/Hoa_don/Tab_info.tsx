@@ -105,9 +105,9 @@ export default function TabInfo({ hoadon, chitietHoaDon, onSaveOKNVThucHienDV, o
     const [openGiamGiaHD, setOpenGiamGiaHD] = useState(false);
     const [laPTramGiamGia, setLaPTramGiamGia] = useState(true);
     const [txtGiamGia, setTxtGiamGia] = useState(0);
-    const [lblGiamGiaHD, setLblGiamGiaHD] = useState(0);
-    const [lblTongThanhToan, setLblTongThanhToan] = useState(0);
-    const [lblConNo, setLblConNo] = useState(0);
+    const [lblGiamGiaHD, setLblGiamGiaHD] = useState(hoadon?.tongGiamGiaHD);
+    const [lblTongThanhToan, setLblTongThanhToan] = useState(hoadon?.tongThanhToan);
+    const [lblConNo, setLblConNo] = useState(hoadon?.conNo);
 
     const [isShowHoaHongDV, setIsShowHoaHongDV] = useState(false);
     const [itemHoaDonChiTiet, setItemHoaDonChiTiet] = useState<HoaDonChiTietDto>({} as HoaDonChiTietDto);
