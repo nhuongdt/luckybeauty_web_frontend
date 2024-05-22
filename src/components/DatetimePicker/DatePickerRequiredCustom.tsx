@@ -57,6 +57,7 @@ export default function DatePickerRequireCustom({ defaultVal, handleChangeDate, 
                             error: props?.error,
                             helperText: props?.helperText,
                             InputProps: {
+                                style: { fontSize: 'var(--font-size-main)' },
                                 startAdornment: (
                                     <React.Fragment>
                                         <DateIcon

@@ -127,6 +127,7 @@ export const LoaiHoaHongHoaDon = {
     DOANH_THU: 2,
     VND: 3
 };
+// TrangThaiCheckin: dùng chung với trạng thái hóa đơn
 export const TrangThaiCheckin = {
     DELETED: 0,
     WAITING: 1,
@@ -134,6 +135,7 @@ export const TrangThaiCheckin = {
     COMPLETED: 3,
     CANCEL: 4
 };
+
 export const SMS_HinhThucGuiTin = {
     SMS: 1,
     ZALO: 2,

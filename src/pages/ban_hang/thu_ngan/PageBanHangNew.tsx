@@ -97,9 +97,12 @@ import { CreateNhatKyThaoTacDto } from '../../../services/nhat_ky_hoat_dong/dto/
 import { SuggestChiNhanhDto } from '../../../services/suggests/dto/SuggestChiNhanhDto';
 import uploadFileService from '../../../services/uploadFileService';
 import QRCodeBaoKim from '../../bao_kim_payment/QRCode';
-import { IBankInfor } from '../../../services/bao_kim_payment/BaoKimDto';
+import { IBankInfor, IResponseThongBaoGiaoDich } from '../../../services/bao_kim_payment/BaoKimDto';
 import BaoKimPaymentService from '../../../services/bao_kim_payment/BaoKimPaymentService';
 import HoaDonDto from '../../../services/ban_hang/HoaDonDto';
+import ThongBaoGiaoDich from '../../bao_kim_payment/ThongBaoGiaoDich';
+import cassoApiService from '../../../services/casso_api/cassoApiService';
+import { HubConnectionBuilder } from '@microsoft/signalr';
 
 const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const appContext = useContext(AppContext);
@@ -141,6 +144,8 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const [isShowQRCode, setIsShowQRCode] = useState(false);
     const [qrCodeBank, setQRCodeBank] = useState<IBankInfor>({} as IBankInfor);
 
+    const [isGiaoDichOK, setIsGiaoDichOK] = useState(false);
+
     const ref = handleClickOutside(() => setIsExpandShoppingCart(false));
 
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
@@ -179,6 +184,8 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             maxResultCount: 100
         } as PagedNhanSuRequestDto);
         setAllNhanVien([...data.items]);
+
+        // await cassoApiService.TaoWebhook();
     };
 
     const GetAllMauIn_byChiNhanh = async () => {
@@ -1148,7 +1155,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         return false;
     };
 
-    const saveHoaDonToDB = async () => {
+    const saveHoaDonToDB = async (trangThai: number) => {
         // assign again STT of cthd before save
         const dataSave = { ...hoadon };
         dataSave?.hoaDonChiTiet?.map((x: PageHoaDonChiTietDto, index: number) => {
@@ -1162,7 +1169,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                 idKhachHang: hoadon?.idKhachHang as unknown as string,
                 dateTimeCheckIn: hoadon?.ngayLapHoaDon,
                 idChiNhanh: hoadon?.idChiNhanh as unknown as string,
-                trangThai: TrangThaiCheckin.COMPLETED,
+                trangThai: trangThai,
                 ghiChu: ''
             };
             if (
@@ -1214,6 +1221,27 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         await GetDataPrint(hodaDonDB.maHoaDon, hodaDonDB?.ngayLapHoaDon, quyHD);
     };
 
+    useEffect(() => {
+        const invoiceHubConnection = new HubConnectionBuilder()
+            .withUrl(process.env.REACT_APP_REMOTE_SERVICE_BASE_URL + 'invoiceHub')
+            .build();
+
+        invoiceHubConnection.start().then(() => console.log('Connected to InvoiceHub'));
+
+        invoiceHubConnection.on('ThongBaoGiaDich_fromBaoKim', async (data: IResponseThongBaoGiaoDich) => {
+            console.log('ThongBaoGiaDich_fromBaoKim ', data);
+        });
+
+        return () => {
+            invoiceHubConnection.off('ThongBaoGiaDich_fromBaoKim');
+            invoiceHubConnection.stop();
+        };
+    }, []);
+
+    const GuiTraLaiDuLieu = async (data: IResponseThongBaoGiaoDich, idHoaDon: string) => {
+        await BaoKimPaymentService.GuiLaiThongTinGiaoDich(data, idHoaDon);
+    };
+
     // click thanh toan---> chon hinh thucthanhtoan--->   luu hoadon + phieuthu
     const saveHoaDon = async () => {
         setShowDetail(false);
@@ -1226,52 +1254,32 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         }
 
         // assign again qct if tra thua tien
-        let lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(lstQuyCT, sumTienKhachTra, hoadon?.tongThanhToan ?? 0);
-        const hodaDonDB = await saveHoaDonToDB();
+        const lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(lstQuyCT, sumTienKhachTra, hoadon?.tongThanhToan ?? 0);
+        const checkCK = checkIsChuyenKhoan(lstQCT_After);
+        const hodaDonDB = await saveHoaDonToDB(TrangThaiCheckin.COMPLETED);
         if (hodaDonDB != null) {
-            // save soquy (Mat, POS, ChuyenKhoan)
-            const tongThu = lstQCT_After.reduce((currentValue: number, item) => {
-                return currentValue + item.tienThu;
-            }, 0);
-            let quyHD = new QuyHoaDonDto({});
-            if (tongThu > 0) {
-                quyHD = new QuyHoaDonDto({
-                    idChiNhanh: utils.checkNull(chiNhanhCurrent?.id) ? idChiNhanh : chiNhanhCurrent?.id,
-                    idLoaiChungTu: LoaiChungTu.PHIEU_THU,
-                    ngayLapHoaDon: hodaDonDB.ngayLapHoaDon,
-                    tongTienThu: tongThu,
-                    noiDungThu: hoadon?.ghiChuHD
-                });
-                lstQCT_After = lstQCT_After.filter((x: QuyChiTietDto) => x.tienThu > 0);
-                // assign idHoadonLienQuan, idKhachHang for quyCT
-                lstQCT_After.map((x: QuyChiTietDto) => {
-                    x.idHoaDonLienQuan = hodaDonDB.id;
-                    x.idKhachHang = hoadon.idKhachHang == Guid.EMPTY ? null : hoadon.idKhachHang;
-                    x.maHoaDonLienQuan = hodaDonDB.maHoaDon;
-                });
-                quyHD.quyHoaDon_ChiTiet = lstQCT_After;
-                const dataPT = await SoQuyServices.CreateQuyHoaDon(quyHD); // todo hoahong NV hoadon
-                quyHD.maHoaDon = dataPT?.maHoaDon;
-                quyHD.tenNguoiNop = hoadon.tenKhachHang; // used to print qrCode
-                await saveDiarySoQuy(hodaDonDB?.maHoaDon, quyHD);
-            }
+            await savePhieuThuDB(hodaDonDB, lstQCT_After);
             setObjAlert({
                 show: true,
                 type: 1,
                 mes: 'Thanh toán hóa đơn thành công'
             });
-            await GetDataPrint(hodaDonDB.maHoaDon, hodaDonDB?.ngayLapHoaDon, quyHD);
         }
-
         // reset after save
         ResetState_AfterSave();
         await RemoveCache();
     };
 
     const Genarate_QRCodeBaoKim = async () => {
-        setIsShowQRCode(true);
         const data = await BaoKimPaymentService.CreateQRCode();
         setQRCodeBank(data);
+        setIsShowQRCode(true);
+        return data;
+    };
+
+    const onClose_QRCodeBaoKim = () => {
+        setIsShowQRCode(false);
+        setClickSave(false);
     };
 
     const ResetState_AfterSave = () => {
@@ -1533,8 +1541,13 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             <QRCodeBaoKim
                 isShowModal={isShowQRCode}
                 objUpDate={qrCodeBank}
-                onClose={() => setIsShowQRCode(false)}
+                onClose={onClose_QRCodeBaoKim}
                 onOK={() => console.log('ok payment')}
+            />
+            <ThongBaoGiaoDich
+                isShowModal={isGiaoDichOK}
+                onClose={() => setIsGiaoDichOK(false)}
+                onOK={() => console.log('ok trans')}
             />
             <ListNhanVienDataContext.Provider value={allNhanVien}>
                 <ModalAddCustomerCheckIn
@@ -2021,7 +2034,8 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                                             alignItems={'end'}
                                             sx={{
                                                 '& fieldset': {
-                                                    border: 'none'
+                                                    border: 'none',
+                                                    fontSize: '13px'
                                                 },
                                                 ' & .MuiInputBase-root': {
                                                     marginTop: '-5px'
