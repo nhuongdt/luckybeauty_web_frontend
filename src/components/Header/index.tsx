@@ -226,6 +226,7 @@ const Header: React.FC<HeaderProps> = (
                         display="flex"
                         gap="8px"
                         marginLeft="16px"
+                        alignItems={'baseline'}
                         // onClick={() => {
                         //     navigate('/home');
                         // }}
@@ -233,10 +234,9 @@ const Header: React.FC<HeaderProps> = (
                         <img style={{ width: '2rem', height: '2rem' }} src={LuckybeautyLogo} />
                         {window.screen.width <= 650 ? null : (
                             <Typography
-                                fontFamily="VLAMPLE !important"
                                 color="#319DFF"
-                                fontSize="1.5rem"
-                                fontWeight={400}
+                                fontSize="1.375rem"
+                                variant="body1"
                                 sx={{
                                     opacity: collapsed && !isChildHovered ? '0' : '1',
                                     transform: collapsed && !isChildHovered ? 'translateX(-40px)' : 'translateX(0)',
