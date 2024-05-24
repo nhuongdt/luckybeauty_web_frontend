@@ -165,7 +165,7 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
         setProduct((itemOlds) => {
             return {
                 ...itemOlds,
-                giaBan: event.target.value
+                giaBan: utils.formatNumberToFloat(event.target.value)
             };
         });
     };
