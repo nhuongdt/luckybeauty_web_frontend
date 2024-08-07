@@ -7,6 +7,7 @@ import { BookingRequestDto, PagedBookingResultRequestDto } from './dto/PagedBook
 import utils from '../../utils/utils';
 import { Guid } from 'guid-typescript';
 import { BookingInfoDto } from './dto/BookingInfoDto';
+import { PagedResultDto } from '../dto/pagedResultDto';
 class BookingServices {
     public async getAllBooking(input: PagedBookingResultRequestDto): Promise<BookingGetAllItemDto[]> {
         const result = await http.get('api/services/app/Booking/GetAll', { params: input });
@@ -16,7 +17,7 @@ class BookingServices {
         const result = await http.post('api/services/app/Booking/CreateOrEditBooking', input);
         return result.data.result;
     }
-    public async GetKhachHang_Booking(input: BookingRequestDto) {
+    public async GetKhachHang_Booking(input: BookingRequestDto): Promise<PagedResultDto<BookingDetail_ofCustomerDto>> {
         const param = qs.stringify(input);
         const xx = await http.get(`api/services/app/Booking/GetKhachHang_Booking?${param}`);
         return xx.data.result;

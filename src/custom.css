@@ -1,6 +1,7 @@
 :root {
     --color-main: #007FC7;
-    --color-second:burlywood;
+    --color-second:#9c27b0;
+    --color-text-blur: rgb(153, 150, 153); /*chữ mờ */
     --color-title: #00284c;
     --color-bg: #e5f3ff;
     --color-text-secondary: #839bb1;

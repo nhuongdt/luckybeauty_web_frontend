@@ -1,11 +1,23 @@
-import { AppBar, Box, Stack, Button, IconButton, Toolbar, Typography, Avatar, Drawer, Grid } from '@mui/material';
+import {
+    AppBar,
+    Box,
+    Stack,
+    Button,
+    IconButton,
+    Toolbar,
+    Typography,
+    Avatar,
+    Drawer,
+    Grid,
+    debounce
+} from '@mui/material';
 import { ReactComponent as Logo } from '../../../images/Logo_Lucky_Beauty.svg';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import { LocalOffer } from '@mui/icons-material';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import TreeViewGroupProduct from '../../../components/Treeview/ProductGroup';
 import GroupProductService from '../../../services/product/GroupProductService';
 import { IHangHoaGroupTheoNhomDto, ModelNhomHangHoa } from '../../../services/product/dto';
@@ -13,13 +25,9 @@ import { IList } from '../../../services/dto/IList';
 import AccordionWithData from '../../../components/Accordion/AccordionWithData';
 import ProductService from '../../../services/product/ProductService';
 
-const lstOption: IList[] = [
-    { id: '1', text: 'Trang chủ', icon: <HomeOutlinedIcon /> },
-    { id: '2', text: 'Danh sách hóa đơn', icon: <FormatListBulletedOutlinedIcon /> },
-    { id: '3', text: 'Lịch hẹn', icon: <CalendarMonthOutlinedIcon /> }
-];
+export default function PageThuNgan({ txtSearch }: any) {
+    const firstLoad = useRef(true);
 
-export default function PageThuNgan() {
     const [openDrawer, setOpenDrawer] = useState(false);
     const [idNhomHang, setIdNhomHang] = useState('');
     const [idLoaiHangHoa, setIdLoaiHangHoa] = useState(0);
@@ -34,10 +42,10 @@ export default function PageThuNgan() {
         const list = await GroupProductService.GetTreeNhomHangHoa();
         setAllNhomHangHoa(list.items);
     };
-    const getListHangHoa_groupbyNhom = async () => {
+    const getListHangHoa_groupbyNhom = async (txtSearch: string) => {
         const input = {
             IdNhomHangHoas: idNhomHang,
-            TextSearch: '',
+            TextSearch: txtSearch,
             IdLoaiHangHoa: idLoaiHangHoa,
             CurrentPage: 0,
             PageSize: 50
@@ -47,12 +55,22 @@ export default function PageThuNgan() {
     };
     const PageLoad = () => {
         GetTreeNhomHangHoa();
-        getListHangHoa_groupbyNhom();
     };
 
     useEffect(() => {
         PageLoad();
     }, []);
+
+    // only used when change textsearch
+    const debounceSearchHangHoa = useRef(
+        debounce(async (txtSearch: string) => {
+            getListHangHoa_groupbyNhom(txtSearch);
+        }, 500)
+    ).current;
+
+    useEffect(() => {
+        debounceSearchHangHoa(txtSearch);
+    }, [txtSearch]);
 
     const clickAction = (item: IList) => {
         //
@@ -110,18 +128,36 @@ export default function PageThuNgan() {
             </Drawer>
             <Grid container minHeight={'86vh'} maxHeight={'86vh'}>
                 <Grid item xs={6}>
-                    <Stack spacing={2} overflow={'auto'} maxHeight={'80vh'}>
+                    <Stack spacing={2} overflow={'auto'} maxHeight={'84vh'}>
                         {listProduct.map((nhom: IHangHoaGroupTheoNhomDto, index: number) => (
                             <Stack key={index}>
                                 <Typography fontSize={16} fontWeight={500} marginBottom={0.5}>
                                     {nhom?.tenNhomHang}
                                 </Typography>
                                 <Grid container spacing={2}>
-                                    {nhom.hangHoas.map((item, index2) => (
+                                    {nhom?.hangHoas.map((item, index2) => (
                                         <Grid key={index2} item xs={4}>
-                                            <Stack padding={2} sx={{ backgroundColor: 'var(--color-bg)' }}>
+                                            <Stack
+                                                padding={2}
+                                                title={item.tenHangHoa}
+                                                sx={{
+                                                    backgroundColor: 'var(--color-bg)',
+                                                    border: '1px solid transparent',
+                                                    '&:hover': {
+                                                        borderColor: 'var(--color-main)',
+                                                        cursor: 'pointer'
+                                                    }
+                                                }}>
                                                 <Stack spacing={2}>
-                                                    <Typography fontWeight={500} variant="body2">
+                                                    <Typography
+                                                        fontWeight={500}
+                                                        variant="body2"
+                                                        sx={{
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            whiteSpace: 'nowrap',
+                                                            width: '100%'
+                                                        }}>
                                                         {item?.tenHangHoa}
                                                     </Typography>
                                                     <Typography variant="caption">

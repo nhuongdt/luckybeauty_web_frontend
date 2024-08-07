@@ -1,16 +1,9 @@
-import { Avatar, Button, Divider, Grid, IconButton, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { Avatar, Button, Grid, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
-import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import SearchIcon from '@mui/icons-material/Search';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
-import SpaOutlinedIcon from '@mui/icons-material/SpaOutlined';
 import { IList } from '../../../services/dto/IList';
 import React, { useEffect, useState } from 'react';
 import khachHangService from '../../../services/khach-hang/khachHangService';
@@ -18,9 +11,15 @@ import { PagedResultDto } from '../../../services/dto/pagedResultDto';
 import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
 import TabPanel from '../../../components/TabPanel/TabPanel';
 import '../style.css';
+import '../../../App.css';
+
 import PageThuNgan from './page_thu_ngan';
-import { StaticDatePicker } from '@mui/x-date-pickers';
-import { borderColor } from '@mui/system';
+import TabKhachHangNoBooking from '../../check_in/tab_khach_hang_nobooking';
+import { PagedKhachHangResultRequestDto } from '../../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
+import TabKhachHangBooking from '../../check_in/tab_khach_hang_booking';
+import TrangThaiFilter from '../../../enum/TrangThaiFilter';
+import { TextTranslate } from '../../../components/TableLanguage';
+import { useNavigate } from 'react-router-dom';
 
 const TabThuNgan = {
     HOA_DON: 1,
@@ -36,39 +35,19 @@ const TabKhachHang = {
 };
 
 export default function MainPageThuNgan() {
-    const [khachhang_tabActive, setKhachhang_TabActive] = useState(TabKhachHang.KHACH_HANG);
+    const navigation = useNavigate();
+    const [txtSearch, setTextSearch] = useState('');
     const [tabMainActive, setTabMainActive] = useState(ThuNgan_TabMain.KHACH_HANG);
+    const [khachhang_tabActive, setKhachhang_TabActive] = useState(TabKhachHang.KHACH_HANG);
     const [thungan_tabActive, setThungan_tabActive] = useState(TabThuNgan.HOA_DON);
-    const [lstCustomer, setLstCustomer] = useState<PagedResultDto<KhachHangItemDto>>({
-        items: [],
-        totalCount: 0,
-        totalPage: 0
-    });
-    const [listCusBooking, setListCusBooking] = useState<PagedResultDto<KhachHangItemDto>>({
-        items: [],
-        totalCount: 0,
-        totalPage: 0
-    });
 
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
         setKhachhang_TabActive(newValue);
         setThungan_tabActive(newValue);
     };
 
-    const GetListCustomer = async () => {
-        const data = await khachHangService.getAll({
-            keyword: '',
-            maxResultCount: 10,
-            skipCount: 0,
-            loaiDoiTuong: 1,
-            sortBy: '',
-            sortType: ''
-        });
-        setLstCustomer(data);
-    };
-
     const PageLoad = () => {
-        GetListCustomer();
+        //GetListCustomer();
     };
 
     useEffect(() => {
@@ -76,7 +55,6 @@ export default function MainPageThuNgan() {
     }, []);
 
     const changeActiveTabMain = (tabNew: number) => {
-        console.log('tabnew ', tabNew);
         setTabMainActive(tabNew);
         setKhachhang_TabActive(TabKhachHang.KHACH_HANG);
         setThungan_tabActive(TabThuNgan.HOA_DON);
@@ -92,7 +70,10 @@ export default function MainPageThuNgan() {
                     alignItems={'center'}
                     spacing={2}
                     flex={tabMainActive == ThuNgan_TabMain.KHACH_HANG ? 2 : 2.5}>
-                    <HomeOutlinedIcon />
+                    <HomeOutlinedIcon
+                        onClick={() => navigation('/home')}
+                        sx={{ color: 'var(--color-main)', '&:hover': { cursor: 'pointer' } }}
+                    />
                     {tabMainActive == ThuNgan_TabMain.KHACH_HANG && (
                         <Stack direction={'row'} spacing={2} alignItems={'center'}>
                             <Tabs value={khachhang_tabActive} onChange={handleChangeTab} aria-label="nav tabs example">
@@ -123,6 +104,7 @@ export default function MainPageThuNgan() {
                         <TextField
                             size="small"
                             placeholder="Tìm kiếm khách hàng"
+                            onChange={(e) => setTextSearch(e.target.value)}
                             InputProps={{ startAdornment: <SearchIcon /> }}
                         />
                     </Stack>
@@ -132,6 +114,7 @@ export default function MainPageThuNgan() {
                         <TextField
                             size="small"
                             placeholder="Tìm kiếm dịch vụ"
+                            onChange={(e) => setTextSearch(e.target.value)}
                             InputProps={{ startAdornment: <SearchIcon /> }}
                         />
                     </Stack>
@@ -156,7 +139,7 @@ export default function MainPageThuNgan() {
                         <Button variant="outlined" color="info">
                             Thêm mới khách
                         </Button>
-                        <Button variant="outlined" color="info">
+                        <Button variant="outlined" color="secondary">
                             Thêm lịch hẹn
                         </Button>
                     </Stack>
@@ -168,173 +151,22 @@ export default function MainPageThuNgan() {
                     <TabPanel
                         value={khachhang_tabActive}
                         index={TabKhachHang.KHACH_HANG}
-                        style={{ marginTop: '20px', minHeight: '86vh' }}>
-                        <Grid container spacing={2}>
-                            {lstCustomer?.items?.map((cusItem, index) => (
-                                <Grid item key={index} xs={12} sm={4} md={4} lg={3}>
-                                    <Stack
-                                        padding={1.5}
-                                        border={'1px solid transparent'}
-                                        borderRadius={1}
-                                        sx={{
-                                            transition: '.4s',
-                                            boxShadow: '0px 2px 5px 0px #c6bdd1',
-                                            backgroundColor: '#fff',
-                                            '&:hover': {
-                                                borderColor: 'var(--color-main)',
-                                                cursor: 'pointer'
-                                            }
-                                        }}>
-                                        <Stack minHeight={100} justifyContent={'space-between'}>
-                                            <Stack direction={'row'} padding={1} justifyContent={'space-between'}>
-                                                <Stack spacing={2} direction={'row'}>
-                                                    <Stack>
-                                                        <Avatar src={cusItem?.avatar} />
-                                                    </Stack>
-                                                    <Stack spacing={1}>
-                                                        <Typography variant="body2" fontWeight={500}>
-                                                            {cusItem?.tenKhachHang}
-                                                        </Typography>
-                                                        <Typography variant="caption">
-                                                            {cusItem?.soDienThoai}
-                                                        </Typography>
-                                                    </Stack>
-                                                </Stack>
-                                            </Stack>
-                                            <Stack
-                                                direction={'row'}
-                                                alignItems={'center'}
-                                                spacing={2}
-                                                height={30}
-                                                justifyContent={'space-between'}>
-                                                <Stack
-                                                    direction={'row'}
-                                                    spacing={1}
-                                                    sx={{
-                                                        color: '#b7b42d',
-                                                        '&:hover': {
-                                                            color: '#3c9977',
-                                                            cursor: 'pointer'
-                                                        }
-                                                    }}>
-                                                    <AddCircleOutlineOutlinedIcon />
-                                                    <Typography>Hóa đơn</Typography>
-                                                </Stack>
-                                                <Stack
-                                                    sx={{
-                                                        width: '1px',
-                                                        height: '100%'
-                                                    }}></Stack>
-
-                                                <Stack
-                                                    direction={'row'}
-                                                    spacing={1}
-                                                    sx={{
-                                                        color: 'var(--color-second)',
-                                                        '&:hover': {
-                                                            color: '#c32b2b',
-                                                            cursor: 'pointer'
-                                                        }
-                                                    }}>
-                                                    <AddCircleOutlineOutlinedIcon />
-                                                    <Typography> Gói dịch vụ</Typography>
-                                                </Stack>
-                                            </Stack>
-                                        </Stack>
-                                    </Stack>
-                                </Grid>
-                            ))}
-                        </Grid>
+                        style={{ minHeight: '86vh', position: 'relative' }}>
+                        <TabKhachHangNoBooking txtSearch={txtSearch} />
                     </TabPanel>
                     <TabPanel
                         value={khachhang_tabActive}
                         index={TabKhachHang.CUOC_HEN}
-                        style={{ marginTop: '20px', minHeight: '86vh' }}>
-                        <Grid container spacing={2}>
-                            {lstCustomer?.items?.map((cusItem, index) => (
-                                <Grid item key={index} xs={12} sm={4} md={4} lg={3}>
-                                    <Stack
-                                        padding={1.5}
-                                        border={'1px solid transparent'}
-                                        borderRadius={1}
-                                        sx={{
-                                            transition: '.4s',
-                                            boxShadow: '0px 2px 5px 0px #c6bdd1',
-                                            backgroundColor: '#fff',
-                                            '&:hover': {
-                                                borderColor: 'var(--color-main)',
-                                                cursor: 'pointer'
-                                            }
-                                        }}>
-                                        <Stack minHeight={100} justifyContent={'space-between'}>
-                                            <Stack direction={'row'} padding={1} justifyContent={'space-between'}>
-                                                <Stack spacing={2} direction={'row'}>
-                                                    <Stack>
-                                                        <Avatar src={cusItem?.avatar} />
-                                                    </Stack>
-                                                    <Stack spacing={1}>
-                                                        <Typography variant="body2" fontWeight={500}>
-                                                            {cusItem?.tenKhachHang}
-                                                        </Typography>
-                                                        <Typography variant="caption">
-                                                            {cusItem?.soDienThoai}
-                                                        </Typography>
-                                                    </Stack>
-                                                </Stack>
-                                            </Stack>
-                                            <Stack
-                                                direction={'row'}
-                                                alignItems={'center'}
-                                                spacing={2}
-                                                height={30}
-                                                justifyContent={'space-between'}>
-                                                <Stack
-                                                    direction={'row'}
-                                                    spacing={1}
-                                                    sx={{
-                                                        '&:hover': {
-                                                            color: 'var(--color-main)',
-                                                            cursor: 'pointer'
-                                                        }
-                                                    }}>
-                                                    <AddCircleOutlineOutlinedIcon />
-                                                    <Typography>Hóa đơn</Typography>
-                                                </Stack>
-                                                <Stack
-                                                    sx={{
-                                                        width: '1px',
-                                                        height: '100%'
-                                                    }}></Stack>
-
-                                                <Stack
-                                                    direction={'row'}
-                                                    spacing={1}
-                                                    sx={{
-                                                        '&:hover': {
-                                                            color: 'burlywood',
-                                                            cursor: 'pointer'
-                                                        }
-                                                    }}>
-                                                    <AddCircleOutlineOutlinedIcon />
-                                                    <Typography> Gói dịch vụ</Typography>
-                                                </Stack>
-                                            </Stack>
-                                        </Stack>
-                                    </Stack>
-                                </Grid>
-                            ))}
-                        </Grid>
+                        style={{ minHeight: '86vh', position: 'relative' }}>
+                        <TabKhachHangBooking txtSearch={txtSearch} />
                     </TabPanel>
                 </>
             )}
 
             {tabMainActive == ThuNgan_TabMain.HOA_DON && (
                 <>
-                    <TabPanel value={thungan_tabActive} index={TabThuNgan.HOA_DON}>
-                        <PageThuNgan />
-                    </TabPanel>
-                    <TabPanel value={thungan_tabActive} index={TabThuNgan.GOI_DICH_VU}>
-                        <PageThuNgan />
+                    <TabPanel value={tabMainActive} index={ThuNgan_TabMain.HOA_DON}>
+                        <PageThuNgan txtSearch={txtSearch} />
                     </TabPanel>
                 </>
             )}
