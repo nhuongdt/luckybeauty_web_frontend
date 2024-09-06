@@ -6,8 +6,15 @@ import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
+import { LoaiChungTu } from '../../lib/appconst';
 
-const TabKhachHangNoBooking: React.FC<{ txtSearch: string }> = ({ txtSearch }) => {
+export type IPropsTabKhachHangNoBooking = {
+    txtSearch: string;
+    onClickAddHoaDon: (customerId: string, loaiHoaDon: number) => void;
+};
+
+export default function TabKhachHangNoBooking(props: IPropsTabKhachHangNoBooking) {
+    const { txtSearch, onClickAddHoaDon, ...other } = props;
     const firstLoad = useRef(true);
     const [paramSearchCus, setParamSearchCus] = useState<PagedKhachHangResultRequestDto>({
         skipCount: 1,
@@ -47,6 +54,10 @@ const TabKhachHangNoBooking: React.FC<{ txtSearch: string }> = ({ txtSearch }) =
         }
         GetKhachHang_noBooking(txtSearch);
     }, [paramSearchCus?.skipCount]);
+
+    const addHoaDon = (cusItem: KhachHangItemDto, loaiHoaDon: number) => {
+        onClickAddHoaDon(cusItem.id.toString(), loaiHoaDon);
+    };
 
     return (
         <Grid container spacing={2}>
@@ -89,6 +100,7 @@ const TabKhachHangNoBooking: React.FC<{ txtSearch: string }> = ({ txtSearch }) =
                                 <Stack
                                     direction={'row'}
                                     spacing={1}
+                                    onClick={() => addHoaDon(cusItem, LoaiChungTu.HOA_DON_BAN_LE)}
                                     sx={{
                                         color: 'var(--color-main)',
                                         '&:hover': {
@@ -114,7 +126,8 @@ const TabKhachHangNoBooking: React.FC<{ txtSearch: string }> = ({ txtSearch }) =
                                             color: '#c32b2b',
                                             cursor: 'pointer'
                                         }
-                                    }}>
+                                    }}
+                                    onClick={() => addHoaDon(cusItem, LoaiChungTu.GOI_DICH_VU)}>
                                     <AddCircleOutlineOutlinedIcon />
                                     <Typography> Gói dịch vụ</Typography>
                                 </Stack>
@@ -147,5 +160,4 @@ const TabKhachHangNoBooking: React.FC<{ txtSearch: string }> = ({ txtSearch }) =
             </Grid>
         </Grid>
     );
-};
-export default TabKhachHangNoBooking;
+}

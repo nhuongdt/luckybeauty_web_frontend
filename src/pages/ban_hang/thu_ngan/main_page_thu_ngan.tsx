@@ -1,9 +1,15 @@
-import { Avatar, Button, Grid, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { Avatar, Button, Divider, Grid, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
-import SearchIcon from '@mui/icons-material/Search';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import SearchIcon from '@mui/icons-material/Search';
+import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { IList } from '../../../services/dto/IList';
 import React, { useEffect, useState } from 'react';
 import khachHangService from '../../../services/khach-hang/khachHangService';
@@ -20,47 +26,192 @@ import TabKhachHangBooking from '../../check_in/tab_khach_hang_booking';
 import TrangThaiFilter from '../../../enum/TrangThaiFilter';
 import { TextTranslate } from '../../../components/TableLanguage';
 import { useNavigate } from 'react-router-dom';
+import { LoaiChungTu, LoaiHoaHongDichVu } from '../../../lib/appconst';
+import { dbDexie } from '../../../lib/dexie/dexieDB';
+import utils from '../../../utils/utils';
+import Cookies from 'js-cookie';
+import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
+import { Guid } from 'guid-typescript';
+import ModalFilterNhomHangHoa from '../../../components/Dialog/modal_filter_nhom_hang_hoa';
+import { SuggestChiNhanhDto } from '../../../services/suggests/dto/SuggestChiNhanhDto';
+import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
+import AutocompleteWithData from '../../../components/Autocomplete/AutocompleteWithData';
+import { IDataAutocomplete } from '../../../services/dto/IDataAutocomplete';
+import { handleClickOutside } from '../../../utils/customReactHook';
+import MenuWithDataHasSearch from '../../../components/Menu/MenuWithData_HasSearch';
 
-const TabThuNgan = {
-    HOA_DON: 1,
-    GOI_DICH_VU: 2
-};
-const ThuNgan_TabMain = {
+const TabMain = {
     KHACH_HANG: 1,
-    HOA_DON: 2
+    CUOC_HEN: 2,
+    THU_NGAN: 3
 };
-const TabKhachHang = {
-    KHACH_HANG: 1,
-    CUOC_HEN: 2
+
+type IPropDropdownChiNhanh = {
+    idChosed: string;
+    lstData: IList[];
+    handleChoseChiNhanh: (itemChosed: IList) => void;
+};
+
+export const ThuNganSetting = ({ idChosed, lstData, handleChoseChiNhanh }: IPropDropdownChiNhanh) => {
+    const [lblChiNhanh, setLblChiNhanh] = useState('');
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const expandDropdownChiNhanh = Boolean(anchorEl);
+
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const choseChiNhanh = (item: IList) => {
+        setAnchorEl(null);
+        handleChoseChiNhanh(item);
+    };
+
+    useEffect(() => {
+        const itemChosed = lstData?.filter((x) => x.id == idChosed);
+        if (itemChosed?.length > 0) {
+            setLblChiNhanh(itemChosed[0].text);
+        }
+    }, [idChosed]);
+    return (
+        <Stack direction={'row'} alignItems={'center'} spacing={1}>
+            <LocationOnOutlinedIcon />
+            <Stack>
+                <Typography variant="body1" onClick={handleClick}>
+                    {lblChiNhanh}
+                </Typography>
+                <MenuWithDataHasSearch
+                    open={expandDropdownChiNhanh}
+                    lstData={lstData}
+                    anchorEl={anchorEl}
+                    handleClose={() => setAnchorEl(null)}
+                    handleChoseItem={choseChiNhanh}
+                />
+            </Stack>
+            <SettingsOutlinedIcon />
+        </Stack>
+    );
 };
 
 export default function MainPageThuNgan() {
     const navigation = useNavigate();
+    const idChiNhanh = Cookies.get('IdChiNhanh') ?? '';
     const [txtSearch, setTextSearch] = useState('');
-    const [tabMainActive, setTabMainActive] = useState(ThuNgan_TabMain.KHACH_HANG);
-    const [khachhang_tabActive, setKhachhang_TabActive] = useState(TabKhachHang.KHACH_HANG);
-    const [thungan_tabActive, setThungan_tabActive] = useState(TabThuNgan.HOA_DON);
+    const [isShowModalFilterNhomHangHoa, setIsShowModalFilterNhomHangHoa] = useState(false);
+    const [arrIdNhomHangFilter, setArrIdNhomHangFilter] = useState<string[]>([]);
 
-    const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
-        setKhachhang_TabActive(newValue);
-        setThungan_tabActive(newValue);
+    const [tabMainActive, setTabMainActive] = useState(TabMain.KHACH_HANG);
+    const [thungan_tabActive, setThungan_tabActive] = useState(LoaiChungTu.HOA_DON_BAN_LE);
+
+    const [idChiNhanhChosed, setIdChiNhanhChosed] = useState<string>(idChiNhanh);
+    const [customerIdChosed, setCustomerIdChosed] = useState<string>();
+    const [idHoaDonChosing, setIdHoaDonChosing] = useState<string>();
+    const [pageThuNgan_LoaiHoaDon, setPageThuNgan_LoaiHoaDon] = useState<number>();
+
+    const [allInvoiceWaiting, setAllInvoiceWaiting] = useState<PageHoaDonDto[]>([]);
+    const [allChiNhanh_byUser, setAllChiNhanh_byUser] = useState<SuggestChiNhanhDto[]>([]);
+
+    const onClickBack_Forward = (tabNew: number) => {
+        setTabMainActive(tabNew);
+        setThungan_tabActive(LoaiChungTu.HOA_DON_BAN_LE);
     };
 
     const PageLoad = () => {
-        //GetListCustomer();
+        GetListtHoaDon_fromCache();
+        GetChiNhanhByUser();
+    };
+
+    const GetChiNhanhByUser = async () => {
+        const data = await chiNhanhService.GetChiNhanhByUser();
+        setAllChiNhanh_byUser(data);
     };
 
     useEffect(() => {
         PageLoad();
     }, []);
 
-    const changeActiveTabMain = (tabNew: number) => {
+    const changeActiveTabMain = (event: React.SyntheticEvent, tabNew: number) => {
         setTabMainActive(tabNew);
-        setKhachhang_TabActive(TabKhachHang.KHACH_HANG);
-        setThungan_tabActive(TabThuNgan.HOA_DON);
+    };
+    const changeTabHoaDon = (event: React.SyntheticEvent, tabNew: number) => {
+        setThungan_tabActive(tabNew);
+    };
+
+    const onAgreeFilterNhomHang = (arrIdNhomHang: string[]) => {
+        setArrIdNhomHangFilter([...arrIdNhomHang]);
+        setIsShowModalFilterNhomHangHoa(false);
+    };
+
+    const changeChiNhanh = (item: IList) => {
+        setIdChiNhanhChosed(item?.id);
+    };
+
+    const GetListtHoaDon_fromCache = async () => {
+        const allHD = await dbDexie.hoaDon
+            .where('idChiNhanh')
+            .equals(idChiNhanh as string)
+            .sortBy('ngayLapHoaDon');
+        setAllInvoiceWaiting(allHD);
+    };
+
+    const getMaHoaDonMax = (loaiHoaDon: number): string => {
+        const arrMaHD = allInvoiceWaiting
+            ?.filter((x) => x.idLoaiChungTu === loaiHoaDon)
+            .map((x) => {
+                return x?.maHoaDon;
+            });
+
+        const numbers = arrMaHD
+            .flatMap((item) => item.match(/\d+/g)) // Extract arrays of number strings
+            .map(Number) // Convert to numbers
+            .filter((num) => !isNaN(num));
+        const maxNumber = numbers.length > 0 ? Math.max(...numbers) : 1;
+        if (maxNumber < 10) {
+            return '0' + maxNumber;
+        } else {
+            return maxNumber.toString();
+        }
+    };
+
+    const onClickAddHoaDon = (customerId: string, loaiHoaDon: number, bookingId?: string) => {
+        setTabMainActive(TabMain.THU_NGAN);
+        setThungan_tabActive(loaiHoaDon);
+        setCustomerIdChosed(customerId);
+        setPageThuNgan_LoaiHoaDon(loaiHoaDon);
+
+        const hdOfCustomer = allInvoiceWaiting?.filter((x) => x.idKhachHang == customerId);
+        if (hdOfCustomer?.length > 0) {
+            setIdHoaDonChosing(hdOfCustomer[0]?.id);
+        } else {
+            const maxMaHD = getMaHoaDonMax(loaiHoaDon);
+            let maHD = '';
+            switch (loaiHoaDon) {
+                case LoaiChungTu.HOA_DON_BAN_LE:
+                    {
+                        maHD = 'HD' + maxMaHD;
+                    }
+                    break;
+                case LoaiChungTu.GOI_DICH_VU:
+                    {
+                        maHD = 'GDV' + maxMaHD;
+                    }
+                    break;
+            }
+            const newHD = new PageHoaDonDto({
+                id: Guid.create().toString(),
+                maHoaDon: maHD,
+                idKhachHang: customerId as unknown as null,
+                idChiNhanh: idChiNhanh,
+                tenKhachHang: 'Khách lẻ'
+            });
+        }
     };
     return (
         <Stack className="main_page_thu_ngan" padding={2} justifyContent={'space-between'} position={'relative'}>
+            <ModalFilterNhomHangHoa
+                isShow={isShowModalFilterNhomHangHoa}
+                onClose={() => setIsShowModalFilterNhomHangHoa(false)}
+                onAgree={onAgreeFilterNhomHang}
+            />
             <Stack
                 direction={{ xs: 'column', sm: 'column', md: 'row', lg: 'row' }}
                 justifyContent={'space-between'}
@@ -69,136 +220,141 @@ export default function MainPageThuNgan() {
                     direction={'row'}
                     alignItems={'center'}
                     spacing={2}
-                    flex={tabMainActive == ThuNgan_TabMain.KHACH_HANG ? 2 : 2.5}>
+                    flex={tabMainActive !== TabMain.THU_NGAN ? 2 : 2}>
                     <HomeOutlinedIcon
                         onClick={() => navigation('/home')}
                         sx={{ color: 'var(--color-main)', '&:hover': { cursor: 'pointer' } }}
                     />
-                    {tabMainActive == ThuNgan_TabMain.KHACH_HANG && (
-                        <Stack direction={'row'} spacing={2} alignItems={'center'}>
-                            <Tabs value={khachhang_tabActive} onChange={handleChangeTab} aria-label="nav tabs example">
-                                <Tab label="Khách hàng" value={TabKhachHang.KHACH_HANG} />
-                                <Tab label="Cuộc hẹn" value={TabKhachHang.CUOC_HEN} />
-                            </Tabs>
-                            <KeyboardDoubleArrowRightIcon
-                                sx={{ width: '32px', height: '32px' }}
-                                onClick={() => changeActiveTabMain(ThuNgan_TabMain.HOA_DON)}
-                            />
-                        </Stack>
-                    )}
-                    {tabMainActive == ThuNgan_TabMain.HOA_DON && (
-                        <Stack direction={'row'} spacing={2} alignItems={'center'}>
-                            <Tabs value={thungan_tabActive} onChange={handleChangeTab} aria-label="nav tabs example">
-                                <Tab label="Hóa đơn" value={TabThuNgan.HOA_DON} />
-                                <Tab label="Gói dịch vụ" value={TabThuNgan.GOI_DICH_VU} />
-                            </Tabs>
-                            <KeyboardDoubleArrowLeftIcon
-                                sx={{ width: '32px', height: '32px' }}
-                                onClick={() => changeActiveTabMain(ThuNgan_TabMain.KHACH_HANG)}
-                            />
-                        </Stack>
-                    )}
-                </Stack>
-                {tabMainActive == ThuNgan_TabMain.KHACH_HANG && (
-                    <Stack flex={{ sm: 2, lg: 2, xs: 2, md: 1 }}>
-                        <TextField
-                            size="small"
-                            placeholder="Tìm kiếm khách hàng"
-                            onChange={(e) => setTextSearch(e.target.value)}
-                            InputProps={{ startAdornment: <SearchIcon /> }}
-                        />
+                    <Stack direction={'row'} spacing={2} alignItems={'center'}>
+                        {tabMainActive === TabMain.THU_NGAN ? (
+                            <>
+                                <KeyboardDoubleArrowLeftIcon
+                                    sx={{ width: '32px', height: '32px' }}
+                                    onClick={() => onClickBack_Forward(TabMain.KHACH_HANG)}
+                                />
+                                <Tabs
+                                    value={tabMainActive}
+                                    onChange={changeActiveTabMain}
+                                    aria-label="nav tabs example">
+                                    <Tab label="Thu ngân" value={TabMain.THU_NGAN} />
+                                </Tabs>
+                            </>
+                        ) : (
+                            <>
+                                <Tabs
+                                    value={tabMainActive}
+                                    onChange={changeActiveTabMain}
+                                    aria-label="nav tabs example">
+                                    <Tab label="Khách hàng" value={TabMain.KHACH_HANG} />
+                                    <Tab label="Cuộc hẹn" value={TabMain.CUOC_HEN} />
+                                </Tabs>
+                                <KeyboardDoubleArrowRightIcon
+                                    sx={{ width: '32px', height: '32px' }}
+                                    onClick={() => onClickBack_Forward(TabMain.THU_NGAN)}
+                                />
+                            </>
+                        )}
                     </Stack>
-                )}
-                {tabMainActive == ThuNgan_TabMain.HOA_DON && (
-                    <Stack flex={{ sm: 2, lg: 3.5, xs: 2, md: 1 }}>
+                </Stack>
+                {tabMainActive != TabMain.THU_NGAN ? (
+                    <Stack flex={{ sm: 2, lg: 3, xs: 2, md: 1 }} direction={'row'} spacing={1}>
+                        <Stack flex={5}>
+                            <TextField
+                                size="small"
+                                placeholder="Tìm kiếm khách hàng"
+                                onChange={(e) => setTextSearch(e.target.value)}
+                                InputProps={{ startAdornment: <SearchIcon /> }}
+                            />
+                        </Stack>
+                        <Stack flex={2}>
+                            {tabMainActive === TabMain.KHACH_HANG ? (
+                                <Button variant="outlined" color="info" startIcon={<AddOutlinedIcon />}>
+                                    Thêm mới khách
+                                </Button>
+                            ) : (
+                                <Button variant="outlined" color="info" startIcon={<AddOutlinedIcon />}>
+                                    Thêm lịch hẹn
+                                </Button>
+                            )}
+                        </Stack>
+                    </Stack>
+                ) : (
+                    <Stack flex={{ sm: 2, lg: 5, xs: 2, md: 1 }}>
                         <TextField
                             size="small"
                             placeholder="Tìm kiếm dịch vụ"
                             onChange={(e) => setTextSearch(e.target.value)}
-                            InputProps={{ startAdornment: <SearchIcon /> }}
+                            InputProps={{
+                                startAdornment: <SearchIcon />,
+                                endAdornment: (
+                                    <FilterAltOutlinedIcon
+                                        sx={{ cursor: 'pointer' }}
+                                        onClick={() => setIsShowModalFilterNhomHangHoa(true)}
+                                    />
+                                )
+                            }}
                         />
                     </Stack>
                 )}
-                {tabMainActive == ThuNgan_TabMain.HOA_DON && (
-                    <Stack flex={{ sm: 2, lg: 6, xs: 2, md: 1 }} className="tab-hoadon">
-                        <Stack direction={'row'} alignItems={'center'} spacing={1}>
-                            <Stack direction={'row'}>
-                                <Typography padding={'8px 16px'} className="active">
-                                    HD01
-                                </Typography>
-                                <Typography padding={'8px 16px'} className="not-active">
-                                    HD02
-                                </Typography>
-                            </Stack>
-                            <AddCircleOutlineOutlinedIcon />
+                {tabMainActive == TabMain.THU_NGAN ? (
+                    <Stack flex={{ sm: 2, lg: 5, xs: 2, md: 1 }}>
+                        <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
+                            <Tabs value={thungan_tabActive} onChange={changeTabHoaDon} aria-label="nav tabs example">
+                                <Tab label="Hóa đơn" value={LoaiChungTu.HOA_DON_BAN_LE} />
+                                <Tab label="Gói dịch vụ" value={LoaiChungTu.GOI_DICH_VU} />
+                            </Tabs>
+                            <ThuNganSetting
+                                idChosed={idChiNhanh}
+                                lstData={allChiNhanh_byUser?.map((x) => {
+                                    return {
+                                        id: x.id,
+                                        text: x.tenChiNhanh
+                                    } as IList;
+                                })}
+                                handleChoseChiNhanh={changeChiNhanh}
+                            />
                         </Stack>
                     </Stack>
-                )}
-                {tabMainActive == ThuNgan_TabMain.KHACH_HANG && (
+                ) : (
                     <Stack direction={'row'} spacing={1} flex={2} justifyContent={'end'}>
-                        <Button variant="outlined" color="info">
-                            Thêm mới khách
-                        </Button>
-                        <Button variant="outlined" color="secondary">
-                            Thêm lịch hẹn
-                        </Button>
+                        <ThuNganSetting
+                            idChosed={idChiNhanh}
+                            lstData={allChiNhanh_byUser?.map((x) => {
+                                return {
+                                    id: x.id,
+                                    text: x.tenChiNhanh
+                                } as IList;
+                            })}
+                            handleChoseChiNhanh={changeChiNhanh}
+                        />
                     </Stack>
                 )}
             </Stack>
 
-            {tabMainActive == ThuNgan_TabMain.KHACH_HANG && (
+            {tabMainActive !== TabMain.THU_NGAN ? (
                 <>
                     <TabPanel
-                        value={khachhang_tabActive}
-                        index={TabKhachHang.KHACH_HANG}
+                        value={tabMainActive}
+                        index={TabMain.KHACH_HANG}
                         style={{ minHeight: '86vh', position: 'relative' }}>
-                        <TabKhachHangNoBooking txtSearch={txtSearch} />
+                        <TabKhachHangNoBooking txtSearch={txtSearch} onClickAddHoaDon={onClickAddHoaDon} />
                     </TabPanel>
                     <TabPanel
-                        value={khachhang_tabActive}
-                        index={TabKhachHang.CUOC_HEN}
+                        value={tabMainActive}
+                        index={TabMain.CUOC_HEN}
                         style={{ minHeight: '86vh', position: 'relative' }}>
-                        <TabKhachHangBooking txtSearch={txtSearch} />
+                        <TabKhachHangBooking txtSearch={txtSearch} onClickAddHoaDon={onClickAddHoaDon} />
                     </TabPanel>
                 </>
+            ) : (
+                <TabPanel value={tabMainActive} index={TabMain.THU_NGAN}>
+                    <PageThuNgan
+                        txtSearch={txtSearch}
+                        customerIdChosed={customerIdChosed}
+                        loaiHoaDon={pageThuNgan_LoaiHoaDon}
+                    />
+                </TabPanel>
             )}
-
-            {tabMainActive == ThuNgan_TabMain.HOA_DON && (
-                <>
-                    <TabPanel value={tabMainActive} index={ThuNgan_TabMain.HOA_DON}>
-                        <PageThuNgan txtSearch={txtSearch} />
-                    </TabPanel>
-                </>
-            )}
-
-            {/* <Stack
-                direction={'row'}
-                position={'absolute'}
-                bottom={2}
-                className="tab-bottom"
-                width={thungan_tabActive == TabThuNgan.KHACH_HANG ? '100%' : '48%'}
-                sx={{ backgroundColor: 'var(--color-bg-main)', color: 'white' }}>
-                {lstOption?.map((item, index) => (
-                    <Stack
-                        onClick={() => changeActiveTabThuNgan(item.id)}
-                        key={index}
-                        direction={'row'}
-                        padding={'8px 16px'}
-                        spacing={1}
-                        sx={{
-                            '&:hover': {
-                                backgroundColor: '#005e94',
-                                cursor: 'pointer',
-                                transition: '.4s',
-                                color: 'white'
-                            }
-                        }}
-                        className={thungan_tabActive == parseFloat(item.id) ? 'active' : 'not-active'}>
-                        {item.icon}
-                        <Typography>{item.text}</Typography>
-                    </Stack>
-                ))}
-            </Stack> */}
         </Stack>
     );
 }

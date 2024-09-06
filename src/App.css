@@ -423,3 +423,12 @@ body .font-normal {
         transform: rotate(360deg);
     }
 }
+
+.text-cursor{
+    cursor: pointer;
+    color: var(--color-main);
+}
+.payment-form-hinhthucTT p{
+font-size: 17px;
+font-weight: 500;
+}

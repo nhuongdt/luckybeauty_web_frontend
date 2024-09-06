@@ -6,6 +6,7 @@ import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import Cookies from 'js-cookie';
 import utils from '../../utils/utils';
 import { format } from 'date-fns';
+import { LoaiChungTu } from '../appconst';
 
 export class SubClassDexie extends Dexie {
     hoaDon!: Table<PageHoaDonDto>;
@@ -73,6 +74,21 @@ export class SubClassDexie extends Dexie {
                         } else {
                             o.ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS');
                         }
+                    });
+            });
+        this.version(6)
+            .stores({
+                // isOpenLast: là hóa đơn vừa được mở ra xem cuối cùng
+                hoaDon: '&id, idKhachHang, idChiNhanh, idCheckIn, ngayLapHoaDon, idLoaiChungTu, maHoaDon' // add column loaiHoaDon,isOpenLast
+            })
+
+            .upgrade((x) => {
+                return x
+                    .table('hoaDon')
+                    .filter((o) => utils.checkNull(o.idLoaiChungTu))
+                    .modify(async (o, index) => {
+                        o.idLoaiChungTu = LoaiChungTu.HOA_DON_BAN_LE;
+                        o.maHoaDon = 'HD0' + index;
                     });
             });
     }
