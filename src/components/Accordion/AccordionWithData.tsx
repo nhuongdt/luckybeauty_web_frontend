@@ -2,7 +2,7 @@ import { Accordion, AccordionSummary, Typography, Box, Stack, TextField } from '
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import SearchIcon from '@mui/icons-material/Search';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { OpenInNew } from '@mui/icons-material';
 import utils from '../../utils/utils'; // func common
 import { IList } from '../../services/dto/IList';
@@ -49,21 +49,7 @@ export default function AccordionWithData({ roleEdit, lstData, clickTreeItem }: 
     };
     return (
         <>
-            <Box
-                sx={{
-                    overflow: 'auto',
-                    maxHeight: '66vh',
-                    '&::-webkit-scrollbar': {
-                        width: '7px'
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                        bgcolor: 'rgba(0,0,0,0.1)',
-                        borderRadius: '8px'
-                    },
-                    '&::-webkit-scrollbar-track': {
-                        bgcolor: 'var(--color-bg)'
-                    }
-                }}>
+            <Box>
                 <Stack spacing={1} paddingTop={1}>
                     <TextField
                         variant="standard"
@@ -112,65 +98,67 @@ export default function AccordionWithData({ roleEdit, lstData, clickTreeItem }: 
                             </Typography>
                         </AccordionSummary>
                     </Accordion>
-                    {lstSearch?.map((item: IList, index: any) => (
-                        <Accordion
-                            disableGutters
-                            key={index}
-                            sx={{
-                                boxShadow: 'unset',
-                                '&.MuiAccordion-root::before': { content: 'none' },
-                                '& .MuiAccordionSummary-root': { minHeight: '46px', maxHeight: '46px' }
-                            }}>
-                            <AccordionSummary
+                    <Box sx={{ marginTop: '0px!important', overflow: 'auto', maxHeight: '70vh' }}>
+                        {lstSearch?.map((item: IList, index: any) => (
+                            <Accordion
+                                disableGutters
+                                key={index}
                                 sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    bgcolor: idChosing === item.id ? 'var(--color-bg)' : '',
-                                    '&:hover': {
-                                        bgcolor: 'var(--color-bg)'
-                                    },
-                                    '& .MuiAccordionSummary-content': {
-                                        alignItems: 'end'
-                                    }
-                                }}
-                                onMouseLeave={(event) => {
-                                    handleHover(event, item);
-                                }}
-                                onMouseEnter={(event) => {
-                                    handleHover(event, item);
-                                }}
-                                onClick={() => handleClickTreeItem(false, item.id)}>
-                                {item?.icon}
-                                <Typography
-                                    variant="body2"
-                                    fontSize="14px"
-                                    fontWeight="700"
-                                    textTransform="capitalize"
+                                    boxShadow: 'unset',
+                                    '&.MuiAccordion-root::before': { content: 'none' },
+                                    '& .MuiAccordionSummary-root': { minHeight: '46px', maxHeight: '46px' }
+                                }}>
+                                <AccordionSummary
                                     sx={{
-                                        marginLeft: '9px',
+                                        display: 'flex',
                                         alignItems: 'center',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        display: '-webkit-box',
-                                        WebkitBoxOrient: 'vertical',
-                                        WebkitLineClamp: 1,
-                                        paddingRight: '20px'
+                                        bgcolor: idChosing === item.id ? 'var(--color-bg)' : '',
+                                        '&:hover': {
+                                            bgcolor: 'var(--color-bg)'
+                                        },
+                                        '& .MuiAccordionSummary-content': {
+                                            alignItems: 'end'
+                                        }
                                     }}
-                                    title={item.text}>
-                                    {item.text}
-                                </Typography>
-                                {isHover && item.id !== '' && rowHover.id === item.id && roleEdit && (
-                                    <OpenInNew
-                                        onClick={(event) => {
-                                            event.stopPropagation(); // dừng không cho gọi đến sự kiện click của parent
-                                            handleClickTreeItem(true, item.id);
+                                    onMouseLeave={(event) => {
+                                        handleHover(event, item);
+                                    }}
+                                    onMouseEnter={(event) => {
+                                        handleHover(event, item);
+                                    }}
+                                    onClick={() => handleClickTreeItem(false, item.id)}>
+                                    {item?.icon}
+                                    <Typography
+                                        variant="body2"
+                                        fontSize="14px"
+                                        fontWeight="700"
+                                        textTransform="capitalize"
+                                        sx={{
+                                            marginLeft: '9px',
+                                            alignItems: 'center',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            display: '-webkit-box',
+                                            WebkitBoxOrient: 'vertical',
+                                            WebkitLineClamp: 1,
+                                            paddingRight: '20px'
                                         }}
-                                        sx={{ position: 'absolute', right: 16 }}
-                                    />
-                                )}
-                            </AccordionSummary>
-                        </Accordion>
-                    ))}
+                                        title={item.text}>
+                                        {item.text}
+                                    </Typography>
+                                    {isHover && item.id !== '' && rowHover.id === item.id && roleEdit && (
+                                        <OpenInNew
+                                            onClick={(event) => {
+                                                event.stopPropagation(); // dừng không cho gọi đến sự kiện click của parent
+                                                handleClickTreeItem(true, item.id);
+                                            }}
+                                            sx={{ position: 'absolute', right: 16 }}
+                                        />
+                                    )}
+                                </AccordionSummary>
+                            </Accordion>
+                        ))}
+                    </Box>
                 </Stack>
             </Box>
         </>
