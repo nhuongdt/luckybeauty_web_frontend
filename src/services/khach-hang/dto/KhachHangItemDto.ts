@@ -15,4 +15,5 @@ export interface KhachHangItemDto {
     tongTichDiem: number;
     soLanCheckIn?: number;
     trangThaiCheckIn?: number;
+    zoaUserId?: string;
 }
