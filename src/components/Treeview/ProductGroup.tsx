@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Typography, TextField, Stack } from '@mui/material';
+import { Typography, TextField, Stack, Checkbox, FormGroup, FormControlLabel } from '@mui/material';
 import { OpenInNew, LocalOffer, Search } from '@mui/icons-material';
 import TreeView from '@mui/lab/TreeView';
 import TreeItem from '@mui/lab/TreeItem';
@@ -8,17 +8,24 @@ import { IList } from '../../services/dto/IList';
 
 interface IPropsTreeView {
     roleEdit: boolean;
-    defaultId?: string;
+    isShowCheckAll?: boolean;
+    isShowCheckbox?: boolean;
+    arrItemChosedDefault?: string[];
     lstData: IList[];
-    clickTreeItem: (isEdit?: boolean, itemChosed?: IList | null) => void;
+    clickTreeItem: (isEdit?: boolean, arrIdChosed?: string[] | null) => void;
 }
 
-export default function TreeViewGroupProduct({ roleEdit, defaultId, lstData, clickTreeItem }: IPropsTreeView) {
-    const [rowHover, setRowHover] = React.useState<IList | null>();
+export default function TreeViewGroupProduct({
+    roleEdit,
+    isShowCheckAll,
+    arrItemChosedDefault,
+    lstData,
+    clickTreeItem
+}: IPropsTreeView) {
+    const [rowIdHover, setRowIdHover] = React.useState<string | null>();
     const [isHover, setIsHover] = React.useState(false);
     const [textSearch, setTextSearch] = React.useState('');
-
-    const iconThis = lstData?.length > 0 ? lstData[0].icon : <LocalOffer />;
+    const [arrIdChosed, setArrIdChosed] = React.useState<string[]>([]);
 
     const handleHover = (event: React.MouseEvent<HTMLElement>, rowData: IList) => {
         switch (event.type) {
@@ -29,14 +36,32 @@ export default function TreeViewGroupProduct({ roleEdit, defaultId, lstData, cli
                 setIsHover(false);
                 break;
         }
-        setRowHover(rowData);
+        setRowIdHover(rowData?.id);
     };
-    const handleClickTreeItem = (isEdit = false) => {
-        clickTreeItem(isEdit, rowHover);
+    const handleClickTreeItem = (isEdit = false, idChosed: string) => {
+        clickTreeItem(isEdit, [idChosed]);
     };
     const handleClickAll = () => {
-        setRowHover(null);
+        setRowIdHover(null);
         clickTreeItem(false, null);
+    };
+
+    const handleChangeCheckbox = (event: React.ChangeEvent<HTMLInputElement>, item: IList) => {
+        const isCheck = event.target.checked;
+        const arrIdChild = item?.children?.map((x) => {
+            return x?.id;
+        });
+        let arrOld = arrIdChosed?.filter((x) => x !== item?.id);
+        if (arrIdChild) {
+            arrOld = arrOld?.filter((x) => !arrIdChild.includes(x));
+        }
+        let arrNew = [...arrOld];
+
+        if (isCheck) {
+            arrNew = [item?.id, ...arrOld, ...(arrIdChild ?? [])];
+        }
+        setArrIdChosed([...arrNew]);
+        clickTreeItem(false, arrNew);
     };
 
     const dataTreeSearch = lstData?.filter((x: IList) => {
@@ -62,69 +87,99 @@ export default function TreeViewGroupProduct({ roleEdit, defaultId, lstData, cli
                 />
                 <Stack
                     direction="row"
-                    padding={'6px 3px '}
+                    alignItems={'center'}
                     onClick={handleClickAll}
                     spacing={1}
                     sx={{
                         cursor: 'pointer',
-                        backgroundColor: utils.checkNull(defaultId) ? 'var(--color-bg)' : '',
+                        display: isShowCheckAll ?? false ? '' : 'none',
+                        backgroundColor: (arrIdChosed?.length ?? 0) === 0 ? 'var(--color-bg)' : '',
                         '&:hover': {
                             bgcolor: 'var(--color-bg)'
                         }
                     }}>
-                    {iconThis}
-                    <Typography variant="body2">Tất cả</Typography>
+                    <FormGroup sx={{ width: '100%' }}>
+                        <FormControlLabel control={<Checkbox />} label="Tất cả" />
+                    </FormGroup>
                 </Stack>
             </Stack>
-
-            <TreeView
-                sx={{ flexGrow: 1, minWidth: 200, overflowY: 'auto' }}
-                defaultCollapseIcon={iconThis}
-                defaultExpandIcon={iconThis}>
-                {dataTreeSearch.map((item: IList) => (
-                    <TreeItem
-                        key={item.id}
-                        nodeId={item?.id ?? ''}
-                        sx={{ backgroundColor: defaultId == item.id ? 'var(--color-bg)' : '' }}
-                        label={
-                            <Stack direction="row" padding={'6px 3px '}>
-                                <Typography variant="body2">{item.text}</Typography>
-                                {isHover && rowHover?.id === item.id && roleEdit && (
-                                    <OpenInNew onClick={() => handleClickTreeItem(true)} />
-                                )}
-                            </Stack>
-                        }
-                        onMouseLeave={(event: any) => {
+            <Stack spacing={1} overflow={'auto'} maxHeight={500}>
+                {dataTreeSearch?.map((item, index) => (
+                    <Stack
+                        sx={{
+                            borderBottom: '1px solid #ccc'
+                        }}
+                        key={index}
+                        onMouseLeave={(event) => {
                             handleHover(event, item);
                         }}
-                        onMouseEnter={(event: any) => {
+                        onMouseEnter={(event) => {
                             handleHover(event, item);
-                        }}
-                        onClick={() => handleClickTreeItem(false)}>
-                        {item?.children?.map((child: IList) => (
-                            <TreeItem
-                                key={child.id}
-                                nodeId={child.id ?? ''}
-                                onClick={() => handleClickTreeItem(false)}
-                                sx={{ backgroundColor: defaultId == item.id ? 'var(--color-bg)' : '' }}
-                                label={
-                                    <Stack direction="row" padding={'6px 3px '}>
-                                        <Typography variant="body2">{child.text}</Typography>
-                                        {isHover && rowHover?.id === child.id && roleEdit && (
-                                            <OpenInNew onClick={() => handleClickTreeItem(true)} />
-                                        )}
-                                    </Stack>
+                        }}>
+                        <Stack
+                            direction={'row'}
+                            alignItems={'center'}
+                            justifyContent={'space-between'}
+                            sx={{
+                                '&:hover': {
+                                    bgcolor: 'var(--color-bg)'
                                 }
-                                onMouseLeave={(event: any) => {
+                            }}>
+                            <FormGroup sx={{ width: '100%' }}>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={arrIdChosed.includes(item.id)}
+                                            onChange={(event) => handleChangeCheckbox(event, item)}
+                                        />
+                                    }
+                                    label={item.text}
+                                />
+                            </FormGroup>
+                            {isHover && rowIdHover === item.id && roleEdit && (
+                                <OpenInNew onClick={() => handleClickTreeItem(true, item?.id)} />
+                            )}
+                        </Stack>
+                        {item?.children?.map((child: IList, index2) => (
+                            <Stack
+                                key={index2}
+                                sx={{
+                                    borderTop: '1px solid #ccc',
+                                    '&:hover': {
+                                        bgcolor: 'var(--color-bg)'
+                                    }
+                                }}
+                                onMouseLeave={(event) => {
                                     handleHover(event, child);
                                 }}
-                                onMouseEnter={(event: any) => {
+                                onMouseEnter={(event) => {
                                     handleHover(event, child);
-                                }}></TreeItem>
+                                }}>
+                                <Stack
+                                    paddingLeft={1.5}
+                                    direction={'row'}
+                                    alignItems={'center'}
+                                    justifyContent={'space-between'}>
+                                    <FormGroup sx={{ width: '100%' }}>
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={arrIdChosed.includes(child.id)}
+                                                    onChange={(event) => handleChangeCheckbox(event, child)}
+                                                />
+                                            }
+                                            label={child.text}
+                                        />
+                                    </FormGroup>
+                                    {isHover && rowIdHover === child.id && roleEdit && (
+                                        <OpenInNew onClick={() => handleClickTreeItem(true, child?.id)} />
+                                    )}
+                                </Stack>
+                            </Stack>
                         ))}
-                    </TreeItem>
+                    </Stack>
                 ))}
-            </TreeView>
+            </Stack>
         </>
     );
 }
