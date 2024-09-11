@@ -88,7 +88,7 @@ class ProductService {
 
         return xx;
     };
-    GetDMHangHoa_groupByNhom = async (input: any) => {
+    GetDMHangHoa_groupByNhom = async (input: PagedProductSearchDto) => {
         const xx = await http
             .post(`api/services/app/HangHoa/GetDMHangHoa_groupByNhom`, input)
             .then((res: { data: { result: IHangHoaGroupTheoNhomDto[] } }) => {
