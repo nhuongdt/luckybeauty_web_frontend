@@ -79,7 +79,7 @@ class KhachHangService {
         const response = await http.post(`api/services/app/KhachHang/ExporSelectedtDanhSach`, input);
         return response.data.result;
     }
-    jqAutoCustomer = async (input: PagedKhachHangResultRequestDto) => {
+    jqAutoCustomer = async (input: PagedKhachHangResultRequestDto): Promise<KhachHangItemDto[]> => {
         const result = await http.post(`api/services/app/KhachHang/JqAutoCustomer`, input);
         return result.data.result;
     };
