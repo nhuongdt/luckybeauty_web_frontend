@@ -52,7 +52,9 @@ class DashboardStore {
     }
     async getThongKeHotService(input: DashboardFilter) {
         const result = await dashboardService.thongKeHotService(input);
-        this.danhSachDichVuHot = result;
+        if (result != null) {
+            this.danhSachDichVuHot = result;
+        }
     }
     async onChangeDateType(type: string) {
         this.dashboardDateType = type;
