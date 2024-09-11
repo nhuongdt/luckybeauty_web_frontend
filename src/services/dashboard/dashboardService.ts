@@ -18,9 +18,13 @@ class DashboardService {
         const response = await http.post(`api/services/app/Dashboard/ThongKeDoanhThu`, input);
         return response.data.result;
     }
-    public async thongKeHotService(input: DashboardFilter) {
-        const response = await http.post(`api/services/app/Dashboard/ThongKeHotService`, input);
-        return response.data.result;
+    public async thongKeHotService(input: DashboardFilter | null) {
+        try {
+            const response = await http.post(`api/services/app/Dashboard/ThongKeHotService`, input);
+            return response.data.result;
+        } catch {
+            return null;
+        }
     }
 }
 export default new DashboardService();
