@@ -11,6 +11,14 @@ class GroupProductService {
             });
         return xx;
     };
+    GetListNhomHangHoa_byId = async (arrId: string[]): Promise<ModelNhomHangHoa[]> => {
+        const xx = await http
+            .post(`api/services/app/NhomHangHoa/GetListNhomHangHoa_byId?arrIdNhomHang=`, arrId)
+            .then((res) => {
+                return res.data.result;
+            });
+        return xx;
+    };
     GetDM_NhomHangHoa = async (): Promise<PagedResultDto<ModelNhomHangHoa>> => {
         const xx = await http
             .get(`api/services/app/NhomHangHoa/GetNhomDichVu`)
