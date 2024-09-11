@@ -31,7 +31,7 @@ export class ModelHangHoaDto {
     laHangHoa?: boolean;
     image? = '';
 
-    donViQuiDois:
+    donViQuiDois?:
         | any[]
         | {
               id: string;
@@ -113,5 +113,5 @@ export class ModelNhomHangHoa {
 
 /* search */
 export class PagedProductSearchDto extends ParamSearchDto {
-    idNhomHangHoas?: string | null = '';
+    idNhomHangHoas?: string[];
 }

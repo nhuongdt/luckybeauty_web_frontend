@@ -9,7 +9,7 @@ import { ModelHangHoaDto, PagedProductSearchDto } from '../../services/product/d
 export default function AutocompleteProduct({ handleChoseItem, productChosed }: any) {
     const [listProduct, setlistProduct] = useState<ModelHangHoaDto[]>([]);
     const [paramSearch, setParamSearch] = useState<PagedProductSearchDto>({
-        idNhomHangHoas: '',
+        idNhomHangHoas: [],
         textSearch: '',
         currentPage: 0,
         pageSize: 1000,

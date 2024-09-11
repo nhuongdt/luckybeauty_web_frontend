@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
 import { LocalOffer } from '@mui/icons-material';
 
 import TreeViewGroupProduct from '../Treeview/ProductGroup';
@@ -7,6 +7,7 @@ import TreeViewGroupProduct from '../Treeview/ProductGroup';
 import GroupProductService from '../../services/product/GroupProductService';
 import { ModelNhomHangHoa } from '../../services/product/dto';
 import { IList } from '../../services/dto/IList';
+import DialogButtonClose from './ButtonClose';
 
 type IPropModalFilter = {
     isShow: boolean;
@@ -39,7 +40,12 @@ const ModalFilterNhomHangHoa = (props: IPropModalFilter) => {
 
     return (
         <Dialog open={isShow} fullWidth maxWidth="sm" onClose={onClose}>
-            <DialogTitle>Chọn nhóm hàng</DialogTitle>
+            <DialogTitle>
+                <Typography fontSize={'18px'} fontWeight={500}>
+                    Chọn nhóm hàng
+                </Typography>
+                <DialogButtonClose onClose={onClose} />
+            </DialogTitle>
             <DialogContent>
                 <TreeViewGroupProduct
                     roleEdit={false}
