@@ -21,6 +21,7 @@ import ZaloService from '../../../services/zalo/ZaloService';
 import { LoaiTin } from '../../../lib/appconst';
 import { ZaloConst } from '../../../lib/zaloConst';
 import ModalZaloTemplate from '../../zalo/modal_zalo_template';
+import PageEmpty from '../../../components/PageEmpty';
 
 export const PageMauTin_TabActive = {
     ZALO: '1',
@@ -169,98 +170,106 @@ const MauTinNhan = () => {
                     <Grid item xs={12} className="page-full">
                         <TabContext value={tabActive}>
                             <TabPanel value={PageMauTin_TabActive.ZALO} sx={{ padding: 0 }}>
-                                <Stack spacing={2}>
-                                    {allMauTinDB?.map((item, index) => (
-                                        <Stack spacing={2} key={index}>
-                                            <Stack spacing={2} direction={'row'}>
-                                                {item.idLoaiTinZalo === ZaloConst.LoaiTin.PROMOTION ? (
-                                                    <CampaignOutlinedIcon sx={{ color: 'rgb(128, 10, 199)' }} />
-                                                ) : item.idLoaiTinZalo === ZaloConst.LoaiTin.TRANSACTION ? (
-                                                    <ReceiptOutlinedIcon sx={{ color: 'rgb(80, 205, 137)' }} />
-                                                ) : item.idLoaiTinZalo === ZaloConst.LoaiTin.MESSAGE ? (
-                                                    <LibraryBooksOutlinedIcon />
-                                                ) : (
-                                                    <LibraryBooksOutlinedIcon />
-                                                )}
-                                                <Typography fontWeight={500}>{item.tenLoaiTinZalo}</Typography>
-                                            </Stack>
-                                            <Stack paddingLeft={2}>
-                                                {item?.lstDetail?.map((detail) => (
-                                                    <Stack
-                                                        spacing={1}
-                                                        key={detail?.id}
-                                                        className="details-mau-tin"
-                                                        padding={1}
-                                                        onClick={() => editMauTinZalo(detail?.id)}>
-                                                        <Stack spacing={1} direction={'row'} flex={12}>
-                                                            <Typography variant="body2" fontWeight={500} flex={2}>
-                                                                {detail?.tenMauTin}
-                                                            </Typography>
-                                                            <Stack flex={10}>
-                                                                {detail?.elements?.map((elm) => (
-                                                                    <Stack key={elm?.id}>
-                                                                        {elm.elementType ===
-                                                                        ZaloConst.ElementType.TEXT ? (
-                                                                            <Typography variant="body2">
-                                                                                {elm.content}
-                                                                            </Typography>
-                                                                        ) : elm.elementType ===
-                                                                          ZaloConst.ElementType.HEADER ? (
-                                                                            <Typography variant="body2">
-                                                                                {elm.content}
-                                                                            </Typography>
-                                                                        ) : null}
-                                                                    </Stack>
-                                                                ))}
+                                {allMauTinDB?.length == 0 ? (
+                                    <PageEmpty style={{ height: '75vh' }} />
+                                ) : (
+                                    <Stack spacing={2}>
+                                        {allMauTinDB?.map((item, index) => (
+                                            <Stack spacing={2} key={index}>
+                                                <Stack spacing={2} direction={'row'}>
+                                                    {item.idLoaiTinZalo === ZaloConst.LoaiTin.PROMOTION ? (
+                                                        <CampaignOutlinedIcon sx={{ color: 'rgb(128, 10, 199)' }} />
+                                                    ) : item.idLoaiTinZalo === ZaloConst.LoaiTin.TRANSACTION ? (
+                                                        <ReceiptOutlinedIcon sx={{ color: 'rgb(80, 205, 137)' }} />
+                                                    ) : item.idLoaiTinZalo === ZaloConst.LoaiTin.MESSAGE ? (
+                                                        <LibraryBooksOutlinedIcon />
+                                                    ) : (
+                                                        <LibraryBooksOutlinedIcon />
+                                                    )}
+                                                    <Typography fontWeight={500}>{item.tenLoaiTinZalo}</Typography>
+                                                </Stack>
+                                                <Stack paddingLeft={2}>
+                                                    {item?.lstDetail?.map((detail) => (
+                                                        <Stack
+                                                            spacing={1}
+                                                            key={detail?.id}
+                                                            className="details-mau-tin"
+                                                            padding={1}
+                                                            onClick={() => editMauTinZalo(detail?.id)}>
+                                                            <Stack spacing={1} direction={'row'} flex={12}>
+                                                                <Typography variant="body2" fontWeight={500} flex={2}>
+                                                                    {detail?.tenMauTin}
+                                                                </Typography>
+                                                                <Stack flex={10}>
+                                                                    {detail?.elements?.map((elm) => (
+                                                                        <Stack key={elm?.id}>
+                                                                            {elm.elementType ===
+                                                                            ZaloConst.ElementType.TEXT ? (
+                                                                                <Typography variant="body2">
+                                                                                    {elm.content}
+                                                                                </Typography>
+                                                                            ) : elm.elementType ===
+                                                                              ZaloConst.ElementType.HEADER ? (
+                                                                                <Typography variant="body2">
+                                                                                    {elm.content}
+                                                                                </Typography>
+                                                                            ) : null}
+                                                                        </Stack>
+                                                                    ))}
+                                                                </Stack>
                                                             </Stack>
                                                         </Stack>
-                                                    </Stack>
-                                                ))}
+                                                    ))}
+                                                </Stack>
                                             </Stack>
-                                        </Stack>
-                                    ))}
-                                </Stack>
+                                        ))}
+                                    </Stack>
+                                )}
                             </TabPanel>
                             <TabPanel value={PageMauTin_TabActive.SMS} sx={{ padding: 0 }}>
-                                <Stack spacing={2}>
-                                    {dataGroupMauTin?.map((item, index) => (
-                                        <Stack spacing={2} key={index}>
-                                            <Stack spacing={2} direction={'row'}>
-                                                {item.idLoaiTin === LoaiTin.TIN_SINH_NHAT ? (
-                                                    <CakeOutlinedIcon sx={{ color: 'rgb(128, 10, 199)' }} />
-                                                ) : item.idLoaiTin === LoaiTin.TIN_LICH_HEN ? (
-                                                    <NotificationsNoneOutlinedIcon
-                                                        sx={{ color: 'rgb(255, 125, 161)' }}
-                                                    />
-                                                ) : item.idLoaiTin === LoaiTin.TIN_GIAO_DICH ? (
-                                                    <ReceiptOutlinedIcon sx={{ color: 'rgb(80, 205, 137)' }} />
-                                                ) : (
-                                                    <LibraryBooksOutlinedIcon />
-                                                )}
-                                                <Typography fontWeight={500}>{item.loaiTin}</Typography>
-                                            </Stack>
-                                            <Stack paddingLeft={2}>
-                                                {item?.lstDetail?.map((detail) => (
-                                                    <Stack
-                                                        spacing={1}
-                                                        key={detail?.id}
-                                                        className="details-mau-tin"
-                                                        padding={1}
-                                                        onClick={() => editMauTin(detail)}>
-                                                        <Stack spacing={1} direction={'row'} flex={12}>
-                                                            <Typography variant="body2" fontWeight={500} flex={2}>
-                                                                {detail?.tenMauTin}
-                                                            </Typography>
-                                                            <Typography variant="body2" flex={10}>
-                                                                {detail?.noiDungTinMau}
-                                                            </Typography>
+                                {dataGroupMauTin?.length == 0 ? (
+                                    <PageEmpty style={{ height: '75vh' }} />
+                                ) : (
+                                    <Stack spacing={2}>
+                                        {dataGroupMauTin?.map((item, index) => (
+                                            <Stack spacing={2} key={index}>
+                                                <Stack spacing={2} direction={'row'}>
+                                                    {item.idLoaiTin === LoaiTin.TIN_SINH_NHAT ? (
+                                                        <CakeOutlinedIcon sx={{ color: 'rgb(128, 10, 199)' }} />
+                                                    ) : item.idLoaiTin === LoaiTin.TIN_LICH_HEN ? (
+                                                        <NotificationsNoneOutlinedIcon
+                                                            sx={{ color: 'rgb(255, 125, 161)' }}
+                                                        />
+                                                    ) : item.idLoaiTin === LoaiTin.TIN_GIAO_DICH ? (
+                                                        <ReceiptOutlinedIcon sx={{ color: 'rgb(80, 205, 137)' }} />
+                                                    ) : (
+                                                        <LibraryBooksOutlinedIcon />
+                                                    )}
+                                                    <Typography fontWeight={500}>{item.loaiTin}</Typography>
+                                                </Stack>
+                                                <Stack paddingLeft={2}>
+                                                    {item?.lstDetail?.map((detail) => (
+                                                        <Stack
+                                                            spacing={1}
+                                                            key={detail?.id}
+                                                            className="details-mau-tin"
+                                                            padding={1}
+                                                            onClick={() => editMauTin(detail)}>
+                                                            <Stack spacing={1} direction={'row'} flex={12}>
+                                                                <Typography variant="body2" fontWeight={500} flex={2}>
+                                                                    {detail?.tenMauTin}
+                                                                </Typography>
+                                                                <Typography variant="body2" flex={10}>
+                                                                    {detail?.noiDungTinMau}
+                                                                </Typography>
+                                                            </Stack>
                                                         </Stack>
-                                                    </Stack>
-                                                ))}
+                                                    ))}
+                                                </Stack>
                                             </Stack>
-                                        </Stack>
-                                    ))}
-                                </Stack>
+                                        ))}
+                                    </Stack>
+                                )}
                             </TabPanel>
                         </TabContext>
                     </Grid>
