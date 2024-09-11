@@ -141,7 +141,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                             setFieldValue('idKhachHang', item?.id); // Cập nhật giá trị id trong Formik
                                                         }
                                                     }}
-                                                    error={errors.idKhachHang && touched.idKhachHang}
+                                                    error={(errors.idKhachHang && touched.idKhachHang) as boolean}
                                                     helperText={errors.idKhachHang}
                                                 />
 

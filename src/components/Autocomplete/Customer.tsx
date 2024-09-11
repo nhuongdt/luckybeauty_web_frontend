@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Autocomplete, Grid, TextField, Typography, Box, Avatar, InputAdornment } from '@mui/material';
+import { Autocomplete, Grid, TextField, Typography, Box, Avatar, InputAdornment, Stack } from '@mui/material';
 import { useState, useRef } from 'react';
 import { debounce } from '@mui/material/utils';
 import khachHangService from '../../services/khach-hang/khachHangService';
@@ -9,10 +9,21 @@ import utils from '../../utils/utils';
 import { Guid } from 'guid-typescript';
 import BadgeFistCharOfName from '../Badge/FistCharOfName';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import { CSSProperties } from 'styled-components';
+import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
 
-export default function AutocompleteCustomer({ idChosed, handleChoseItem, helperText = '', err = false }: any) {
-    const [listCustomer, setListCustomer] = useState([]);
-    const [cusChosed, setCusChosed] = useState<CreateOrEditKhachHangDto | null>(null);
+export type IPropAutoComplete = {
+    idChosed: string;
+    handleChoseItem: (item: any) => void;
+    helperText?: string;
+    error?: boolean;
+    style?: CSSProperties;
+};
+
+export default function AutocompleteCustomer(props: IPropAutoComplete) {
+    const { idChosed, handleChoseItem, helperText, error, ...other } = props;
+    const [listCustomer, setListCustomer] = useState<KhachHangItemDto[]>([]);
+    const [cusChosed, setCusChosed] = useState<KhachHangItemDto | null>(null);
     const [paramSearch, setParamSearch] = useState<PagedKhachHangResultRequestDto>({
         keyword: '',
         loaiDoiTuong: 1,
@@ -25,7 +36,17 @@ export default function AutocompleteCustomer({ idChosed, handleChoseItem, helper
     const getInforCustomerbyID = async () => {
         if (!utils.checkNull(idChosed) && idChosed !== Guid.EMPTY) {
             const data = await khachHangService.getKhachHang(idChosed);
-            setCusChosed(data);
+            const cusItem: KhachHangItemDto = {
+                id: Guid.parse(data?.id),
+                maKhachHang: data?.maKhachHang,
+                tenKhachHang: data?.tenKhachHang,
+                soDienThoai: data?.soDienThoai,
+                avatar: data?.avatar ?? '',
+                diaChi: data?.diaChi ?? '',
+                tongTichDiem: data?.tongTichDiem ?? 0,
+                cuocHenGanNhat: new Date()
+            };
+            setCusChosed(cusItem);
         } else {
             setCusChosed(() => null);
         }
@@ -62,20 +83,22 @@ export default function AutocompleteCustomer({ idChosed, handleChoseItem, helper
                 autoComplete
                 multiple={false}
                 value={cusChosed}
-                onChange={(event: any, newValue: CreateOrEditKhachHangDto | null) => choseItem(newValue)}
+                onChange={(event: any, newValue: KhachHangItemDto | null) => choseItem(newValue)}
                 onInputChange={(event, newInputValue) => {
                     handleInputChange(newInputValue);
                 }}
                 filterOptions={(x) => x}
                 //isOptionEqualToValue={(option, value) => option.id === value.id}// bi douple 2 dong neu them dong nay
                 options={listCustomer}
-                getOptionLabel={(option: any) => (option.tenKhachHang ? option.tenKhachHang : '')}
-                renderInput={(params) => <TextField {...params} label="Tìm kiếm" helperText={helperText} error={err} />}
+                getOptionLabel={(option) => (option.tenKhachHang ? option.tenKhachHang : '')}
+                renderInput={(params) => (
+                    <TextField autoFocus {...params} label="Tìm kiếm" helperText={helperText} error={error} />
+                )}
                 renderOption={(props, option) => {
                     return (
                         <li
                             {...props}
-                            key={option.id}
+                            key={option.id.toString()}
                             style={{
                                 borderBottom: '1px dashed var(--border-color)'
                             }}>

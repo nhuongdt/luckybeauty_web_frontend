@@ -504,7 +504,7 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                             {quyHoaDon.loaiDoiTuong !== LoaiDoiTuong.NHAN_VIEN && (
                                                 <>
                                                     <AutocompleteCustomer
-                                                        idChosed={quyHoaDon?.idDoiTuongNopTien}
+                                                        idChosed={quyHoaDon?.idDoiTuongNopTien ?? ''}
                                                         handleChoseItem={(item: any) => {
                                                             {
                                                                 formik.setFieldValue(
@@ -524,8 +524,8 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                             Boolean(formik.errors?.idDoiTuongNopTien)
                                                         }
                                                         helperText={
-                                                            formik.touched.idDoiTuongNopTien &&
-                                                            formik.errors.idDoiTuongNopTien
+                                                            (formik.touched.idDoiTuongNopTien &&
+                                                                formik.errors.idDoiTuongNopTien) as string
                                                         }
                                                     />
                                                 </>

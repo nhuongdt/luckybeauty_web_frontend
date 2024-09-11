@@ -82,11 +82,11 @@ export default function Zalo_MultipleAutoComplete_WithSDT(props: IPropsZalo_Auto
                                         maxResultCount: 50
                                     } as PagedKhachHangResultRequestDto;
                                     const data = await khachHangService.jqAutoCustomer(param);
-                                    arrUser = data?.map((x: any) => {
+                                    arrUser = data?.map((x) => {
                                         return {
-                                            id: x?.id,
-                                            idKhachHang: x?.id,
-                                            maKhachHang: x?.maKhachHang,
+                                            id: x?.id?.toString(),
+                                            idKhachHang: x?.id?.toString(),
+                                            maKhachHang: x?.maKhachHang ?? '',
                                             tenKhachHang: x?.tenKhachHang,
                                             soDienThoai: x?.soDienThoai,
                                             avatar: x?.avatar
@@ -135,11 +135,18 @@ export default function Zalo_MultipleAutoComplete_WithSDT(props: IPropsZalo_Auto
                                             if (!utils.checkNull(itFor?.zoaUserId)) {
                                                 const zaloUser = await ZaloService.GetInforUser_ofOA(
                                                     suggestStore?.zaloAccessToken ?? '',
-                                                    itFor.zoaUserId
+                                                    itFor?.zoaUserId ?? ''
                                                 );
                                                 // get avartar zalo
-                                                itFor.avatar = zaloUser?.avatar;
-                                                arrUser.push(itFor);
+                                                const newCus = {
+                                                    id: itFor?.id?.toString(),
+                                                    idKhachHang: itFor?.id?.toString(),
+                                                    zoaUserId: itFor?.zoaUserId ?? '',
+                                                    tenKhachHang: itFor?.tenKhachHang,
+                                                    soDienThoai: itFor?.soDienThoai,
+                                                    avatar: zaloUser?.avatar ?? ''
+                                                } as CustomerSMSDto;
+                                                arrUser.push(newCus);
                                             }
                                         }
                                     }
