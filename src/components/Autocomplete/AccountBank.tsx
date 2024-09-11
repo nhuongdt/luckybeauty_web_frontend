@@ -21,7 +21,7 @@ export default function AutocompleteAccountBank({
         }
     }, [idChosed]);
 
-    const choseItem = (item: any) => {
+    const choseItem = (item: TaiKhoanNganHangDto) => {
         handleChoseItem(item);
     };
 
