@@ -79,7 +79,7 @@ export default function PopoverFilterBCBanHang(props: IPropsPopoverFilter<ParamS
                                     <Stack paddingTop={1} sx={{ overflow: 'auto', maxHeight: '250px' }}>
                                         <TreeViewGroupProduct
                                             roleEdit={false}
-                                            defaultId={paramFilterThis?.idNhomHangHoa}
+                                            //arrIdChosedDefault={[paramFilterThis?.idNhomHangHoa as string]}
                                             lstData={allNhomHang?.map((x) => {
                                                 return {
                                                     id: x.id,
@@ -96,12 +96,9 @@ export default function PopoverFilterBCBanHang(props: IPropsPopoverFilter<ParamS
                                                     })
                                                 } as IList;
                                             })}
-                                            clickTreeItem={(isEdit, itemChosed) =>
-                                                setParamFilterThis({
-                                                    ...paramFilterThis,
-                                                    idNhomHangHoa: itemChosed?.id
-                                                })
-                                            }
+                                            clickTreeItem={(isEdit, itemChosed) => {
+                                                //
+                                            }}
                                         />
                                     </Stack>
                                 </Stack>

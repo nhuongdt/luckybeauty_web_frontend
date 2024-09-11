@@ -40,7 +40,7 @@ export const ZaloTemplateView = (props: PropsZaloTempView) => {
                 ))}
 
                 <Stack spacing={1}>
-                    {buttons?.map((x: any, index: number) => (
+                    {buttons?.map((x, index: number) => (
                         <Button variant="contained" key={index}>
                             {x.title}
                         </Button>
