@@ -41,49 +41,74 @@ export interface IResultToken {
 const Imgur_URLApi = `https://api.imgur.com/3/`;
 
 class ImgurAPI {
-    Generate_AccessToken = async (): Promise<IResultToken> => {
-        const formdata = new FormData();
-        formdata.append('refresh_token', `${process.env.REACT_APP_IMGUR_REFRESH_TOKEN}`);
-        formdata.append('client_id', `${process.env.REACT_APP_IMGUR_CLIENT_ID}`);
-        formdata.append('client_secret', `${process.env.REACT_APP_IMGUR_CLIENT_SECRET}`);
-        formdata.append('grant_type', 'refresh_token');
+    Generate_AccessToken = async (): Promise<IResultToken | null> => {
+        try {
+            const formdata = new FormData();
+            formdata.append('refresh_token', `${process.env.REACT_APP_IMGUR_REFRESH_TOKEN}`);
+            formdata.append('client_id', `${process.env.REACT_APP_IMGUR_CLIENT_ID}`);
+            formdata.append('client_secret', `${process.env.REACT_APP_IMGUR_CLIENT_SECRET}`);
+            formdata.append('grant_type', 'refresh_token');
 
-        const response = await axios.post(`https://api.imgur.com/oauth2/token`, formdata);
-        const data = response?.data;
-
-        Cookies.set('Imgur_accessToken', data.access_token, {
-            expires: new Date(new Date().getTime() + 1000 * data.expires_in)
-        });
-        Cookies.set('Imgur_refreshToken', data.refresh_token);
-        return data;
+            const response = await axios.post(`https://api.imgur.com/oauth2/token`, formdata);
+            console.log('respone ', response);
+            if (response.status == 200) {
+                const data = response?.data;
+                Cookies.set('Imgur_accessToken', data.access_token, {
+                    expires: new Date(new Date().getTime() + 1000 * data.expires_in)
+                });
+                Cookies.set('Imgur_refreshToken', data.refresh_token);
+                return data;
+            }
+            return null;
+        } catch {
+            return null;
+        }
     };
     GetAccessToken = async (): Promise<string> => {
         let accessToken = Cookies.get('Imgur_accessToken');
         if (utils.checkNull(accessToken)) {
             const newToken = await this.Generate_AccessToken();
-            accessToken = newToken.accessToken;
+            if (newToken !== null) {
+                accessToken = newToken.accessToken;
+            }
         }
         return accessToken ?? '';
     };
 
     GetAccSetting = async () => {
-        const accessToken = await this.GetAccessToken();
-        const response = await axios.get(`${Imgur_URLApi}account/me/settings`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
+        try {
+            const accessToken = await this.GetAccessToken();
+            if (accessToken != '') {
+                const response = await axios.get(`${Imgur_URLApi}account/me/settings`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
+                return response.data?.data;
             }
-        });
-        return response.data?.data;
+            return null;
+        } catch {
+            return null;
+        }
     };
     GetAllAlbum_WithAccount = async (): Promise<Imgur_AlbumDetailDto[]> => {
-        const account = await this.GetAccSetting();
-        const accessToken = await this.GetAccessToken();
-        const response = await axios.get(`${Imgur_URLApi}account/${account.account_url}/albums`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
+        try {
+            const accessToken = await this.GetAccessToken();
+            if (accessToken !== '') {
+                const account = await this.GetAccSetting();
+                if (account !== null) {
+                    const response = await axios.get(`${Imgur_URLApi}account/${account.account_url}/albums`, {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`
+                        }
+                    });
+                    return response.data?.data;
+                }
             }
-        });
-        return response.data?.data;
+            return [] as Imgur_AlbumDetailDto[];
+        } catch {
+            return [] as Imgur_AlbumDetailDto[];
+        }
     };
     FindAlbumIdExists_InImgur = async (albumName: string): Promise<string> => {
         if (utils.checkNull(albumName)) return '';
@@ -112,47 +137,51 @@ class ImgurAPI {
     GetImage_fromAlbum = async (albumId: string, fileId = 'mVu3TZz'): Promise<Imgur_ImageDetailDto | null> => {
         if (utils.checkNull(fileId) || fileId?.includes(`http`)) return null;
         const accessToken = await this.GetAccessToken();
-
-        const response = await axios.get(`${Imgur_URLApi}album/${albumId}/image/${fileId}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
+        if (accessToken !== '') {
+            const response = await axios.get(`${Imgur_URLApi}album/${albumId}/image/${fileId}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+            if (response.status === 200) {
+                return response.data?.data;
             }
-        });
-        if (response.status === 200) {
-            return response.data?.data;
         }
         return null;
     };
     UploadImage = async (imageFile: File, description = ''): Promise<Imgur_ImageDetailDto | null> => {
         const accessToken = await this.GetAccessToken();
+        if (accessToken !== '') {
+            const formData = new FormData();
+            formData.append('image', imageFile, imageFile?.name);
+            formData.append('type', 'image');
+            formData.append('title', imageFile?.name);
+            formData.append('description', utils.checkNull(description) ? `#${imageFile?.name}` : description);
 
-        const formData = new FormData();
-        formData.append('image', imageFile, imageFile?.name);
-        formData.append('type', 'image');
-        formData.append('title', imageFile?.name);
-        formData.append('description', utils.checkNull(description) ? `#${imageFile?.name}` : description);
-
-        const response = await axios.post(`${Imgur_URLApi}image`, formData, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'multipart/form-data'
+            const response = await axios.post(`${Imgur_URLApi}image`, formData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            if (response.status === 200) {
+                return response.data?.data;
             }
-        });
-        if (response.status === 200) {
-            return response.data?.data;
         }
+
         return null;
     };
     RemoveImage = async (imageId: string): Promise<boolean> => {
         const accessToken = await this.GetAccessToken();
+        if (accessToken !== '') {
+            const response = await axios.delete(`${Imgur_URLApi}image/${imageId}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
 
-        const response = await axios.delete(`${Imgur_URLApi}image/${imageId}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-
-        if (response.status === 200) return true;
+            if (response.status === 200) return true;
+        }
         return false;
     };
     GetAlbumDetails_byId = async (albumId = 'irQhxYt'): Promise<Imgur_AlbumDetailDto[]> => {
@@ -163,7 +192,6 @@ class ImgurAPI {
                     Authorization: `Client-ID ${process.env.REACT_APP_IMGUR_CLIENT_ID}`
                 }
             });
-            console.log('GetAlbumDetails ', response.data?.data);
             return response.data?.data;
         } catch {
             return [];
@@ -199,12 +227,15 @@ class ImgurAPI {
         // mối ảnh trên Imgur chứa 1 Id duy nhất
         // chỉ cần xóa ảnh theo Id --> ảnh sẽ tự động bị xóa khỏi album
         const accessToken = await this.GetAccessToken();
-        const response = await axios.delete(`${Imgur_URLApi}album/${albumId}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-        return response.status === 200;
+        if (accessToken !== '') {
+            const response = await axios.delete(`${Imgur_URLApi}album/${albumId}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+            return response.status === 200;
+        }
+        return false;
     };
 
     AddImageToAlbum_WithImageId = async (albumId: string, imageId: string): Promise<Imgur_ImageDetailDto | null> => {
@@ -215,24 +246,26 @@ class ImgurAPI {
             coverImg = imageId.split(',')[0];
         }
         try {
-            const response = await axios.put(
-                `${Imgur_URLApi}album/${albumId}/add`,
-                {
-                    ids: imageId,
-                    cover: coverImg
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
+            const accessToken = await this.GetAccessToken();
+            if (accessToken !== '') {
+                const response = await axios.put(
+                    `${Imgur_URLApi}album/${albumId}/add`,
+                    {
+                        ids: imageId,
+                        cover: coverImg
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`
+                        }
                     }
-                }
-            );
+                );
 
-            if (response.status === 200) {
-                return response.data.data;
-            } else {
-                return null;
+                if (response.status === 200) {
+                    return response.data.data;
+                }
             }
+            return null;
         } catch (error) {
             return null;
         }
@@ -242,14 +275,17 @@ class ImgurAPI {
         if (utils.checkNull(albumId)) return null;
         try {
             const accessToken = await this.GetAccessToken();
-            const response = await axios.get(`${Imgur_URLApi}album/${albumId}/images`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
+            if (accessToken !== '') {
+                const response = await axios.get(`${Imgur_URLApi}album/${albumId}/images`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
+                if (response.status == 200) {
+                    return response.data?.data;
                 }
-            });
-            if (response.status == 200) {
-                return response.data?.data;
             }
+
             return null;
         } catch {
             return null;
