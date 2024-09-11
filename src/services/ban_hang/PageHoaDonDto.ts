@@ -3,6 +3,7 @@ import { KhachHangItemDto } from '../khach-hang/dto/KhachHangItemDto';
 import HoaDonDto from './HoaDonDto';
 import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
 import { format } from 'date-fns';
+import { LoaiChungTu } from '../../lib/appconst';
 
 export default class PageHoaDonDto extends HoaDonDto {
     maKhachHang = '';
@@ -31,6 +32,7 @@ export default class PageHoaDonDto extends HoaDonDto {
 
     constructor({
         id = Guid.create().toString(),
+        idLoaiChungTu = LoaiChungTu.HOA_DON_BAN_LE,
         idKhachHang = null,
         idChiNhanh = '',
         maKhachHang = '',
@@ -48,6 +50,7 @@ export default class PageHoaDonDto extends HoaDonDto {
     }) {
         super({
             id: id,
+            idLoaiChungTu,
             idKhachHang: idKhachHang,
             idChiNhanh: idChiNhanh,
             maHoaDon: maHoaDon,
