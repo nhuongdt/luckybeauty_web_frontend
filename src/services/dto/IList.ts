@@ -1,5 +1,4 @@
-import { SvgIconComponent } from '@mui/icons-material';
-import { ReactComponentElement } from 'react';
+import { SvgIconProps } from '@mui/material';
 
 export interface IList {
     id: string;
@@ -7,6 +6,6 @@ export interface IList {
     text2?: string;
     isShow?: boolean;
     color?: string;
-    icon?: ReactComponentElement<SvgIconComponent>;
+    icon?: React.ReactNode;
     children?: IList[];
 }
