@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { Autocomplete, Grid, TextField, Typography, Stack } from '@mui/material';
 import { IDataAutocomplete } from '../../services/dto/IDataAutocomplete';
+import { CSSProperties } from 'styled-components';
 
 export interface IPropsAutocompleteWithData {
     label?: string;
@@ -10,10 +11,11 @@ export interface IPropsAutocompleteWithData {
     lstData: IDataAutocomplete[];
     optionLabel?: { label1?: string; label2?: string };
     handleChoseItem: (item: IDataAutocomplete) => void;
+    style?: CSSProperties;
 }
 
 export default function AutocompleteWithData(props: IPropsAutocompleteWithData) {
-    const { label, helperText, idChosed, lstData, optionLabel, handleChoseItem } = props;
+    const { label, helperText, style, idChosed, lstData, optionLabel, handleChoseItem } = props;
 
     const [itemChosed, setItemChosed] = useState<IDataAutocomplete | null>(null);
     React.useEffect(() => {
@@ -30,7 +32,7 @@ export default function AutocompleteWithData(props: IPropsAutocompleteWithData) 
     };
 
     return (
-        <>
+        <Stack style={style}>
             <Autocomplete
                 size="small"
                 fullWidth
@@ -91,6 +93,6 @@ export default function AutocompleteWithData(props: IPropsAutocompleteWithData) 
                     );
                 }}
             />
-        </>
+        </Stack>
     );
 }
