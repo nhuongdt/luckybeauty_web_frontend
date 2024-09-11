@@ -1,4 +1,4 @@
-import { Avatar, Button, Divider, Grid, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { Avatar, Button, Divider, Grid, IconButton, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
@@ -39,6 +39,7 @@ import AutocompleteWithData from '../../../components/Autocomplete/AutocompleteW
 import { IDataAutocomplete } from '../../../services/dto/IDataAutocomplete';
 import { handleClickOutside } from '../../../utils/customReactHook';
 import MenuWithDataHasSearch from '../../../components/Menu/MenuWithData_HasSearch';
+import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 
 const TabMain = {
     KHACH_HANG: 1,
@@ -99,6 +100,8 @@ export default function MainPageThuNgan() {
     const [isShowModalFilterNhomHangHoa, setIsShowModalFilterNhomHangHoa] = useState(false);
     const [arrIdNhomHangFilter, setArrIdNhomHangFilter] = useState<string[]>([]);
 
+    const [isShowModalAdd, setIsShowModalAdd] = useState(false);
+
     const [tabMainActive, setTabMainActive] = useState(TabMain.KHACH_HANG);
     const [thungan_tabActive, setThungan_tabActive] = useState(LoaiChungTu.HOA_DON_BAN_LE);
 
@@ -106,6 +109,7 @@ export default function MainPageThuNgan() {
     const [customerIdChosed, setCustomerIdChosed] = useState<string>();
     const [idHoaDonChosing, setIdHoaDonChosing] = useState<string>();
     const [pageThuNgan_LoaiHoaDon, setPageThuNgan_LoaiHoaDon] = useState<number>();
+    const [pageThuNgan_IdBooking, setPageThuNgan_IdBooking] = useState<string>();
 
     const [allInvoiceWaiting, setAllInvoiceWaiting] = useState<PageHoaDonDto[]>([]);
     const [allChiNhanh_byUser, setAllChiNhanh_byUser] = useState<SuggestChiNhanhDto[]>([]);
@@ -131,6 +135,7 @@ export default function MainPageThuNgan() {
 
     const changeActiveTabMain = (event: React.SyntheticEvent, tabNew: number) => {
         setTabMainActive(tabNew);
+        setIsShowModalAdd(false);
     };
     const changeTabHoaDon = (event: React.SyntheticEvent, tabNew: number) => {
         setThungan_tabActive(tabNew);
@@ -177,33 +182,7 @@ export default function MainPageThuNgan() {
         setThungan_tabActive(loaiHoaDon);
         setCustomerIdChosed(customerId);
         setPageThuNgan_LoaiHoaDon(loaiHoaDon);
-
-        const hdOfCustomer = allInvoiceWaiting?.filter((x) => x.idKhachHang == customerId);
-        if (hdOfCustomer?.length > 0) {
-            setIdHoaDonChosing(hdOfCustomer[0]?.id);
-        } else {
-            const maxMaHD = getMaHoaDonMax(loaiHoaDon);
-            let maHD = '';
-            switch (loaiHoaDon) {
-                case LoaiChungTu.HOA_DON_BAN_LE:
-                    {
-                        maHD = 'HD' + maxMaHD;
-                    }
-                    break;
-                case LoaiChungTu.GOI_DICH_VU:
-                    {
-                        maHD = 'GDV' + maxMaHD;
-                    }
-                    break;
-            }
-            const newHD = new PageHoaDonDto({
-                id: Guid.create().toString(),
-                maHoaDon: maHD,
-                idKhachHang: customerId as unknown as null,
-                idChiNhanh: idChiNhanh,
-                tenKhachHang: 'Khách lẻ'
-            });
-        }
+        setPageThuNgan_IdBooking(bookingId ?? '');
     };
     return (
         <Stack className="main_page_thu_ngan" padding={2} justifyContent={'space-between'} position={'relative'}>
@@ -212,16 +191,14 @@ export default function MainPageThuNgan() {
                 onClose={() => setIsShowModalFilterNhomHangHoa(false)}
                 onAgree={onAgreeFilterNhomHang}
             />
+
             <Stack
                 direction={{ xs: 'column', sm: 'column', md: 'row', lg: 'row' }}
                 justifyContent={'space-between'}
                 spacing={{ xs: 2, sm: 2, lg: 4 }}>
-                <Stack
-                    direction={'row'}
-                    alignItems={'center'}
-                    spacing={2}
-                    flex={tabMainActive !== TabMain.THU_NGAN ? 2 : 2}>
+                <Stack direction={'row'} alignItems={'center'} spacing={2} flex={2}>
                     <HomeOutlinedIcon
+                        titleAccess="Đi đến trang chủ"
                         onClick={() => navigation('/home')}
                         sx={{ color: 'var(--color-main)', '&:hover': { cursor: 'pointer' } }}
                     />
@@ -229,7 +206,15 @@ export default function MainPageThuNgan() {
                         {tabMainActive === TabMain.THU_NGAN ? (
                             <>
                                 <KeyboardDoubleArrowLeftIcon
-                                    sx={{ width: '32px', height: '32px' }}
+                                    titleAccess="Trở về trang khách hàng/lịch hẹn"
+                                    sx={{
+                                        width: '32px',
+                                        height: '32px',
+                                        '&:hover': {
+                                            color: 'blue',
+                                            cursor: 'pointer'
+                                        }
+                                    }}
                                     onClick={() => onClickBack_Forward(TabMain.KHACH_HANG)}
                                 />
                                 <Tabs
@@ -249,7 +234,15 @@ export default function MainPageThuNgan() {
                                     <Tab label="Cuộc hẹn" value={TabMain.CUOC_HEN} />
                                 </Tabs>
                                 <KeyboardDoubleArrowRightIcon
-                                    sx={{ width: '32px', height: '32px' }}
+                                    titleAccess="Đi đến trang thu ngân"
+                                    sx={{
+                                        width: '32px',
+                                        height: '32px',
+                                        '&:hover': {
+                                            color: 'blue',
+                                            cursor: 'pointer'
+                                        }
+                                    }}
                                     onClick={() => onClickBack_Forward(TabMain.THU_NGAN)}
                                 />
                             </>
@@ -267,15 +260,13 @@ export default function MainPageThuNgan() {
                             />
                         </Stack>
                         <Stack flex={2}>
-                            {tabMainActive === TabMain.KHACH_HANG ? (
-                                <Button variant="outlined" color="info" startIcon={<AddOutlinedIcon />}>
-                                    Thêm mới khách
-                                </Button>
-                            ) : (
-                                <Button variant="outlined" color="info" startIcon={<AddOutlinedIcon />}>
-                                    Thêm lịch hẹn
-                                </Button>
-                            )}
+                            <Button
+                                variant="outlined"
+                                color="info"
+                                startIcon={<AddOutlinedIcon />}
+                                onClick={() => setIsShowModalAdd(true)}>
+                                {tabMainActive === TabMain.KHACH_HANG ? ' Thêm mới khách' : ' Thêm lịch hẹn'}
+                            </Button>
                         </Stack>
                     </Stack>
                 ) : (
@@ -287,10 +278,13 @@ export default function MainPageThuNgan() {
                             InputProps={{
                                 startAdornment: <SearchIcon />,
                                 endAdornment: (
-                                    <FilterAltOutlinedIcon
+                                    <IconButton
                                         sx={{ cursor: 'pointer' }}
-                                        onClick={() => setIsShowModalFilterNhomHangHoa(true)}
-                                    />
+                                        aria-label="Lọc sản phẩm theo nhóm"
+                                        title="Lọc sản phẩm theo nhóm"
+                                        onClick={() => setIsShowModalFilterNhomHangHoa(true)}>
+                                        <FilterAltOutlinedIcon />
+                                    </IconButton>
                                 )
                             }}
                         />
@@ -337,21 +331,35 @@ export default function MainPageThuNgan() {
                         value={tabMainActive}
                         index={TabMain.KHACH_HANG}
                         style={{ minHeight: '86vh', position: 'relative' }}>
-                        <TabKhachHangNoBooking txtSearch={txtSearch} onClickAddHoaDon={onClickAddHoaDon} />
+                        <TabKhachHangNoBooking
+                            txtSearch={txtSearch}
+                            onClickAddHoaDon={onClickAddHoaDon}
+                            isShowModalAddCustomer={tabMainActive == TabMain.KHACH_HANG ? isShowModalAdd : false}
+                            onCloseModalAddCutomer={() => setIsShowModalAdd(false)}
+                        />
                     </TabPanel>
                     <TabPanel
                         value={tabMainActive}
                         index={TabMain.CUOC_HEN}
                         style={{ minHeight: '86vh', position: 'relative' }}>
-                        <TabKhachHangBooking txtSearch={txtSearch} onClickAddHoaDon={onClickAddHoaDon} />
+                        <TabKhachHangBooking
+                            txtSearch={txtSearch}
+                            idChiNhanhChosed={idChiNhanhChosed}
+                            onClickAddHoaDon={onClickAddHoaDon}
+                            isShowModalAdd={tabMainActive == TabMain.CUOC_HEN ? isShowModalAdd : false}
+                            onCloseModalAddLichHen={() => setIsShowModalAdd(false)}
+                        />
                     </TabPanel>
                 </>
             ) : (
                 <TabPanel value={tabMainActive} index={TabMain.THU_NGAN}>
                     <PageThuNgan
                         txtSearch={txtSearch}
-                        customerIdChosed={customerIdChosed}
                         loaiHoaDon={pageThuNgan_LoaiHoaDon}
+                        idChiNhanhChosed={idChiNhanhChosed}
+                        customerIdChosed={customerIdChosed}
+                        booingId={pageThuNgan_IdBooking}
+                        arrIdNhomHangFilter={arrIdNhomHangFilter}
                     />
                 </TabPanel>
             )}

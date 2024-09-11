@@ -1,4 +1,16 @@
-import { Avatar, Button, debounce, Grid, Pagination, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
+import {
+    Avatar,
+    Badge,
+    Button,
+    debounce,
+    Grid,
+    Pagination,
+    Stack,
+    Tab,
+    Tabs,
+    TextField,
+    Typography
+} from '@mui/material';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import React, { useEffect, useRef, useState } from 'react';
 import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
@@ -7,15 +19,34 @@ import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
 import { LoaiChungTu } from '../../lib/appconst';
+import CreateOrEditCustomerDialog from '../customer/components/create-or-edit-customer-modal';
+import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
+import { Guid } from 'guid-typescript';
+import { KhachHangDto } from '../../services/khach-hang/dto/KhachHangDto';
+import Loading from '../../components/Loading';
 
 export type IPropsTabKhachHangNoBooking = {
     txtSearch: string;
+    isShowModalAddCustomer?: boolean;
     onClickAddHoaDon: (customerId: string, loaiHoaDon: number) => void;
+    onCloseModalAddCutomer: () => void;
 };
 
 export default function TabKhachHangNoBooking(props: IPropsTabKhachHangNoBooking) {
-    const { txtSearch, onClickAddHoaDon, ...other } = props;
+    const { txtSearch, onClickAddHoaDon, isShowModalAddCustomer, onCloseModalAddCutomer, ...other } = props;
     const firstLoad = useRef(true);
+    const [isLoadingData, setIsLoadingData] = useState(true);
+    const [isShowModalAddCus, setIsShowModalAddCus] = useState(false);
+    const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>({} as CreateOrEditKhachHangDto);
+
+    useEffect(() => {
+        if (isShowModalAddCus) {
+            console.log('isshow ', isShowModalAddCus);
+            showModalAddCustomer();
+        }
+        setIsShowModalAddCus(isShowModalAddCustomer ?? false);
+    }, [isShowModalAddCustomer ?? false]);
+
     const [paramSearchCus, setParamSearchCus] = useState<PagedKhachHangResultRequestDto>({
         skipCount: 1,
         maxResultCount: 16
@@ -35,6 +66,7 @@ export default function TabKhachHangNoBooking(props: IPropsTabKhachHangNoBooking
             totalCount: data?.totalCount,
             totalPage: Math.ceil(data?.totalCount / paramSearchCus?.maxResultCount)
         });
+        setIsLoadingData(false);
     };
 
     const debounceCustomer = useRef(
@@ -59,8 +91,64 @@ export default function TabKhachHangNoBooking(props: IPropsTabKhachHangNoBooking
         onClickAddHoaDon(cusItem.id.toString(), loaiHoaDon);
     };
 
+    const showModalAddCustomer = () => {
+        setIsShowModalAddCus(true);
+        setNewCus({
+            id: Guid.EMPTY,
+            maKhachHang: '',
+            tenKhachHang: '',
+            soDienThoai: '',
+            diaChi: '',
+            idNhomKhach: '',
+            idNguonKhach: '',
+            gioiTinhNam: false,
+            moTa: '',
+            idLoaiKhach: 1
+        } as CreateOrEditKhachHangDto);
+    };
+
+    const saveOKCustomer_fromModalAdd = (newCus: KhachHangDto) => {
+        onCloseModalAddCutomer();
+        const newObj: KhachHangItemDto = {
+            id: newCus?.id,
+            maKhachHang: newCus?.maKhachHang ?? '',
+            tenKhachHang: newCus?.tenKhachHang ?? '',
+            avatar: newCus?.avatar ?? '',
+            soDienThoai: newCus?.soDienThoai ?? '',
+            diaChi: newCus?.diaChi ?? '',
+            tongChiTieu: 0,
+            conNo: 0,
+            cuocHenGanNhat: new Date(),
+            tongTichDiem: 0,
+            soLanCheckIn: 0,
+            trangThaiCheckIn: 1,
+            zoaUserId: ''
+        };
+
+        setLstCustomerNoBooking({
+            ...lstCustomerNoBooking,
+            totalCount: (lstCustomerNoBooking?.totalCount ?? 0) + 1,
+            items: [newObj, ...(lstCustomerNoBooking?.items ?? [])]
+        });
+    };
+
+    const closeModalAddCustomer = () => {
+        onCloseModalAddCutomer();
+    };
+
+    if (isLoadingData) {
+        return <Loading />;
+    }
+
     return (
-        <Grid container spacing={2}>
+        <Grid container spacing={2.5}>
+            <CreateOrEditCustomerDialog
+                visible={isShowModalAddCus ?? false}
+                onCancel={closeModalAddCustomer}
+                onOk={saveOKCustomer_fromModalAdd}
+                title="Thêm mới khách hàng"
+                formRef={newCus}
+            />
             {lstCustomerNoBooking?.items?.map((cusItem, index) => (
                 <Grid item key={index} xs={12} sm={4} md={4} lg={3}>
                     <Stack
@@ -82,7 +170,11 @@ export default function TabKhachHangNoBooking(props: IPropsTabKhachHangNoBooking
                                         <Avatar src={cusItem?.avatar} />
                                     </Stack>
                                     <Stack spacing={1}>
-                                        <Typography variant="body2" fontWeight={500}>
+                                        <Typography
+                                            variant="body2"
+                                            fontWeight={500}
+                                            className="lableOverflow"
+                                            title={cusItem?.tenKhachHang}>
                                             {cusItem?.tenKhachHang}
                                         </Typography>
                                         <Typography variant="caption" color={'var( --color-text-blur)'}>
@@ -91,46 +183,46 @@ export default function TabKhachHangNoBooking(props: IPropsTabKhachHangNoBooking
                                     </Stack>
                                 </Stack>
                             </Stack>
-                            <Stack
-                                direction={'row'}
-                                alignItems={'center'}
-                                spacing={2}
-                                height={30}
-                                justifyContent={'space-between'}>
-                                <Stack
-                                    direction={'row'}
-                                    spacing={1}
-                                    onClick={() => addHoaDon(cusItem, LoaiChungTu.HOA_DON_BAN_LE)}
-                                    sx={{
-                                        color: 'var(--color-main)',
-                                        '&:hover': {
-                                            color: '#3c9977',
-                                            cursor: 'pointer'
-                                        }
-                                    }}>
-                                    <AddCircleOutlineOutlinedIcon />
-                                    <Typography>Hóa đơn</Typography>
+                            {index == 0 ? (
+                                <Stack alignItems={'center'} justifyContent={'center'}>
+                                    <Typography fontWeight={500}>200.000.000</Typography>
                                 </Stack>
-                                <Stack
-                                    sx={{
-                                        width: '1px',
-                                        height: '100%'
-                                    }}></Stack>
+                            ) : null}
 
-                                <Stack
-                                    direction={'row'}
-                                    spacing={1}
-                                    sx={{
-                                        color: 'var(--color-second)',
-                                        '&:hover': {
-                                            color: '#c32b2b',
-                                            cursor: 'pointer'
-                                        }
-                                    }}
-                                    onClick={() => addHoaDon(cusItem, LoaiChungTu.GOI_DICH_VU)}>
-                                    <AddCircleOutlineOutlinedIcon />
-                                    <Typography> Gói dịch vụ</Typography>
-                                </Stack>
+                            <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
+                                <Badge badgeContent={index == 0 ? 1 : 0} color="primary">
+                                    <Stack
+                                        direction={'row'}
+                                        spacing={1}
+                                        onClick={() => addHoaDon(cusItem, LoaiChungTu.HOA_DON_BAN_LE)}
+                                        sx={{
+                                            color: '#1976d2',
+                                            '&:hover': {
+                                                color: '#3c9977',
+                                                cursor: 'pointer'
+                                            }
+                                        }}>
+                                        <AddCircleOutlineOutlinedIcon />
+                                        <Typography>Hóa đơn</Typography>
+                                    </Stack>
+                                </Badge>
+
+                                <Badge>
+                                    <Stack
+                                        direction={'row'}
+                                        spacing={1}
+                                        sx={{
+                                            color: 'var(--color-second)',
+                                            '&:hover': {
+                                                color: '#c32b2b',
+                                                cursor: 'pointer'
+                                            }
+                                        }}
+                                        onClick={() => addHoaDon(cusItem, LoaiChungTu.GOI_DICH_VU)}>
+                                        <AddCircleOutlineOutlinedIcon />
+                                        <Typography> Gói dịch vụ</Typography>
+                                    </Stack>
+                                </Badge>
                             </Stack>
                         </Stack>
                     </Stack>
