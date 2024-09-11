@@ -82,7 +82,7 @@ const PageProduct = () => {
     });
 
     const [filterPageProduct, setFilterPageProduct] = useState<PagedProductSearchDto>({
-        idNhomHangHoas: '',
+        idNhomHangHoas: [],
         textSearch: '',
         currentPage: 1,
         pageSize: AppConsts.pageOption[0].value,
@@ -163,7 +163,7 @@ const PageProduct = () => {
                 item: item
             });
         } else {
-            setFilterPageProduct({ ...filterPageProduct, idNhomHangHoas: item.id });
+            setFilterPageProduct({ ...filterPageProduct, idNhomHangHoas: [item?.id ?? ''] });
             setTriggerModalProduct((old) => {
                 return {
                     ...old,

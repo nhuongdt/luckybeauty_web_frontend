@@ -36,6 +36,7 @@ import ZaloService from '../../../services/zalo/ZaloService';
 import { IInforUserZOA, IMemberZOA, ZaloAuthorizationDto } from '../../../services/zalo/zalo_dto';
 import AutocompleteWithData from '../../../components/Autocomplete/AutocompleteWithData';
 import { IDataAutocomplete } from '../../../services/dto/IDataAutocomplete';
+import { KhachHangDto } from '../../../services/khach-hang/dto/KhachHangDto';
 
 export interface ICreateOrEditCustomerProps {
     visible: boolean;

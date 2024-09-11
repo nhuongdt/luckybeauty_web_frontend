@@ -45,7 +45,7 @@ import { Guid } from 'guid-typescript';
 import utils from '../../../utils/utils';
 import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
 import CheckinService from '../../../services/check_in/CheckinService';
-import { IHangHoaGroupTheoNhomDto, ModelNhomHangHoa } from '../../../services/product/dto';
+import { IHangHoaGroupTheoNhomDto, ModelNhomHangHoa, PagedProductSearchDto } from '../../../services/product/dto';
 import { PropConfirmOKCancel, PropModal } from '../../../utils/PropParentToChild';
 import ModalEditChiTietGioHang from './modal_edit_chitiet';
 import Cookies from 'js-cookie';
@@ -309,7 +309,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             IdLoaiHangHoa: idLoaiHangHoa,
             CurrentPage: 0,
             PageSize: 50
-        };
+        } as PagedProductSearchDto;
         const data = await ProductService.GetDMHangHoa_groupByNhom(input);
         setListProduct(data);
     };

@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from 'react';
 import ListProductByGroup from './list_product_by_group';
 import ProductService from '../../services/product/ProductService';
 import DialogButtonClose from '../../components/Dialog/ButtonClose';
-import { IHangHoaGroupTheoNhomDto } from '../../services/product/dto';
+import { IHangHoaGroupTheoNhomDto, PagedProductSearchDto } from '../../services/product/dto';
 
 export default function ModalSearchProduct({ isShow, handlClose, handleChoseProduct }: any) {
     const [txtSearch, setTxtSearch] = useState('');
@@ -19,7 +19,7 @@ export default function ModalSearchProduct({ isShow, handlClose, handleChoseProd
             IdLoaiHangHoa: '',
             CurrentPage: 0,
             PageSize: 50
-        };
+        } as PagedProductSearchDto;
         const data = await ProductService.GetDMHangHoa_groupByNhom(input);
         setListProduct(data);
     };

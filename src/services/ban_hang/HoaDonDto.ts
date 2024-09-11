@@ -1,13 +1,14 @@
 import { Guid } from 'guid-typescript';
 import PageHoaDonChiTietDto from './PageHoaDonChiTietDto';
 import { format } from 'date-fns';
+import { LoaiChungTu } from '../../lib/appconst';
 
 export default class HoaDonDto {
     id = Guid.create().toString();
     idKhachHang: string | null = null;
     idChiNhanh?: string;
     idNhanVien? = null;
-    idLoaiChungTu = 1;
+    idLoaiChungTu = LoaiChungTu.HOA_DON_BAN_LE;
     maHoaDon = '';
     ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS');
 
