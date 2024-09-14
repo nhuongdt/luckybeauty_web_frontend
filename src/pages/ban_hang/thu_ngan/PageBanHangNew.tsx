@@ -124,7 +124,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
     const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
     const [allMauIn, setAllMauIn] = useState<MauInDto[]>([]);
     const [cusChosing, setCusChosing] = useState<CreateOrEditKhachHangDto>();
-    const idChiNhanh = utils.checkNull(chiNhanhCurrent?.id) ? Cookies.get('IdChiNhanh') : chiNhanhCurrent?.id;
+    const idChiNhanh = utils.checkNull(chiNhanhCurrent?.id) ? Cookies.get('IdChiNhanh') : chiNhanhCurrent?.id ?? '';
 
     const [txtSearchInvoiceWaiting, setTxtSearchInvoiceWaiting] = useState('');
     const [isExpandShoppingCart, setIsExpandShoppingCart] = useState(false);

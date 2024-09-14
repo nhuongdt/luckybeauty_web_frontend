@@ -35,3 +35,8 @@
 .main_page_thu_ngan .tab-bottom, .tab-hoadon .not-active{
     border-bottom:  1px solid var(--color-main);
 }
+
+.input-number input{
+    text-align:right;
+    font-weight:700
+}

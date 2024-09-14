@@ -18,22 +18,26 @@ import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
-import { LoaiChungTu } from '../../lib/appconst';
+import { LoaiChungTu, TrangThaiCheckin } from '../../lib/appconst';
 import CreateOrEditCustomerDialog from '../customer/components/create-or-edit-customer-modal';
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import { Guid } from 'guid-typescript';
 import { KhachHangDto } from '../../services/khach-hang/dto/KhachHangDto';
 import Loading from '../../components/Loading';
+import { KHCheckInDto } from '../../services/check_in/CheckinDto';
+import CheckinService from '../../services/check_in/CheckinService';
 
 export type IPropsTabKhachHangNoBooking = {
     txtSearch: string;
+    idChiNhanhChosed: string;
     isShowModalAddCustomer?: boolean;
-    onClickAddHoaDon: (customerId: string, loaiHoaDon: number) => void;
+    onClickAddHoaDon: (customerId: string, loaiHoaDon: number, idCheckIn?: string) => void;
     onCloseModalAddCutomer: () => void;
 };
 
 export default function TabKhachHangNoBooking(props: IPropsTabKhachHangNoBooking) {
-    const { txtSearch, onClickAddHoaDon, isShowModalAddCustomer, onCloseModalAddCutomer, ...other } = props;
+    const { txtSearch, idChiNhanhChosed, onClickAddHoaDon, isShowModalAddCustomer, onCloseModalAddCutomer, ...other } =
+        props;
     const firstLoad = useRef(true);
     const [isLoadingData, setIsLoadingData] = useState(true);
     const [isShowModalAddCus, setIsShowModalAddCus] = useState(false);
@@ -87,8 +91,15 @@ export default function TabKhachHangNoBooking(props: IPropsTabKhachHangNoBooking
         GetKhachHang_noBooking(txtSearch);
     }, [paramSearchCus?.skipCount]);
 
-    const addHoaDon = (cusItem: KhachHangItemDto, loaiHoaDon: number) => {
-        onClickAddHoaDon(cusItem.id.toString(), loaiHoaDon);
+    const addHoaDon = async (cusItem: KhachHangItemDto, loaiHoaDon: number) => {
+        // save to check in
+        const newObjCheckin: KHCheckInDto = new KHCheckInDto({
+            idKhachHang: cusItem.id.toString(),
+            idChiNhanh: idChiNhanhChosed,
+            trangThai: TrangThaiCheckin.WAITING
+        });
+        const dataCheckIn = await CheckinService.InsertCustomerCheckIn(newObjCheckin);
+        onClickAddHoaDon(cusItem.id.toString(), loaiHoaDon, dataCheckIn?.id);
     };
 
     const showModalAddCustomer = () => {
@@ -152,7 +163,7 @@ export default function TabKhachHangNoBooking(props: IPropsTabKhachHangNoBooking
             {lstCustomerNoBooking?.items?.map((cusItem, index) => (
                 <Grid item key={index} xs={12} sm={4} md={4} lg={3}>
                     <Stack
-                        padding={1.5}
+                        padding={2}
                         border={'1px solid #cccc'}
                         borderRadius={1}
                         sx={{
@@ -163,8 +174,8 @@ export default function TabKhachHangNoBooking(props: IPropsTabKhachHangNoBooking
                                 cursor: 'pointer'
                             }
                         }}>
-                        <Stack minHeight={100} justifyContent={'space-between'}>
-                            <Stack direction={'row'} padding={1} justifyContent={'space-between'}>
+                        <Stack minHeight={100} justifyContent={'space-between'} spacing={1}>
+                            <Stack direction={'row'} justifyContent={'space-between'}>
                                 <Stack spacing={2} direction={'row'}>
                                     <Stack>
                                         <Avatar src={cusItem?.avatar} />

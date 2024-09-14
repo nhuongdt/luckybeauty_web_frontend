@@ -11,7 +11,7 @@ import {
     Stack,
     Pagination
 } from '@mui/material';
-import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { ReactComponent as AddIcon } from '../../images/add.svg';
 import '../../pages/customer/customerPage.css';
 
@@ -28,6 +28,7 @@ import utils from '../../utils/utils';
 import abpCustom from '../../components/abp-custom';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import { KhachHangDto } from '../../services/khach-hang/dto/KhachHangDto';
+import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
 const TabKhachHang = ({ handleChoseCus, isShowKhachLe = false }: any) => {
     const firsLoad = useRef(true);
     const windowWidth = useWindowWidth();
@@ -138,7 +139,7 @@ const TabKhachHang = ({ handleChoseCus, isShowKhachLe = false }: any) => {
                             startAdornment: (
                                 <>
                                     <InputAdornment position="start">
-                                        <SearchIcon />
+                                        <SearchOutlinedIcon />
                                     </InputAdornment>
                                 </>
                             )
@@ -175,7 +176,7 @@ const TabKhachHang = ({ handleChoseCus, isShowKhachLe = false }: any) => {
                                 padding: '18px',
                                 border: '1px solid #E6E1E6',
                                 borderRadius: '8px',
-                                boxShadow: '0px 7px 20px 0px #28293D14',
+                                boxShadow: '1px 4px 40px #28293D14',
                                 transition: '.4s',
                                 cursor: 'pointer',
                                 '&:hover': {
@@ -205,7 +206,7 @@ const TabKhachHang = ({ handleChoseCus, isShowKhachLe = false }: any) => {
                                 padding: '18px',
                                 border: '1px solid #E6E1E6',
                                 borderRadius: '8px',
-                                boxShadow: '0px 7px 20px 0px #28293D14',
+                                boxShadow: '1px 4px 4px #28293D14',
                                 transition: '.4s',
                                 cursor: 'pointer',
                                 '&:hover': {
@@ -247,21 +248,24 @@ const TabKhachHang = ({ handleChoseCus, isShowKhachLe = false }: any) => {
                     </Grid>
                 ))}
             </Grid>
-            {(pageDataCustomer?.totalPage ?? 0) > 1 && (
-                <Grid container mt={2}>
-                    <Grid item xs={12}>
-                        <Stack spacing={1} direction={'row'} justifyContent={'center'}>
-                            <Pagination
-                                shape="circular"
-                                count={pageDataCustomer?.totalPage}
-                                page={paramSearch?.skipCount}
-                                defaultPage={1}
-                                onChange={handleChangePage}
-                            />
-                        </Stack>
-                    </Grid>
+            <Grid container mt={2}>
+                <Grid item xs={12}>
+                    <Stack spacing={1} direction={'row'} justifyContent={'center'}>
+                        <LabelDisplayedRows
+                            currentPage={paramSearch?.skipCount ?? 0}
+                            pageSize={paramSearch?.maxResultCount}
+                            totalCount={pageDataCustomer?.totalCount}
+                        />
+                        <Pagination
+                            shape="circular"
+                            count={pageDataCustomer?.totalPage}
+                            page={paramSearch?.skipCount}
+                            defaultPage={1}
+                            onChange={handleChangePage}
+                        />
+                    </Stack>
                 </Grid>
-            )}
+            </Grid>
         </Box>
     );
 };
