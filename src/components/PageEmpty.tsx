@@ -1,5 +1,5 @@
 import { Stack, Typography } from '@mui/material';
-import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
+import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
 import { CSSProperties } from 'styled-components';
 
 export type IPropPageEmpty = {
@@ -18,7 +18,7 @@ export default function PageEmpty(props: IPropPageEmpty) {
             {...other}
             style={style}
             sx={{ backgroundColor: '#f2f2ea' }}>
-            {icon ?? <LibraryBooksOutlinedIcon style={{ width: '100px', height: '100px', color: 'burlywood' }} />}
+            {icon ?? <NoteAddOutlinedIcon style={{ width: 80, height: 80, color: '#d3cbc0' }} />}
             <Typography fontSize={'16px'}>{text ?? 'Không có dữ liệu'}</Typography>
         </Stack>
     );
