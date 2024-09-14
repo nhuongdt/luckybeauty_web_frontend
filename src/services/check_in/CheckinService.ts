@@ -53,7 +53,7 @@ class CheckinService {
         return xx;
     };
     UpdateTrangThaiCheckin = async (idCheckIn: string, trangThai = 1) => {
-        if (utils.checkNull(idCheckIn) || idCheckIn === Guid.EMPTY) {
+        if (utils.checkNull_OrEmpty(idCheckIn)) {
             return;
         }
         const xx = await http
