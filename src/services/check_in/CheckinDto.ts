@@ -45,6 +45,7 @@ export class PageKhachHangCheckInDto {
     trangThaiCheckIn? = 1;
     txtTrangThaiCheckIn? = '';
     tongThanhToan? = 0; // mục đích để chỉ lấy ra ở DS khách hàng checking (get TongThanhToan from cache hoadon)
+    loaiHoaDon? = 0; // mục đích để chỉ lấy ra ở DS khách hàng checking (get loaiHoaDon from cache hoadon)
 
     dateCheckIn? = '';
     timeCheckIn? = '';
