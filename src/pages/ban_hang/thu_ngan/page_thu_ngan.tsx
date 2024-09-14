@@ -9,7 +9,8 @@ import {
     FormControlLabel,
     Radio,
     TextField,
-    IconButton
+    IconButton,
+    CircularProgress
 } from '@mui/material';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
@@ -31,8 +32,6 @@ import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/Creat
 import PageHoaDonChiTietDto from '../../../services/ban_hang/PageHoaDonChiTietDto';
 import HoaDonChiTietDto from '../../../services/ban_hang/HoaDonChiTietDto';
 import { NumericFormat } from 'react-number-format';
-import AutocompleteCustomer from '../../../components/Autocomplete/Customer';
-import { handleClickOutside } from '../../../utils/customReactHook';
 import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import PaymentsForm from './Payment';
@@ -45,7 +44,7 @@ import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import HoaDonService from '../../../services/ban_hang/HoaDonService';
 import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
-import { HINH_THUC_THANH_TOAN, LoaiChungTu } from '../../../lib/appconst';
+import { HINH_THUC_THANH_TOAN, LoaiChungTu, TrangThaiCheckin } from '../../../lib/appconst';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 import nhatKyHoatDongService from '../../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
 import { CreateNhatKyThaoTacDto } from '../../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
@@ -53,59 +52,69 @@ import { format } from 'date-fns';
 import HoaDonDto from '../../../services/ban_hang/HoaDonDto';
 import MenuWithDataFromDB from '../../../components/Menu/MenuWithData_fromDB';
 import { TypeSearchfromDB } from '../../../enum/TypeSearch_fromDB';
-import { ResetTvRounded } from '@mui/icons-material';
 import { KhachHangDto } from '../../../services/khach-hang/dto/KhachHangDto';
-import datLichService from '../../../services/dat-lich/datLichService';
+import { dbDexie } from '../../../lib/dexie/dexieDB';
+import CheckinService from '../../../services/check_in/CheckinService';
+import { KHCheckInDto } from '../../../services/check_in/CheckinDto';
+import TrangThaiBooking from '../../../enum/TrangThaiBooking';
 
 export type IPropsPageThuNgan = {
     txtSearch: string;
-    loaiHoaDon?: number;
-    customerIdChosed?: string;
+    loaiHoaDon: number;
+    customerIdChosed: string;
     idChiNhanhChosed: string;
-    booingId?: string;
+
+    idCheckIn?: string;
     arrIdNhomHangFilter?: string[];
+    onSetActiveTabLoaiHoaDon: (idLoaiChungTu: number) => void;
 };
 
 export default function PageThuNgan(props: IPropsPageThuNgan) {
-    const { txtSearch, customerIdChosed, loaiHoaDon, idChiNhanhChosed, booingId, arrIdNhomHangFilter } = props;
+    const {
+        txtSearch,
+        loaiHoaDon,
+        customerIdChosed,
+        idChiNhanhChosed,
+        idCheckIn,
+        arrIdNhomHangFilter,
+        onSetActiveTabLoaiHoaDon
+    } = props;
     const firstLoad = useRef(true);
+    const firstLoad_changeLoaiHD = useRef(true);
     const [anchorDropdownCustomer, setAnchorDropdownCustomer] = useState<null | HTMLElement>(null);
     const expandSearchCus = Boolean(anchorDropdownCustomer);
 
     const [isSavingHoaDon, setIsSavingHoaDon] = useState(false);
     const [isThanhToanTienMat, setIsThanhToanTienMat] = useState(true);
-    const [idNhomHang, setIdNhomHang] = useState('');
-    const [idLoaiHangHoa, setIdLoaiHangHoa] = useState(0);
     const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
     const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
-    const [inforDelete, setinforDelete] = useState<PropConfirmOKCancel>({
+
+    const [arrIdNhomHangChosed, setArrIdNhomHangChosed] = useState<string[]>([]);
+    const [nhomHangHoaChosed, setNhomHangHoaChosed] = useState<ModelNhomHangHoa[]>([]);
+    const [listProduct, setListProduct] = useState<IHangHoaGroupTheoNhomDto[]>([]);
+    const [isShowModalAddCus, setIsShowModalAddCus] = useState(false);
+    const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>({} as CreateOrEditKhachHangDto);
+    const [customerChosed, setCustomerChosed] = useState<CreateOrEditKhachHangDto>({} as CreateOrEditKhachHangDto);
+    const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
+    const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
+        new PageHoaDonDto({
+            idKhachHang: null,
+            idLoaiChungTu: LoaiChungTu.HOA_DON_BAN_LE,
+            tenKhachHang: 'Khách lẻ',
+            idChiNhanh: idChiNhanhChosed
+        })
+    );
+    const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
+        new PageHoaDonChiTietDto({ id: '', expanded: false })
+    );
+
+    const [confirmDialog, setConfirmDialog] = useState<PropConfirmOKCancel>({
         show: false,
         title: '',
         type: 1,
         mes: ''
     });
-    const [arrIdNhomHangChosed, setArrIdNhomHangChosed] = useState<string[]>([]);
-    const [nhomHangHoaChosed, setNhomHangHoaChosed] = useState<ModelNhomHangHoa[]>([]);
-    const [listProduct, setListProduct] = useState<IHangHoaGroupTheoNhomDto[]>([]);
-
-    const [customerChosed, setCustomerChosed] = useState<CreateOrEditKhachHangDto>({} as CreateOrEditKhachHangDto);
-
-    const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
-        new PageHoaDonDto({
-            idKhachHang: customerIdChosed as unknown as undefined,
-            idLoaiChungTu: loaiHoaDon,
-            tenKhachHang: 'Khách lẻ',
-            idChiNhanh: idChiNhanhChosed
-        })
-    );
-    const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
-    const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
-        new PageHoaDonChiTietDto({ id: '', expanded: false })
-    );
-
-    const [isShowModalAddCus, setIsShowModalAddCus] = useState(false);
-    const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>({} as CreateOrEditKhachHangDto);
 
     const GetListNhomHangHoa_byId = async (arrIdNhomHangFilter: string[]) => {
         const list = await GroupProductService.GetListNhomHangHoa_byId(arrIdNhomHangFilter);
@@ -123,7 +132,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         const input = {
             IdNhomHangHoas: [],
             TextSearch: txtSearch,
-            IdLoaiHangHoa: idLoaiHangHoa,
+            IdLoaiHangHoa: 0, // all
             CurrentPage: 0,
             PageSize: 50
         } as PagedProductSearchDto;
@@ -135,7 +144,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         const input = {
             IdNhomHangHoas: arrIdNhomHang,
             TextSearch: txtSearch,
-            IdLoaiHangHoa: idLoaiHangHoa,
+            IdLoaiHangHoa: 0, // all
             CurrentPage: 0,
             PageSize: 50
         } as PagedProductSearchDto;
@@ -143,55 +152,83 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         setListProduct(data);
     };
 
-    const GetInforBooking_byId = async (bookingId: string) => {
-        const ctLichHen = await datLichService.GetInforBooking_byID(bookingId);
-        for (let i = 0; i < (ctLichHen?.length ?? 0); i++) {
-            const itFor = ctLichHen[i];
-            for (let j = 0; j < (itFor?.details?.length ?? 0); j++) {
-                const forIn = itFor?.details?.[j];
-                if (forIn) {
-                    const newObj: ModelHangHoaDto = {
-                        id: forIn?.idHangHoa,
-                        idDonViQuyDoi: forIn?.idDonViQuyDoi,
-                        maHangHoa: forIn?.maHangHoa,
-                        tenHangHoa: forIn?.tenHangHoa,
-                        giaBan: forIn?.giaBan,
-                        idNhomHangHoa: forIn?.idNhomHangHoa,
-                        tenNhomHang: forIn?.tenNhomHang,
-                        donViQuiDois: []
-                    };
-                    choseProduct(newObj);
-                }
-            }
-        }
-    };
-
     useEffect(() => {
         setArrIdNhomHangChosed(arrIdNhomHangFilter ?? []);
     }, [arrIdNhomHangFilter]);
-
-    useEffect(() => {
-        GetInforBooking_byId(booingId ?? '');
-    }, [booingId]);
 
     useEffect(() => {
         GetListNhomHangHoa_byId(arrIdNhomHangChosed ?? []);
         getListHangHoa_groupbyNhom_filterNhom(arrIdNhomHangChosed ?? []);
     }, [arrIdNhomHangChosed]);
 
-    const GetInforCustomer_byId = async (cusId?: string) => {
-        const customer = await khachHangService.getKhachHang(cusId ?? Guid.EMPTY);
+    const GetInforCustomer_byId = async (cusId: string) => {
+        const customer = await khachHangService.getKhachHang(cusId);
         setCustomerChosed(customer);
     };
+
+    const InitData_forHoaDon = async (idKhachHang: string, idChiNhanh: string, idCheckIn: string) => {
+        console.log('idKhachHang', idKhachHang, 'idChiNhanh ', idChiNhanh, 'idCheckIn ', idCheckIn);
+        const hdCache = await dbDexie.hoaDon.where('idCheckIn').equals(idCheckIn).toArray();
+        if (hdCache?.length > 0) {
+            setHoaDon({
+                ...hdCache[0]
+            });
+            setHoaDonChiTiet([...(hdCache[0]?.hoaDonChiTiet ?? [])]);
+            onSetActiveTabLoaiHoaDon(hdCache[0]?.idLoaiChungTu ?? LoaiChungTu.HOA_DON_BAN_LE);
+        } else {
+            onSetActiveTabLoaiHoaDon(LoaiChungTu.HOA_DON_BAN_LE);
+
+            setHoaDon({
+                ...hoadon,
+                idKhachHang: idKhachHang,
+                idChiNhanh: idChiNhanh,
+                idLoaiChungTu: LoaiChungTu.HOA_DON_BAN_LE,
+                idCheckIn: idCheckIn
+            });
+            // add to cache if not exists
+            const dataHD: PageHoaDonDto = {
+                ...hoadon,
+                idKhachHang: idKhachHang,
+                idChiNhanh: idChiNhanh,
+                idLoaiChungTu: LoaiChungTu.HOA_DON_BAN_LE,
+                idCheckIn: idCheckIn
+            };
+            await dbDexie.hoaDon.add(dataHD);
+        }
+    };
+
+    const ChangeLoaiHoaDon = async (loaiHoaDon: number) => {
+        setHoaDon({ ...hoadon, idLoaiChungTu: loaiHoaDon });
+
+        await dbDexie.hoaDon
+            .where('id')
+            .equals(hoadon?.id)
+            .modify((o) => (o.idLoaiChungTu = loaiHoaDon));
+    };
+
+    useEffect(() => {
+        // firstload: auto set loaiHoadon = HOA_DON_BAN_LE
+        InitData_forHoaDon(customerIdChosed, idChiNhanhChosed, idCheckIn ?? Guid.EMPTY);
+    }, [idChiNhanhChosed, idCheckIn, customerIdChosed]);
+
+    useEffect(() => {
+        // update loaiHoaDon if change tab
+        if (firstLoad_changeLoaiHD.current) {
+            firstLoad_changeLoaiHD.current = false;
+            return;
+        }
+        ChangeLoaiHoaDon(loaiHoaDon);
+    }, [loaiHoaDon]);
 
     useEffect(() => {
         GetInforCustomer_byId(customerIdChosed);
     }, [customerIdChosed]);
 
-    useEffect(() => {
-        // change at main_page
-        setHoaDon({ ...hoadon, idChiNhanh: idChiNhanhChosed, idLoaiChungTu: loaiHoaDon as number });
-    }, [loaiHoaDon, idChiNhanhChosed]);
+    // useEffect(() => {
+    //     // change at main_page
+    //     console.log('changeloaiHD ', loaiHoaDon, idChiNhanhChosed);
+    //     setHoaDon({ ...hoadon, idChiNhanh: idChiNhanhChosed, idLoaiChungTu: loaiHoaDon as number });
+    // }, [loaiHoaDon, idChiNhanhChosed]);
 
     const PageLoad = () => {
         //
@@ -208,6 +245,11 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     }, 0);
 
     useEffect(() => {
+        if (firstLoad.current) {
+            firstLoad.current = false;
+            return;
+        }
+        console.log('changeCTHD ', idCheckIn);
         // change cthd --> update hoadon
         const sumThanhTienSauCK = cthd_SumThanhTienTruocCK - cthd_SumTienChietKhau;
         const sumThanhTienSauVAT = sumThanhTienSauCK - cthd_SumTienThue;
@@ -221,6 +263,16 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             tongTienHDSauVAT: sumThanhTienSauVAT,
             tongThanhToan: sumThanhTienSauVAT - (hoadon?.tongGiamGiaHD ?? 0)
         });
+        dbDexie.hoaDon
+            .where('id')
+            .equals(hoadon?.id)
+            .modify((o: PageHoaDonDto) => {
+                o.tongTienHangChuaChietKhau = cthd_SumThanhTienTruocCK;
+                o.tongChietKhauHangHoa = cthd_SumTienChietKhau;
+                o.tongTienHang = sumThanhTienSauCK;
+                o.tongTienHDSauVAT = sumThanhTienSauVAT;
+                o.tongThanhToan = sumThanhTienSauVAT - (hoadon?.tongGiamGiaHD ?? 0);
+            });
     }, [cthd_SumThanhTienTruocCK, cthd_SumTienChietKhau, cthd_SumTienThue]);
 
     useEffect(() => {
@@ -238,11 +290,14 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         debounceSearchHangHoa(txtSearch);
     }, [txtSearch]);
 
-    const removeCTHD = (item: HoaDonChiTietDto) => {
+    const removeCTHD = async (item: HoaDonChiTietDto) => {
         setHoaDonChiTiet(hoaDonChiTiet?.filter((x) => x?.idDonViQuyDoi !== item?.idDonViQuyDoi));
+        const cthd = hoaDonChiTiet?.filter((x) => x?.idDonViQuyDoi !== item?.idDonViQuyDoi);
+        await UpdateCTHD_toCache([...cthd]);
     };
 
     const choseProduct = (item: ModelHangHoaDto) => {
+        let cthdLast: PageHoaDonChiTietDto[] = [];
         const newCT = new PageHoaDonChiTietDto({
             idDonViQuyDoi: item?.idDonViQuyDoi as unknown as undefined,
             maHangHoa: item?.maHangHoa,
@@ -276,10 +331,20 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             const arr = hoaDonChiTiet?.filter((x) => x.idDonViQuyDoi !== item.idDonViQuyDoi);
             setHoaDonChiTiet([newCT, ...arr]);
 
+            cthdLast = [newCT, ...arr];
             //UpdateHoaHongDichVu_forNVThucHien(newCT.id, newCT?.thanhTienSauCK ?? 0);
         } else {
             setHoaDonChiTiet([newCT, ...hoaDonChiTiet]);
+            cthdLast = [newCT, ...hoaDonChiTiet];
         }
+        UpdateCTHD_toCache(cthdLast);
+    };
+
+    const UpdateCTHD_toCache = async (cthdNew: PageHoaDonChiTietDto[]) => {
+        await dbDexie.hoaDon
+            .where('id')
+            .equals(hoadon?.id)
+            .modify((o: PageHoaDonDto) => (o.hoaDonChiTiet = cthdNew));
     };
 
     const UpdateHoaHongDichVu_forNVThucHien = (idCTHD: string, thanhTienSauCK: number) => {
@@ -309,7 +374,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         );
     };
 
-    const changeCustomer_fromModalAdd = (customer?: KhachHangDto) => {
+    const changeCustomer_fromModalAdd = async (customer?: KhachHangDto) => {
         setIsShowModalAddCus(false);
         if (customer) {
             setCustomerChosed({
@@ -319,11 +384,35 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 tenKhachHang: customer?.tenKhachHang ?? 'Khách lẻ',
                 soDienThoai: customer?.soDienThoai ?? ''
             });
-            setHoaDon({ ...hoadon, idKhachHang: customer?.id?.toString() });
+
+            const idCheckin = await InsertCustomer_toCheckIn(customer?.id?.toString());
+
+            setHoaDon({ ...hoadon, idKhachHang: customer?.id?.toString(), idCheckIn: idCheckin });
+
+            await dbDexie.hoaDon
+                .where('id')
+                .equals(hoadon?.id)
+                .modify((o: PageHoaDonDto) => {
+                    o.idKhachHang = customer?.id?.toString();
+                    o.idCheckIn = idCheckin;
+                });
         }
     };
 
-    const changeCustomer = (item: IList) => {
+    const InsertCustomer_toCheckIn = async (customerId: string): Promise<string> => {
+        const objCheckInNew: KHCheckInDto = {
+            id: Guid.EMPTY,
+            idKhachHang: customerId,
+            dateTimeCheckIn: hoadon?.ngayLapHoaDon,
+            idChiNhanh: idChiNhanhChosed,
+            trangThai: TrangThaiCheckin.DOING,
+            ghiChu: ''
+        };
+        const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckInNew);
+        return dataCheckIn.id;
+    };
+
+    const changeCustomer = async (item: IList) => {
         setAnchorDropdownCustomer(null);
         setCustomerChosed({
             ...customerChosed,
@@ -332,10 +421,22 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             tenKhachHang: item?.text ?? 'Khách lẻ',
             soDienThoai: item?.text2 ?? ''
         });
-        setHoaDon({ ...hoadon, idKhachHang: item?.id });
+
+        const idCheckin = await InsertCustomer_toCheckIn(item?.id ?? Guid.EMPTY);
+
+        setHoaDon({ ...hoadon, idKhachHang: item?.id, idCheckIn: idCheckin });
+
+        await dbDexie.hoaDon
+            .where('id')
+            .equals(hoadon?.id)
+            .modify((o: PageHoaDonDto) => {
+                o.idKhachHang = item?.id;
+                o.idCheckIn = idCheckin;
+            });
     };
 
-    const RemoveCustomer = () => {
+    const AgreeChangeRemoveCustomer = async () => {
+        setConfirmDialog({ ...confirmDialog, show: false });
         setHoaDon({ ...hoadon, idKhachHang: null });
         setCustomerChosed({
             ...customerChosed,
@@ -344,6 +445,23 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             tenKhachHang: 'Khách lẻ',
             soDienThoai: ''
         });
+        await dbDexie.hoaDon
+            .where('id')
+            .equals(hoadon?.id)
+            .modify((o: PageHoaDonDto) => (o.idKhachHang = null));
+    };
+
+    const RemoveCustomer = async () => {
+        // if (!utils.checkNull_OrEmpty(hoadon?.idCheckIn)) {
+        //     setConfirmDialog({
+        //         ...confirmDialog,
+        //         show: true,
+        //         mes: 'Khách hàng đang check in. Bạn có chắc chắn muốn thay đổi khách hàng không?',
+        //         title: 'Xác nhận hủy'
+        //     });
+        //     return;
+        // }
+        await AgreeChangeRemoveCustomer();
     };
 
     const showModalAddCustomer = () => {
@@ -368,14 +486,17 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             ...hoadon,
             ngayLapHoaDon: dt
         });
-        // await dbDexie.hoaDon.update(hoadon?.id, {
-        //     ngayLapHoaDon: dt
-        // });
-        // update ngaycheckin??
+        await dbDexie.hoaDon
+            .where('id')
+            .equals(hoadon?.id)
+            .modify((o: PageHoaDonDto) => (o.ngayLapHoaDon = dt));
     };
 
-    const onClickConfirmDelete = () => {
-        //
+    const onClickConfirmDelete = async () => {
+        const idCheckinDelete = hoadon?.idCheckIn ?? Guid.EMPTY;
+        await CheckinService.UpdateTrangThaiCheckin(idCheckinDelete, TrangThaiCheckin.DELETED);
+        await CheckinService.UpdateTrangThaiBooking_byIdCheckIn(idCheckinDelete, TrangThaiBooking.Confirm);
+        await AgreeChangeRemoveCustomer();
     };
 
     const checkSaveInvoice = async () => {
@@ -387,12 +508,22 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             });
             return false;
         }
-        if (utils.checkNull(hoadon?.idKhachHang) || hoadon?.idKhachHang === Guid.EMPTY) {
+        if (utils.checkNull_OrEmpty(hoadon?.idKhachHang)) {
             if (sumTienKhachTra < hoadon?.tongThanhToan) {
                 setObjAlert({
                     show: true,
                     type: 2,
                     mes: 'Là khách lẻ. Không cho phép nợ'
+                });
+                return false;
+            }
+        }
+        if (hoadon?.idLoaiChungTu === LoaiChungTu.GOI_DICH_VU) {
+            if (utils.checkNull_OrEmpty(hoadon?.idKhachHang)) {
+                setObjAlert({
+                    show: true,
+                    type: 2,
+                    mes: 'Vui lòng chọn khách hàng khi mua gói dịch vụ'
                 });
                 return false;
             }
@@ -429,20 +560,19 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         return true;
     };
 
-    const ResetState_AfterSave = () => {
+    const ResetState_AfterSave = async () => {
         setIsSavingHoaDon(false);
         setIsThanhToanTienMat(true);
 
         setHoaDonChiTiet([]);
-        setHoaDon(
-            new PageHoaDonDto({
-                id: Guid.create().toString(),
-                idLoaiChungTu: loaiHoaDon,
-                idKhachHang: customerIdChosed as unknown as undefined,
-                idChiNhanh: idChiNhanhChosed,
-                tenKhachHang: 'Khách lẻ'
-            })
-        );
+        const newHD = new PageHoaDonDto({
+            id: Guid.create().toString(),
+            idLoaiChungTu: LoaiChungTu.HOA_DON_BAN_LE,
+            idKhachHang: customerIdChosed as unknown as undefined,
+            idChiNhanh: idChiNhanhChosed,
+            tenKhachHang: 'Khách lẻ'
+        });
+        setHoaDon({ ...newHD });
         setCustomerChosed({
             ...customerChosed,
             id: '',
@@ -452,71 +582,9 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             tongTichDiem: 0,
             avatar: ''
         } as CreateOrEditKhachHangDto);
-    };
 
-    const saveDiarySoQuy = async (maHoaDon: string, quyHD: QuyHoaDonDto) => {
-        let ptThanhToan = '';
-        const itemMat = quyHD?.quyHoaDon_ChiTiet?.filter((x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.TIEN_MAT);
-        if ((itemMat?.length ?? 0) > 0) {
-            ptThanhToan += 'Tiền mặt, ';
-        }
-        const itemCK = quyHD?.quyHoaDon_ChiTiet?.filter(
-            (x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN
-        );
-        if ((itemCK?.length ?? 0) > 0) {
-            ptThanhToan += 'Chuyển khoản, ';
-        }
-        const itemPos = quyHD?.quyHoaDon_ChiTiet?.filter((x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.QUYET_THE);
-        if ((itemPos?.length ?? 0) > 0) {
-            ptThanhToan += 'POS';
-        }
-        ptThanhToan = utils.Remove_LastComma(ptThanhToan);
-        const diary = {
-            idChiNhanh: idChiNhanhChosed,
-            noiDung: `Thêm mới phiếu thu ${quyHD?.maHoaDon} cho hóa đơn ${maHoaDon}`,
-            chucNang: 'Thêm mới phiếu thu',
-            noiDungChiTiet: `<b> Chi tiết phiếu thu: </b> <br /> Mã phiếu thu: ${
-                quyHD?.maHoaDon
-            }  <br /> Ngày lập: ${format(new Date(quyHD?.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')} <br /> Khách hàng: ${
-                quyHD?.tenNguoiNop
-            }  <br /> Tổng tiền:  ${Intl.NumberFormat('vi-VN').format(
-                quyHD?.tongTienThu
-            )} <br /> Phương thức thanh toán: ${ptThanhToan} `,
-            loaiNhatKy: 1
-        } as CreateNhatKyThaoTacDto;
-        nhatKyHoatDongService.createNhatKyThaoTac(diary);
-    };
-
-    const savePhieuThu = async (hoadon: HoaDonDto) => {
-        const quyCT = new QuyChiTietDto({
-            idHoaDonLienQuan: hoadon.id as unknown as null,
-            idKhachHang: (hoadon?.idKhachHang ?? null) as unknown as null,
-            hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT,
-            tienThu: sumTienKhachTra
-        });
-        quyCT.maHoaDonLienQuan = hoadon.maHoaDon;
-
-        const lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet([quyCT], sumTienKhachTra, hoadon?.tongThanhToan ?? 0);
-
-        const tongThu = lstQCT_After.reduce((currentValue: number, item) => {
-            return currentValue + item.tienThu;
-        }, 0);
-        if (tongThu > 0) {
-            const quyHD = new QuyHoaDonDto({
-                idChiNhanh: idChiNhanhChosed,
-                idLoaiChungTu: LoaiChungTu.PHIEU_THU,
-                ngayLapHoaDon: hoadon.ngayLapHoaDon,
-                tongTienThu: tongThu,
-                noiDungThu: hoadon?.ghiChuHD
-            });
-            quyHD.quyHoaDon_ChiTiet = [quyCT];
-            const dataPT = await SoQuyServices.CreateQuyHoaDon(quyHD);
-            if (dataPT) {
-                quyHD.maHoaDon = dataPT?.maHoaDon;
-                quyHD.tenNguoiNop = customerChosed?.tenKhachHang; // used to print qrCode
-                await saveDiarySoQuy(hoadon?.maHoaDon, quyHD);
-            }
-        }
+        await dbDexie.hoaDon.where('id').equals(hoadon?.id).delete();
+        await dbDexie.hoaDon.add(newHD); // alway add newHD with KhachLe after save
     };
 
     const saveDiaryHoaDon = async (maHoaDon: string, ngaylapHoaDonDB: string) => {
@@ -555,6 +623,35 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         nhatKyHoatDongService.createNhatKyThaoTac(diary);
     };
 
+    const thanhToanAtPaymentForm = async (
+        tienMat: number,
+        tienCK: number,
+        tienPOS: number,
+        idTaiKhoanCK: string | null,
+        idTaiKHoanPos: string | null
+    ) => {
+        const hoadonDB = await saveHoaDon();
+        if (hoadonDB) {
+            await SoQuyServices.savePhieuThu_forHoaDon({
+                phaiTT: hoadon?.tongThanhToan ?? 0,
+                tienmat: tienMat,
+                tienCK: tienCK,
+                tienPOS: tienPOS,
+                idTaiKhoanChuyenKhoan: idTaiKhoanCK as null,
+                idTaiKhoanPOS: idTaiKHoanPos as null,
+                hoadon: {
+                    maHoaDon: hoadonDB?.maHoaDon,
+                    id: (hoadonDB?.id ?? null) as unknown as null,
+                    idKhachHang: customerChosed?.id as unknown as null,
+                    idChiNhanh: idChiNhanhChosed as unknown as null,
+                    ngayLapHoaDon: hoadonDB?.ngayLapHoaDon,
+                    tenKhachHang: customerChosed?.tenKhachHang,
+                    ghiChuHD: ''
+                }
+            });
+        }
+    };
+
     const saveHoaDon = async () => {
         setIsSavingHoaDon(true);
         if (isSavingHoaDon) return;
@@ -577,23 +674,42 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 type: 1,
                 mes: 'Thanh toán hóa đơn thành công'
             });
+
             await saveDiaryHoaDon(hoadonDB?.maHoaDon, hoadonDB?.ngayLapHoaDon);
 
-            // save soquy
-            await savePhieuThu(hoadonDB);
+            // await savePhieuThu(hoadonDB);
+            await CheckinService.UpdateTrangThaiCheckin(hoadon?.idCheckIn, TrangThaiCheckin.COMPLETED);
+            await CheckinService.Update_IdHoaDon_toCheckInHoaDon(hoadon?.idCheckIn, hoadonDB.id);
+
+            if (isThanhToanTienMat) {
+                await SoQuyServices.savePhieuThu_forHoaDon({
+                    phaiTT: hoadon?.tongThanhToan ?? 0,
+                    tienmat: sumTienKhachTra,
+                    hoadon: {
+                        maHoaDon: hoadonDB?.maHoaDon,
+                        id: (hoadonDB?.id ?? null) as unknown as null,
+                        idKhachHang: customerChosed?.id as unknown as null,
+                        idChiNhanh: idChiNhanhChosed as unknown as null,
+                        ngayLapHoaDon: hoadon?.ngayLapHoaDon,
+                        tenKhachHang: customerChosed?.tenKhachHang,
+                        ghiChuHD: ''
+                    }
+                });
+            }
 
             ResetState_AfterSave();
+            return hoadonDB;
         }
     };
 
     return (
         <>
             <ConfirmDelete
-                isShow={inforDelete.show}
-                title={inforDelete.title}
-                mes={inforDelete.mes}
+                isShow={confirmDialog.show}
+                title={confirmDialog.title}
+                mes={confirmDialog.mes}
                 onOk={onClickConfirmDelete}
-                onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
+                onCancel={() => setConfirmDialog({ ...confirmDialog, show: false })}></ConfirmDelete>
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
@@ -612,6 +728,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                         <PaymentsForm
                             tongPhaiTra={hoadon?.tongThanhToan ?? 0}
                             onClose={() => setIsThanhToanTienMat(true)}
+                            onSaveHoaDon={thanhToanAtPaymentForm}
                         />
                     </Grid>
                 ) : (
@@ -923,22 +1040,40 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                     }}
                                 />
 
-                                <Stack
-                                    sx={{
-                                        backgroundColor: isThanhToanTienMat ? '#1976d2' : '#e5ebed',
-                                        borderRadius: '8px',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        color: 'white'
-                                    }}
-                                    direction={'row'}
-                                    spacing={1}
-                                    onClick={saveHoaDon}>
-                                    <CheckOutlinedIcon />
-                                    <Typography fontSize={'16px'} padding={2} fontWeight={500}>
-                                        THANH TOÁN
-                                    </Typography>
-                                </Stack>
+                                {isSavingHoaDon ? (
+                                    <Stack
+                                        sx={{
+                                            backgroundColor: isThanhToanTienMat ? '#1976d2' : '#e5ebed',
+                                            borderRadius: '8px',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            color: 'white'
+                                        }}
+                                        direction={'row'}
+                                        spacing={1}>
+                                        <CircularProgress />
+                                        <Typography fontSize={'16px'} padding={2} fontWeight={500}>
+                                            Đang lưu
+                                        </Typography>
+                                    </Stack>
+                                ) : (
+                                    <Stack
+                                        sx={{
+                                            backgroundColor: isThanhToanTienMat ? '#1976d2' : '#e5ebed',
+                                            borderRadius: '8px',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            color: 'white'
+                                        }}
+                                        direction={'row'}
+                                        spacing={1}
+                                        onClick={saveHoaDon}>
+                                        <CheckOutlinedIcon />
+                                        <Typography fontSize={'16px'} padding={2} fontWeight={500}>
+                                            THANH TOÁN
+                                        </Typography>
+                                    </Stack>
+                                )}
                             </Stack>
                         </Stack>
                     </Stack>

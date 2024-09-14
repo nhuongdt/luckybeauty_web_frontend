@@ -1,129 +1,55 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Typography, Grid, TextField } from '@mui/material';
+import { Stack, Typography, Grid, TextField, CircularProgress } from '@mui/material';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
 import { NumericFormat } from 'react-number-format';
 import utils from '../../../utils/utils';
-import { Guid } from 'guid-typescript';
 import { TaiKhoanNganHangDto } from '../../../services/so_quy/Dto/TaiKhoanNganHangDto';
 import TaiKhoanNganHangServices from '../../../services/so_quy/TaiKhoanNganHangServices';
 import AutocompleteAccountBank from '../../../components/Autocomplete/AccountBank';
 interface ChildComponent {
-    customerId?: string;
     tongPhaiTra: number;
     onClose: () => void;
+    onSaveHoaDon: (
+        tienMat: number,
+        tienCK: number,
+        tienPOS: number,
+        idTaiKhoanPos: string | null,
+        idTaiKhoanCK: string | null
+    ) => void;
 }
-const PaymentsForm: React.FC<ChildComponent> = ({ customerId, tongPhaiTra = 0, onClose }) => {
+const PaymentsForm: React.FC<ChildComponent> = ({ tongPhaiTra = 0, onClose, onSaveHoaDon }) => {
+    const [tienMat, setTienMat] = useState(tongPhaiTra);
+    const [isSaving, setIsSaving] = useState(false);
+    const [tienChuyenKhoan, setTienChuyenKhoan] = useState(0);
+    const [tienQuyeThePos, setTienQuyeThePos] = useState(0);
     const [allBankAccount, setAllBankAccount] = useState<TaiKhoanNganHangDto[]>([]);
-    const [lstQuyCT, setLstQuyCT] = useState<QuyChiTietDto[]>([]);
 
-    const [idTaiKhoanChuyenKhoan, setidTaiKhoanChuyenKhoan] = useState('');
-    const [idTaiKhoanPOS, setidTaiKhoanPOS] = useState('');
+    const [idTaiKhoanChuyenKhoan, setIdTaiKhoanChuyenKhoan] = useState('');
+    const [idTaiKhoanPOS, setIdTaiKhoanPOS] = useState('');
     const GetAllTaiKhoanNganHang = async () => {
         const data = await TaiKhoanNganHangServices.GetAllBankAccount();
         setAllBankAccount(data);
-        console.log('bankAcc ', data);
     };
 
     useEffect(() => {
         GetAllTaiKhoanNganHang();
     }, []);
 
-    const changeTaiKhoanNganHang = (item: TaiKhoanNganHangDto) => {
-        //
+    const tienKhachDua = tienMat + tienChuyenKhoan + tienQuyeThePos;
+    const tienKhachThieu = tongPhaiTra - tienKhachDua;
+
+    const changeTaiKhoanChuyenKhoan = (item: TaiKhoanNganHangDto) => {
+        setIdTaiKhoanChuyenKhoan(item?.id);
+    };
+    const changeTaiKhoanPOS = (item: TaiKhoanNganHangDto) => {
+        setIdTaiKhoanPOS(item?.id);
     };
 
-    const shareMoney_QuyHD = (
-        phaiTT: number,
-        tienDiem: number,
-        tienmat: number,
-        tienPOS: number,
-        chuyenkhoan: number,
-        thegiatri: number,
-        tiencoc: number
-    ) => {
-        // thutu uutien: 1.coc, 2.diem, 3.thegiatri, 4.mat, 5.pos, 6.chuyenkhoan
-        if (tiencoc >= phaiTT) {
-            return {
-                TienCoc: phaiTT,
-                TTBangDiem: 0,
-                TienMat: 0,
-                TienPOS: 0,
-                TienChuyenKhoan: 0,
-                TienTheGiaTri: 0
-            };
-        } else {
-            phaiTT = phaiTT - tiencoc;
-            if (tienDiem >= phaiTT) {
-                return {
-                    TienCoc: tiencoc,
-                    TTBangDiem: phaiTT,
-                    TienMat: 0,
-                    TienPOS: 0,
-                    TienChuyenKhoan: 0,
-                    TienTheGiaTri: 0
-                };
-            } else {
-                phaiTT = phaiTT - tienDiem;
-                if (thegiatri >= phaiTT) {
-                    return {
-                        TienCoc: tiencoc,
-                        TTBangDiem: tienDiem,
-                        TienMat: 0,
-                        TienPOS: 0,
-                        TienChuyenKhoan: 0,
-                        TienTheGiaTri: Math.abs(phaiTT)
-                    };
-                } else {
-                    phaiTT = phaiTT - thegiatri;
-                    if (tienmat >= phaiTT) {
-                        return {
-                            TienCoc: tiencoc,
-                            TTBangDiem: tienDiem,
-                            TienMat: Math.abs(phaiTT),
-                            TienPOS: 0,
-                            TienChuyenKhoan: 0,
-                            TienTheGiaTri: thegiatri
-                        };
-                    } else {
-                        phaiTT = phaiTT - tienmat;
-                        if (tienPOS >= phaiTT) {
-                            return {
-                                TienCoc: tiencoc,
-                                TTBangDiem: tienDiem,
-                                TienMat: tienmat,
-                                TienPOS: Math.abs(phaiTT),
-                                TienChuyenKhoan: 0,
-                                TienTheGiaTri: thegiatri
-                            };
-                        } else {
-                            phaiTT = phaiTT - tienPOS;
-                            if (chuyenkhoan >= phaiTT) {
-                                return {
-                                    TienCoc: tiencoc,
-                                    TTBangDiem: tienDiem,
-                                    TienMat: tienmat,
-                                    TienPOS: tienPOS,
-                                    TienChuyenKhoan: Math.abs(phaiTT),
-                                    TienTheGiaTri: thegiatri
-                                };
-                            } else {
-                                phaiTT = phaiTT - chuyenkhoan;
-                                return {
-                                    TienCoc: tiencoc,
-                                    TTBangDiem: tienDiem,
-                                    TienMat: tienmat,
-                                    TienPOS: tienPOS,
-                                    TienChuyenKhoan: chuyenkhoan,
-                                    TienTheGiaTri: thegiatri
-                                };
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    const thanhToan = async () => {
+        setIsSaving(true);
+        onSaveHoaDon(tienMat, tienChuyenKhoan, tienQuyeThePos, idTaiKhoanChuyenKhoan, idTaiKhoanPOS);
+        setIsSaving(false);
     };
 
     return (
@@ -154,7 +80,7 @@ const PaymentsForm: React.FC<ChildComponent> = ({ customerId, tongPhaiTra = 0, o
                         <Grid item lg={4}></Grid>
                         <Grid item lg={4}>
                             <Typography textAlign={'right'} fontSize={20} fontWeight={500}>
-                                {Intl.NumberFormat('vn-VN').format(tongPhaiTra)}
+                                {new Intl.NumberFormat('vi-VN').format(tongPhaiTra)}
                             </Typography>
                         </Grid>
                     </Grid>
@@ -164,9 +90,9 @@ const PaymentsForm: React.FC<ChildComponent> = ({ customerId, tongPhaiTra = 0, o
                         className="payment-form-hinhthucTT">
                         <Stack padding={2}>
                             <Stack spacing={1}>
-                                <Grid container sx={{ display: 'none' }}>
-                                    <Grid item lg={4}>
-                                        <Typography>Thanh toán bằng điểm</Typography>
+                                <Grid container display={'none'}>
+                                    <Grid item lg={3}>
+                                        <Typography>Sử dụng điểm</Typography>
                                     </Grid>
                                     <Grid item lg={8}>
                                         <Grid container spacing={2}>
@@ -187,10 +113,10 @@ const PaymentsForm: React.FC<ChildComponent> = ({ customerId, tongPhaiTra = 0, o
                                 </Grid>
 
                                 <Grid container sx={{ display: 'none' }}>
-                                    <Grid item lg={4}>
+                                    <Grid item lg={3}>
                                         <Typography>Thu từ thẻ</Typography>
                                     </Grid>
-                                    <Grid item lg={8}>
+                                    <Grid item lg={9}>
                                         <Grid container spacing={2}>
                                             <Grid item lg={7}>
                                                 <Typography
@@ -205,54 +131,93 @@ const PaymentsForm: React.FC<ChildComponent> = ({ customerId, tongPhaiTra = 0, o
                                     </Grid>
                                 </Grid>
                                 <Grid container>
-                                    <Grid item lg={4}>
+                                    <Grid item lg={3}>
                                         <Typography>Tiền mặt</Typography>
                                     </Grid>
-                                    <Grid item lg={8}>
+                                    <Grid item lg={9}>
                                         <Grid container spacing={2}>
                                             <Grid item lg={7}></Grid>
                                             <Grid item lg={5}>
-                                                <TextField size="small" fullWidth />
+                                                <NumericFormat
+                                                    className="input-number"
+                                                    size="small"
+                                                    fullWidth
+                                                    value={tienMat}
+                                                    decimalSeparator=","
+                                                    thousandSeparator="."
+                                                    customInput={TextField}
+                                                    onChange={(event) => {
+                                                        setTienMat(utils.formatNumberToFloat(event.target.value));
+                                                    }}
+                                                />
                                             </Grid>
                                         </Grid>
                                     </Grid>
                                 </Grid>
 
                                 <Grid container>
-                                    <Grid item lg={4}>
+                                    <Grid item lg={3}>
                                         <Typography>Chuyển khoản</Typography>
                                     </Grid>
-                                    <Grid item lg={8}>
+                                    <Grid item lg={9}>
                                         <Grid container spacing={2}>
                                             <Grid item lg={7}>
                                                 <AutocompleteAccountBank
-                                                    handleChoseItem={changeTaiKhoanNganHang}
+                                                    handleChoseItem={changeTaiKhoanChuyenKhoan}
                                                     idChosed={idTaiKhoanChuyenKhoan}
                                                     listOption={allBankAccount}
                                                 />
                                             </Grid>
                                             <Grid item lg={5}>
-                                                <TextField size="small" fullWidth />
+                                                <NumericFormat
+                                                    size="small"
+                                                    fullWidth
+                                                    disabled={utils.checkNull_OrEmpty(idTaiKhoanChuyenKhoan)}
+                                                    value={tienChuyenKhoan}
+                                                    decimalSeparator=","
+                                                    thousandSeparator="."
+                                                    className="input-number"
+                                                    customInput={TextField}
+                                                    onChange={(event) => {
+                                                        setTienChuyenKhoan(
+                                                            utils.formatNumberToFloat(event.target.value)
+                                                        );
+                                                    }}
+                                                />
                                             </Grid>
                                         </Grid>
                                     </Grid>
                                 </Grid>
 
                                 <Grid container>
-                                    <Grid item lg={4}>
+                                    <Grid item lg={3}>
                                         <Typography>Quyẹt thẻ</Typography>
                                     </Grid>
-                                    <Grid item lg={8}>
+                                    <Grid item lg={9}>
                                         <Grid container spacing={2}>
                                             <Grid item lg={7}>
                                                 <AutocompleteAccountBank
-                                                    handleChoseItem={changeTaiKhoanNganHang}
-                                                    idChosed={idTaiKhoanChuyenKhoan}
+                                                    handleChoseItem={changeTaiKhoanPOS}
+                                                    idChosed={idTaiKhoanPOS}
                                                     listOption={allBankAccount}
                                                 />
                                             </Grid>
                                             <Grid item lg={5}>
-                                                <TextField size="small" fullWidth />
+                                                <NumericFormat
+                                                    size="small"
+                                                    fullWidth
+                                                    disabled={utils.checkNull_OrEmpty(idTaiKhoanPOS)}
+                                                    value={tienQuyeThePos}
+                                                    decimalSeparator=","
+                                                    thousandSeparator="."
+                                                    className="input-number"
+                                                    customInput={TextField}
+                                                    onChange={(event) => {
+                                                        setTienQuyeThePos(
+                                                            utils.formatNumberToFloat(event.target.value)
+                                                        );
+                                                    }}
+                                                />
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -270,20 +235,20 @@ const PaymentsForm: React.FC<ChildComponent> = ({ customerId, tongPhaiTra = 0, o
                         </Grid>
                         <Grid item lg={4}>
                             <Typography textAlign={'right'} fontSize={18} fontWeight={500}>
-                                560.000
+                                {new Intl.NumberFormat('vi-VN').format(tienKhachDua)}
                             </Typography>
                         </Grid>
                     </Grid>
                     <Grid container>
                         <Grid item lg={4}></Grid>
                         <Grid item lg={4}>
-                            <Typography textAlign={'right'} fontSize={18} fontWeight={500}>
-                                Tiền thiếu
+                            <Typography textAlign={'right'} fontSize={16} fontWeight={500}>
+                                {tienKhachThieu >= 0 ? 'Tiền thiếu' : 'Tiền thừa'}
                             </Typography>
                         </Grid>
                         <Grid item lg={4}>
-                            <Typography textAlign={'right'} fontSize={18} fontWeight={500}>
-                                560.000
+                            <Typography textAlign={'right'} fontSize={16} fontWeight={500}>
+                                {new Intl.NumberFormat('vi-VN').format(Math.abs(tienKhachThieu))}
                             </Typography>
                         </Grid>
                     </Grid>
@@ -292,21 +257,40 @@ const PaymentsForm: React.FC<ChildComponent> = ({ customerId, tongPhaiTra = 0, o
                     <Grid container>
                         <Grid item lg={4}></Grid>
                         <Grid item lg={4}>
-                            <Stack
-                                sx={{
-                                    backgroundColor: '#1976d2',
-                                    borderRadius: '8px',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    color: 'white'
-                                }}
-                                direction={'row'}
-                                spacing={1}>
-                                <CheckOutlinedIcon />
-                                <Typography fontSize={'16px'} padding={2} fontWeight={500}>
-                                    THANH TOÁN
-                                </Typography>
-                            </Stack>
+                            {isSaving ? (
+                                <Stack
+                                    sx={{
+                                        backgroundColor: '#1976d2',
+                                        borderRadius: '8px',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        color: 'white'
+                                    }}
+                                    direction={'row'}
+                                    spacing={1}>
+                                    <CircularProgress />
+                                    <Typography fontSize={'16px'} padding={2} fontWeight={500}>
+                                        ĐANG LƯU
+                                    </Typography>
+                                </Stack>
+                            ) : (
+                                <Stack
+                                    sx={{
+                                        backgroundColor: '#1976d2',
+                                        borderRadius: '8px',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        color: 'white'
+                                    }}
+                                    direction={'row'}
+                                    spacing={1}
+                                    onClick={thanhToan}>
+                                    <CheckOutlinedIcon />
+                                    <Typography fontSize={'16px'} padding={2} fontWeight={500}>
+                                        THANH TOÁN
+                                    </Typography>
+                                </Stack>
+                            )}
                         </Grid>
                         <Grid item lg={4}></Grid>
                     </Grid>
