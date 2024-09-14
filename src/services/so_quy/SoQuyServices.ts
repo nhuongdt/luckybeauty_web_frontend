@@ -8,7 +8,10 @@ import { IFileDto } from '../dto/FileDto';
 import QuyChiTietDto from './QuyChiTietDto';
 import { ParamSearchSoQuyDto } from './Dto/ParamSearchSoQuyDto';
 import { IThuChiDauKyCuoiKyDto } from './Dto/IThuChiDauKyCuoiKyDto';
-import { HINH_THUC_THANH_TOAN } from '../../lib/appconst';
+import { HINH_THUC_THANH_TOAN, LoaiChungTu } from '../../lib/appconst';
+import { format } from 'date-fns';
+import { CreateNhatKyThaoTacDto } from '../nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
+import nhatKyHoatDongService from '../nhat_ky_hoat_dong/nhatKyHoatDongService';
 
 class SoQuyServices {
     CreateQuyHoaDon = async (input: any) => {
@@ -92,14 +95,133 @@ class SoQuyServices {
             return response.data.result;
         }
     };
+    savePhieuThu_forHoaDon = async ({
+        phaiTT = 0,
+        tienDiem = 0,
+        tienmat = 0,
+        tienPOS = 0,
+        tienCK = 0,
+        thegiatri = 0,
+        tiencoc = 0,
+        idTaiKhoanChuyenKhoan = null,
+        idTaiKhoanPOS = null,
+        hoadon = {
+            id: null,
+            idChiNhanh: null,
+            idKhachHang: null,
+            maHoaDon: '',
+            tenKhachHang: '',
+            ghiChuHD: '',
+            ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS')
+        }
+    }) => {
+        const lstQuyCT_After: QuyChiTietDto[] = [];
+        const shareMoney = this.ShareMoney_QuyHD({
+            phaiTT: phaiTT,
+            tienmat: tienmat,
+            chuyenkhoan: tienCK,
+            tienPOS: tienPOS,
+            tienDiem: tienDiem,
+            thegiatri: thegiatri,
+            tiencoc: tiencoc
+        });
+        const tienMatNew = shareMoney.TienMat,
+            tienPosNew = shareMoney.TienPOS,
+            tienCKNew = shareMoney.TienChuyenKhoan;
+
+        if (tienMatNew > 0) {
+            const newQCT = new QuyChiTietDto({
+                hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT,
+                tienThu: tienMatNew,
+                idHoaDonLienQuan: hoadon?.id,
+                idKhachHang: hoadon?.idKhachHang
+            });
+            lstQuyCT_After.push(newQCT);
+        }
+        if (tienCKNew > 0) {
+            const newQCT = new QuyChiTietDto({
+                hinhThucThanhToan: HINH_THUC_THANH_TOAN.CHUYEN_KHOAN,
+                tienThu: tienCKNew,
+                idTaiKhoanNganHang: idTaiKhoanChuyenKhoan,
+                idHoaDonLienQuan: hoadon?.id,
+                idKhachHang: hoadon?.idKhachHang
+            });
+            lstQuyCT_After.push(newQCT);
+        }
+        if (tienPosNew > 0) {
+            const newQCT = new QuyChiTietDto({
+                hinhThucThanhToan: HINH_THUC_THANH_TOAN.QUYET_THE,
+                tienThu: tienPosNew,
+                idTaiKhoanNganHang: idTaiKhoanPOS,
+                idHoaDonLienQuan: hoadon?.id,
+                idKhachHang: hoadon?.idKhachHang
+            });
+            lstQuyCT_After.push(newQCT);
+        }
+        const tongThu = lstQuyCT_After.reduce((currentValue: number, item) => {
+            return currentValue + item.tienThu;
+        }, 0);
+        if (tongThu > 0) {
+            const quyHD = new QuyHoaDonDto({
+                idChiNhanh: hoadon?.idChiNhanh ?? '',
+                idLoaiChungTu: LoaiChungTu.PHIEU_THU,
+                ngayLapHoaDon: hoadon?.ngayLapHoaDon,
+                tongTienThu: tongThu,
+                noiDungThu: hoadon?.ghiChuHD
+            });
+            quyHD.quyHoaDon_ChiTiet = lstQuyCT_After;
+            const dataPT = await this.CreateQuyHoaDon(quyHD);
+            if (dataPT) {
+                quyHD.maHoaDon = dataPT?.maHoaDon;
+                quyHD.tenNguoiNop = hoadon?.tenKhachHang; // used to print qrCode
+                await this.saveDiarySoQuy(hoadon?.maHoaDon, quyHD);
+            }
+        }
+    };
+
+    saveDiarySoQuy = async (maHoaDon: string, quyHD: QuyHoaDonDto) => {
+        let ptThanhToan = '';
+        const itemMat = quyHD?.quyHoaDon_ChiTiet?.filter((x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.TIEN_MAT);
+        if ((itemMat?.length ?? 0) > 0) {
+            ptThanhToan += 'Tiền mặt, ';
+        }
+        const itemCK = quyHD?.quyHoaDon_ChiTiet?.filter(
+            (x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN
+        );
+        if ((itemCK?.length ?? 0) > 0) {
+            ptThanhToan += 'Chuyển khoản, ';
+        }
+        const itemPos = quyHD?.quyHoaDon_ChiTiet?.filter((x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.QUYET_THE);
+        if ((itemPos?.length ?? 0) > 0) {
+            ptThanhToan += 'POS';
+        }
+        ptThanhToan = utils.Remove_LastComma(ptThanhToan);
+        const diary = {
+            idChiNhanh: quyHD?.idChiNhanh,
+            noiDung: `Thêm mới phiếu thu ${quyHD?.maHoaDon} cho hóa đơn ${maHoaDon}`,
+            chucNang: 'Thêm mới phiếu thu',
+            noiDungChiTiet: `<b> Chi tiết phiếu thu: </b> <br /> Mã phiếu thu: ${
+                quyHD?.maHoaDon
+            }  <br /> Ngày lập: ${format(new Date(quyHD?.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')} <br /> Khách hàng: ${
+                quyHD?.tenNguoiNop
+            }  <br /> Tổng tiền:  ${Intl.NumberFormat('vi-VN').format(
+                quyHD?.tongTienThu
+            )} <br /> Phương thức thanh toán: ${ptThanhToan} `,
+            loaiNhatKy: 1
+        } as CreateNhatKyThaoTacDto;
+        nhatKyHoatDongService.createNhatKyThaoTac(diary);
+    };
     ShareMoney_QuyHD = (
-        phaiTT: number,
-        tienDiem: number,
-        tienmat: number,
-        tienPOS: number,
-        chuyenkhoan: number,
-        thegiatri: number,
-        tiencoc: number
+        // thứ tự thanh toán ưu tiên
+        {
+            phaiTT = 0,
+            tienDiem = 0, // 2
+            tienmat = 0, // 4
+            tienPOS = 0, // 6
+            chuyenkhoan = 0, //5
+            thegiatri = 0, // 3
+            tiencoc = 0 // 1
+        }
     ) => {
         // thutu uutien: 1.coc, 2.diem, 3.thegiatri, 4.mat, 5.pos, 6.chuyenkhoan
         if (tiencoc >= phaiTT) {
@@ -146,28 +268,28 @@ class SoQuyServices {
                         };
                     } else {
                         phaiTT = phaiTT - tienmat;
-                        if (tienPOS >= phaiTT) {
+                        if (chuyenkhoan >= phaiTT) {
                             return {
                                 TienCoc: tiencoc,
                                 TTBangDiem: tienDiem,
                                 TienMat: tienmat,
-                                TienPOS: Math.abs(phaiTT),
-                                TienChuyenKhoan: 0,
+                                TienPOS: 0,
+                                TienChuyenKhoan: Math.abs(phaiTT),
                                 TienTheGiaTri: thegiatri
                             };
                         } else {
-                            phaiTT = phaiTT - tienPOS;
-                            if (chuyenkhoan >= phaiTT) {
+                            phaiTT = phaiTT - chuyenkhoan;
+                            if (tienPOS >= phaiTT) {
                                 return {
                                     TienCoc: tiencoc,
                                     TTBangDiem: tienDiem,
                                     TienMat: tienmat,
-                                    TienPOS: tienPOS,
-                                    TienChuyenKhoan: Math.abs(phaiTT),
+                                    TienPOS: Math.abs(phaiTT),
+                                    TienChuyenKhoan: chuyenkhoan,
                                     TienTheGiaTri: thegiatri
                                 };
                             } else {
-                                phaiTT = phaiTT - chuyenkhoan;
+                                phaiTT = phaiTT - tienPOS;
                                 return {
                                     TienCoc: tiencoc,
                                     TTBangDiem: tienDiem,
@@ -214,7 +336,12 @@ class SoQuyServices {
             }
         }
         if (sumTienKhachTra > tongPhaiTra) {
-            const shareMoney = this.ShareMoney_QuyHD(tongPhaiTra, 0, tienMat, tienPos, tienCK, 0, 0);
+            const shareMoney = this.ShareMoney_QuyHD({
+                phaiTT: tongPhaiTra,
+                tienmat: tienMat,
+                chuyenkhoan: tienCK,
+                tienPOS: tienPos
+            });
             const tienMatNew = shareMoney.TienMat,
                 tienPosNew = shareMoney.TienPOS,
                 tienCKNew = shareMoney.TienChuyenKhoan;
