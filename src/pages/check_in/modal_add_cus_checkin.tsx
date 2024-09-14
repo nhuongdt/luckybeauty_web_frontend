@@ -33,13 +33,11 @@ export const ModalCheckin_FormType = {
 
 export interface IPropModalCheckIn extends IPropModal<PageKhachHangCheckInDto> {
     isNew: boolean; // dùng ở Thu ngân: khi muốn thay đổi khách hàng (vì: idChekIn của khách lẻ = empty)
+    idChiNhanh?: string;
 }
 
 export default function ModalAddCustomerCheckIn(props: IPropModalCheckIn) {
-    const { idUpdate, isShowModal, typeForm, isNew, onClose, onOK } = props;
-    const appContext = useContext(AppContext);
-    const chiNhanhCurrent = appContext.chinhanhCurrent;
-    const idChiNhanh = chiNhanhCurrent?.id ?? Cookies.get('IdChiNhanh');
+    const { idChiNhanh, idUpdate, isShowModal, typeForm, isNew, onClose, onOK } = props;
     const [currentTab, setCurrentTab] = useState(CheckIn_TabName.BOOKING);
     const [objAlert, setObjAlert] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
     const [objCheckIn, setObjCheckIn] = useState<KHCheckInDto>({} as KHCheckInDto);
@@ -210,7 +208,7 @@ export default function ModalAddCustomerCheckIn(props: IPropModalCheckIn) {
                 open={isShowModal}
                 onClose={onClose}
                 fullWidth
-                maxWidth="md"
+                maxWidth="lg"
                 aria-labelledby="dialogIdTitle"
                 //PaperComponent={DialogDraggable}
                 sx={{
@@ -239,7 +237,7 @@ export default function ModalAddCustomerCheckIn(props: IPropModalCheckIn) {
                         width: '100%'
                     }}>
                     <Box fontWeight="700!important" fontSize="24px">
-                        {isNew ? 'Thêm check in' : 'Thay đổi khách hàng'}
+                        {isNew ? 'Thêm khách check-in' : 'Thay đổi khách hàng'}
                     </Box>
                     <IconButton
                         onClick={onClose}
