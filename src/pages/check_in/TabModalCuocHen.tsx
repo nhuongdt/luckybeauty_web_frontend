@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, TextField, Button, Typography, Grid, InputAdornment, Stack, debounce } from '@mui/material';
-import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
+import { Box, TextField, Button, Typography, Grid, InputAdornment, Stack, debounce, Pagination } from '@mui/material';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import QueryBuilderOutlinedIcon from '@mui/icons-material/QueryBuilderOutlined';
 import { ReactComponent as AddIcon } from '../../images/add.svg';
 import { ReactComponent as ClockIcon } from '../../images/clock.svg';
 import useWindowWidth from '../../components/StateWidth';
@@ -14,6 +15,10 @@ import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 import utils from '../../utils/utils';
 import abpCustom from '../../components/abp-custom';
 import TrangThaiBooking from '../../enum/TrangThaiBooking';
+import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
+import { PagedResultDto } from '../../services/dto/pagedResultDto';
+import PageEmpty from '../../components/PageEmpty';
+import Loading from '../../components/Loading';
 const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     const arrTrangThaiBook = [
         {
@@ -30,8 +35,14 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
         }
     ];
 
+    const isFirstLoad = useRef(true);
+    const [isLoadingData, setIsLoadingData] = useState(true);
     const [isShowModalLichHen, setIsShowModalLichHen] = useState(false);
-    const [listCusBooking, setListCusBooking] = useState<BookingDetail_ofCustomerDto[]>([]);
+    const [listCusBooking, setListCusBooking] = useState<PagedResultDto<BookingDetail_ofCustomerDto>>({
+        items: [],
+        totalCount: 0,
+        totalPage: 0
+    });
     const [paramSearch, setParamSearch] = useState<BookingRequestDto>(
         new BookingRequestDto(
             { currentPage: 0, trangThaiBook: 3, pageSize: 1000 } // 0.xoa 1.chua xacnhan, 2.da xacnhan, 3.all
@@ -39,8 +50,15 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     );
 
     const GetListCustomer_wasBooking = async (paramSearch: BookingRequestDto) => {
+        setIsLoadingData(true);
         const data = await datLichService.GetKhachHang_Booking(paramSearch);
-        setListCusBooking(data?.items);
+        setListCusBooking({
+            ...listCusBooking,
+            items: data?.items,
+            totalCount: data?.totalCount,
+            totalPage: Math.ceil(data?.totalCount / (paramSearch?.pageSize ?? 16))
+        });
+        setIsLoadingData(false);
     };
 
     const GetAllDichVu = async () => {
@@ -54,7 +72,6 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
         await suggestStore.getSuggestKyThuatVien();
     };
     useEffect(() => {
-        GetListCustomer_wasBooking(paramSearch);
         // khachhang, nvien, dichvu: mục đích chỉ để get thông tin cho form them lich hen
         GetAllListCustomer();
         GetAllDichVu();
@@ -77,8 +94,12 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     }, [paramSearch.textSearch]);
 
     useEffect(() => {
+        if (isFirstLoad.current) {
+            isFirstLoad.current = false;
+            return;
+        }
         GetListCustomer_wasBooking(paramSearch);
-    }, [paramSearch.trangThaiBook]);
+    }, [paramSearch.trangThaiBook, paramSearch.currentPage]);
 
     const showModalAddLichHen = () => {
         setIsShowModalLichHen(true);
@@ -92,12 +113,19 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
             if (newBooking[0].trangThai === TrangThaiBooking.CheckIn) {
                 choseBooking(newBooking[0]);
             } else {
-                setListCusBooking([newBooking[0], ...listCusBooking]);
+                setListCusBooking({
+                    ...listCusBooking,
+                    items: [newBooking[0], ...(listCusBooking?.items ?? [])],
+                    totalCount: listCusBooking?.totalCount + 1
+                });
             }
         }
     };
 
     const windowWidth = useWindowWidth();
+
+    if (isLoadingData) return <Loading />;
+
     return (
         <>
             <CreateOrEditLichHenModal
@@ -121,7 +149,7 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                             startAdornment: (
                                 <>
                                     <InputAdornment position="start">
-                                        <SearchIcon />
+                                        <SearchOutlinedIcon />
                                     </InputAdornment>
                                 </>
                             )
@@ -168,116 +196,145 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                     </Button>
                 ))}
             </Box>
-            <Grid container spacing={2}>
-                {listCusBooking.map((item, indexBooking) => (
-                    <Grid item key={indexBooking} sm={6} md={4} xs={12}>
-                        <Stack
-                            spacing={1}
-                            sx={{
-                                padding: '16px',
-                                border: '1px solid #E6E1E6',
-                                borderRadius: '8px',
-                                boxShadow: '0px 7px 20px 0px #28293D14',
-                                transition: '.4s',
-                                cursor: 'pointer',
-                                '&:hover': {
-                                    borderColor: 'var(--color-main)'
-                                },
-                                '& p': {
-                                    mb: '0'
-                                },
-                                height: '100%',
-                                justifyContent: 'space-between'
-                            }}
-                            onClick={() => choseBooking(item)}>
-                            <Box
-                                sx={{
-                                    display: 'flex'
-                                }}>
-                                <Stack spacing={2} direction={'row'} sx={{ width: '100%' }} title={item.tenKhachHang}>
-                                    {utils.checkNull(item.avatar) ? (
-                                        <BadgeFistCharOfName
-                                            firstChar={utils.getFirstLetter(item?.tenKhachHang ?? '')}
-                                        />
-                                    ) : (
-                                        // <Avatar src={item.avatar} sx={{ width: 40, height: 40 }} />
-                                        <img
-                                            src={item.avatar}
-                                            style={{ width: 40, height: 40, borderRadius: '100%' }}
-                                        />
-                                    )}
-                                    <Stack sx={{ width: 'calc(100% - 40px)' }} justifyContent={'space-evenly'}>
-                                        <Typography
-                                            variant="subtitle2"
-                                            sx={{
-                                                whiteSpace: 'nowrap',
-                                                textOverflow: 'ellipsis',
-                                                overflow: 'hidden'
-                                            }}>
-                                            {item.tenKhachHang}
-                                        </Typography>
-                                        <Typography fontSize="12px" color="#999699">
-                                            {item.soDienThoai}
-                                        </Typography>
-                                    </Stack>
-                                </Stack>
-                            </Box>
-                            <Stack paddingTop={'4px'}>
-                                {item.details.map((ct: BookingDetailDto, index2) => (
-                                    <Stack
-                                        direction={'row'}
-                                        key={index2}
-                                        mt={'2px'}
-                                        sx={{
-                                            justifyContent: 'space-between'
-                                        }}>
-                                        <Typography
-                                            maxWidth={'70%'}
-                                            title={ct.tenHangHoa}
-                                            variant="body2"
-                                            className="lableOverflow">
-                                            {ct.tenHangHoa}
-                                        </Typography>
-
-                                        <Typography variant="body2" fontWeight={600}>
-                                            {new Intl.NumberFormat('vi-VN').format(ct.giaBan)}
-                                        </Typography>
-                                    </Stack>
-                                ))}
-                            </Stack>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            {listCusBooking?.totalCount == 0 ? (
+                <PageEmpty style={{ height: '60vh' }} />
+            ) : (
+                <>
+                    <Grid container spacing={2}>
+                        {listCusBooking?.items?.map((item, indexBooking) => (
+                            <Grid item key={indexBooking} sm={6} md={4} xs={12}>
                                 <Stack
-                                    direction={'row'}
+                                    spacing={1}
                                     sx={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        fontSize: '14px',
-                                        color: '#666466'
-                                    }}>
-                                    <Box marginRight="4px">
-                                        <ClockIcon />
-                                    </Box>
-                                    <Typography variant="caption">
-                                        {format(new Date(item.startTime), 'HH:mm')}
-                                    </Typography>{' '}
-                                    -{' '}
-                                    <Typography variant="caption">{format(new Date(item.endTime), 'HH:mm')}</Typography>
-                                </Stack>
-                                <Box
-                                    sx={{
-                                        fontSize: '12px',
-                                        padding: '4px 12px',
+                                        padding: '16px',
+                                        border: '1px solid #E6E1E6',
                                         borderRadius: '8px',
-                                        color: item.trangThai == 2 ? 'var(--color-main)' : '#75753a',
-                                        bgcolor: item.trangThai == 2 ? 'var(--color-bg)' : '#ededc8'
-                                    }}>
-                                    {item.txtTrangThaiBook}
-                                </Box>
-                            </Box>
-                        </Stack>
+                                        boxShadow: '1px 4px 4px #28293D14',
+                                        transition: '.4s',
+                                        cursor: 'pointer',
+                                        '&:hover': {
+                                            borderColor: 'var(--color-main)'
+                                        },
+                                        '& p': {
+                                            mb: '0'
+                                        },
+                                        height: '100%',
+                                        justifyContent: 'space-between'
+                                    }}
+                                    onClick={() => choseBooking(item)}>
+                                    <Box
+                                        sx={{
+                                            display: 'flex'
+                                        }}>
+                                        <Stack
+                                            spacing={2}
+                                            direction={'row'}
+                                            sx={{ width: '100%' }}
+                                            title={item.tenKhachHang}>
+                                            {utils.checkNull(item.avatar) ? (
+                                                <BadgeFistCharOfName
+                                                    firstChar={utils.getFirstLetter(item?.tenKhachHang ?? '')}
+                                                />
+                                            ) : (
+                                                // <Avatar src={item.avatar} sx={{ width: 40, height: 40 }} />
+                                                <img
+                                                    src={item.avatar}
+                                                    style={{ width: 40, height: 40, borderRadius: '100%' }}
+                                                />
+                                            )}
+                                            <Stack sx={{ width: 'calc(100% - 40px)' }} justifyContent={'space-evenly'}>
+                                                <Typography
+                                                    variant="subtitle2"
+                                                    className="lableOverflow"
+                                                    maxWidth={250}>
+                                                    {item.tenKhachHang}
+                                                </Typography>
+                                                <Typography fontSize="12px" color="#999699">
+                                                    {item.soDienThoai}
+                                                </Typography>
+                                            </Stack>
+                                        </Stack>
+                                    </Box>
+                                    <Stack paddingTop={'4px'}>
+                                        {item.details.map((ct: BookingDetailDto, index2) => (
+                                            <Stack
+                                                direction={'row'}
+                                                key={index2}
+                                                mt={'2px'}
+                                                sx={{
+                                                    justifyContent: 'space-between'
+                                                }}>
+                                                <Typography
+                                                    maxWidth={'70%'}
+                                                    title={ct.tenHangHoa}
+                                                    variant="body2"
+                                                    className="lableOverflow">
+                                                    {ct.tenHangHoa}
+                                                </Typography>
+
+                                                <Typography variant="body2" fontWeight={600}>
+                                                    {new Intl.NumberFormat('vi-VN').format(ct.giaBan)}
+                                                </Typography>
+                                            </Stack>
+                                        ))}
+                                    </Stack>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <Stack
+                                            direction={'row'}
+                                            sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                fontSize: '14px',
+                                                color: '#666466'
+                                            }}>
+                                            <Box marginRight="4px">
+                                                <ClockIcon />
+                                            </Box>
+                                            <Typography variant="caption">
+                                                {format(new Date(item.startTime), 'HH:mm')}
+                                            </Typography>
+                                        </Stack>
+                                        <Box>
+                                            <Typography
+                                                variant="caption"
+                                                className={
+                                                    item.trangThai == TrangThaiBooking.Wait
+                                                        ? 'data-grid-cell-trangthai-notActive'
+                                                        : 'data-grid-cell-trangthai-active'
+                                                }>
+                                                {item.txtTrangThaiBook}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                </Stack>
+                            </Grid>
+                        ))}
                     </Grid>
-                ))}
-            </Grid>
+                    <Grid container mt={2}>
+                        <Grid item xs={12}>
+                            <Stack spacing={1} direction={'row'} justifyContent={'center'}>
+                                <LabelDisplayedRows
+                                    currentPage={(paramSearch?.currentPage ?? 0) + 1}
+                                    pageSize={paramSearch?.pageSize}
+                                    totalCount={listCusBooking?.totalCount}
+                                />
+                                <Pagination
+                                    shape="circular"
+                                    count={listCusBooking?.totalPage}
+                                    page={(paramSearch?.currentPage ?? 0) + 1}
+                                    defaultPage={1}
+                                    onChange={(e, value) =>
+                                        setParamSearch({
+                                            ...paramSearch,
+                                            currentPage: value
+                                        })
+                                    }
+                                />
+                            </Stack>
+                        </Grid>
+                    </Grid>
+                </>
+            )}
         </>
     );
 };
