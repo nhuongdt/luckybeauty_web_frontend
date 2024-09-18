@@ -432,3 +432,21 @@ body .font-normal {
 font-size: 17px;
 font-weight: 500;
 }
+
+.grid-table{
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+}
+.grid-table.grid-table-header{
+   text-align: center;
+}
+.grid-table.grid-table-header p{
+   font-weight: 500;
+}
+.grid-table.grid-content .MuiGrid-item{
+    border-right: 1px solid #ccc;
+}
+.grid-table.grid-content .MuiGrid-item p{
+    padding-left: 8px;
+    padding-right: 8px;
+}
