@@ -10,12 +10,15 @@ import {
     Radio,
     TextField,
     IconButton,
-    CircularProgress
+    CircularProgress,
+    Divider
 } from '@mui/material';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import HorizontalRuleOutlinedIcon from '@mui/icons-material/HorizontalRuleOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
 import { useEffect, useRef, useState } from 'react';
 import GroupProductService from '../../../services/product/GroupProductService';
 import {
@@ -57,6 +60,8 @@ import { dbDexie } from '../../../lib/dexie/dexieDB';
 import CheckinService from '../../../services/check_in/CheckinService';
 import { KHCheckInDto } from '../../../services/check_in/CheckinDto';
 import TrangThaiBooking from '../../../enum/TrangThaiBooking';
+import ModalSuDungGDV from '../../goi_dich_vu/modal_sudung_gdv';
+import ChiTietSuDungGDVDto from '../../../services/ban_hang/ChiTietSuDungGDVDto';
 
 export type IPropsPageThuNgan = {
     txtSearch: string;
@@ -85,7 +90,10 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     const expandSearchCus = Boolean(anchorDropdownCustomer);
 
     const [isSavingHoaDon, setIsSavingHoaDon] = useState(false);
+    const [customerHasGDV, setCustomerHasGDV] = useState(false);
     const [isThanhToanTienMat, setIsThanhToanTienMat] = useState(true);
+    const [isShowModalSuDungGDV, setIsShowModalSuDungGDV] = useState(false);
+
     const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
     const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
@@ -167,7 +175,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     };
 
     const InitData_forHoaDon = async (idKhachHang: string, idChiNhanh: string, idCheckIn: string) => {
-        console.log('idKhachHang', idKhachHang, 'idChiNhanh ', idChiNhanh, 'idCheckIn ', idCheckIn);
         const hdCache = await dbDexie.hoaDon.where('idCheckIn').equals(idCheckIn).toArray();
         if (hdCache?.length > 0) {
             setHoaDon({
@@ -177,6 +184,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             onSetActiveTabLoaiHoaDon(hdCache[0]?.idLoaiChungTu ?? LoaiChungTu.HOA_DON_BAN_LE);
         } else {
             onSetActiveTabLoaiHoaDon(LoaiChungTu.HOA_DON_BAN_LE);
+            console.log('idKhachHang', idKhachHang, 'idhoadon ', hoadon?.id, 'idCheckIn ', idCheckIn);
 
             setHoaDon({
                 ...hoadon,
@@ -186,14 +194,17 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 idCheckIn: idCheckIn
             });
             // add to cache if not exists
-            const dataHD: PageHoaDonDto = {
-                ...hoadon,
-                idKhachHang: idKhachHang,
-                idChiNhanh: idChiNhanh,
-                idLoaiChungTu: LoaiChungTu.HOA_DON_BAN_LE,
-                idCheckIn: idCheckIn
-            };
-            await dbDexie.hoaDon.add(dataHD);
+            const hdExist = await dbDexie.hoaDon.where('id').equals(hoadon?.id).toArray();
+            if (hdExist?.length == 0) {
+                const dataHD: PageHoaDonDto = {
+                    ...hoadon,
+                    idKhachHang: idKhachHang,
+                    idChiNhanh: idChiNhanh,
+                    idLoaiChungTu: LoaiChungTu.HOA_DON_BAN_LE,
+                    idCheckIn: idCheckIn
+                };
+                await dbDexie.hoaDon.add(dataHD);
+            }
         }
     };
 
@@ -203,7 +214,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         await dbDexie.hoaDon
             .where('id')
             .equals(hoadon?.id)
-            .modify((o) => (o.idLoaiChungTu = loaiHoaDon));
+            .modify((o: PageHoaDonDto) => (o.idLoaiChungTu = loaiHoaDon));
     };
 
     useEffect(() => {
@@ -222,6 +233,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
 
     useEffect(() => {
         GetInforCustomer_byId(customerIdChosed);
+        CheckCustomer_hasGDV(customerIdChosed);
     }, [customerIdChosed]);
 
     // useEffect(() => {
@@ -244,12 +256,96 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         return (item?.tienThue ?? 0) * item.soLuong + prevValue;
     }, 0);
 
+    const showModalSuDungGDV = async () => {
+        setIsShowModalSuDungGDV(true);
+    };
+
+    const GDV_CheckSuDungQuaBuoi = (lstChosed: ChiTietSuDungGDVDto[]) => {
+        let tenDV = '';
+        for (let index = 0; index < lstChosed.length; index++) {
+            const element = lstChosed[index];
+            // check exist cthd
+            const itemCTHD = hoaDonChiTiet?.filter(
+                (x) => x.idDonViQuyDoi === element?.idDonViQuyDoi && x.idChiTietHoaDon === element?.idChiTietHoaDon
+            );
+            if (itemCTHD?.length > 0) {
+                if (itemCTHD[0]?.soLuong + 1 > element?.soLuongConLai) {
+                    tenDV += element?.tenHangHoa + ', ';
+                }
+            }
+        }
+        if (!utils.checkNull(tenDV)) {
+            setObjAlert({
+                ...objAlert,
+                show: true,
+                type: 2,
+                mes: `Dịch vụ ${utils.Remove_LastComma(tenDV)} vượt quá số buổi còn lại`
+            });
+            return false;
+        }
+        return true;
+    };
+    const AgreeSuDungGDV = async (type: number, lstChosed?: ChiTietSuDungGDVDto[]) => {
+        setIsShowModalSuDungGDV(false);
+        if (lstChosed) {
+            const checkSD = GDV_CheckSuDungQuaBuoi(lstChosed);
+            if (!checkSD) {
+                return;
+            }
+            // remove ctold if same & add again
+            const cthdRemove: PageHoaDonChiTietDto[] = [];
+            const arrChosed: PageHoaDonChiTietDto[] = [];
+            for (let index = 0; index < lstChosed.length; index++) {
+                const element = lstChosed[index];
+                // check exist cthd
+                const itemCTHD = hoaDonChiTiet?.filter(
+                    (x) => x.idDonViQuyDoi === element?.idDonViQuyDoi && x?.idChiTietHoaDon === element?.idChiTietHoaDon
+                );
+                if (itemCTHD?.length > 0) {
+                    // tang soluong
+                    const newCT = { ...itemCTHD[0] };
+                    newCT.soLuong = newCT.soLuong + 1;
+                    arrChosed.push(newCT);
+
+                    cthdRemove.push(itemCTHD[0]);
+                } else {
+                    // add new
+                    const newCT = new PageHoaDonChiTietDto({
+                        id: Guid.create().toString(),
+                        soLuong: 1,
+                        maHangHoa: element?.maHangHoa,
+                        tenHangHoa: element?.tenHangHoa,
+                        idDonViQuyDoi: element?.idDonViQuyDoi,
+                        idHangHoa: element?.idHangHoa,
+                        idNhomHangHoa: element?.idNhomHangHoa
+                    });
+                    newCT.idChiTietHoaDon = element?.idChiTietHoaDon;
+                    newCT.soLuongConLai = element?.soLuongConLai ?? 0;
+                    newCT.donGiaTruocCK = element?.donGiaTruocCK ?? 0;
+                    newCT.tienChietKhau = element?.tienChietKhau ?? 0;
+                    // sử dụng gdv: thành tiền = 0
+                    newCT.thanhTienTruocCK = 0;
+                    newCT.thanhTienSauCK = 0;
+                    newCT.thanhTienSauVAT = 0;
+                    arrChosed.push(newCT);
+                }
+            }
+            const arrIdCTHDRemove = cthdRemove?.map((x) => {
+                return x.id;
+            });
+            const arrCT_afterRemove = hoaDonChiTiet?.filter((x) => !arrIdCTHDRemove.includes(x.id));
+            const lstCTHDLast = [...arrChosed, ...(arrCT_afterRemove ?? [])];
+            setHoaDonChiTiet([...lstCTHDLast]);
+
+            await UpdateCTHD_toCache([...lstCTHDLast]);
+        }
+    };
+
     useEffect(() => {
         if (firstLoad.current) {
             firstLoad.current = false;
             return;
         }
-        console.log('changeCTHD ', idCheckIn);
         // change cthd --> update hoadon
         const sumThanhTienSauCK = cthd_SumThanhTienTruocCK - cthd_SumTienChietKhau;
         const sumThanhTienSauVAT = sumThanhTienSauCK - cthd_SumTienThue;
@@ -308,7 +404,9 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             soLuong: 1,
             expanded: false
         });
-        const itemCTHD = hoaDonChiTiet?.filter((x) => x.idDonViQuyDoi === item.idDonViQuyDoi);
+        const itemCTHD = hoaDonChiTiet?.filter(
+            (x) => x.idDonViQuyDoi === item.idDonViQuyDoi && utils.checkNull_OrEmpty(x.idChiTietHoaDon)
+        );
         if (itemCTHD?.length > 0) {
             const slNew = itemCTHD[0].soLuong + 1;
             newCT.id = itemCTHD[0].id;
@@ -328,10 +426,14 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             }
 
             // remove & add again
-            const arr = hoaDonChiTiet?.filter((x) => x.idDonViQuyDoi !== item.idDonViQuyDoi);
-            setHoaDonChiTiet([newCT, ...arr]);
+            const arrConLai = hoaDonChiTiet?.filter(
+                (x) =>
+                    (x.idDonViQuyDoi === item.idDonViQuyDoi && !utils.checkNull_OrEmpty(x.idChiTietHoaDon)) ||
+                    x.idDonViQuyDoi !== item.idDonViQuyDoi
+            );
+            setHoaDonChiTiet([newCT, ...arrConLai]);
 
-            cthdLast = [newCT, ...arr];
+            cthdLast = [newCT, ...arrConLai];
             //UpdateHoaHongDichVu_forNVThucHien(newCT.id, newCT?.thanhTienSauCK ?? 0);
         } else {
             setHoaDonChiTiet([newCT, ...hoaDonChiTiet]);
@@ -396,6 +498,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                     o.idKhachHang = customer?.id?.toString();
                     o.idCheckIn = idCheckin;
                 });
+            setCustomerHasGDV(false);
         }
     };
 
@@ -433,9 +536,17 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 o.idKhachHang = item?.id;
                 o.idCheckIn = idCheckin;
             });
+
+        await CheckCustomer_hasGDV(item?.id ?? '');
     };
 
-    const AgreeChangeRemoveCustomer = async () => {
+    const CheckCustomer_hasGDV = async (customerId: string) => {
+        const existGDV = await HoaDonService.CheckCustomer_hasGDV(customerId);
+        setCustomerHasGDV(existGDV);
+    };
+
+    const AgreeRemoveCustomer = async () => {
+        setCustomerHasGDV(false);
         setConfirmDialog({ ...confirmDialog, show: false });
         setHoaDon({ ...hoadon, idKhachHang: null });
         setCustomerChosed({
@@ -449,19 +560,55 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             .where('id')
             .equals(hoadon?.id)
             .modify((o: PageHoaDonDto) => (o.idKhachHang = null));
+
+        // reset cthd (if using GDV)
+        setHoaDonChiTiet(
+            hoaDonChiTiet?.map((x) => {
+                return {
+                    ...x,
+                    idChiTietHoaDon: null,
+                    soLuongConLai: 0,
+                    thanhTienTruocCK: x.soLuong * (x?.donGiaTruocCK ?? 0),
+                    thanhTienSauCK: x.soLuong * (x?.donGiaSauCK ?? 0),
+                    thanhTienSauVAT: x.soLuong * (x?.donGiaSauVAT ?? 0)
+                };
+            })
+        );
+
+        const arrCT = hoaDonChiTiet?.map((x) => {
+            return {
+                ...x,
+                idChiTietHoaDon: null,
+                soLuongConLai: 0,
+                thanhTienTruocCK: x.soLuong * (x?.donGiaTruocCK ?? 0),
+                thanhTienSauCK: x.soLuong * (x?.donGiaSauCK ?? 0),
+                thanhTienSauVAT: x.soLuong * (x?.donGiaSauVAT ?? 0)
+            };
+        });
+
+        await UpdateCTHD_toCache([...arrCT]);
+    };
+
+    const CheckDangSuDungGDV = () => {
+        const ctSuDung = hoaDonChiTiet?.filter((x) => !utils.checkNull_OrEmpty(x.idChiTietHoaDon));
+        if (ctSuDung?.length > 0) {
+            setConfirmDialog({
+                ...confirmDialog,
+                show: true,
+                mes: 'Đang sử dụng Gói dịch vụ. Bạn có muốn chuyển sang mua mới không?',
+                title: 'Xác nhận chuyển đổi'
+            });
+            return false;
+        }
+        return true;
     };
 
     const RemoveCustomer = async () => {
-        // if (!utils.checkNull_OrEmpty(hoadon?.idCheckIn)) {
-        //     setConfirmDialog({
-        //         ...confirmDialog,
-        //         show: true,
-        //         mes: 'Khách hàng đang check in. Bạn có chắc chắn muốn thay đổi khách hàng không?',
-        //         title: 'Xác nhận hủy'
-        //     });
-        //     return;
-        // }
-        await AgreeChangeRemoveCustomer();
+        const check = CheckDangSuDungGDV();
+        if (!check) {
+            return;
+        }
+        await onClickConfirmDelete();
     };
 
     const showModalAddCustomer = () => {
@@ -496,7 +643,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         const idCheckinDelete = hoadon?.idCheckIn ?? Guid.EMPTY;
         await CheckinService.UpdateTrangThaiCheckin(idCheckinDelete, TrangThaiCheckin.DELETED);
         await CheckinService.UpdateTrangThaiBooking_byIdCheckIn(idCheckinDelete, TrangThaiBooking.Confirm);
-        await AgreeChangeRemoveCustomer();
+        await AgreeRemoveCustomer();
     };
 
     const checkSaveInvoice = async () => {
@@ -563,6 +710,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     const ResetState_AfterSave = async () => {
         setIsSavingHoaDon(false);
         setIsThanhToanTienMat(true);
+        setCustomerHasGDV(false);
 
         setHoaDonChiTiet([]);
         const newHD = new PageHoaDonDto({
@@ -585,6 +733,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
 
         await dbDexie.hoaDon.where('id').equals(hoadon?.id).delete();
         await dbDexie.hoaDon.add(newHD); // alway add newHD with KhachLe after save
+        onSetActiveTabLoaiHoaDon(LoaiChungTu.HOA_DON_BAN_LE);
     };
 
     const saveDiaryHoaDon = async (maHoaDon: string, ngaylapHoaDonDB: string) => {
@@ -677,7 +826,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
 
             await saveDiaryHoaDon(hoadonDB?.maHoaDon, hoadonDB?.ngayLapHoaDon);
 
-            // await savePhieuThu(hoadonDB);
             await CheckinService.UpdateTrangThaiCheckin(hoadon?.idCheckIn, TrangThaiCheckin.COMPLETED);
             await CheckinService.Update_IdHoaDon_toCheckInHoaDon(hoadon?.idCheckIn, hoadonDB.id);
 
@@ -721,6 +869,12 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 onOk={changeCustomer_fromModalAdd}
                 title="Thêm mới khách hàng"
                 formRef={newCus}
+            />
+            <ModalSuDungGDV
+                isShowModal={isShowModalSuDungGDV}
+                idUpdate={customerChosed?.id}
+                onClose={() => setIsShowModalSuDungGDV(false)}
+                onOK={AgreeSuDungGDV}
             />
             <Grid container minHeight={'86vh'} maxHeight={'86vh'}>
                 {!isThanhToanTienMat ? (
@@ -871,9 +1025,20 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                                 )}
                                             </Stack>
 
-                                            <Typography color={'#ccc'} variant="caption">
-                                                {customerChosed?.soDienThoai}
-                                            </Typography>
+                                            <Stack direction={'row'} spacing={2} alignItems={'center'}>
+                                                <Typography color={'#ccc'} variant="caption">
+                                                    {customerChosed?.soDienThoai}
+                                                </Typography>
+                                                {customerHasGDV && (
+                                                    <AutoStoriesOutlinedIcon
+                                                        color="secondary"
+                                                        onClick={(event) => {
+                                                            event.stopPropagation();
+                                                            showModalSuDungGDV();
+                                                        }}
+                                                    />
+                                                )}
+                                            </Stack>
                                         </Stack>
                                     </Stack>
 
@@ -935,16 +1100,30 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                                                 spacing={1}
                                                                 flex={1}
                                                                 justifyContent={'end'}>
-                                                                <Typography fontWeight={500}>
-                                                                    {cthd?.soLuong}
-                                                                </Typography>
+                                                                <Stack>
+                                                                    <Typography fontWeight={500}>
+                                                                        {cthd?.soLuong}
+                                                                    </Typography>
+                                                                    {(cthd?.soLuongConLai ?? 0) > 0 && (
+                                                                        <Typography
+                                                                            fontWeight={500}
+                                                                            variant="body2"
+                                                                            margin={'-4px'}>
+                                                                            <span>{' /'}</span>
+                                                                            <span>{cthd?.soLuongConLai}</span>
+                                                                        </Typography>
+                                                                    )}
+                                                                </Stack>
+
                                                                 <Typography>x</Typography>
                                                             </Stack>
                                                             <Typography
                                                                 className="text-cursor"
                                                                 flex={3}
                                                                 textAlign={'left'}>
-                                                                {Intl.NumberFormat('vi-VN').format(cthd?.giaBan ?? 0)}
+                                                                {Intl.NumberFormat('vi-VN').format(
+                                                                    cthd?.donGiaTruocCK ?? 0
+                                                                )}
                                                             </Typography>
                                                         </Stack>
                                                     </Grid>

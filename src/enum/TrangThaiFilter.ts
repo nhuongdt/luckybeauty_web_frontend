@@ -5,3 +5,9 @@ enum TrangThaiFilter {
     ALL = 3
 }
 export default TrangThaiFilter;
+
+export enum RdoTrangThaiFilter {
+    TAT_CA = 2,
+    CO = 1,
+    KHONG = 0
+}
