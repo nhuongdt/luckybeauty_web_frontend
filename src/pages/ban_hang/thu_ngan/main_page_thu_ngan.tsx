@@ -1,4 +1,4 @@
-import { Button, IconButton, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { Grid, Button, IconButton, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
@@ -78,7 +78,7 @@ export const ThuNganSetting = ({ idChosed, handleChoseChiNhanh }: IPropDropdownC
     };
 
     return (
-        <Stack direction={'row'} alignItems={'center'} spacing={1}>
+        <Stack direction={'row'} alignItems={'center'} spacing={1} display={{ xs: 'none', lg: 'flex', md: 'flex' }}>
             <LocationOnOutlinedIcon />
             <Stack>
                 <Typography variant="body1" onClick={handleClick}>
@@ -157,90 +157,110 @@ export default function MainPageThuNgan() {
         setPageThuNgan_idChecking(idCheckIn ?? '');
     };
     return (
-        <Stack className="main_page_thu_ngan" padding={2} justifyContent={'space-between'} position={'relative'}>
+        <Grid container className="main_page_thu_ngan" padding={2} position={'relative'}>
             <ModalFilterNhomHangHoa
                 isShow={isShowModalFilterNhomHangHoa}
                 onClose={() => setIsShowModalFilterNhomHangHoa(false)}
                 onAgree={onAgreeFilterNhomHang}
             />
 
-            <Stack
-                direction={{ xs: 'column', sm: 'column', md: 'row', lg: 'row' }}
-                justifyContent={'space-between'}
-                spacing={{ xs: 2, sm: 2, lg: 3 }}>
-                <Stack direction={'row'} alignItems={'center'} spacing={2} flex={2}>
-                    <HomeOutlinedIcon
-                        titleAccess="Đi đến trang chủ"
-                        onClick={() => navigation('/home')}
-                        sx={{ color: 'var(--color-main)', '&:hover': { cursor: 'pointer' } }}
-                    />
-                    <Stack direction={'row'} spacing={2} alignItems={'center'}>
-                        <Tabs value={tabMainActive} onChange={changeActiveTabMain} aria-label="nav tabs example">
-                            <Tab label="Check in" value={TabMain.CHECK_IN} />
-                            <Tab label="Thu ngân" value={TabMain.THU_NGAN} />
-                        </Tabs>
-                    </Stack>
-                </Stack>
-                {tabMainActive != TabMain.THU_NGAN ? (
-                    <Stack flex={{ sm: 2, lg: 4, xs: 2, md: 1 }} direction={'row'} spacing={1}>
-                        <Stack flex={5}>
+            <Grid item lg={12} width={'100%'}>
+                <Grid container spacing={2}>
+                    <Grid item lg={tabMainActive == TabMain.THU_NGAN ? 2 : 3} md={4}>
+                        <Stack direction={'row'} alignItems={'center'} spacing={2}>
+                            <HomeOutlinedIcon
+                                titleAccess="Đi đến trang chủ"
+                                onClick={() => navigation('/home')}
+                                sx={{ color: 'var(--color-main)', '&:hover': { cursor: 'pointer' } }}
+                            />
+                            <Stack direction={'row'} spacing={2} alignItems={'center'}>
+                                <Tabs
+                                    value={tabMainActive}
+                                    onChange={changeActiveTabMain}
+                                    aria-label="nav tabs example">
+                                    <Tab label="Check in" value={TabMain.CHECK_IN} />
+                                    <Tab label="Thu ngân" value={TabMain.THU_NGAN} />
+                                </Tabs>
+                            </Stack>
+                        </Stack>
+                    </Grid>
+                    {tabMainActive != TabMain.THU_NGAN ? (
+                        <Grid item lg={6} md={7} xs={12}>
+                            <Grid container spacing={1}>
+                                <Grid item lg={8} md={7} sm={8}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        placeholder="Tìm kiếm khách hàng"
+                                        onChange={(e) => setTextSearch(e.target.value)}
+                                        InputProps={{ startAdornment: <SearchIcon /> }}
+                                    />
+                                </Grid>
+                                <Grid
+                                    item
+                                    lg={4}
+                                    md={5}
+                                    sm={4}
+                                    display={{ xs: 'none', lg: 'flex', md: 'flex', sm: 'flex' }}>
+                                    <Button
+                                        variant="outlined"
+                                        color="info"
+                                        fullWidth
+                                        startIcon={<AddOutlinedIcon />}
+                                        onClick={() => setIsShowModalAdd(true)}>
+                                        Thêm khách check in
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    ) : (
+                        <Grid item lg={5} md={8} xs={12}>
                             <TextField
                                 size="small"
-                                placeholder="Tìm kiếm khách hàng"
+                                placeholder="Tìm kiếm dịch vụ"
+                                fullWidth
                                 onChange={(e) => setTextSearch(e.target.value)}
-                                InputProps={{ startAdornment: <SearchIcon /> }}
+                                InputProps={{
+                                    startAdornment: <SearchIcon />,
+                                    endAdornment: (
+                                        <IconButton
+                                            sx={{ cursor: 'pointer' }}
+                                            aria-label="Lọc sản phẩm theo nhóm"
+                                            title="Lọc sản phẩm theo nhóm"
+                                            onClick={() => setIsShowModalFilterNhomHangHoa(true)}>
+                                            <FilterAltOutlinedIcon />
+                                        </IconButton>
+                                    )
+                                }}
                             />
-                        </Stack>
-                        <Stack flex={2}>
-                            <Button
-                                variant="outlined"
-                                color="info"
-                                startIcon={<AddOutlinedIcon />}
-                                onClick={() => setIsShowModalAdd(true)}>
-                                Thêm khách check in
-                            </Button>
-                        </Stack>
-                    </Stack>
-                ) : (
-                    <Stack flex={{ sm: 2, lg: 5, xs: 2, md: 1 }}>
-                        <TextField
-                            size="small"
-                            placeholder="Tìm kiếm dịch vụ"
-                            onChange={(e) => setTextSearch(e.target.value)}
-                            InputProps={{
-                                startAdornment: <SearchIcon />,
-                                endAdornment: (
-                                    <IconButton
-                                        sx={{ cursor: 'pointer' }}
-                                        aria-label="Lọc sản phẩm theo nhóm"
-                                        title="Lọc sản phẩm theo nhóm"
-                                        onClick={() => setIsShowModalFilterNhomHangHoa(true)}>
-                                        <FilterAltOutlinedIcon />
-                                    </IconButton>
-                                )
-                            }}
-                        />
-                    </Stack>
-                )}
-                <Stack flex={tabMainActive == TabMain.THU_NGAN ? 5 : 2}>
-                    <Stack
-                        direction={'row'}
-                        alignItems={'center'}
-                        justifyContent={tabMainActive == TabMain.THU_NGAN ? 'space-between' : 'end'}>
-                        {tabMainActive == TabMain.THU_NGAN && (
-                            <Tabs
-                                value={pageThuNgan_LoaiHoaDon}
-                                onChange={changeTabHoaDon}
-                                aria-label="nav tabs example">
-                                <Tab label="Hóa đơn" value={LoaiChungTu.HOA_DON_BAN_LE} />
-                                <Tab label="Gói dịch vụ" value={LoaiChungTu.GOI_DICH_VU} />
-                            </Tabs>
-                        )}
+                        </Grid>
+                    )}
+                    <Grid item md={6} sm={5} sx={{ display: { md: '', sm: '', lg: 'none' } }}></Grid>
+                    <Grid
+                        item
+                        lg={tabMainActive == TabMain.THU_NGAN ? 5 : 3}
+                        md={tabMainActive == TabMain.THU_NGAN ? 6 : 12}
+                        sm={tabMainActive == TabMain.THU_NGAN ? 7 : 12}
+                        justifyContent={'end'}>
+                        <Stack
+                            direction={'row'}
+                            alignItems={'center'}
+                            justifyContent={tabMainActive == TabMain.THU_NGAN ? 'space-between' : 'end'}>
+                            {tabMainActive == TabMain.THU_NGAN && (
+                                <Tabs
+                                    value={pageThuNgan_LoaiHoaDon}
+                                    onChange={changeTabHoaDon}
+                                    aria-label="nav tabs example">
+                                    <Tab label="Hóa đơn" value={LoaiChungTu.HOA_DON_BAN_LE} />
+                                    <Tab label="Gói dịch vụ" value={LoaiChungTu.GOI_DICH_VU} />
+                                </Tabs>
+                            )}
 
-                        <ThuNganSetting idChosed={idChiNhanhChosed} handleChoseChiNhanh={changeChiNhanh} />
-                    </Stack>
-                </Stack>
-            </Stack>
+                            <ThuNganSetting idChosed={idChiNhanhChosed} handleChoseChiNhanh={changeChiNhanh} />
+                        </Stack>
+                    </Grid>
+                </Grid>
+            </Grid>
 
             {tabMainActive !== TabMain.THU_NGAN ? (
                 <TabPanel
@@ -268,6 +288,6 @@ export default function MainPageThuNgan() {
                     />
                 </TabPanel>
             )}
-        </Stack>
+        </Grid>
     );
 }

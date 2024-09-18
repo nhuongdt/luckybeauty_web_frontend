@@ -1,12 +1,11 @@
 import { Avatar, Badge, Button, debounce, Grid, InputLabel, Stack, TextField, Typography } from '@mui/material';
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import React, { useEffect, useRef, useState } from 'react';
 import { LoaiChungTu, TrangThaiCheckin } from '../../lib/appconst';
 import Loading from '../../components/Loading';
-import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
+import { PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import CheckinService from '../../services/check_in/CheckinService';
 import { PagedRequestDto } from '../../services/dto/pagedRequestDto';
 import ModalAddCustomerCheckIn from './modal_add_cus_checkin';
@@ -14,9 +13,8 @@ import PageEmpty from '../../components/PageEmpty';
 import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import TrangThaiBooking from '../../enum/TrangThaiBooking';
 import { dbDexie } from '../../lib/dexie/dexieDB';
-import DialogButtonClose from '../../components/Dialog/ButtonClose';
 import { Guid } from 'guid-typescript';
-import { format } from 'date-fns';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 
 export type IPropsTabKhachHangCheckIn = {
     txtSearch: string;
@@ -81,8 +79,14 @@ export default function TabKhachHangChecking(props: IPropsTabKhachHangCheckIn) {
         onClickAddHoaDon(cusItem?.idKhachHang ?? '', cusItem?.idCheckIn);
     };
 
-    const onRemoveCustomerChecking = (idCheckIn: string) => {
-        //
+    const onRemoveCustomerChecking = (item: PageKhachHangCheckInDto) => {
+        setIdCheckinDelete(item?.idCheckIn);
+        setinforDelete({
+            ...inforDelete,
+            show: true,
+            title: 'Xác nhận hủy',
+            mes: 'Bạn có chắc chắn muốn hủy khách hàng ' + item?.tenKhachHang + ' đang check-in không'
+        });
     };
 
     const deleteCusChecking = async () => {
@@ -103,6 +107,7 @@ export default function TabKhachHangChecking(props: IPropsTabKhachHangCheckIn) {
         if (dataCheckIn_Dexie.length > 0) {
             await dbDexie.hoaDon.delete(dataCheckIn_Dexie[0].id);
         }
+        setIdCheckinDelete('');
     };
 
     const saveCheckInOK = async (typeAction: number, dataCheckIn: PageKhachHangCheckInDto | undefined) => {
@@ -141,6 +146,13 @@ export default function TabKhachHangChecking(props: IPropsTabKhachHangCheckIn) {
                 onOK={saveCheckInOK}
                 onClose={onCloseModalAddCheckin}
             />
+            <ConfirmDelete
+                isShow={inforDelete?.show}
+                title={inforDelete?.title}
+                mes={inforDelete?.mes}
+                onOk={deleteCusChecking}
+                onCancel={() => setinforDelete({ ...inforDelete, show: false })}
+            />
             {(lstCustomerChecking?.length ?? 0) == 0 ? (
                 <PageEmpty
                     text="Không có khách hàng check in"
@@ -150,7 +162,7 @@ export default function TabKhachHangChecking(props: IPropsTabKhachHangCheckIn) {
             ) : (
                 <Grid container spacing={2.5}>
                     {lstCustomerChecking?.map((cusItem, index) => (
-                        <Grid item key={index} xs={12} sm={4} md={4} lg={3}>
+                        <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
                             <Stack
                                 padding={2}
                                 position={'relative'}
@@ -166,7 +178,7 @@ export default function TabKhachHangChecking(props: IPropsTabKhachHangCheckIn) {
                                 }}>
                                 <CloseOutlinedIcon
                                     sx={{ position: 'absolute', width: 25, top: 4, right: 4 }}
-                                    onClick={() => onRemoveCustomerChecking(cusItem?.idCheckIn)}
+                                    onClick={() => onRemoveCustomerChecking(cusItem)}
                                 />
                                 <Stack
                                     justifyContent={'space-between'}

@@ -62,6 +62,7 @@ import { KHCheckInDto } from '../../../services/check_in/CheckinDto';
 import TrangThaiBooking from '../../../enum/TrangThaiBooking';
 import ModalSuDungGDV from '../../goi_dich_vu/modal_sudung_gdv';
 import ChiTietSuDungGDVDto from '../../../services/ban_hang/ChiTietSuDungGDVDto';
+import Loading from '../../../components/Loading';
 
 export type IPropsPageThuNgan = {
     txtSearch: string;
@@ -89,6 +90,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     const [anchorDropdownCustomer, setAnchorDropdownCustomer] = useState<null | HTMLElement>(null);
     const expandSearchCus = Boolean(anchorDropdownCustomer);
 
+    const [isLoadingData, setIsLoadingData] = useState(false);
     const [isSavingHoaDon, setIsSavingHoaDon] = useState(false);
     const [customerHasGDV, setCustomerHasGDV] = useState(false);
     const [isThanhToanTienMat, setIsThanhToanTienMat] = useState(true);
@@ -137,6 +139,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     };
 
     const getListHangHoa_groupbyNhom = async (txtSearch: string) => {
+        setIsLoadingData(true);
         const input = {
             IdNhomHangHoas: [],
             TextSearch: txtSearch,
@@ -146,6 +149,8 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         } as PagedProductSearchDto;
         const data = await ProductService.GetDMHangHoa_groupByNhom(input);
         setListProduct(data);
+
+        setIsLoadingData(false);
     };
 
     const getListHangHoa_groupbyNhom_filterNhom = async (arrIdNhomHang: string[]) => {
@@ -850,6 +855,10 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         }
     };
 
+    if (isLoadingData) {
+        return <Loading />;
+    }
+
     return (
         <>
             <ConfirmDelete
@@ -878,7 +887,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             />
             <Grid container minHeight={'86vh'} maxHeight={'86vh'}>
                 {!isThanhToanTienMat ? (
-                    <Grid item xs={7}>
+                    <Grid item lg={7} md={6} xs={12}>
                         <PaymentsForm
                             tongPhaiTra={hoadon?.tongThanhToan ?? 0}
                             onClose={() => setIsThanhToanTienMat(true)}
@@ -886,7 +895,14 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                         />
                     </Grid>
                 ) : (
-                    <Grid item xs={7} borderRight={'1px solid rgb(224, 228, 235)'}>
+                    <Grid
+                        item
+                        lg={7}
+                        md={6}
+                        xs={12}
+                        sm={5}
+                        borderRight={'1px solid rgb(224, 228, 235)'}
+                        marginTop={{ md: '-64px', sm: '-64px', lg: 0 }}>
                         <Stack spacing={2} overflow={'auto'} maxHeight={'84vh'}>
                             {(nhomHangHoaChosed?.length ?? 0) > 0 && (
                                 <Stack spacing={2}>
@@ -933,7 +949,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                     </Typography>
                                     <Grid container spacing={2} paddingRight={2}>
                                         {nhom?.hangHoas.map((item, index2) => (
-                                            <Grid key={index2} item lg={4}>
+                                            <Grid key={index2} item lg={4} md={6} xs={12} sm={12}>
                                                 <Stack
                                                     padding={2}
                                                     title={item.tenHangHoa}
@@ -971,7 +987,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                     </Grid>
                 )}
 
-                <Grid item xs={5}>
+                <Grid item lg={5} md={6} xs={12} sm={7}>
                     <Stack marginLeft={4} position={'relative'} height={'100%'}>
                         <Stack>
                             <Stack
