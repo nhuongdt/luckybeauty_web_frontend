@@ -31,6 +31,14 @@ export default class HoaDonChiTietDto {
     thanhTienSauCK? = 0;
     thanhTienSauVAT? = 0;
 
+    private _thanhTienTruocCK?: number;
+    // private _donGiaSauCK?: number;
+    private _thanhTienSauCK?: number;
+    // private _donGiaSauVAT?: number;
+    private _thanhTienSauVAT?: number;
+
+    idChiTietHoaDon?: string | null;
+
     nhanVienThucHien?: NhanVienThucHienDto[];
 
     constructor({
@@ -45,7 +53,8 @@ export default class HoaDonChiTietDto {
         ptThue = 0,
         tienThue = 0,
         ghiChu = '',
-        trangThai = 3
+        trangThai = 1,
+        idChiTietHoaDon = null
     }) {
         this.id = id;
         this.idHoaDon = idHoaDon;
@@ -59,12 +68,19 @@ export default class HoaDonChiTietDto {
         this.tienThue = ptThue > 0 ? ((donGiaTruocCK - this.tienChietKhau) * ptThue) / 100 : tienThue;
         this.ghiChu = ghiChu;
         this.trangThai = trangThai;
+        this.idChiTietHoaDon = idChiTietHoaDon;
         this.nhanVienThucHien = [];
 
         Object.defineProperties(this, {
             thanhTienTruocCK: {
                 get() {
-                    return this.soLuong * this.donGiaTruocCK;
+                    if (this._thanhTienTruocCK === undefined) {
+                        return this.soLuong * this.donGiaTruocCK;
+                    }
+                    return this._thanhTienTruocCK;
+                },
+                set(value: number) {
+                    this._thanhTienTruocCK = value;
                 }
             },
             donGiaSauCK: {
@@ -74,10 +90,21 @@ export default class HoaDonChiTietDto {
                     }
                     return this.donGiaTruocCK - (this.tienChietKhau ?? 0);
                 }
+                // set(newVal: number) {
+                //     return newVal;
+                // }
             },
+            // vừa có thể tự động tính toán
+            // nhưng vẫn có thể thay đổi giá trị nếu được gán lại
             thanhTienSauCK: {
                 get() {
-                    return this.soLuong * this.donGiaSauCK;
+                    if (this._thanhTienSauCK === undefined) {
+                        return this.soLuong * this.donGiaSauCK;
+                    }
+                    return this._thanhTienSauCK;
+                },
+                set(value: number) {
+                    this._thanhTienSauCK = value;
                 }
             },
             donGiaSauVAT: {
@@ -87,10 +114,19 @@ export default class HoaDonChiTietDto {
                     }
                     return this.donGiaSauCK - (this.tienThue ?? 0);
                 }
+                // set(newVal: number) {
+                //     return newVal;
+                // }
             },
             thanhTienSauVAT: {
                 get() {
-                    return this.soLuong * this.donGiaSauVAT;
+                    if (this._thanhTienSauVAT === undefined) {
+                        return this.soLuong * this.donGiaSauVAT;
+                    }
+                    return this._thanhTienSauVAT;
+                },
+                set(value: number) {
+                    this._thanhTienSauVAT = value;
                 }
             }
         });
