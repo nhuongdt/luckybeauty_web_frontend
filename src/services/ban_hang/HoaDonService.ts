@@ -7,6 +7,8 @@ import { PagedResultDto } from '../dto/pagedResultDto';
 import utils from '../../utils/utils';
 import { IFileDto } from '../dto/FileDto';
 import HoaDonDto from './HoaDonDto';
+import ChiTietSuDungGDVDto, { GroupChiTietSuDungGDVDto } from './ChiTietSuDungGDVDto';
+import ParamSearchChiTietSuDungGDVDto from './ParamSearchChiTietSuDungGDVDto';
 class HoaDonService {
     CreateHoaDon = async (input: any): Promise<HoaDonDto | null> => {
         if (input.idKhachHang === '' || input.idKhachHang === Guid.EMPTY.toString()) {
@@ -88,6 +90,20 @@ class HoaDonService {
     };
     ExportToExcel = async (input: HoaDonRequestDto): Promise<IFileDto> => {
         const result = await http.post('api/services/app/HoaDon/ExportDanhSach', input);
+        return result.data.result;
+    };
+
+    GetChiTiet_SuDungGDV_ofCustomer = async (
+        param: ParamSearchChiTietSuDungGDVDto
+    ): Promise<GroupChiTietSuDungGDVDto[]> => {
+        const result = await http.post('api/services/app/HoaDon/GetChiTiet_SuDungGDV_ofCustomer', param);
+        return result.data.result;
+    };
+    CheckCustomer_hasGDV = async (customerId: string): Promise<boolean> => {
+        if (utils.checkNull_OrEmpty(customerId)) {
+            return false;
+        }
+        const result = await http.get(`api/services/app/HoaDon/CheckCustomer_hasGDV?customerId=${customerId}`);
         return result.data.result;
     };
 }
