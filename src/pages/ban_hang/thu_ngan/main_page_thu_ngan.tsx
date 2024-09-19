@@ -118,6 +118,7 @@ export default function MainPageThuNgan() {
     const changeActiveTabMain = (event: React.SyntheticEvent, tabNew: number) => {
         setTabMainActive(tabNew);
         setIsShowModalAdd(false);
+        setArrIdNhomHangFilter([]);
     };
     const changeTabHoaDon = (event: React.SyntheticEvent, tabNew: number) => {
         setPageThuNgan_LoaiHoaDon(tabNew);

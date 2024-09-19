@@ -27,6 +27,10 @@ const ModalFilterNhomHangHoa = (props: IPropModalFilter) => {
     };
 
     useEffect(() => {
+        setArrIdChosed([]);
+    }, [isShow]);
+
+    useEffect(() => {
         getTreeNhomHangHoa();
     }, []);
 

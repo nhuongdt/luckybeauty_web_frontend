@@ -133,15 +133,20 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
 
     const BoChon1NhomHang = (idNhomHang: string) => {
         setArrIdNhomHangChosed(arrIdNhomHangChosed?.filter((x) => x !== idNhomHang));
+        const arrIdNhom = arrIdNhomHangChosed?.filter((x) => x !== idNhomHang);
+        GetListNhomHangHoa_byId(arrIdNhom ?? []);
+        getListHangHoa_groupbyNhom(txtSearch, arrIdNhom ?? []);
     };
     const BoChonAllNhomHang = () => {
         setArrIdNhomHangChosed([]);
+        GetListNhomHangHoa_byId([]);
+        getListHangHoa_groupbyNhom(txtSearch, []);
     };
 
-    const getListHangHoa_groupbyNhom = async (txtSearch: string) => {
+    const getListHangHoa_groupbyNhom = async (txtSearch: string, arrIdNhomHang: string[] = []) => {
         setIsLoadingData(true);
         const input = {
-            IdNhomHangHoas: [],
+            IdNhomHangHoas: arrIdNhomHang,
             TextSearch: txtSearch,
             IdLoaiHangHoa: 0, // all
             CurrentPage: 0,
@@ -153,26 +158,14 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         setIsLoadingData(false);
     };
 
-    const getListHangHoa_groupbyNhom_filterNhom = async (arrIdNhomHang: string[]) => {
-        const input = {
-            IdNhomHangHoas: arrIdNhomHang,
-            TextSearch: txtSearch,
-            IdLoaiHangHoa: 0, // all
-            CurrentPage: 0,
-            PageSize: 50
-        } as PagedProductSearchDto;
-        const data = await ProductService.GetDMHangHoa_groupByNhom(input);
-        setListProduct(data);
-    };
-
     useEffect(() => {
         setArrIdNhomHangChosed(arrIdNhomHangFilter ?? []);
-    }, [arrIdNhomHangFilter]);
 
-    useEffect(() => {
-        GetListNhomHangHoa_byId(arrIdNhomHangChosed ?? []);
-        getListHangHoa_groupbyNhom_filterNhom(arrIdNhomHangChosed ?? []);
-    }, [arrIdNhomHangChosed]);
+        if ((arrIdNhomHangFilter?.length ?? 0) > 0) {
+            getListHangHoa_groupbyNhom(txtSearch, arrIdNhomHangFilter ?? []);
+            GetListNhomHangHoa_byId(arrIdNhomHangFilter ?? []);
+        }
+    }, [arrIdNhomHangFilter]);
 
     const GetInforCustomer_byId = async (cusId: string) => {
         const customer = await khachHangService.getKhachHang(cusId);
@@ -189,7 +182,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             onSetActiveTabLoaiHoaDon(hdCache[0]?.idLoaiChungTu ?? LoaiChungTu.HOA_DON_BAN_LE);
         } else {
             onSetActiveTabLoaiHoaDon(LoaiChungTu.HOA_DON_BAN_LE);
-            console.log('idKhachHang', idKhachHang, 'idhoadon ', hoadon?.id, 'idCheckIn ', idCheckIn);
 
             setHoaDon({
                 ...hoadon,
@@ -224,6 +216,17 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
 
     useEffect(() => {
         // firstload: auto set loaiHoadon = HOA_DON_BAN_LE
+        console.log(
+            'idKhachHang',
+            customerIdChosed,
+            'idChiNhanhChosed',
+            idChiNhanhChosed,
+            ' idhoadon ',
+            hoadon?.id,
+            'idCheckIn ',
+            idCheckIn
+        );
+
         InitData_forHoaDon(customerIdChosed, idChiNhanhChosed, idCheckIn ?? Guid.EMPTY);
     }, [idChiNhanhChosed, idCheckIn, customerIdChosed]);
 
@@ -240,12 +243,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         GetInforCustomer_byId(customerIdChosed);
         CheckCustomer_hasGDV(customerIdChosed);
     }, [customerIdChosed]);
-
-    // useEffect(() => {
-    //     // change at main_page
-    //     console.log('changeloaiHD ', loaiHoaDon, idChiNhanhChosed);
-    //     setHoaDon({ ...hoadon, idChiNhanh: idChiNhanhChosed, idLoaiChungTu: loaiHoaDon as number });
-    // }, [loaiHoaDon, idChiNhanhChosed]);
 
     const PageLoad = () => {
         //
@@ -383,7 +380,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     // only used when change textsearch
     const debounceSearchHangHoa = useRef(
         debounce(async (txtSearch: string) => {
-            getListHangHoa_groupbyNhom(txtSearch);
+            getListHangHoa_groupbyNhom(txtSearch, arrIdNhomHangChosed);
         }, 500)
     ).current;
 
