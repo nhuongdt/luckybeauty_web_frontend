@@ -11,12 +11,11 @@ export default function ModalSearchProduct({ isShow, handlClose, handleChoseProd
     const firstLoad = useRef(true);
     const [listProduct, setListProduct] = useState<IHangHoaGroupTheoNhomDto[]>([]);
 
-    // todo (if chose NhomHang)
-    const getListHangHoa_groupbyNhom = async () => {
+    const getListHangHoa_groupbyNhom = async (txtSearch: string) => {
         const input = {
-            IdNhomHangHoas: '',
-            TextSearch: '',
-            IdLoaiHangHoa: '',
+            IdNhomHangHoas: [],
+            TextSearch: txtSearch,
+            IdLoaiHangHoa: 0, // all
             CurrentPage: 0,
             PageSize: 50
         } as PagedProductSearchDto;
@@ -25,29 +24,24 @@ export default function ModalSearchProduct({ isShow, handlClose, handleChoseProd
     };
 
     useEffect(() => {
-        getListHangHoa_groupbyNhom();
-    }, []);
+        if (isShow) {
+            getListHangHoa_groupbyNhom('');
+        }
+    }, [isShow]);
 
     // only used when change textseach
     const debounceDropDown = useRef(
-        debounce(async (input: any) => {
-            const data = await ProductService.GetDMHangHoa_groupByNhom(input);
-            setListProduct(data);
+        debounce(async (txtSearch: string) => {
+            await getListHangHoa_groupbyNhom(txtSearch);
         }, 500)
     ).current;
 
     useEffect(() => {
-        if (isShow) {
-            const input = {
-                IdNhomHangHoas: '',
-                TextSearch: txtSearch,
-                IdLoaiHangHoa: 0,
-                CurrentPage: 0,
-                PageSize: 50
-            };
-
-            debounceDropDown(input);
+        if (firstLoad.current) {
+            firstLoad.current = false;
+            return;
         }
+        debounceDropDown(txtSearch);
     }, [txtSearch]);
 
     return (

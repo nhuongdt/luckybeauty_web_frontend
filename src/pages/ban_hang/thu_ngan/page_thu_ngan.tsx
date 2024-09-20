@@ -11,12 +11,13 @@ import {
     TextField,
     IconButton,
     CircularProgress,
-    Divider
+    Chip
 } from '@mui/material';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import CloseIcon from '@mui/icons-material/Close';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import HorizontalRuleOutlinedIcon from '@mui/icons-material/HorizontalRuleOutlined';
+import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
 import { useEffect, useRef, useState } from 'react';
@@ -43,16 +44,13 @@ import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import CreateOrEditCustomerDialog from '../../customer/components/create-or-edit-customer-modal';
 
 import utils from '../../../utils/utils';
-import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
+import { PropConfirmOKCancel, PropModal } from '../../../utils/PropParentToChild';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import HoaDonService from '../../../services/ban_hang/HoaDonService';
-import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
-import { HINH_THUC_THANH_TOAN, LoaiChungTu, TrangThaiCheckin } from '../../../lib/appconst';
-import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
+import { LoaiChungTu, TrangThaiCheckin } from '../../../lib/appconst';
 import nhatKyHoatDongService from '../../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
 import { CreateNhatKyThaoTacDto } from '../../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
 import { format } from 'date-fns';
-import HoaDonDto from '../../../services/ban_hang/HoaDonDto';
 import MenuWithDataFromDB from '../../../components/Menu/MenuWithData_fromDB';
 import { TypeSearchfromDB } from '../../../enum/TypeSearch_fromDB';
 import { KhachHangDto } from '../../../services/khach-hang/dto/KhachHangDto';
@@ -63,6 +61,9 @@ import TrangThaiBooking from '../../../enum/TrangThaiBooking';
 import ModalSuDungGDV from '../../goi_dich_vu/modal_sudung_gdv';
 import ChiTietSuDungGDVDto from '../../../services/ban_hang/ChiTietSuDungGDVDto';
 import Loading from '../../../components/Loading';
+import ModalEditChiTietGioHang from './modal_edit_chitiet';
+import HoaHongNhanVienDichVu from '../../nhan_vien_thuc_hien/hoa_hong_nhan_vien_dich_vu';
+import NhanVienThucHienDto from '../../../services/nhan_vien_thuc_hien/NhanVienThucHienDto';
 
 export type IPropsPageThuNgan = {
     txtSearch: string;
@@ -95,10 +96,11 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     const [customerHasGDV, setCustomerHasGDV] = useState(false);
     const [isThanhToanTienMat, setIsThanhToanTienMat] = useState(true);
     const [isShowModalSuDungGDV, setIsShowModalSuDungGDV] = useState(false);
-
+    const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
     const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
     const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+    const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(new PropModal({ isShow: false, isNew: true }));
 
     const [arrIdNhomHangChosed, setArrIdNhomHangChosed] = useState<string[]>([]);
     const [nhomHangHoaChosed, setNhomHangHoaChosed] = useState<ModelNhomHangHoa[]>([]);
@@ -118,6 +120,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
         new PageHoaDonChiTietDto({ id: '', expanded: false })
     );
+    const [idCTHDChosing, setIdCTHDChosing] = useState('');
 
     const [confirmDialog, setConfirmDialog] = useState<PropConfirmOKCancel>({
         show: false,
@@ -216,16 +219,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
 
     useEffect(() => {
         // firstload: auto set loaiHoadon = HOA_DON_BAN_LE
-        console.log(
-            'idKhachHang',
-            customerIdChosed,
-            'idChiNhanhChosed',
-            idChiNhanhChosed,
-            ' idhoadon ',
-            hoadon?.id,
-            'idCheckIn ',
-            idCheckIn
-        );
 
         InitData_forHoaDon(customerIdChosed, idChiNhanhChosed, idCheckIn ?? Guid.EMPTY);
     }, [idChiNhanhChosed, idCheckIn, customerIdChosed]);
@@ -427,6 +420,21 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 newCT.tienThue = itemCTHD[0]?.tienChietKhau ?? 0;
             }
 
+            newCT.nhanVienThucHien = newCT.nhanVienThucHien?.map((nv) => {
+                if (nv.ptChietKhau > 0) {
+                    return {
+                        ...nv,
+                        tienChietKhau: (nv.ptChietKhau * (newCT?.thanhTienSauCK ?? 0)) / 100
+                    };
+                } else {
+                    return {
+                        ...nv,
+                        // tienCK/soluongOld * slNew
+                        tienChietKhau: (nv.tienChietKhau / itemCTHD[0].soLuong) * newCT.soLuong
+                    };
+                }
+            });
+
             // remove & add again
             const arrConLai = hoaDonChiTiet?.filter(
                 (x) =>
@@ -436,7 +444,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             setHoaDonChiTiet([newCT, ...arrConLai]);
 
             cthdLast = [newCT, ...arrConLai];
-            //UpdateHoaHongDichVu_forNVThucHien(newCT.id, newCT?.thanhTienSauCK ?? 0);
         } else {
             setHoaDonChiTiet([newCT, ...hoaDonChiTiet]);
             cthdLast = [newCT, ...hoaDonChiTiet];
@@ -449,33 +456,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             .where('id')
             .equals(hoadon?.id)
             .modify((o: PageHoaDonDto) => (o.hoaDonChiTiet = cthdNew));
-    };
-
-    const UpdateHoaHongDichVu_forNVThucHien = (idCTHD: string, thanhTienSauCK: number) => {
-        setHoaDonChiTiet(
-            hoaDonChiTiet.map((x) => {
-                if (x.id === idCTHD) {
-                    return {
-                        ...x,
-                        nhanVienThucHien: x.nhanVienThucHien?.map((nv) => {
-                            if (nv.ptChietKhau > 0) {
-                                return {
-                                    ...nv,
-                                    tienChietKhau: (nv.ptChietKhau * thanhTienSauCK) / 100
-                                };
-                            } else {
-                                return {
-                                    ...nv,
-                                    tienChietKhau: (nv.chietKhauMacDinh ?? 0) * x.soLuong
-                                };
-                            }
-                        })
-                    };
-                } else {
-                    return x;
-                }
-            })
-        );
     };
 
     const changeCustomer_fromModalAdd = async (customer?: KhachHangDto) => {
@@ -647,6 +627,149 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         await CheckinService.UpdateTrangThaiBooking_byIdCheckIn(idCheckinDelete, TrangThaiBooking.Confirm);
         await AgreeRemoveCustomer();
     };
+
+    const showPopNhanVienThucHien = (item: HoaDonChiTietDto) => {
+        setPropNVThucHien((old) => {
+            return { ...old, isShow: true, isNew: true, item: item, id: item.id };
+        });
+    };
+
+    const AgreeNVThucHien = async (lstNVChosed: NhanVienThucHienDto[]) => {
+        setPropNVThucHien({ ...propNVThucHien, isShow: false });
+        // update cthd + save to cache
+        setHoaDonChiTiet(
+            hoaDonChiTiet.map((x) => {
+                if (propNVThucHien.item.id === x.id) {
+                    return { ...x, nhanVienThucHien: lstNVChosed };
+                } else {
+                    return x;
+                }
+            })
+        );
+
+        const arrCT = hoaDonChiTiet.map((x) => {
+            if (propNVThucHien.item.id === x.id) {
+                return { ...x, nhanVienThucHien: lstNVChosed };
+            } else {
+                return x;
+            }
+        });
+        await UpdateCTHD_toCache(arrCT);
+    };
+
+    const RemoveNVThucHien = async (cthd: PageHoaDonChiTietDto, nv: NhanVienThucHienDto) => {
+        setHoaDonChiTiet(
+            hoaDonChiTiet.map((x) => {
+                if (x.id === cthd.id) {
+                    return {
+                        ...x,
+                        nhanVienThucHien: x.nhanVienThucHien?.filter((nvth) => nvth.idNhanVien !== nv.idNhanVien)
+                    };
+                } else {
+                    return x;
+                }
+            })
+        );
+        const arrCT = hoaDonChiTiet.map((x) => {
+            if (x.id === cthd.id) {
+                return {
+                    ...x,
+                    nhanVienThucHien: x.nhanVienThucHien?.filter((nvth) => nvth.idNhanVien !== nv.idNhanVien)
+                };
+            } else {
+                return x;
+            }
+        });
+        await UpdateCTHD_toCache(arrCT);
+    };
+
+    // modal chitiet giohang
+    const showPopChiTietGioHang = (idChiTiet: string) => {
+        setIsShowEditGioHang(true);
+        setIdCTHDChosing(idChiTiet);
+    };
+
+    const AgreeGioHang = async (ctUpdate: PageHoaDonChiTietDto) => {
+        setIsShowEditGioHang(false);
+
+        // update cthd + save to cache
+        setHoaDonChiTiet(
+            hoaDonChiTiet.map((item) => {
+                if (item.id === ctUpdate.id) {
+                    const isSuDungDV = !utils.checkNull_OrEmpty(item?.idChiTietHoaDon ?? '');
+                    return {
+                        ...item,
+                        soLuong: ctUpdate.soLuong,
+                        donGiaTruocCK: ctUpdate.donGiaTruocCK,
+                        laPTChietKhau: ctUpdate.laPTChietKhau,
+                        ptChietKhau: ctUpdate.ptChietKhau,
+                        tienChietKhau: ctUpdate.tienChietKhau,
+                        donGiaSauCK: ctUpdate.donGiaSauCK,
+                        donGiaSauVAT: ctUpdate.donGiaSauVAT,
+                        thanhTienTruocCK: isSuDungDV ? 0 : ctUpdate.thanhTienTruocCK,
+                        thanhTienSauCK: isSuDungDV ? 0 : ctUpdate.thanhTienSauCK,
+                        thanhTienSauVAT: isSuDungDV ? 0 : ctUpdate.thanhTienSauVAT,
+                        nhanVienThucHien: item?.nhanVienThucHien?.map((nv) => {
+                            if (nv.ptChietKhau > 0) {
+                                return {
+                                    ...nv,
+                                    // soluong * dongia (tránh trường hợp sử dụng GDV: thanhtien = 0)
+                                    tienChietKhau:
+                                        (nv.ptChietKhau * ctUpdate.soLuong * (ctUpdate?.donGiaSauCK ?? 0)) / 100
+                                };
+                            } else {
+                                return {
+                                    ...nv,
+                                    // (tienchietkhau/soLuongCu) * slNew
+                                    tienChietKhau: (nv.tienChietKhau / item.soLuong) * ctUpdate.soLuong
+                                };
+                            }
+                        })
+                    };
+                } else {
+                    return item;
+                }
+            })
+        );
+
+        const arrCT = hoaDonChiTiet.map((item) => {
+            if (item.id === ctUpdate.id) {
+                const isSuDungDV = !utils.checkNull_OrEmpty(item?.idChiTietHoaDon ?? '');
+                return {
+                    ...item,
+                    soLuong: ctUpdate.soLuong,
+                    donGiaTruocCK: ctUpdate.donGiaTruocCK,
+                    laPTChietKhau: ctUpdate.laPTChietKhau,
+                    ptChietKhau: ctUpdate.ptChietKhau,
+                    tienChietKhau: ctUpdate.tienChietKhau,
+                    donGiaSauCK: ctUpdate.donGiaSauCK,
+                    donGiaSauVAT: ctUpdate.donGiaSauVAT,
+                    thanhTienTruocCK: isSuDungDV ? 0 : ctUpdate.thanhTienTruocCK,
+                    thanhTienSauCK: isSuDungDV ? 0 : ctUpdate.thanhTienSauCK,
+                    thanhTienSauVAT: isSuDungDV ? 0 : ctUpdate.thanhTienSauVAT,
+                    nhanVienThucHien: item?.nhanVienThucHien?.map((nv) => {
+                        if (nv.ptChietKhau > 0) {
+                            return {
+                                ...nv,
+                                tienChietKhau: (nv.ptChietKhau * ctUpdate.soLuong * (ctUpdate?.donGiaSauCK ?? 0)) / 100
+                            };
+                        } else {
+                            return {
+                                ...nv,
+                                tienChietKhau: (nv.tienChietKhau / item.soLuong) * ctUpdate.soLuong
+                            };
+                        }
+                    })
+                };
+            } else {
+                return item;
+            }
+        });
+
+        await UpdateCTHD_toCache(arrCT);
+    };
+
+    // end modal chi tiet
 
     const checkSaveInvoice = async () => {
         if (hoaDonChiTiet.length === 0) {
@@ -882,6 +1005,21 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 onClose={() => setIsShowModalSuDungGDV(false)}
                 onOK={AgreeSuDungGDV}
             />
+            <ModalEditChiTietGioHang
+                formType={1}
+                isShow={isShowEditGioHang}
+                hoadonChiTiet={hoaDonChiTiet.filter((x) => x.id === idCTHDChosing)}
+                handleSave={AgreeGioHang}
+                handleClose={() => setIsShowEditGioHang(false)}
+            />
+            <HoaHongNhanVienDichVu
+                isNew={true}
+                idChiNhanh={idChiNhanhChosed}
+                iShow={propNVThucHien.isShow}
+                itemHoaDonChiTiet={propNVThucHien.item}
+                onSaveOK={AgreeNVThucHien}
+                onClose={() => setPropNVThucHien({ ...propNVThucHien, isShow: false })}
+            />
             <Grid container minHeight={'86vh'} maxHeight={'86vh'}>
                 {!isThanhToanTienMat ? (
                     <Grid item lg={7} md={6} xs={12}>
@@ -1095,54 +1233,53 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                             container
                                             key={index}
                                             borderBottom={'1px solid #cccc'}
-                                            alignItems={'baseline'}
+                                            alignItems={'center'}
                                             padding={'8px 0px'}>
-                                            <Grid item xs={12} lg={7}>
-                                                <Typography className="text-cursor">{cthd?.tenHangHoa}</Typography>
+                                            <Grid item xs={12} lg={6} md={5}>
+                                                <Stack spacing={1}>
+                                                    <Stack direction={'row'} spacing={1} alignItems={'center'}>
+                                                        <PersonAddOutlinedIcon
+                                                            titleAccess="Chọn nhân viên thực hiện"
+                                                            onClick={() => showPopNhanVienThucHien(cthd)}
+                                                        />
+                                                        <Typography
+                                                            className="text-cursor lableOverflow"
+                                                            // maxWidth={240}
+                                                            title={cthd?.tenHangHoa}
+                                                            onClick={() => showPopChiTietGioHang(cthd?.id ?? '')}>
+                                                            {cthd?.tenHangHoa}
+                                                        </Typography>
+                                                    </Stack>
+                                                </Stack>
                                             </Grid>
-                                            <Grid item xs={12} lg={5}>
-                                                <Grid container alignItems={'baseline'}>
+                                            <Grid item xs={12} lg={6} md={7}>
+                                                <Grid container alignItems={'center'}>
                                                     <Grid item xs={6}>
-                                                        <Stack
-                                                            spacing={1}
-                                                            direction={'row'}
-                                                            textAlign={'right'}
-                                                            justifyContent={'end'}>
+                                                        <Stack spacing={1} direction={'row'} justifyContent={'end'}>
                                                             <Stack
                                                                 direction={'row'}
                                                                 spacing={1}
                                                                 flex={1}
-                                                                justifyContent={'end'}>
-                                                                <Stack>
-                                                                    <Typography fontWeight={500}>
-                                                                        {cthd?.soLuong}
-                                                                    </Typography>
-                                                                    {(cthd?.soLuongConLai ?? 0) > 0 && (
-                                                                        <Typography
-                                                                            fontWeight={500}
-                                                                            variant="body2"
-                                                                            margin={'-4px'}>
-                                                                            <span>{' /'}</span>
-                                                                            <span>{cthd?.soLuongConLai}</span>
-                                                                        </Typography>
-                                                                    )}
-                                                                </Stack>
+                                                                justifyContent={'end'}
+                                                                alignItems={'center'}>
+                                                                <Typography fontWeight={500}>
+                                                                    {cthd?.soLuong}
+                                                                </Typography>
 
                                                                 <Typography>x</Typography>
                                                             </Stack>
-                                                            <Typography
-                                                                className="text-cursor"
-                                                                flex={3}
-                                                                textAlign={'left'}>
-                                                                {Intl.NumberFormat('vi-VN').format(
-                                                                    cthd?.donGiaTruocCK ?? 0
-                                                                )}
-                                                            </Typography>
+                                                            <Stack flex={3}>
+                                                                <Typography className="text-cursor" textAlign={'left'}>
+                                                                    {Intl.NumberFormat('vi-VN').format(
+                                                                        cthd?.donGiaTruocCK ?? 0
+                                                                    )}
+                                                                </Typography>
+                                                            </Stack>
                                                         </Stack>
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <Stack
-                                                            spacing={1}
+                                                            spacing={0.5}
                                                             direction={'row'}
                                                             textAlign={'right'}
                                                             justifyContent={'end'}
@@ -1160,6 +1297,78 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                                             </IconButton>
                                                         </Stack>
                                                     </Grid>
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid item xs={12} lg={6} md={5}>
+                                                {(cthd?.nhanVienThucHien?.length ?? 0) > 0 && (
+                                                    <Stack direction={'row'} spacing={1}>
+                                                        {cthd?.nhanVienThucHien
+                                                            ?.filter((x, index) => index < 2)
+                                                            ?.map((nv, indexNV) => (
+                                                                <Chip
+                                                                    key={indexNV}
+                                                                    sx={{
+                                                                        backgroundColor: 'var(--color-bg)',
+                                                                        '& .MuiChip-deleteIcon:hover': {
+                                                                            color: 'red'
+                                                                        }
+                                                                    }}
+                                                                    label={nv?.tenNhanVien}
+                                                                    deleteIcon={<CloseIcon sx={{ width: 20 }} />}
+                                                                    onDelete={() => RemoveNVThucHien(cthd, nv)}
+                                                                />
+                                                            ))}
+                                                        {(cthd?.nhanVienThucHien?.length ?? 0) > 2 && (
+                                                            <Chip
+                                                                sx={{ backgroundColor: 'var(--color-bg)' }}
+                                                                label={`${(cthd?.nhanVienThucHien?.length ?? 0) - 2} +`}
+                                                            />
+                                                        )}
+                                                    </Stack>
+                                                )}
+                                            </Grid>
+
+                                            <Grid item xs={12} lg={6} md={7}>
+                                                <Grid container>
+                                                    <Grid item lg={12} width={'100%'}>
+                                                        <Stack
+                                                            spacing={1}
+                                                            direction={'row'}
+                                                            alignItems={'center'}
+                                                            marginTop={'-12px'}>
+                                                            <Stack flex={1} textAlign={'center'} component={'span'}>
+                                                                {(cthd?.soLuongConLai ?? 0) > 0 && (
+                                                                    <Typography
+                                                                        fontWeight={500}
+                                                                        variant="body2"
+                                                                        component={'span'}>
+                                                                        <span>{'/'}</span>
+                                                                        <span>{cthd?.soLuongConLai}</span>
+                                                                    </Typography>
+                                                                )}
+                                                            </Stack>
+                                                            <Stack flex={6}>
+                                                                {(cthd?.tienChietKhau ?? 0) > 0 && (
+                                                                    <Typography
+                                                                        variant="caption"
+                                                                        fontStyle={'italic'}
+                                                                        color={'var( --color-text-secondary)'}
+                                                                        component={'span'}>
+                                                                        Giảm{' '}
+                                                                        <Typography
+                                                                            component={'span'}
+                                                                            variant="caption">
+                                                                            {Intl.NumberFormat('vi-VN').format(
+                                                                                cthd?.tienChietKhau ?? 0
+                                                                            )}
+                                                                        </Typography>
+                                                                    </Typography>
+                                                                )}
+                                                            </Stack>
+                                                        </Stack>
+                                                    </Grid>
+                                                    {/* <Grid item lg={6}></Grid> */}
                                                 </Grid>
                                             </Grid>
                                         </Grid>

@@ -30,15 +30,15 @@ import TabList from '@mui/lab/TabList';
 import TabContext from '@mui/lab/TabContext';
 import { LoaiHoaHongDichVu, TypeAction } from '../../lib/appconst';
 import { enqueueSnackbar } from 'notistack';
-import Cookies from 'js-cookie';
 
-export default function HoaHongNhanVienDichVu({ iShow, isNew = false, onClose, itemHoaDonChiTiet, onSaveOK }: any) {
-    const appContext = useContext(AppContext);
-    const chinhanhCurrent = appContext.chinhanhCurrent;
-    let idChiNhanh = chinhanhCurrent?.id;
-    if (utils.checkNull(idChiNhanh)) {
-        idChiNhanh = Cookies.get('IdChiNhanh') as string;
-    }
+export default function HoaHongNhanVienDichVu({
+    idChiNhanh,
+    iShow,
+    isNew = false,
+    onClose,
+    itemHoaDonChiTiet,
+    onSaveOK
+}: any) {
     const [txtSearch, setTxtSearch] = useState('');
     const [tabActive, setTabActive] = useState(LoaiHoaHongDichVu.THUC_HIEN.toString());
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
@@ -63,7 +63,7 @@ export default function HoaHongNhanVienDichVu({ iShow, isNew = false, onClose, i
             const arr = data.map((x: NhanVienThucHienDto) => {
                 return { ...x, laPhanTram: x.ptChietKhau > 0 };
             });
-            setLstNhanVienChosed(arr);
+            setLstNhanVienChosed([...arr]);
         } else {
             setLstNhanVienChosed([]);
         }
@@ -78,7 +78,7 @@ export default function HoaHongNhanVienDichVu({ iShow, isNew = false, onClose, i
         // get hoahongHD from db
         if (isNew) {
             // page thungan
-            setLstNhanVienChosed(itemHoaDonChiTiet?.nhanVienThucHien);
+            setLstNhanVienChosed([...(itemHoaDonChiTiet?.nhanVienThucHien ?? [])]);
         } else {
             GetNhanVienThucHien_byIdHoaDonChiTiet();
         }
@@ -107,6 +107,8 @@ export default function HoaHongNhanVienDichVu({ iShow, isNew = false, onClose, i
     useEffect(() => {
         SearchNhanVienClient();
     }, [txtSearch]);
+
+    const giaTriTinhHoaHong = itemHoaDonChiTiet.soLuong * (itemHoaDonChiTiet?.donGiaSauCK ?? 0);
 
     const ChoseNhanVien = async (item: NhanSuItemDto) => {
         const nvEX = lstNVThucHien.filter((x) => x.idNhanVien === item.id);
@@ -143,12 +145,10 @@ export default function HoaHongNhanVienDichVu({ iShow, isNew = false, onClose, i
         const ckSetup_byLoai = ckSetup?.filter((x) => x.loaiChietKhau === loaiCKActive);
         if (ckSetup_byLoai != null && ckSetup_byLoai.length > 0) {
             const gtriSetup = ckSetup_byLoai[0].giaTri ?? 0;
-
             newNV.ptChietKhau = ckSetup_byLoai[0].laPhanTram ? gtriSetup : 0;
-            newNV.chietKhauMacDinh = gtriSetup;
 
             if (newNV.ptChietKhau > 0) {
-                newNV.tienChietKhau = (newNV.ptChietKhau * itemHoaDonChiTiet?.thanhTienSauCK) / 100;
+                newNV.tienChietKhau = (newNV.ptChietKhau * giaTriTinhHoaHong) / 100;
             } else {
                 newNV.tienChietKhau = gtriSetup * itemHoaDonChiTiet?.soLuong;
                 newNV.laPhanTram = false;
@@ -176,7 +176,7 @@ export default function HoaHongNhanVienDichVu({ iShow, isNew = false, onClose, i
                     } else {
                         // vnd --> %
                         if (laPtramNew) {
-                            ptChietKhau = (ckNew / itemHoaDonChiTiet?.thanhTienSauCK) * 100;
+                            ptChietKhau = (ckNew / giaTriTinhHoaHong) * 100;
                         }
                     }
 
@@ -198,7 +198,7 @@ export default function HoaHongNhanVienDichVu({ iShow, isNew = false, onClose, i
                     let ptCKNew = x.ptChietKhau;
                     if (x.laPhanTram) {
                         ptCKNew = gtriCK;
-                        tienCKnew = (gtriCK * itemHoaDonChiTiet?.thanhTienSauCK) / 100;
+                        tienCKnew = (gtriCK * giaTriTinhHoaHong) / 100;
                     } else {
                         ptCKNew = 0;
                         tienCKnew = gtriCK;
@@ -219,7 +219,7 @@ export default function HoaHongNhanVienDichVu({ iShow, isNew = false, onClose, i
                     let tienCKnew = x.tienChietKhau;
                     let ptCKNew = x.ptChietKhau;
                     if (x.laPhanTram) {
-                        ptCKNew = (tienCK / itemHoaDonChiTiet?.thanhTienSauCK) * 100;
+                        ptCKNew = (tienCK / giaTriTinhHoaHong) * 100;
                         tienCKnew = tienCK;
                     } else {
                         ptCKNew = 0;
@@ -277,7 +277,7 @@ export default function HoaHongNhanVienDichVu({ iShow, isNew = false, onClose, i
                 </DialogTitle>
                 <DialogContent>
                     <Grid container>
-                        <Grid item xs={4}>
+                        <Grid item lg={4} xs={12} md={4}>
                             <TabContext value={tabActive}>
                                 <TabList
                                     onChange={handleChange}
@@ -306,22 +306,24 @@ export default function HoaHongNhanVienDichVu({ iShow, isNew = false, onClose, i
                                 </TabList>
                             </TabContext>
                         </Grid>
-                        <Grid item xs={8}>
+                        <Grid item lg={8} xs={12} md={8}>
                             <Stack flex={4} fontSize={14}>
                                 <Stack
                                     direction={'row'}
                                     justifyContent={'center'}
                                     sx={{
-                                        padding: '10px',
-                                        borderRadius: '4px'
+                                        padding: '10px'
                                     }}>
-                                    <Stack direction={'row'} spacing={1} flex={1} justifyContent={'space-between'}>
+                                    <Stack
+                                        direction={{ lg: 'row', md: 'row', sm: 'row', xs: 'column' }}
+                                        spacing={1}
+                                        flex={1}
+                                        justifyContent={'space-between'}>
                                         <Stack direction={'row'} spacing={1}>
                                             <Stack sx={{ fontWeight: '600' }}>{itemHoaDonChiTiet?.tenHangHoa}</Stack>
                                         </Stack>
                                         <Stack sx={{ fontWeight: '600' }}>
-                                            Giá trị:{' '}
-                                            {new Intl.NumberFormat('vi-VN').format(itemHoaDonChiTiet?.thanhTienSauCK)}
+                                            Giá trị: {new Intl.NumberFormat('vi-VN').format(giaTriTinhHoaHong)}
                                         </Stack>
                                     </Stack>
                                 </Stack>
@@ -330,7 +332,7 @@ export default function HoaHongNhanVienDichVu({ iShow, isNew = false, onClose, i
                     </Grid>
 
                     <Grid container spacing={2}>
-                        <Grid item xs={4}>
+                        <Grid item lg={4} xs={12} md={4}>
                             <Stack spacing={1}>
                                 <TextField
                                     size="small"
@@ -377,7 +379,7 @@ export default function HoaHongNhanVienDichVu({ iShow, isNew = false, onClose, i
                                 </Stack>
                             </Stack>
                         </Grid>
-                        <Grid item xs={8} sx={{ fontSize: '14px' }}>
+                        <Grid item lg={8} xs={12} md={8} sx={{ fontSize: '14px' }}>
                             <Stack>
                                 <Stack
                                     direction={'row'}
@@ -473,7 +475,7 @@ export default function HoaHongNhanVienDichVu({ iShow, isNew = false, onClose, i
                                                         style: { textAlign: 'right' }
                                                     }
                                                 }}
-                                                onChange={(e: any) => {
+                                                onChange={(e) => {
                                                     changeTienChietKhau(e.target.value, nv);
                                                 }}
                                                 inputRef={(el: any) => (refTienChietKhau.current[index] = el)}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 // TbCurrencyDong
 import {
     Dialog,
@@ -10,32 +10,21 @@ import {
     Grid,
     Stack,
     Button,
-    Radio,
-    FormControlLabel,
     Box,
     Link,
     IconButton,
     ButtonGroup
 } from '@mui/material';
 import { Add, Remove, ExpandMore, ExpandLess, Close } from '@mui/icons-material';
-import { createTheme } from '@mui/material/styles';
 import PageHoaDonChiTietDto from '../../../services/ban_hang/PageHoaDonChiTietDto';
 import Utils from '../../../utils/utils'; // func common
 import { NumericFormat } from 'react-number-format';
 import HoaDonService from '../../../services/ban_hang/HoaDonService';
 import ModalSearchProduct from '../../product/modal_search_product';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
-const themInputChietKhau = createTheme({
-    components: {
-        MuiOutlinedInput: {
-            styleOverrides: {
-                root: {
-                    paddingRight: '0px'
-                }
-            }
-        }
-    }
-});
+import ButtonOnlyIcon from '../../../components/Button/ButtonOnlyIcon';
+import utils from '../../../utils/utils';
+import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 
 export const ConstFormNumber = {
     BAN_HANG: 1,
@@ -56,6 +45,7 @@ export default function ModalEditChiTietGioHang({
     const displayComponent = formType === ConstFormNumber.BAN_HANG ? 'none' : '';
     const [itemVisibility, setItemVisibility] = useState<boolean[]>(lstCTHoaDon.map(() => false)); //expaned cthd
     const [showModalSeachProduct, setShowModalSeachProduct] = useState(false);
+    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
     const toggleVisibility = (index: number) => {
         const updatedVisibility = [...itemVisibility];
@@ -63,7 +53,7 @@ export default function ModalEditChiTietGioHang({
         setItemVisibility(updatedVisibility);
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         setIsSave(false);
         const arr = hoadonChiTiet.map((ct: PageHoaDonChiTietDto) => {
             return {
@@ -71,7 +61,7 @@ export default function ModalEditChiTietGioHang({
                 laPTChietKhau: (ct?.ptChietKhau ?? 0) > 0 || (ct?.tienChietKhau ?? 0) === 0
             };
         });
-        setLstCTHoaDon(arr);
+        setLstCTHoaDon([...arr]);
 
         if (formType === ConstFormNumber.OTHER) {
             setLstCTHoaDon(
@@ -119,11 +109,19 @@ export default function ModalEditChiTietGioHang({
         );
     };
 
-    const handleChangeSoLuong = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, id: string) => {
+    const handleChangeSoLuong = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+        itemCTHD: PageHoaDonChiTietDto
+    ) => {
+        const sluongNew = Utils.formatNumberToFloat(event.target.value);
+        const checkGDV = CheckGDV_SuDungQuaBuoi(itemCTHD, sluongNew);
+        if (!checkGDV) {
+            return;
+        }
+
         setLstCTHoaDon(
             lstCTHoaDon.map((item) => {
-                if (item.id === id) {
-                    const sluongNew = Utils.formatNumberToFloat(event.target.value);
+                if (item.id === itemCTHD.id) {
                     return {
                         ...item,
                         soLuong: sluongNew,
@@ -138,10 +136,30 @@ export default function ModalEditChiTietGioHang({
         );
     };
 
-    const tangSoLuong = (id: string) => {
+    const CheckGDV_SuDungQuaBuoi = (itemCTHD: PageHoaDonChiTietDto, slNew: number) => {
+        if (formType === ConstFormNumber.BAN_HANG && !utils.checkNull_OrEmpty(itemCTHD?.idChiTietHoaDon ?? '')) {
+            if (slNew > (itemCTHD?.soLuongConLai ?? 0)) {
+                setObjAlert({
+                    ...objAlert,
+                    show: true,
+                    type: 2,
+                    mes: `Dịch vụ ${itemCTHD.tenHangHoa} đã dùng đủ số buổi`
+                });
+                return false;
+            }
+        }
+        return true;
+    };
+
+    const tangSoLuong = (itemCTHD: PageHoaDonChiTietDto) => {
+        const checkGDV = CheckGDV_SuDungQuaBuoi(itemCTHD, itemCTHD.soLuong + 1);
+        if (!checkGDV) {
+            return;
+        }
+
         setLstCTHoaDon(
             lstCTHoaDon.map((item) => {
-                if (item.id === id) {
+                if (item.id === itemCTHD.id) {
                     const sluongNew = item.soLuong + 1;
                     return {
                         ...item,
@@ -275,7 +293,7 @@ export default function ModalEditChiTietGioHang({
         );
     };
 
-    const changeGtriChietKhau = (gtriCK: any, idCTHD: string) => {
+    const changeGtriChietKhau = (gtriCK: string, idCTHD: string) => {
         const gtriCKNew = Utils.formatNumberToFloat(gtriCK);
         setLstCTHoaDon(
             lstCTHoaDon.map((item: PageHoaDonChiTietDto) => {
@@ -393,10 +411,13 @@ export default function ModalEditChiTietGioHang({
                 handlClose={() => setShowModalSeachProduct(false)}
                 handleChoseProduct={addNewChiTiet}
             />
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Dialog open={isShow} onClose={handleClose} fullWidth maxWidth="sm">
-                <DialogTitle sx={{ color: '#29303D', fontWeight: '700', fontSize: '24px' }}>
-                    Chỉnh sửa giỏ hàng
-                </DialogTitle>
+                <DialogTitle className="modal-title">Chỉnh sửa giỏ hàng</DialogTitle>
                 <IconButton
                     onClick={closeModal}
                     sx={{
@@ -452,15 +473,7 @@ export default function ModalEditChiTietGioHang({
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 gap: '8px'
-                                                // maxWidth: '80%'
                                             }}>
-                                            {/* <Box
-                                                sx={{
-                                                    bgcolor: '#E5F3FF',
-                                                    width: 40,
-                                                    height: 40,
-                                                    borderRadius: '4px'
-                                                }}></Box> */}
                                             <Typography
                                                 title={ct?.tenHangHoa}
                                                 sx={{
@@ -494,7 +507,7 @@ export default function ModalEditChiTietGioHang({
                                                     textAlign: 'right',
                                                     color: 'var(--color-main)'
                                                 }}>
-                                                {new Intl.NumberFormat('vi-VN').format(ct?.thanhTienSauVAT ?? 0)}
+                                                {new Intl.NumberFormat('vi-VN').format(ct?.thanhTienSauCK ?? 0)}
                                             </Typography>
                                         </Stack>
                                     </Grid>
@@ -531,6 +544,7 @@ export default function ModalEditChiTietGioHang({
                                             <NumericFormat
                                                 size="small"
                                                 fullWidth
+                                                disabled={!utils.checkNull_OrEmpty(ct?.idChiTietHoaDon ?? '')}
                                                 value={ct.donGiaTruocCK}
                                                 decimalSeparator=","
                                                 thousandSeparator="."
@@ -556,111 +570,121 @@ export default function ModalEditChiTietGioHang({
                                                 direction="row"
                                                 spacing={1}
                                                 sx={{ '& .btnIcon': { cursor: 'pointer' } }}>
-                                                <Remove className="btnIcon" onClick={() => giamSoLuong(ct.id)} />
+                                                <ButtonOnlyIcon
+                                                    icon={<Remove onClick={() => giamSoLuong(ct.id)} />}
+                                                    style={{ width: 60, height: 37 }}
+                                                />
                                                 <TextField
                                                     size="small"
+                                                    sx={{
+                                                        ' input': {
+                                                            textAlign: 'center'
+                                                        }
+                                                    }}
                                                     fullWidth
                                                     value={ct.soLuong}
-                                                    onChange={(event) => handleChangeSoLuong(event, ct.id)}></TextField>
-                                                <Add className="btnIcon" onClick={() => tangSoLuong(ct.id)} />
+                                                    onChange={(event) => handleChangeSoLuong(event, ct)}></TextField>
+                                                <ButtonOnlyIcon
+                                                    icon={<Add onClick={() => tangSoLuong(ct)} />}
+                                                    style={{ width: 60, height: 37 }}
+                                                />
                                             </Stack>
                                         </Stack>
                                     </Grid>
                                     <Grid
                                         item
-                                        xs={6}
-                                        md={10}
-                                        lg={10}
-                                        sm={10}
+                                        lg={7}
+                                        sm={7}
+                                        md={7}
+                                        xs={12}
                                         sx={{
                                             display: itemVisibility[index] ? '' : 'none'
                                         }}>
                                         <Stack direction="column" spacing={1}>
-                                            <Stack direction="row" justifyContent="space-between">
-                                                <Stack direction="row" spacing={1}>
-                                                    <Typography variant="body2">Giảm giá</Typography>
-                                                    <span
-                                                        style={{
-                                                            fontSize: '10px',
-                                                            textAlign: 'right',
-                                                            float: 'right',
-                                                            color: 'red',
-                                                            display: 'none'
-                                                        }}>
-                                                        -{new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau ?? 0)}
-                                                    </span>
-                                                </Stack>
-                                                <Stack
-                                                    direction="row"
-                                                    spacing="4px"
+                                            <Stack direction="row" spacing={2} alignContent={'center'}>
+                                                <Typography variant="body2">Chiết khấu</Typography>
+                                                <Typography
+                                                    variant="caption"
                                                     style={{
-                                                        fontSize: '10px',
-                                                        textAlign: 'right',
-                                                        float: 'right',
                                                         color: 'red',
                                                         display: (ct?.tienChietKhau ?? 0) > 0 ? '' : 'none'
                                                     }}>
                                                     -{new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau ?? 0)}
-                                                </Stack>
+                                                </Typography>
                                             </Stack>
 
-                                            <NumericFormat
-                                                size="small"
-                                                fullWidth
-                                                value={(ct.ptChietKhau ?? 0) > 0 ? ct.ptChietKhau : ct.tienChietKhau}
-                                                decimalSeparator=","
-                                                thousandSeparator="."
-                                                customInput={TextField}
-                                                onChange={(event) => changeGtriChietKhau(event.target.value, ct.id)}
-                                            />
+                                            <Stack direction={'row'} alignItems={'center'} spacing={1}>
+                                                <NumericFormat
+                                                    size="small"
+                                                    fullWidth
+                                                    disabled={!utils.checkNull_OrEmpty(ct?.idChiTietHoaDon ?? '')}
+                                                    value={
+                                                        (ct.ptChietKhau ?? 0) > 0 ? ct.ptChietKhau : ct.tienChietKhau
+                                                    }
+                                                    decimalSeparator=","
+                                                    thousandSeparator="."
+                                                    customInput={TextField}
+                                                    onChange={(event) => changeGtriChietKhau(event.target.value, ct.id)}
+                                                />
+                                                <ButtonGroup>
+                                                    <Button
+                                                        sx={{
+                                                            bgcolor: ct.laPTChietKhau ? 'var(--color-main)' : '',
+                                                            color: ct.laPTChietKhau ? 'white' : 'var(--color-main)',
+                                                            '&:hover ': {
+                                                                bgcolor: 'var(--color-main)',
+                                                                color: 'white'
+                                                            }
+                                                        }}
+                                                        onClick={() => changeLoaiChietKhau(true, ct.id)}>
+                                                        %
+                                                    </Button>
+                                                    <Button
+                                                        sx={{
+                                                            bgcolor: !ct.laPTChietKhau ? ' var(--color-main)' : '',
+                                                            color: !ct.laPTChietKhau ? 'white' : 'var(--color-main)',
+                                                            '&:hover ': {
+                                                                bgcolor: 'var(--color-main)',
+                                                                color: 'white'
+                                                            }
+                                                        }}
+                                                        onClick={() => changeLoaiChietKhau(false, ct.id)}>
+                                                        đ
+                                                    </Button>
+                                                </ButtonGroup>
+                                            </Stack>
                                         </Stack>
                                     </Grid>
+
                                     <Grid
                                         item
-                                        xs={6}
-                                        md={2}
-                                        lg={2}
-                                        sm={2}
+                                        lg={5}
+                                        sm={5}
+                                        md={5}
+                                        xs={12}
                                         sx={{
                                             display: itemVisibility[index] ? '' : 'none'
                                         }}>
-                                        <ButtonGroup
-                                            sx={{
-                                                paddingTop: '26.58px',
-                                                maxWidth: '100%',
-                                                '& button': {
-                                                    minWidth: '38px !important',
-                                                    height: '35.69px'
-                                                }
-                                            }}
-                                            fullWidth>
-                                            <Button
+                                        <Stack direction="column" spacing={1}>
+                                            <Typography variant="body2">Giá bán mới</Typography>
+                                            <NumericFormat
+                                                size="small"
+                                                disabled
+                                                fullWidth
                                                 sx={{
-                                                    bgcolor: ct.laPTChietKhau ? 'var(--color-main)' : '',
-                                                    color: ct.laPTChietKhau ? 'white' : 'var(--color-main)',
-                                                    '&:hover ': {
-                                                        bgcolor: 'var(--color-main)',
-                                                        color: 'white'
+                                                    '& input': {
+                                                        fontWeight: 500
                                                     }
                                                 }}
-                                                onClick={() => changeLoaiChietKhau(true, ct.id)}>
-                                                %
-                                            </Button>
-                                            <Button
-                                                sx={{
-                                                    bgcolor: !ct.laPTChietKhau ? ' var(--color-main)' : '',
-                                                    color: !ct.laPTChietKhau ? 'white' : 'var(--color-main)',
-                                                    '&:hover ': {
-                                                        bgcolor: 'var(--color-main)',
-                                                        color: 'white'
-                                                    }
-                                                }}
-                                                onClick={() => changeLoaiChietKhau(false, ct.id)}>
-                                                đ
-                                            </Button>
-                                        </ButtonGroup>
+                                                value={ct?.donGiaSauCK ?? 0}
+                                                decimalSeparator=","
+                                                thousandSeparator="."
+                                                customInput={TextField}
+                                            />
+                                        </Stack>
                                     </Grid>
-                                    {formType === ConstFormNumber.BAN_HANG && ct.laPTChietKhau && (
+
+                                    {/* {formType === ConstFormNumber.BAN_HANG && ct.laPTChietKhau && (
                                         <Grid item xs={12} md={12}>
                                             <Stack spacing={1} direction={'row'} flexWrap="wrap" useFlexGap>
                                                 {chietKhau.map((item, index) => (
@@ -688,65 +712,7 @@ export default function ModalEditChiTietGioHang({
                                                 ))}
                                             </Stack>
                                         </Grid>
-                                    )}
-                                    <Grid item xs={12} sm={12} md={12} lg={12} style={{ display: 'none' }}>
-                                        <Stack direction="column" spacing={1}>
-                                            <Stack direction="row" justifyContent="space-between">
-                                                <Stack direction="row" spacing={1}>
-                                                    <Typography variant="body2">Chiết khấu</Typography>
-                                                    <span
-                                                        style={{
-                                                            fontSize: '10px',
-                                                            textAlign: 'right',
-                                                            float: 'right',
-                                                            color: 'red',
-                                                            display: 'none'
-                                                        }}>
-                                                        -{' '}
-                                                        {new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau ?? 0)}
-                                                    </span>
-                                                </Stack>
-                                                <Stack
-                                                    direction="row"
-                                                    spacing="4px"
-                                                    style={{
-                                                        fontSize: '10px',
-                                                        textAlign: 'right',
-                                                        float: 'right',
-                                                        color: 'red',
-                                                        display: (ct?.tienChietKhau ?? 0) > 0 ? '' : 'none'
-                                                    }}>
-                                                    <span>
-                                                        -{new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau ?? 0)}
-                                                    </span>
-                                                </Stack>
-                                            </Stack>
-
-                                            <NumericFormat
-                                                size="small"
-                                                fullWidth
-                                                value={(ct?.ptChietKhau ?? 0) > 0 ? ct.ptChietKhau : ct.tienChietKhau}
-                                                decimalSeparator=","
-                                                thousandSeparator="."
-                                                customInput={TextField}
-                                                onChange={(event) => changeGtriChietKhau(event.target.value, ct.id)}
-                                            />
-                                        </Stack>
-                                    </Grid>
-                                    <Grid item xs={12} sm={12} md={12} lg={12} style={{ display: 'none' }}>
-                                        <FormControlLabel
-                                            value="true"
-                                            control={<Radio size="small" checked={ct.laPTChietKhau} />}
-                                            label="%"
-                                            onChange={() => changeLoaiChietKhau(true, ct.id)}
-                                        />
-                                        <FormControlLabel
-                                            value="false"
-                                            control={<Radio size="small" checked={!ct.laPTChietKhau} />}
-                                            label="đ"
-                                            onChange={() => changeLoaiChietKhau(false, ct.id)}
-                                        />
-                                    </Grid>
+                                    )} */}
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -783,7 +749,7 @@ export default function ModalEditChiTietGioHang({
                                 Hủy
                             </Button>
                             <Button variant="contained" className="button-container" onClick={agrreGioHang}>
-                                Lưu
+                                {formType === ConstFormNumber.BAN_HANG ? 'Đồng ý' : 'Lưu'}
                             </Button>
                         </Stack>
                     </Grid>
