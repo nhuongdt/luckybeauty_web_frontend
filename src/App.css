@@ -48,11 +48,8 @@ body .font-normal {
 
 .btnIcon {
     /* do dộ rông của ô text nhập giá bán nó như thế này */
-    width: 35.69px !important;
-    height: 35.69px !important;
     border-radius: 4px !important;
     border: 1px solid #cccc !important;
-    padding: 10px !important;
     cursor: pointer;
 }
 .btnIcon:hover {
@@ -161,6 +158,10 @@ body .font-normal {
 
 .MuiOutlinedInput-input {
     font-size: var(--font-size-main) !important;
+    /* do thay đổi fontsize mặc định của textfied (16px -->14px) */
+     /* nên cũng phải thay đổi line-height của input cho phù hợp (1.4375em (23px --> 20px) */
+      /* chiều cao của input sau khi tahy đổi (40px --> 37px) */
+    height: 20px;
 }
 
 /* .inputEdit .MuiOutlinedInput-root {

@@ -4,7 +4,7 @@ export default function ListProductByGroup({ listProduct, handleChoseItem }: any
     return (
         <>
             {listProduct.map((nhom: any, index: any) => (
-                <Grid container paddingTop={2} spacing={2}>
+                <Grid container paddingTop={2} spacing={2} key={index}>
                     <Grid item xs={12} key={index}>
                         <span
                             style={{
