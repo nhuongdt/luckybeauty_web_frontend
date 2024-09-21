@@ -1,10 +1,15 @@
-import { Grid, Button, IconButton, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { Grid, Button, IconButton, Stack, Tab, Tabs, TextField, Typography, Badge } from '@mui/material';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
-
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined';
+import SpaOutlinedIcon from '@mui/icons-material/SpaOutlined';
+import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { IList } from '../../../services/dto/IList';
 import React, { useEffect, useState } from 'react';
@@ -14,7 +19,7 @@ import '../../../App.css';
 
 import PageThuNgan from './page_thu_ngan';
 import { useNavigate } from 'react-router-dom';
-import { LoaiChungTu, LoaiHoaHongDichVu } from '../../../lib/appconst';
+import { LoaiChungTu, TrangThaiCheckin } from '../../../lib/appconst';
 import { dbDexie } from '../../../lib/dexie/dexieDB';
 import utils from '../../../utils/utils';
 import Cookies from 'js-cookie';
@@ -25,6 +30,10 @@ import { SuggestChiNhanhDto } from '../../../services/suggests/dto/SuggestChiNha
 import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 import MenuWithDataHasSearch from '../../../components/Menu/MenuWithData_HasSearch';
 import TabKhachHangChecking from '../../check_in/tab_khach_hang_checking';
+import { handleClickOutside } from '../../../utils/customReactHook';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
+import CheckinService from '../../../services/check_in/CheckinService';
 
 const TabMain = {
     CHECK_IN: 1,
@@ -39,9 +48,8 @@ type IPropDropdownChiNhanh = {
 export const ThuNganSetting = ({ idChosed, handleChoseChiNhanh }: IPropDropdownChiNhanh) => {
     const [lblChiNhanh, setLblChiNhanh] = useState('');
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [allChiNhanh_byUser, setAllChiNhanh_byUser] = useState<SuggestChiNhanhDto[]>([]);
-
     const expandDropdownChiNhanh = Boolean(anchorEl);
+    const [allChiNhanh_byUser, setAllChiNhanh_byUser] = useState<SuggestChiNhanhDto[]>([]);
 
     const GetChiNhanhByUser = async () => {
         const data = await chiNhanhService.GetChiNhanhByUser();
@@ -102,6 +110,241 @@ export const ThuNganSetting = ({ idChosed, handleChoseChiNhanh }: IPropDropdownC
     );
 };
 
+export const InvoiceWaiting = ({ idChiNhanh, idLoaiChungTu, onChose, isAddNewHD }: any) => {
+    const [isExpandShoppingCart, setIsExpandShoppingCart] = useState(false);
+    const [txtSearchInvoiceWaiting, setTxtSearchInvoiceWaiting] = useState<string>('');
+    const [countInvoice, setCountInvoice] = useState<number>(0);
+    const [invoiceChosing, setInvoiceChosing] = useState<PageHoaDonDto | null>(null);
+    const [allInvoiceWaiting, setAllInvoiceWaiting] = useState<PageHoaDonDto[]>([]);
+    const [lstSearchInvoiceWaiting, setLstSearchInvoiceWaiting] = useState<PageHoaDonDto[]>([]);
+    const ref = handleClickOutside(() => setIsExpandShoppingCart(false));
+
+    const [confirmDialog, setConfirmDialog] = useState<PropConfirmOKCancel>({
+        show: false,
+        title: '',
+        type: 1,
+        mes: ''
+    });
+
+    useEffect(() => {
+        if (isAddNewHD !== 0) {
+            setCountInvoice(() => countInvoice + 1);
+        }
+    }, [isAddNewHD]);
+
+    const GetAllInvoiceWaiting = async () => {
+        const allHD = await dbDexie.hoaDon
+            .where('idChiNhanh')
+            .equals(idChiNhanh ?? '')
+            // .and((x) => x.idLoaiChungTu === idLoaiChungTu)
+            .sortBy('ngayLapHoaDon');
+        setAllInvoiceWaiting([...allHD]);
+        setLstSearchInvoiceWaiting([...allHD]);
+        setCountInvoice(allHD?.length ?? 0);
+    };
+
+    useEffect(() => {
+        GetAllInvoiceWaiting();
+    }, [idChiNhanh, idLoaiChungTu]);
+
+    const showAllInvoiceWaiting = async () => {
+        setIsExpandShoppingCart(true);
+        setTxtSearchInvoiceWaiting('');
+        await GetAllInvoiceWaiting();
+    };
+
+    const RemoveAllInvoiceWaiting = async () => {
+        setConfirmDialog({
+            ...confirmDialog,
+            show: true,
+            title: 'Xác nhận xóa',
+            mes: 'Bạn có chắc chắn muốn xóa tất cả hóa đơn chờ không?'
+        });
+        setInvoiceChosing(null);
+    };
+
+    const RemoveInvoiceWaitingById = async (item: PageHoaDonDto) => {
+        setInvoiceChosing({ ...item });
+        setConfirmDialog({
+            ...confirmDialog,
+            show: true,
+            title: 'Xác nhận xóa',
+            mes: `Bạn có chắc chắn muốn xóa hóa đơn chờ của khách hàng ${item?.tenKhachHang} không?`
+        });
+    };
+
+    const choseItemInvoice = async (item: PageHoaDonDto) => {
+        setInvoiceChosing({ ...item });
+        setIsExpandShoppingCart(false);
+        onChose(item?.id);
+    };
+
+    const onClickConfirmDelete = async () => {
+        setConfirmDialog({
+            ...confirmDialog,
+            show: false
+        });
+        if (utils.checkNull(invoiceChosing?.id)) {
+            setAllInvoiceWaiting([]);
+            await dbDexie.hoaDon.toCollection().delete();
+
+            for (let index = 0; index < allInvoiceWaiting?.length; index++) {
+                const element = allInvoiceWaiting[index];
+                if (!utils.checkNull_OrEmpty(element?.idCheckIn ?? '')) {
+                    await CheckinService.UpdateTrangThaiCheckin(element?.idCheckIn ?? '', TrangThaiCheckin.DELETED);
+                }
+            }
+            onChose(Guid.EMPTY);
+        } else {
+            setAllInvoiceWaiting(allInvoiceWaiting?.filter((x) => x.id !== invoiceChosing?.id));
+            await dbDexie.hoaDon.delete(invoiceChosing?.id ?? '');
+
+            if (!utils.checkNull_OrEmpty(invoiceChosing?.idCheckIn ?? '')) {
+                await CheckinService.UpdateTrangThaiCheckin(invoiceChosing?.idCheckIn ?? '', TrangThaiCheckin.DELETED);
+            }
+
+            const arrConLai = allInvoiceWaiting?.filter((x) => x.id !== invoiceChosing?.id);
+            if (arrConLai?.length > 0) {
+                onChose(arrConLai[0]?.id);
+            }
+        }
+    };
+
+    return (
+        <div ref={ref}>
+            <ConfirmDelete
+                isShow={confirmDialog.show}
+                title={confirmDialog.title}
+                mes={confirmDialog.mes}
+                onOk={onClickConfirmDelete}
+                onCancel={() => setConfirmDialog({ ...confirmDialog, show: false })}></ConfirmDelete>
+            <Badge badgeContent={countInvoice} color="secondary" sx={{ position: 'relative' }}>
+                <ShoppingCartIcon sx={{ color: '#1976d2' }} titleAccess="Hóa đơn chờ" onClick={showAllInvoiceWaiting} />
+
+                <Stack
+                    width={300}
+                    spacing={1}
+                    overflow={'auto'}
+                    maxHeight={500}
+                    zIndex={4}
+                    sx={{
+                        display: isExpandShoppingCart ? '' : 'none',
+                        position: 'absolute',
+                        marginLeft: '-160px',
+                        backgroundColor: 'white',
+                        border: '1px solid #cccc',
+                        borderRadius: '4px',
+                        top: '20px'
+                    }}>
+                    <Stack sx={{ backgroundColor: 'antiquewhite' }}>
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                textAlign: 'center',
+                                borderBottom: '1px solid #cccc',
+                                padding: '8px'
+                            }}>
+                            Hóa đơn chờ
+                        </Typography>
+                        <CloseOutlinedIcon
+                            titleAccess="Xóa tất cả"
+                            onClick={RemoveAllInvoiceWaiting}
+                            sx={{
+                                position: 'absolute',
+                                right: '8px',
+                                top: '8px',
+                                width: 16,
+                                height: 16,
+                                color: 'red',
+                                '&:hover': {
+                                    filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                                }
+                            }}
+                        />
+                    </Stack>
+
+                    <TextField
+                        fullWidth
+                        size="small"
+                        variant="standard"
+                        placeholder="Tìm hóa đơn"
+                        value={txtSearchInvoiceWaiting}
+                        onChange={(e) => setTxtSearchInvoiceWaiting(e.target.value)}
+                        InputProps={{ startAdornment: <SearchIcon /> }}
+                    />
+                    <Stack>
+                        {lstSearchInvoiceWaiting?.map((item: PageHoaDonDto, index: number) => (
+                            <Stack
+                                sx={{
+                                    position: 'relative',
+                                    '&:hover': {
+                                        backgroundColor: 'var(--color-bg)',
+                                        cursor: 'pointer'
+                                    }
+                                }}
+                                key={index}>
+                                <CloseOutlinedIcon
+                                    onClick={() => RemoveInvoiceWaitingById(item)}
+                                    sx={{
+                                        position: 'absolute',
+                                        right: '8px',
+                                        top: '8px',
+                                        width: 16,
+                                        height: 16,
+                                        color: 'red'
+                                    }}
+                                />
+                                <Stack
+                                    sx={{
+                                        padding: '10px',
+                                        borderBottom: '1px solid #ccc'
+                                    }}
+                                    onClick={() => choseItemInvoice(item)}>
+                                    <Stack direction={'row'} spacing={1} alignItems={'center'}>
+                                        <AssignmentIndOutlinedIcon
+                                            sx={{
+                                                color: '#cccc',
+                                                width: '18px',
+                                                height: '18px'
+                                            }}
+                                        />
+                                        <Typography variant="subtitle2" title={item?.tenKhachHang}>
+                                            {item.tenKhachHang}
+                                        </Typography>
+                                    </Stack>
+                                    {item?.soDienThoai && (
+                                        <Stack direction={'row'} spacing={1} alignItems={'center'}>
+                                            <PhoneOutlinedIcon
+                                                sx={{
+                                                    color: '#cccc',
+                                                    width: '18px',
+                                                    height: '18px'
+                                                }}
+                                            />
+                                            <Typography color="#999699" variant="caption">
+                                                {item?.soDienThoai}
+                                            </Typography>
+                                        </Stack>
+                                    )}
+                                    <Stack direction={'row'} spacing={1} alignItems={'center'}>
+                                        {item?.idLoaiChungTu === LoaiChungTu.HOA_DON_BAN_LE ? (
+                                            <ReceiptOutlinedIcon color="success" />
+                                        ) : (
+                                            <SpaOutlinedIcon color="secondary" />
+                                        )}
+                                        <Typography variant="body2" fontWeight="600" color={'#d39987'}>
+                                            {Intl.NumberFormat('vi-VN').format(item?.tongThanhToan)}
+                                        </Typography>
+                                    </Stack>
+                                </Stack>
+                            </Stack>
+                        ))}
+                    </Stack>
+                </Stack>
+            </Badge>
+        </div>
+    );
+};
 export default function MainPageThuNgan() {
     const navigation = useNavigate();
     const [txtSearch, setTextSearch] = useState('');
@@ -109,18 +352,21 @@ export default function MainPageThuNgan() {
     const [tabMainActive, setTabMainActive] = useState(TabMain.THU_NGAN);
     const [isShowModalFilterNhomHangHoa, setIsShowModalFilterNhomHangHoa] = useState(false);
     const [arrIdNhomHangFilter, setArrIdNhomHangFilter] = useState<string[]>([]);
+    const [isAddInvoiceToCache, setIsAddInvoiceToCache] = useState<number>(0);
 
     const [idChiNhanhChosed, setIdChiNhanhChosed] = useState<string>(Cookies.get('IdChiNhanh') ?? '');
     const [customerIdChosed, setCustomerIdChosed] = useState<string>('');
-    const [pageThuNgan_idChecking, setPageThuNgan_idChecking] = useState<string>();
-    const [pageThuNgan_LoaiHoaDon, setPageThuNgan_LoaiHoaDon] = useState(LoaiChungTu.HOA_DON_BAN_LE);
 
-    const changeActiveTabMain = (event: React.SyntheticEvent, tabNew: number) => {
+    const [pageThuNgan_idChecking, setPageThuNgan_idChecking] = useState<string>(Guid.EMPTY);
+    const [pageThuNgan_LoaiHoaDon, setPageThuNgan_LoaiHoaDon] = useState(LoaiChungTu.HOA_DON_BAN_LE);
+    const [pageThuNgan_IdInvoiceWaiting, setPageThuNgan_IdInvoiceWaiting] = useState('');
+
+    const changeActiveTabMain = async (event: React.SyntheticEvent, tabNew: number) => {
         setTabMainActive(tabNew);
         setIsShowModalAdd(false);
         setArrIdNhomHangFilter([]);
     };
-    const changeTabHoaDon = (event: React.SyntheticEvent, tabNew: number) => {
+    const changeTabHoaDon = async (event: React.SyntheticEvent, tabNew: number) => {
         setPageThuNgan_LoaiHoaDon(tabNew);
     };
 
@@ -129,8 +375,28 @@ export default function MainPageThuNgan() {
         setIsShowModalFilterNhomHangHoa(false);
     };
 
-    const changeChiNhanh = (item: IList) => {
+    const changeChiNhanh = async (item: IList) => {
         setIdChiNhanhChosed(item?.id);
+    };
+
+    const onSetActiveTabLoaiHoaDon = async (idLoaiChungTu: number) => {
+        setPageThuNgan_LoaiHoaDon(idLoaiChungTu);
+    };
+
+    const onChoseInvoiceWaiting = (idWaiting: string) => {
+        setPageThuNgan_IdInvoiceWaiting(idWaiting);
+    };
+
+    const addNewInvoice = async () => {
+        setIsAddInvoiceToCache(() => isAddInvoiceToCache + 1);
+        const newHD = new PageHoaDonDto({
+            idLoaiChungTu: pageThuNgan_LoaiHoaDon,
+            idChiNhanh: idChiNhanhChosed,
+            maKhachHang: 'KL',
+            tenKhachHang: 'Khách lẻ'
+        });
+        await dbDexie.hoaDon.add(newHD);
+        setPageThuNgan_IdInvoiceWaiting(newHD?.id);
     };
 
     // const getMaHoaDonMax = (loaiHoaDon: number): string => {
@@ -248,16 +514,44 @@ export default function MainPageThuNgan() {
                             alignItems={'center'}
                             justifyContent={tabMainActive == TabMain.THU_NGAN ? 'space-between' : 'end'}>
                             {tabMainActive == TabMain.THU_NGAN && (
-                                <Tabs
-                                    value={pageThuNgan_LoaiHoaDon}
-                                    onChange={changeTabHoaDon}
-                                    aria-label="nav tabs example">
-                                    <Tab label="Hóa đơn" value={LoaiChungTu.HOA_DON_BAN_LE} />
-                                    <Tab label="Gói dịch vụ" value={LoaiChungTu.GOI_DICH_VU} />
-                                </Tabs>
+                                <Stack direction={'row'} alignItems={'center'} spacing={1}>
+                                    <Tabs
+                                        value={pageThuNgan_LoaiHoaDon}
+                                        onChange={changeTabHoaDon}
+                                        aria-label="nav tabs example">
+                                        <Tab label="Hóa đơn" value={LoaiChungTu.HOA_DON_BAN_LE} />
+                                        <Tab label="Gói dịch vụ" value={LoaiChungTu.GOI_DICH_VU} />
+                                    </Tabs>
+                                    {/* <Button variant="outlined" color="primary" startIcon={<AddOutlinedIcon />}>
+                                        Thêm{' '}
+                                        {pageThuNgan_LoaiHoaDon == LoaiChungTu.HOA_DON_BAN_LE
+                                            ? 'hóa đơn'
+                                            : 'gói dịch vụ'}
+                                    </Button> */}
+                                    <IconButton
+                                        aria-label="add-new-invoice"
+                                        sx={{ width: 30, height: 30, border: '1px solid #ccc' }}
+                                        onClick={addNewInvoice}
+                                        title={
+                                            pageThuNgan_LoaiHoaDon == LoaiChungTu.HOA_DON_BAN_LE
+                                                ? 'Thêm hóa đơn'
+                                                : 'Thêm gói dịch vụ'
+                                        }>
+                                        <AddOutlinedIcon />
+                                    </IconButton>
+                                </Stack>
                             )}
-
-                            <ThuNganSetting idChosed={idChiNhanhChosed} handleChoseChiNhanh={changeChiNhanh} />
+                            <Stack direction={'row'} alignItems={'center'} spacing={2}>
+                                {tabMainActive == TabMain.THU_NGAN && (
+                                    <InvoiceWaiting
+                                        idChiNhanh={idChiNhanhChosed}
+                                        idLoaiChungTu={pageThuNgan_LoaiHoaDon}
+                                        onChose={onChoseInvoiceWaiting}
+                                        isAddNewHD={isAddInvoiceToCache}
+                                    />
+                                )}
+                                <ThuNganSetting idChosed={idChiNhanhChosed} handleChoseChiNhanh={changeChiNhanh} />
+                            </Stack>
                         </Stack>
                     </Grid>
                 </Grid>
@@ -284,8 +578,10 @@ export default function MainPageThuNgan() {
                         idChiNhanhChosed={idChiNhanhChosed}
                         customerIdChosed={customerIdChosed}
                         idCheckIn={pageThuNgan_idChecking}
+                        idInvoiceWaiting={pageThuNgan_IdInvoiceWaiting}
                         arrIdNhomHangFilter={arrIdNhomHangFilter}
-                        onSetActiveTabLoaiHoaDon={(idLoaiChungTu: number) => setPageThuNgan_LoaiHoaDon(idLoaiChungTu)}
+                        onSetActiveTabLoaiHoaDon={onSetActiveTabLoaiHoaDon}
+                        onAddHoaDon_toCache={() => setIsAddInvoiceToCache(() => isAddInvoiceToCache + 1)}
                     />
                 </TabPanel>
             )}

@@ -1,6 +1,5 @@
 import {
     Stack,
-    Button,
     Typography,
     Avatar,
     Grid,
@@ -71,9 +70,11 @@ export type IPropsPageThuNgan = {
     customerIdChosed: string;
     idChiNhanhChosed: string;
 
+    idInvoiceWaiting?: string;
     idCheckIn?: string;
     arrIdNhomHangFilter?: string[];
     onSetActiveTabLoaiHoaDon: (idLoaiChungTu: number) => void;
+    onAddHoaDon_toCache: () => void;
 };
 
 export default function PageThuNgan(props: IPropsPageThuNgan) {
@@ -82,12 +83,15 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         loaiHoaDon,
         customerIdChosed,
         idChiNhanhChosed,
+        idInvoiceWaiting,
         idCheckIn,
         arrIdNhomHangFilter,
-        onSetActiveTabLoaiHoaDon
+        onSetActiveTabLoaiHoaDon,
+        onAddHoaDon_toCache
     } = props;
     const firstLoad = useRef(true);
     const firstLoad_changeLoaiHD = useRef(true);
+    const firstLoad_changeIdInvoiceWaiting = useRef(true);
     const [anchorDropdownCustomer, setAnchorDropdownCustomer] = useState<null | HTMLElement>(null);
     const expandSearchCus = Boolean(anchorDropdownCustomer);
 
@@ -175,8 +179,37 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         setCustomerChosed(customer);
     };
 
-    const InitData_forHoaDon = async (idKhachHang: string, idChiNhanh: string, idCheckIn: string) => {
-        const hdCache = await dbDexie.hoaDon.where('idCheckIn').equals(idCheckIn).toArray();
+    const SetDataHoaDon_byIdWaiting = async () => {
+        const hdCache = await dbDexie.hoaDon
+            .where('id')
+            .equals(idInvoiceWaiting ?? '')
+            .toArray();
+        if ((hdCache?.length ?? 0) > 0) {
+            setHoaDon({
+                ...hdCache[0]
+            });
+            setHoaDonChiTiet([...(hdCache[0]?.hoaDonChiTiet ?? [])]);
+
+            await GetInforCustomer_byId(hdCache[0]?.idKhachHang ?? Guid.EMPTY);
+            await CheckCustomer_hasGDV(hdCache[0]?.idKhachHang ?? Guid.EMPTY);
+
+            onSetActiveTabLoaiHoaDon(hdCache[0]?.idLoaiChungTu ?? LoaiChungTu.HOA_DON_BAN_LE);
+        } else {
+            onSetActiveTabLoaiHoaDon(LoaiChungTu.HOA_DON_BAN_LE);
+
+            setHoaDon({
+                ...hoadon,
+                idKhachHang: '',
+                idChiNhanh: idChiNhanhChosed,
+                idLoaiChungTu: LoaiChungTu.HOA_DON_BAN_LE
+            });
+        }
+    };
+
+    const InitData_forHoaDon = async () => {
+        console.log('into ');
+        const idCheckInNew = idCheckIn ?? Guid.EMPTY;
+        const hdCache = await dbDexie.hoaDon.where('idCheckIn').equals(idCheckInNew).toArray();
         if (hdCache?.length > 0) {
             setHoaDon({
                 ...hdCache[0]
@@ -188,23 +221,27 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
 
             setHoaDon({
                 ...hoadon,
-                idKhachHang: idKhachHang,
-                idChiNhanh: idChiNhanh,
+                idKhachHang: customerIdChosed,
+                idChiNhanh: idChiNhanhChosed,
                 idLoaiChungTu: LoaiChungTu.HOA_DON_BAN_LE,
-                idCheckIn: idCheckIn
+                idCheckIn: idCheckInNew
             });
-            // add to cache if not exists
-            const hdExist = await dbDexie.hoaDon.where('id').equals(hoadon?.id).toArray();
-            if (hdExist?.length == 0) {
-                const dataHD: PageHoaDonDto = {
-                    ...hoadon,
-                    idKhachHang: idKhachHang,
-                    idChiNhanh: idChiNhanh,
-                    idLoaiChungTu: LoaiChungTu.HOA_DON_BAN_LE,
-                    idCheckIn: idCheckIn
-                };
-                await dbDexie.hoaDon.add(dataHD);
-            }
+        }
+    };
+
+    const AddHD_toCache_IfNotExists = async () => {
+        // add to cache if not exists
+        const hdExist = await dbDexie.hoaDon.where('id').equals(hoadon?.id).toArray();
+        if (hdExist?.length == 0) {
+            const dataHD: PageHoaDonDto = {
+                ...hoadon,
+                idKhachHang: hoadon?.idKhachHang ?? Guid.EMPTY,
+                idChiNhanh: hoadon?.idChiNhanh ?? idChiNhanhChosed,
+                idLoaiChungTu: hoadon.idLoaiChungTu,
+                idCheckIn: hoadon?.idCheckIn ?? Guid.EMPTY
+            };
+            await dbDexie.hoaDon.add(dataHD);
+            onAddHoaDon_toCache();
         }
     };
 
@@ -220,7 +257,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     useEffect(() => {
         // firstload: auto set loaiHoadon = HOA_DON_BAN_LE
 
-        InitData_forHoaDon(customerIdChosed, idChiNhanhChosed, idCheckIn ?? Guid.EMPTY);
+        InitData_forHoaDon();
     }, [idChiNhanhChosed, idCheckIn, customerIdChosed]);
 
     useEffect(() => {
@@ -231,6 +268,15 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         }
         ChangeLoaiHoaDon(loaiHoaDon);
     }, [loaiHoaDon]);
+
+    useEffect(() => {
+        // get & set HD by IdInvoiceWaiting
+        if (firstLoad_changeIdInvoiceWaiting.current) {
+            firstLoad_changeIdInvoiceWaiting.current = false;
+            return;
+        }
+        SetDataHoaDon_byIdWaiting();
+    }, [idInvoiceWaiting]);
 
     useEffect(() => {
         GetInforCustomer_byId(customerIdChosed);
@@ -387,7 +433,9 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         await UpdateCTHD_toCache([...cthd]);
     };
 
-    const choseProduct = (item: ModelHangHoaDto) => {
+    const choseProduct = async (item: ModelHangHoaDto) => {
+        await AddHD_toCache_IfNotExists();
+
         let cthdLast: PageHoaDonChiTietDto[] = [];
         const newCT = new PageHoaDonChiTietDto({
             idDonViQuyDoi: item?.idDonViQuyDoi as unknown as undefined,
@@ -448,7 +496,8 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             setHoaDonChiTiet([newCT, ...hoaDonChiTiet]);
             cthdLast = [newCT, ...hoaDonChiTiet];
         }
-        UpdateCTHD_toCache(cthdLast);
+
+        await UpdateCTHD_toCache(cthdLast);
     };
 
     const UpdateCTHD_toCache = async (cthdNew: PageHoaDonChiTietDto[]) => {
@@ -470,16 +519,16 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             });
 
             const idCheckin = await InsertCustomer_toCheckIn(customer?.id?.toString());
-
             setHoaDon({ ...hoadon, idKhachHang: customer?.id?.toString(), idCheckIn: idCheckin });
 
-            await dbDexie.hoaDon
-                .where('id')
-                .equals(hoadon?.id)
-                .modify((o: PageHoaDonDto) => {
-                    o.idKhachHang = customer?.id?.toString();
-                    o.idCheckIn = idCheckin;
-                });
+            await AddHD_toCache_IfNotExists();
+            await dbDexie.hoaDon.update(hoadon?.id, {
+                idCheckIn: idCheckin,
+                idKhachHang: customer?.id?.toString(),
+                tenKhachHang: customer?.tenKhachHang,
+                maKhachHang: customer?.maKhachHang,
+                soDienThoai: customer?.soDienThoai
+            });
             setCustomerHasGDV(false);
         }
     };
@@ -508,16 +557,16 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         });
 
         const idCheckin = await InsertCustomer_toCheckIn(item?.id ?? Guid.EMPTY);
-
         setHoaDon({ ...hoadon, idKhachHang: item?.id, idCheckIn: idCheckin });
 
-        await dbDexie.hoaDon
-            .where('id')
-            .equals(hoadon?.id)
-            .modify((o: PageHoaDonDto) => {
-                o.idKhachHang = item?.id;
-                o.idCheckIn = idCheckin;
-            });
+        await AddHD_toCache_IfNotExists();
+        await dbDexie.hoaDon.update(hoadon?.id, {
+            idCheckIn: idCheckin,
+            idKhachHang: item?.id,
+            tenKhachHang: item?.text,
+            maKhachHang: item?.text, // todo maKhachHang
+            soDienThoai: item?.text2
+        });
 
         await CheckCustomer_hasGDV(item?.id ?? '');
     };
@@ -1242,11 +1291,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                                             titleAccess="Chọn nhân viên thực hiện"
                                                             onClick={() => showPopNhanVienThucHien(cthd)}
                                                         />
-                                                        <Typography
-                                                            className="text-cursor lableOverflow"
-                                                            // maxWidth={240}
-                                                            title={cthd?.tenHangHoa}
-                                                            onClick={() => showPopChiTietGioHang(cthd?.id ?? '')}>
+                                                        <Typography className="lableOverflow" title={cthd?.tenHangHoa}>
                                                             {cthd?.tenHangHoa}
                                                         </Typography>
                                                     </Stack>
@@ -1255,14 +1300,18 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                             <Grid item xs={12} lg={6} md={7}>
                                                 <Grid container alignItems={'center'}>
                                                     <Grid item xs={6}>
-                                                        <Stack spacing={1} direction={'row'} justifyContent={'end'}>
+                                                        <Stack
+                                                            spacing={1}
+                                                            direction={'row'}
+                                                            justifyContent={'end'}
+                                                            onClick={() => showPopChiTietGioHang(cthd?.id ?? '')}>
                                                             <Stack
                                                                 direction={'row'}
                                                                 spacing={1}
                                                                 flex={1}
                                                                 justifyContent={'end'}
                                                                 alignItems={'center'}>
-                                                                <Typography fontWeight={500}>
+                                                                <Typography fontWeight={500} className="text-cursor">
                                                                     {cthd?.soLuong}
                                                                 </Typography>
 
