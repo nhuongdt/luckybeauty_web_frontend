@@ -54,7 +54,7 @@ export class RequestFromToDto extends ParamSearchDto {
 }
 
 export class HoaDonRequestDto extends RequestFromToDto {
-    idLoaiChungTus?: string[];
+    idLoaiChungTus?: number[];
     trangThaiNos?: number[]; // 0.hetno, 1.conno
 
     constructor({
