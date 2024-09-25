@@ -40,6 +40,15 @@ class SoQuyServices {
         );
         return result.data.result;
     };
+    UpdateNgayLapQuyHD_ifChangeNgayLapHD = async (
+        idHoaDonLienQuan: string,
+        ngayLapHDNew: string
+    ): Promise<QuyHoaDonDto> => {
+        const result = await http.get(
+            `api/services/app/QuyHoaDon/UpdateNgayLapQuyHD_ifChangeNgayLapHD?idHoaDonLienQuan=${idHoaDonLienQuan}&ngayLapHDNew=${ngayLapHDNew}`
+        );
+        return result.data.result;
+    };
     DeleteMultiple_QuyHoaDon = async (lstId: any) => {
         const result = await http.post('api/services/app/QuyHoaDon/DeleteMultiple_QuyHoaDon', lstId);
         return result.data.success;
