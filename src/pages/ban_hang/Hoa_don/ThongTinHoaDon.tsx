@@ -165,36 +165,6 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
         // setTongThanhToan(0);
     };
 
-    const saveDiaryCTHD = async (arCTnew: PageHoaDonChiTietDto[]) => {
-        let sDetailsOld = '';
-        for (let i = 0; i < chitietHoaDon?.length; i++) {
-            const itFor = chitietHoaDon[i];
-            sDetailsOld += ` <br /> ${i + 1}. ${itFor?.tenHangHoa} (${itFor?.maHangHoa}): ${
-                itFor?.soLuong
-            } x  ${Intl.NumberFormat('vi-VN').format(itFor?.donGiaTruocCK)}  =  ${Intl.NumberFormat('vi-VN').format(
-                itFor?.thanhTienSauCK ?? 0
-            )}`;
-        }
-        let sDetailsNew = '';
-        for (let i = 0; i < arCTnew?.length; i++) {
-            const itFor = arCTnew[i];
-            sDetailsNew += ` <br /> ${i + 1}. ${itFor?.tenHangHoa} (${itFor?.maHangHoa}): ${
-                itFor?.soLuong
-            } x  ${Intl.NumberFormat('vi-VN').format(itFor?.donGiaTruocCK)}  =  ${Intl.NumberFormat('vi-VN').format(
-                itFor?.thanhTienSauCK ?? 0
-            )}`;
-        }
-
-        const diary = {
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? hoadon?.idChiNhanh,
-            chucNang: `Danh mục hóa đơn`,
-            noiDung: `Cập nhật chi tiết hóa đơn ${hoadon?.maHoaDon}`,
-            noiDungChiTiet: `<b> Thông tin mới: </b>  ${sDetailsNew} <br /> <b> Thông tin cũ: </b> ${sDetailsOld}`,
-            loaiNhatKy: LoaiNhatKyThaoTac.UPDATE
-        } as CreateNhatKyThaoTacDto;
-        await nhatKyHoatDongService.createNhatKyThaoTac(diary);
-    };
-
     const AgreeGioHang = async (lstCTAfter: PageHoaDonChiTietDto[]) => {
         setTypeAction(TypeAction.UPDATE);
         setIsShowEditGioHang(false);
@@ -246,7 +216,6 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
             maHoaDon: data?.maHoaDon,
             conNo: tongThanhToan - (hoadonChosed?.daThanhToan ?? 0)
         });
-        await saveDiaryCTHD(lstCTAfter);
     };
     const updateHoaDon = async () => {
         hoadonChosed.pTGiamGiaHD = ptGiamGia;
