@@ -1,12 +1,16 @@
 import { Search } from '@mui/icons-material';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField, debounce } from '@mui/material';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, FC } from 'react';
 import ListProductByGroup from './list_product_by_group';
 import ProductService from '../../services/product/ProductService';
 import DialogButtonClose from '../../components/Dialog/ButtonClose';
-import { IHangHoaGroupTheoNhomDto, PagedProductSearchDto } from '../../services/product/dto';
+import { IHangHoaGroupTheoNhomDto, ModelHangHoaDto, PagedProductSearchDto } from '../../services/product/dto';
 
-export default function ModalSearchProduct({ isShow, handlClose, handleChoseProduct }: any) {
+const ModalSearchProduct: FC<{
+    isShow: boolean;
+    handleChoseProduct: (productChosed: ModelHangHoaDto) => void;
+    handlClose: () => void;
+}> = ({ isShow, handlClose, handleChoseProduct }) => {
     const [txtSearch, setTxtSearch] = useState('');
     const firstLoad = useRef(true);
     const [listProduct, setListProduct] = useState<IHangHoaGroupTheoNhomDto[]>([]);
@@ -72,4 +76,5 @@ export default function ModalSearchProduct({ isShow, handlClose, handleChoseProd
             </Dialog>
         </>
     );
-}
+};
+export default ModalSearchProduct;
