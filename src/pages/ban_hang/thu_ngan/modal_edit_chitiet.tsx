@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-// TbCurrencyDong
 import {
     Dialog,
     DialogTitle,
@@ -25,24 +24,44 @@ import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import ButtonOnlyIcon from '../../../components/Button/ButtonOnlyIcon';
 import utils from '../../../utils/utils';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
+import nhatKyHoatDongService from '../../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
+import { CreateNhatKyThaoTacDto } from '../../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
+import Cookies from 'js-cookie';
+import { LoaiNhatKyThaoTac } from '../../../lib/appconst';
+import { ModelHangHoaDto } from '../../../services/product/dto';
+import HoaDonChiTietDto from '../../../services/ban_hang/HoaDonChiTietDto';
+import nhanVienService from '../../../services/nhan-vien/nhanVienService';
+import NhanVienThucHienServices from '../../../services/nhan_vien_thuc_hien/NhanVienThucHienServices';
 
 export const ConstFormNumber = {
     BAN_HANG: 1,
+    CHI_TIET_GDV: 2,
     OTHER: 0
 };
 
-export default function ModalEditChiTietGioHang({
+const ModalEditChiTietGioHang: React.FC<{
+    maHoaDon?: string;
+    isAddNewProduct?: boolean;
+    isShow: boolean;
+    formType: number;
+    hoadonChiTiet: PageHoaDonChiTietDto[];
+    handleSave: (lstCTAfter: PageHoaDonChiTietDto[]) => void;
+    handleClose: () => void;
+}> = ({
+    maHoaDon = '', // used to save diary
+    isAddNewProduct = false,
     isShow,
-    formType = 0, // 1.form banhang, 0.other
+    formType = ConstFormNumber.BAN_HANG, // 1.form banhang, 0.other, 2. chitiet GDV
     hoadonChiTiet,
     handleSave,
     handleClose
-}: any) {
+}) => {
     const [isSave, setIsSave] = useState(false);
 
-    const [idCTHD, setIdCTHD] = useState('');
     const [lstCTHoaDon, setLstCTHoaDon] = useState<PageHoaDonChiTietDto[]>([]);
-    const displayComponent = formType === ConstFormNumber.BAN_HANG ? 'none' : '';
+    const displayComponent =
+        formType === ConstFormNumber.BAN_HANG || formType === ConstFormNumber.CHI_TIET_GDV ? false : true;
+
     const [itemVisibility, setItemVisibility] = useState<boolean[]>(lstCTHoaDon.map(() => false)); //expaned cthd
     const [showModalSeachProduct, setShowModalSeachProduct] = useState(false);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
@@ -325,13 +344,13 @@ export default function ModalEditChiTietGioHang({
         setLstCTHoaDon(lstCTHoaDon.filter((x: PageHoaDonChiTietDto) => x.id !== item.id));
     };
 
-    const addNewChiTiet = (item: any) => {
+    const addNewChiTiet = (item: ModelHangHoaDto) => {
         const ctNew = new PageHoaDonChiTietDto({
             maHangHoa: item?.maHangHoa,
             tenHangHoa: item.tenHangHoa,
-            idDonViQuyDoi: item.idDonViQuyDoi,
-            idHangHoa: item.idHangHoa,
-            idNhomHangHoa: item.idNhomHangHoa,
+            idDonViQuyDoi: item.idDonViQuyDoi as undefined,
+            idHangHoa: item.idHangHoa as undefined,
+            idNhomHangHoa: item.idNhomHangHoa as undefined,
             giaBan: item.giaBan
         });
         const checkCT = lstCTHoaDon.filter((x: PageHoaDonChiTietDto) => x.idDonViQuyDoi === item.idDonViQuyDoi);
@@ -364,44 +383,84 @@ export default function ModalEditChiTietGioHang({
         handleClose();
     };
 
+    const saveDiaryCTHD = async () => {
+        let sDetailsOld = ' ';
+        for (let i = 0; i < hoadonChiTiet?.length; i++) {
+            const itFor = hoadonChiTiet[i];
+            sDetailsOld += ` <br /> ${i + 1}. ${itFor?.tenHangHoa} (${itFor?.maHangHoa}): ${
+                itFor?.soLuong
+            } x  ${Intl.NumberFormat('vi-VN').format(itFor?.donGiaTruocCK)}  =  ${Intl.NumberFormat('vi-VN').format(
+                itFor?.thanhTienSauCK ?? 0
+            )}`;
+        }
+        sDetailsOld = '<br /> <b> Thông tin cũ: </b> ' + sDetailsOld;
+        let sDetailsNew = '';
+        for (let i = 0; i < lstCTHoaDon?.length; i++) {
+            const itFor = lstCTHoaDon[i];
+            sDetailsNew += ` <br /> ${i + 1}. ${itFor?.tenHangHoa} (${itFor?.maHangHoa}): ${
+                itFor?.soLuong
+            } x  ${Intl.NumberFormat('vi-VN').format(itFor?.donGiaTruocCK)}  =  ${Intl.NumberFormat('vi-VN').format(
+                itFor?.thanhTienSauCK ?? 0
+            )}`;
+        }
+
+        const diary = {
+            idChiNhanh: Cookies.get('IdChiNhanh') ?? null,
+            chucNang: `Danh mục hóa đơn`,
+            noiDung: `${isAddNewProduct ? 'Thêm mới' : 'Cập nhật'} chi tiết hóa đơn ${maHoaDon}`,
+            noiDungChiTiet: `<b> Thông tin mới: </b>  ${sDetailsNew} ${isAddNewProduct ? '' : `${sDetailsOld}`}`,
+            loaiNhatKy: LoaiNhatKyThaoTac.UPDATE
+        } as CreateNhatKyThaoTacDto;
+        await nhatKyHoatDongService.createNhatKyThaoTac(diary);
+    };
+
     const agrreGioHang = async () => {
         setIsSave(true);
-        if (formType === ConstFormNumber.BAN_HANG) {
-            handleSave(lstCTHoaDon[0]); // object
-        } else {
-            // update Db
-            handleSave(lstCTHoaDon);
 
-            // assign again STT of cthd before save
-            const dataSave = [...lstCTHoaDon];
-            dataSave.map((x: PageHoaDonChiTietDto, index: number) => {
-                x.stt = index + 1;
-            });
-            await HoaDonService.Update_ChiTietHoaDon(lstCTHoaDon, hoadonChiTiet[0]?.idHoaDon);
-        }
-    };
-    const chietKhau = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
+        switch (formType) {
+            case ConstFormNumber.BAN_HANG:
+                handleSave(lstCTHoaDon);
+                break;
+            case ConstFormNumber.CHI_TIET_GDV:
+                {
+                    // only update/add 1 row
+                    const objCT = { ...lstCTHoaDon[0] } as HoaDonChiTietDto;
+                    const data = await HoaDonService.CreateOrUpdateCTHD_byIdChiTiet(objCT);
+                    if (data != null) {
+                        lstCTHoaDon[0].id = data.id;
+                        await saveDiaryCTHD();
 
-    const onClickPtramChietKhau = (gtri: number, idCTHD: string) => {
-        setLstCTHoaDon(
-            lstCTHoaDon.map((item: PageHoaDonChiTietDto) => {
-                if (item.id === idCTHD) {
-                    const tienCK = (gtri * item.donGiaTruocCK) / 100;
-                    const dongiasauCK = item.donGiaTruocCK - tienCK;
-                    return {
-                        ...item,
-                        ptChietKhau: gtri,
-                        tienChietKhau: tienCK,
-                        donGiaSauCK: dongiasauCK,
-                        donGiaSauVAT: dongiasauCK,
-                        thanhTienSauCK: dongiasauCK * item.soLuong,
-                        thanhTienSauVAT: dongiasauCK * item.soLuong
-                    };
-                } else {
-                    return item;
+                        if (!isAddNewProduct) {
+                            // update nvth
+                            const ctOld = hoadonChiTiet[0];
+                            if (
+                                ctOld.soLuong !== objCT.soLuong ||
+                                ctOld?.donGiaTruocCK !== objCT.donGiaTruocCK ||
+                                ctOld?.donGiaSauCK !== objCT.donGiaSauCK
+                            ) {
+                                await NhanVienThucHienServices.UpdateTienChietKhau_forNhanVien_whenUpdateCTHD(
+                                    hoadonChiTiet[0]?.id,
+                                    hoadonChiTiet[0]?.soLuong
+                                );
+                            }
+                        }
+                        handleSave(lstCTHoaDon);
+                    }
                 }
-            })
-        );
+                break;
+            case ConstFormNumber.OTHER:
+                {
+                    // update all cthd + nvth
+                    const dataSave = [...lstCTHoaDon];
+                    dataSave.map((x: PageHoaDonChiTietDto, index: number) => {
+                        x.stt = index + 1;
+                    });
+                    await HoaDonService.Update_ChiTietHoaDon(lstCTHoaDon, hoadonChiTiet[0]?.idHoaDon);
+                    await saveDiaryCTHD();
+                    handleSave(lstCTHoaDon);
+                }
+                break;
+        }
     };
 
     return (
@@ -417,7 +476,9 @@ export default function ModalEditChiTietGioHang({
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Dialog open={isShow} onClose={handleClose} fullWidth maxWidth="sm">
-                <DialogTitle className="modal-title">Chỉnh sửa giỏ hàng</DialogTitle>
+                <DialogTitle className="modal-title">
+                    {isAddNewProduct ? 'Thêm chi tiết mới' : 'Chỉnh sửa giỏ hàng'}
+                </DialogTitle>
                 <IconButton
                     onClick={closeModal}
                     sx={{
@@ -432,22 +493,22 @@ export default function ModalEditChiTietGioHang({
                 </IconButton>
                 <DialogContent sx={{ paddingTop: 0 }}>
                     {/* 1 row */}
-                    {lstCTHoaDon.map((ct: PageHoaDonChiTietDto, index: number) => (
+                    {lstCTHoaDon?.map((ct: PageHoaDonChiTietDto, index: number) => (
                         <Grid
                             container
                             key={index}
                             padding="16px 0px"
-                            borderBottom={formType === ConstFormNumber.BAN_HANG ? '' : '1px dashed green'}
+                            borderBottom={!displayComponent ? '' : '1px dashed green'}
                             borderRadius={1}
-                            marginBottom={formType === ConstFormNumber.BAN_HANG ? 0 : '10px'}>
+                            marginBottom={!displayComponent ? 0 : '10px'}>
                             <Grid
                                 item
-                                xs={formType === ConstFormNumber.BAN_HANG ? 0 : 2}
-                                sm={formType === ConstFormNumber.BAN_HANG ? 0 : 1}
-                                md={formType === ConstFormNumber.BAN_HANG ? 0 : 1}
-                                lg={formType === ConstFormNumber.BAN_HANG ? 0 : 1}
+                                xs={!displayComponent ? 0 : 2}
+                                sm={!displayComponent ? 0 : 1}
+                                md={!displayComponent ? 0 : 1}
+                                lg={!displayComponent ? 0 : 1}
                                 sx={{
-                                    display: displayComponent
+                                    display: displayComponent ? '' : 'none'
                                 }}>
                                 <Close
                                     sx={{
@@ -462,10 +523,10 @@ export default function ModalEditChiTietGioHang({
                             </Grid>
                             <Grid
                                 item
-                                xs={formType === ConstFormNumber.BAN_HANG ? 12 : 10}
-                                sm={formType === ConstFormNumber.BAN_HANG ? 12 : 11}
-                                md={formType === ConstFormNumber.BAN_HANG ? 12 : 11}
-                                lg={formType === ConstFormNumber.BAN_HANG ? 12 : 11}>
+                                xs={!displayComponent ? 12 : 10}
+                                sm={!displayComponent ? 12 : 11}
+                                md={!displayComponent ? 12 : 11}
+                                lg={!displayComponent ? 12 : 11}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={9} md={9} lg={9}>
                                         <Box
@@ -478,7 +539,6 @@ export default function ModalEditChiTietGioHang({
                                                 title={ct?.tenHangHoa}
                                                 sx={{
                                                     fontWeight: 600,
-                                                    display: formType === 3 ? 'none' : '',
                                                     color: '#3B4758',
                                                     maxWidth: 'calc(100% - 48px)',
                                                     textOverflow: 'ellipsis',
@@ -491,10 +551,10 @@ export default function ModalEditChiTietGioHang({
                                     </Grid>
                                     <Grid
                                         item
-                                        xs={formType === ConstFormNumber.BAN_HANG ? 12 : 10}
-                                        sm={formType === ConstFormNumber.BAN_HANG ? 3 : 1}
-                                        md={formType === ConstFormNumber.BAN_HANG ? 3 : 2}
-                                        lg={formType === ConstFormNumber.BAN_HANG ? 3 : 2}>
+                                        xs={!displayComponent ? 12 : 10}
+                                        sm={!displayComponent ? 3 : 1}
+                                        md={!displayComponent ? 3 : 2}
+                                        lg={!displayComponent ? 3 : 2}>
                                         <Stack
                                             direction="row"
                                             spacing={1}
@@ -512,25 +572,17 @@ export default function ModalEditChiTietGioHang({
                                         </Stack>
                                     </Grid>
                                     {/* // man hinh thu ngan: khong hien icon toogle  */}
-                                    {formType !== ConstFormNumber.BAN_HANG && (
+                                    {displayComponent && (
                                         <Grid item xs={2} sm={1} md={1} lg={1}>
                                             <Box onClick={() => toggleVisibility(index)} sx={{ cursor: 'pointer' }}>
                                                 <ExpandMore
                                                     sx={{
-                                                        display:
-                                                            formType !== ConstFormNumber.BAN_HANG &&
-                                                            !itemVisibility[index]
-                                                                ? ''
-                                                                : 'none'
+                                                        display: !itemVisibility[index] ? '' : 'none'
                                                     }}
                                                 />
                                                 <ExpandLess
                                                     sx={{
-                                                        display:
-                                                            formType !== ConstFormNumber.BAN_HANG &&
-                                                            itemVisibility[index]
-                                                                ? ''
-                                                                : 'none'
+                                                        display: itemVisibility[index] ? '' : 'none'
                                                     }}
                                                 />
                                             </Box>
@@ -683,36 +735,6 @@ export default function ModalEditChiTietGioHang({
                                             />
                                         </Stack>
                                     </Grid>
-
-                                    {/* {formType === ConstFormNumber.BAN_HANG && ct.laPTChietKhau && (
-                                        <Grid item xs={12} md={12}>
-                                            <Stack spacing={1} direction={'row'} flexWrap="wrap" useFlexGap>
-                                                {chietKhau.map((item, index) => (
-                                                    <Button
-                                                        key={index}
-                                                        onClick={() => onClickPtramChietKhau(item, ct.id)}
-                                                        sx={{
-                                                            minWidth: 'unset',
-                                                            flexGrow: '1',
-                                                            fontSize: '12px',
-                                                            color:
-                                                                ct.ptChietKhau === item ? 'white' : 'var(--color-main)',
-                                                            paddingY: '8px ',
-                                                            textAlign: 'center',
-                                                            border: '1px solid var(--color-main)',
-                                                            borderRadius: '4px',
-                                                            bgcolor: ct.ptChietKhau === item ? 'var(--color-main)' : '',
-                                                            '&:hover ': {
-                                                                bgcolor: 'var(--color-main)',
-                                                                color: 'white'
-                                                            }
-                                                        }}>
-                                                        {item} %
-                                                    </Button>
-                                                ))}
-                                            </Stack>
-                                        </Grid>
-                                    )} */}
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -721,7 +743,7 @@ export default function ModalEditChiTietGioHang({
                         <Grid item xs={1} />
                         <Grid item xs={11}>
                             <Stack
-                                style={{ display: displayComponent }}
+                                style={{ display: displayComponent ? '' : 'none' }}
                                 sx={{
                                     '& a': {
                                         color: 'var(--color-main)'
@@ -749,7 +771,7 @@ export default function ModalEditChiTietGioHang({
                                 Hủy
                             </Button>
                             <Button variant="contained" className="button-container" onClick={agrreGioHang}>
-                                {formType === ConstFormNumber.BAN_HANG ? 'Đồng ý' : 'Lưu'}
+                                {displayComponent ? 'Đồng ý' : 'Lưu'}
                             </Button>
                         </Stack>
                     </Grid>
@@ -757,4 +779,5 @@ export default function ModalEditChiTietGioHang({
             </Dialog>
         </>
     );
-}
+};
+export default ModalEditChiTietGioHang;
