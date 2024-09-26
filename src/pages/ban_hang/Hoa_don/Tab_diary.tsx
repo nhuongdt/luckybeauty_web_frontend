@@ -42,7 +42,7 @@ export default function TabDiary({ idHoaDon }: any) {
             )
         },
         {
-            field: 'sLoaiPhieu',
+            field: 'loaiPhieu',
             headerName: 'Loại thu/chi',
             minWidth: 90,
             flex: 1,
@@ -71,7 +71,7 @@ export default function TabDiary({ idHoaDon }: any) {
             )
         },
         {
-            field: 'sTrangThai',
+            field: 'txtTrangThai',
             headerName: 'Trạng thái',
             headerAlign: 'center',
             minWidth: 100,
