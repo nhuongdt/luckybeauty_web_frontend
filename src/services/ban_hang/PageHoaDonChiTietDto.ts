@@ -23,7 +23,7 @@ export default class PageHoaDonChiTietDto extends HoaDonChiTietDto {
         idDonViQuyDoi = null,
         soLuong = 1,
         expanded = false,
-        trangThai = 1
+        trangThai = 3
     }) {
         super({
             id: id,

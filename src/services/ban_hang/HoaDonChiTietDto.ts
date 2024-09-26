@@ -1,6 +1,5 @@
 import { Guid } from 'guid-typescript';
 import NhanVienThucHienDto from '../nhan_vien_thuc_hien/NhanVienThucHienDto';
-import { ClassInputNumber } from '../../services/dto/InputFormat';
 
 export interface IHoaDonChiTiet_UseForBaoCao {
     soLuong?: number;
@@ -53,7 +52,7 @@ export default class HoaDonChiTietDto {
         ptThue = 0,
         tienThue = 0,
         ghiChu = '',
-        trangThai = 1,
+        trangThai = 3,
         idChiTietHoaDon = null
     }) {
         this.id = id;

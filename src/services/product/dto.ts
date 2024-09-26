@@ -24,7 +24,7 @@ export class ModelHangHoaDto {
     idDonViQuyDoi?: string;
     tenDonViTinh?: string = '';
     maHangHoa?: string = '';
-    giaBan?: string | number = 0;
+    giaBan?: number = 0;
     tyLeChuyenDoi?: number = 1;
     laDonViTinhChuan?: number = 1;
     idHangHoa?: string;

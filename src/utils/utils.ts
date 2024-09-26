@@ -233,7 +233,7 @@ class Utils {
         }
     };
     getTotalPage = (totalCount = 0, pageSize = 10) => {
-        return Math.ceil(totalCount / pageSize);
+        return Math.ceil((totalCount ?? 0) / (pageSize ?? 10));
     };
     getDatefromDatetime = (date: Date) => {
         const day = date.getDate();

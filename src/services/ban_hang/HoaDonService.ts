@@ -9,6 +9,7 @@ import { IFileDto } from '../dto/FileDto';
 import HoaDonDto from './HoaDonDto';
 import ChiTietSuDungGDVDto, { GroupChiTietSuDungGDVDto } from './ChiTietSuDungGDVDto';
 import ParamSearchChiTietSuDungGDVDto from './ParamSearchChiTietSuDungGDVDto';
+import HoaDonChiTietDto from './HoaDonChiTietDto';
 class HoaDonService {
     CreateHoaDon = async (input: any): Promise<HoaDonDto | null> => {
         if (input.idKhachHang === '' || input.idKhachHang === Guid.EMPTY.toString()) {
@@ -30,14 +31,25 @@ class HoaDonService {
         const result = await http.post('api/services/app/HoaDon/UpdateHoaDon', input);
         return result.data.result;
     };
-    Update_InforHoaDon = async (input: any) => {
+    Update_InforHoaDon = async (input: any): Promise<HoaDonDto> => {
         // only update hoadon
         const result = await http.post('api/services/app/HoaDon/Update_InforHoaDon', input);
+        return result.data.result;
+    };
+    UpdateTongTienHoaDon_ifChangeCTHD = async (idHoaDon: string): Promise<HoaDonDto | null> => {
+        if (utils.checkNull_OrEmpty(idHoaDon)) {
+            return null;
+        }
+        const result = await http.get(`api/services/app/HoaDon/UpdateTongTienHoaDon_ifChangeCTHD?idHoaDon=${idHoaDon}`);
         return result.data.result;
     };
     Update_ChiTietHoaDon = async (input: any, idHoaDon: string) => {
         // only update chitiet
         const result = await http.post(`api/services/app/HoaDon/Update_ChiTietHoaDon?idHoadon=${idHoaDon}`, input);
+        return result.data.result;
+    };
+    CreateOrUpdateCTHD_byIdChiTiet = async (input: HoaDonChiTietDto): Promise<HoaDonChiTietDto | null> => {
+        const result = await http.post(`api/services/app/HoaDon/CreateOrUpdateCTHD_byIdChiTiet`, input);
         return result.data.result;
     };
     GetListHoaDon = async (input: HoaDonRequestDto): Promise<PagedResultDto<PageHoaDonDto>> => {
@@ -56,6 +68,13 @@ class HoaDonService {
             return [];
         }
         const result = await http.get(`api/services/app/HoaDon/GetChiTietHoaDon_byIdHoaDon?idHoaDon=${idHoaDon}`);
+        return result.data.result;
+    };
+    GetChiTietHoaDon_byIdChiTiet = async (idChiTiet: string): Promise<PageHoaDonChiTietDto | null> => {
+        if (utils.checkNull_OrEmpty(idChiTiet)) {
+            return null;
+        }
+        const result = await http.get(`api/services/app/HoaDon/GetChiTietHoaDon_byIdChiTiet?idChiTiet=${idChiTiet}`);
         return result.data.result;
     };
     DeleteHoaDon = async (idHoaDon: string) => {
@@ -88,6 +107,13 @@ class HoaDonService {
         }
         return false;
     };
+    DeleteMultipleCTHD = async (lstId: string[]): Promise<boolean> => {
+        if (lstId !== null && lstId !== undefined && lstId.length > 0) {
+            const result = await http.post(`api/services/app/HoaDon/DeleteMultipleCTHD`, lstId);
+            return result.data.result;
+        }
+        return false;
+    };
     ExportToExcel = async (input: HoaDonRequestDto): Promise<IFileDto> => {
         const result = await http.post('api/services/app/HoaDon/ExportDanhSach', input);
         return result.data.result;
@@ -104,6 +130,20 @@ class HoaDonService {
             return false;
         }
         const result = await http.get(`api/services/app/HoaDon/CheckCustomer_hasGDV?customerId=${customerId}`);
+        return result.data.result;
+    };
+    CheckGDV_DaSuDung = async (idGoiDV: string): Promise<boolean> => {
+        if (utils.checkNull_OrEmpty(idGoiDV)) {
+            return false;
+        }
+        const result = await http.get(`api/services/app/HoaDon/CheckGDV_DaSuDung?idGoiDV=${idGoiDV}`);
+        return result.data.result;
+    };
+    CheckChiTietGDV_DaSuDung = async (idChiTietGDV: string): Promise<boolean> => {
+        if (utils.checkNull_OrEmpty(idChiTietGDV)) {
+            return false;
+        }
+        const result = await http.get(`api/services/app/HoaDon/CheckChiTietGDV_DaSuDung?idChiTietGDV=${idChiTietGDV}`);
         return result.data.result;
     };
 }

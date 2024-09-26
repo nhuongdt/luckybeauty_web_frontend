@@ -12,8 +12,7 @@ import {
     TableFooter,
     TableHead,
     TableRow,
-    TextField,
-    Typography
+    TextField
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
@@ -35,6 +34,7 @@ import PopoverFilterHoaDon from '../ban_hang/Giao_dich_thanh_toan/PopoverFilterH
 import { OptionPage } from '../../components/Pagination/OptionPage';
 import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
 import fileDowloadService from '../../services/file-dowload.service';
+import PageDetailGDV from './page_detail_gdv';
 
 export default function PageDanhSachGDV() {
     const appContext = useContext(AppContext);
@@ -49,6 +49,8 @@ export default function PageDanhSachGDV() {
     const [footerTable_TongThanhToan, setFooterTable_TongThanhToan] = useState(0);
     const [footerTable_DaThanhToan, setFooterTable_DaThanhToan] = useState(0);
     const [footerTable_ConNo, setFooterTable_ConNo] = useState(0);
+    const [isOpenFormDetail, setIsOpenFormDetail] = useState(false);
+    const [invoiceChosing, setInvoiceChosing] = useState<PageHoaDonDto | null>(null);
 
     const [paramSearch, setParamSearch] = useState<HoaDonRequestDto>({
         textSearch: '',
@@ -199,6 +201,15 @@ export default function PageDanhSachGDV() {
         fileDowloadService.downloadExportFile(data);
     };
 
+    const OpenFormDetail = (item: PageHoaDonDto) => {
+        setIsOpenFormDetail(true);
+        setInvoiceChosing(item);
+    };
+
+    const gotoPageList = () => {
+        setIsOpenFormDetail(false);
+    };
+
     const listColumnHeader: IHeaderTable[] = [
         { columnId: 'maHoaDon', columnText: 'Mã hóa đơn' },
         { columnId: 'ngayLapHoaDon', columnText: 'Ngày lập' },
@@ -208,6 +219,8 @@ export default function PageDanhSachGDV() {
         { columnId: 'conNo', columnText: 'Còn nợ', align: 'right' },
         { columnId: 'ghiChuHD', columnText: 'Ghi chú' }
     ];
+
+    if (isOpenFormDetail) return <PageDetailGDV itemHD={invoiceChosing} gotoBack={gotoPageList} />;
 
     return (
         <Grid container paddingTop={2}>
@@ -269,7 +282,7 @@ export default function PageDanhSachGDV() {
                                     <Stack flex={1} spacing={1} direction={'row'}>
                                         <Button
                                             variant="outlined"
-                                            className="page_btOutline"
+                                            className="btn-outline-hover"
                                             onClick={ExportToExcel}
                                             startIcon={<FileUploadIcon />}>
                                             Xuất
@@ -319,29 +332,35 @@ export default function PageDanhSachGDV() {
                                                 onChange={(event) => onClickCheckOne(event, row.id)}
                                             />
                                         </TableCell>
-                                        <TableCell sx={{ minWidth: 100, maxWidth: 100 }}>{row?.maHoaDon}</TableCell>
-                                        <TableCell sx={{ maxWidth: 150 }}>
+                                        <TableCell
+                                            sx={{ minWidth: 100, maxWidth: 100 }}
+                                            onClick={() => OpenFormDetail(row)}>
+                                            {row?.maHoaDon}
+                                        </TableCell>
+                                        <TableCell sx={{ maxWidth: 150 }} onClick={() => OpenFormDetail(row)}>
                                             {format(new Date(row?.ngayLapHoaDon), 'dd/MM/yyyy')}
                                         </TableCell>
                                         <TableCell
                                             className="lableOverflow"
                                             sx={{ maxWidth: 200 }}
-                                            title={row?.tenKhachHang}>
+                                            title={row?.tenKhachHang}
+                                            onClick={() => OpenFormDetail(row)}>
                                             {row?.tenKhachHang}
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell align="right" onClick={() => OpenFormDetail(row)}>
                                             {new Intl.NumberFormat('vi-VN').format(row?.tongThanhToan ?? 0)}
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell align="right" onClick={() => OpenFormDetail(row)}>
                                             {new Intl.NumberFormat('vi-VN').format(row?.daThanhToan ?? 0)}
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell align="right" onClick={() => OpenFormDetail(row)}>
                                             {new Intl.NumberFormat('vi-VN').format(row?.conNo ?? 0)}
                                         </TableCell>
                                         <TableCell
                                             className="lableOverflow"
                                             title={row?.ghiChuHD}
-                                            sx={{ minWidth: 150, maxWidth: 200 }}>
+                                            sx={{ minWidth: 150, maxWidth: 200 }}
+                                            onClick={() => OpenFormDetail(row)}>
                                             {row?.ghiChuHD}
                                         </TableCell>
                                     </TableRow>

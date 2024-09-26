@@ -1,12 +1,13 @@
-import { Button, Stack, TextField, Typography } from '@mui/material';
+import { Button, Dialog, Stack, TextField, Typography } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PrintIcon from '@mui/icons-material/Print';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import ButtonOnlyIcon from '../../components/Button/ButtonOnlyIcon';
 import DatePickerCustom from '../../components/DatetimePicker/DatePickerCustom';
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useContext, useEffect, useRef, useState } from 'react';
 import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
 import ModalAddCustomerCheckIn from '../check_in/modal_add_cus_checkin';
 import { PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
@@ -29,15 +30,25 @@ import TaiKhoanNganHangServices from '../../services/so_quy/TaiKhoanNganHangServ
 import { TaiKhoanNganHangDto } from '../../services/so_quy/Dto/TaiKhoanNganHangDto';
 import { TrangThaiHoaDon } from '../../services/ban_hang/HoaDonConst';
 import uploadFileService from '../../services/uploadFileService';
+import PaymentsForm from '../ban_hang/thu_ngan/PaymentsForm';
+import { FormNumber } from '../../enum/FormNumber';
 
-const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null }> = ({ itemHD }) => {
+const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: number }> = ({
+    itemHD,
+    tongThanhToanNew
+}) => {
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
 
+    const firstLoad = useRef(true);
     const [maHoaDon, setMaHoaDon] = useState<string>('');
     const [ngayLapHoaDon, setNgayLapHoaDon] = useState<string>('');
     const [ghiChuHD, setGhiChuHD] = useState<string>('');
+    const [tongThanhToan, setTongThanhToan] = useState(0);
+    const [daThanhToan, setDaThanhToan] = useState(0);
+    const [conNo, setConNo] = useState(0);
     const [isShowModalChangeCus, setIsShowModalChangeCus] = useState<boolean>(false);
+    const [isShowModalThanhToan, setIsShowModalThanhToan] = useState<boolean>(false);
     const [trangThaiHD, setTrangThaiHD] = useState<{
         trangThai: number;
         txtTrangThai: string;
@@ -73,10 +84,12 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null }> = ({ itemHD }) => 
     const sLoaiHoaDon = getLoaiHoaDon(itemHD?.idLoaiChungTu ?? 0);
 
     useEffect(() => {
-        console.log('ngaylap ', itemHD?.ngayLapHoaDon);
         setNgayLapHoaDon(itemHD?.ngayLapHoaDon ?? '');
         setMaHoaDon(itemHD?.maHoaDon ?? '');
         setGhiChuHD(itemHD?.ghiChuHD ?? '');
+        setTongThanhToan(itemHD?.tongThanhToan ?? 0);
+        setDaThanhToan(itemHD?.daThanhToan ?? 0);
+        setConNo(itemHD?.conNo ?? 0);
         setTrangThaiHD({
             ...trangThaiHD,
             trangThai: itemHD?.trangThai ?? TrangThaiHoaDon.HOAN_THANH,
@@ -90,6 +103,17 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null }> = ({ itemHD }) => 
             soDienThoai: itemHD?.soDienThoai ?? ''
         });
     }, [itemHD?.id]);
+
+    useEffect(() => {
+        if (firstLoad.current) {
+            firstLoad.current = false;
+            return;
+        }
+        setTongThanhToan(tongThanhToanNew);
+        let conno = tongThanhToanNew - (itemHD?.daThanhToan ?? 0);
+        conno = conno > 0 ? conno : 0;
+        setConNo(conno);
+    }, [tongThanhToanNew]);
 
     const changeNgayLapHD = (dt: string) => {
         setNgayLapHoaDon(dt);
@@ -153,6 +177,24 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null }> = ({ itemHD }) => 
             }
             DataMauIn.Print(newHtml);
         }
+    };
+
+    const CheckGDV_DaSuDung = async () => {
+        return await HoaDonService.CheckGDV_DaSuDung(itemHD?.id ?? '');
+    };
+
+    const onClickHuyGDV = async () => {
+        const check = await CheckGDV_DaSuDung();
+        if (check) {
+            setObjAlert({ ...objAlert, show: true, mes: 'Gói dịch vụ đã được sử dụng. Không thể hủy' });
+            return;
+        }
+        setConfirmDialog({
+            ...confirmDialog,
+            show: true,
+            title: 'Xác nhận hủy',
+            mes: `Bạn có chắc chắn muốn hủy ${sLoaiHoaDon}  ${maHoaDon}  không?`
+        });
     };
 
     const onAgreeRemoveInvoice = async () => {
@@ -242,6 +284,13 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null }> = ({ itemHD }) => 
         }
         setObjAlert({ ...objAlert, show: true, mes: `Cập nhật ${sLoaiHoaDon} thành công` });
     };
+
+    const savePhieuThuOK = (tongTienThu: number) => {
+        setDaThanhToan(daThanhToan + tongTienThu);
+        setConNo(tongThanhToan - daThanhToan - tongTienThu);
+        setIsShowModalThanhToan(false);
+        setObjAlert({ ...objAlert, show: true, mes: `Thanh toán hóa đơn thành công` });
+    };
     return (
         <>
             <ModalAddCustomerCheckIn
@@ -263,6 +312,22 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null }> = ({ itemHD }) => 
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
 
+            <Dialog open={isShowModalThanhToan} onClose={() => setIsShowModalThanhToan(false)} maxWidth="md">
+                <PaymentsForm
+                    formNumber={FormNumber.OTHER}
+                    tongPhaiTra={conNo}
+                    inforHD={{
+                        id: itemHD?.id ?? '',
+                        maHoaDon: itemHD?.maHoaDon ?? '',
+                        idKhachHang: itemHD?.idKhachHang ?? '',
+                        idChiNhanh: chinhanh?.id ?? '',
+                        tenKhachHang: itemHD?.tenKhachHang ?? ''
+                    }}
+                    onClose={() => setIsShowModalThanhToan(false)}
+                    onSaveOKQuyHD={savePhieuThuOK}
+                />
+            </Dialog>
+
             <Stack
                 className="page-full"
                 position={'relative'}
@@ -277,12 +342,13 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null }> = ({ itemHD }) => 
                     <Typography fontSize={'20px'} fontWeight={600}>
                         Thông tin gói dịch vụ
                     </Typography>
-                    <SaveIcon
-                        titleAccess="Lưu hóa đơn"
-                        className="only-icon"
-                        sx={{ position: 'absolute', top: 8, right: 8, color: '#47e7e' }}
-                        onClick={updateInvoice}
-                    />
+                    <Stack
+                        direction={'row'}
+                        spacing={1}
+                        sx={{ position: 'absolute', top: 8, right: 8, color: '#47e7e' }}>
+                        <MoreHorizIcon titleAccess="Thao tác khác" />
+                        <PrintIcon titleAccess="In hóa đơn" className="only-icon" onClick={InHoaDon} />
+                    </Stack>
                 </Stack>
 
                 <Stack padding={2} overflow={'auto'}>
@@ -349,7 +415,7 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null }> = ({ itemHD }) => 
                                     Tổng phải trả
                                 </Typography>
                                 <Typography flex={1} fontWeight={500} fontSize={'18px'}>
-                                    {new Intl.NumberFormat('vi-VN').format(itemHD?.tongThanhToan ?? 0)}
+                                    {new Intl.NumberFormat('vi-VN').format(tongThanhToan ?? 0)}
                                 </Typography>
                             </Stack>
                             <Stack direction={'row'} spacing={1} alignItems={'center'}>
@@ -357,7 +423,7 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null }> = ({ itemHD }) => 
                                     Đã thanh toán
                                 </Typography>
                                 <Typography flex={1} fontWeight={500}>
-                                    {new Intl.NumberFormat('vi-VN').format(itemHD?.daThanhToan ?? 0)}
+                                    {new Intl.NumberFormat('vi-VN').format(daThanhToan ?? 0)}
                                 </Typography>
                             </Stack>
                             <Stack direction={'row'} spacing={1} alignItems={'center'}>
@@ -365,7 +431,7 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null }> = ({ itemHD }) => 
                                     Còn nợ
                                 </Typography>
                                 <Typography flex={1} fontWeight={500}>
-                                    {new Intl.NumberFormat('vi-VN').format(itemHD?.conNo ?? 0)}
+                                    {new Intl.NumberFormat('vi-VN').format(conNo ?? 0)}
                                 </Typography>
                             </Stack>
                             <Stack direction={'row'} spacing={1} alignItems={'center'}>
@@ -404,41 +470,32 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null }> = ({ itemHD }) => 
                     </Stack>
                 </Stack>
                 <Stack position={'absolute'} bottom={0} sx={{ backgroundColor: 'white' }} width={'100%'}>
-                    <Stack direction={'row'} spacing={1} alignItems={'center'} padding={2}>
-                        <ButtonOnlyIcon
-                            icon={<MoreHorizIcon titleAccess="Thao tác khác" />}
-                            style={{ border: '1px solid #ccc', width: 60, height: 37, flex: 1.5 }}
-                        />
-                        <Button
-                            variant="outlined"
-                            fullWidth
-                            sx={{ flex: 1.5 }}
-                            startIcon={<PrintIcon />}
-                            onClick={InHoaDon}>
-                            In
-                        </Button>
+                    <Stack direction={'row'} spacing={1} alignItems={'center'} padding={2} justifyContent={'center'}>
+                        {conNo > 0 && (
+                            <Button
+                                variant="outlined"
+                                sx={{ flex: 2 }}
+                                fullWidth
+                                startIcon={<AttachMoneyIcon />}
+                                onClick={() => setIsShowModalThanhToan(true)}>
+                                Thanh toán
+                            </Button>
+                        )}
 
                         <Button
                             variant="outlined"
                             color="error"
                             fullWidth
-                            sx={{ flex: 2 }}
+                            sx={{ flex: 1.5 }}
                             startIcon={<DeleteIcon />}
-                            onClick={() =>
-                                setConfirmDialog({
-                                    ...confirmDialog,
-                                    show: true,
-                                    title: 'Xác nhận hủy',
-                                    mes: `Bạn có chắc chắn muốn hủy ${sLoaiHoaDon}  ${maHoaDon}  không?`
-                                })
-                            }>
+                            onClick={onClickHuyGDV}>
                             Hủy bỏ
                         </Button>
 
                         <Button
                             variant="contained"
                             fullWidth
-                            sx={{ flex: 2 }}
+                            sx={{ flex: 1 }}
                             startIcon={<SaveIcon />}
                             onClick={updateInvoice}>
                             Lưu
