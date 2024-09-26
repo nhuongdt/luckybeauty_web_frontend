@@ -14,7 +14,7 @@ import { CreateNhatKyThaoTacDto } from '../nhat_ky_hoat_dong/dto/CreateNhatKyTha
 import nhatKyHoatDongService from '../nhat_ky_hoat_dong/nhatKyHoatDongService';
 
 class SoQuyServices {
-    CreateQuyHoaDon = async (input: any) => {
+    CreateQuyHoaDon = async (input: any): Promise<QuyHoaDonDto> => {
         const result = await http.post('api/services/app/QuyHoaDon/Create', input);
         return result.data.result;
     };
@@ -114,16 +114,16 @@ class SoQuyServices {
         tiencoc = 0,
         idTaiKhoanChuyenKhoan = null,
         idTaiKhoanPOS = null,
+        noiDungThu = '',
         hoadon = {
-            id: null,
-            idChiNhanh: null,
+            id: '' || null,
+            idChiNhanh: '',
             idKhachHang: null,
             maHoaDon: '',
             tenKhachHang: '',
-            ghiChuHD: '',
             ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS')
         }
-    }) => {
+    }): Promise<QuyHoaDonDto | null> => {
         const lstQuyCT_After: QuyChiTietDto[] = [];
         const shareMoney = this.ShareMoney_QuyHD({
             phaiTT: phaiTT,
@@ -176,7 +176,7 @@ class SoQuyServices {
                 idLoaiChungTu: LoaiChungTu.PHIEU_THU,
                 ngayLapHoaDon: hoadon?.ngayLapHoaDon,
                 tongTienThu: tongThu,
-                noiDungThu: hoadon?.ghiChuHD
+                noiDungThu: noiDungThu
             });
             quyHD.quyHoaDon_ChiTiet = lstQuyCT_After;
             const dataPT = await this.CreateQuyHoaDon(quyHD);
@@ -184,8 +184,10 @@ class SoQuyServices {
                 quyHD.maHoaDon = dataPT?.maHoaDon;
                 quyHD.tenNguoiNop = hoadon?.tenKhachHang; // used to print qrCode
                 await this.saveDiarySoQuy(hoadon?.maHoaDon, quyHD);
+                return dataPT;
             }
         }
+        return null;
     };
 
     saveDiarySoQuy = async (maHoaDon: string, quyHD: QuyHoaDonDto) => {

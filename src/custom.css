@@ -3,7 +3,8 @@
     --color-second:#9c27b0;
     --color-text-blur: rgb(153, 150, 153); /*chữ mờ */
     --color-title: #00284c;
-    --color-bg: #e5f3ff;
+    --color-bg: #e5f3ff; 
+    --color-bg-vung-nhan-manh: rgb(245 241 241);
     --color-text-secondary: #839bb1;
     --white: #fff;
     --secondary-1: '#009EF7';
@@ -260,7 +261,7 @@
 }
 
 .btn-outline-hover:hover {
-    border-color: var(--color-main) !important;
+    border-color: var(--color-main) !important; 
 }
 
 .btn-container-hover {

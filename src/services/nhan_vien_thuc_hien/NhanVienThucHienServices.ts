@@ -59,6 +59,18 @@ class NhanVienThucHienService {
         );
         return result.data;
     };
+    UpdateTienChietKhau_forNhanVien_whenUpdateCTHD = async (
+        idHoaDonChiTiet: string,
+        soLuongOld: number
+    ): Promise<boolean> => {
+        if (utils.checkNull_OrEmpty(idHoaDonChiTiet)) {
+            return false;
+        }
+        const result = await http.get(
+            `api/services/app/NhanVienThucHien/UpdateTienChietKhau_forNhanVien_whenUpdateCTHD?idHoaDonChiTiet=${idHoaDonChiTiet}&soLuongOld=${soLuongOld}`
+        );
+        return result.data.result;
+    };
 }
 
 export default new NhanVienThucHienService();

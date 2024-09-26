@@ -562,10 +562,6 @@ const GiaoDichThanhToan: React.FC = () => {
                                 onClick={exportToExcel}
                                 startIcon={<UploadIcon />}
                                 sx={{
-                                    borderColor: '#CDC9CD!important',
-                                    bgcolor: '#fff!important',
-                                    color: '#333233',
-                                    fontSize: '14px',
                                     display: abpCustom.isGrandPermission('Pages.HoaDon.Export') ? '' : 'none'
                                 }}
                                 className="btn-outline-hover">

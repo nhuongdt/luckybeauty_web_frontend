@@ -700,44 +700,47 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
         setIsExpandShoppingCart(false);
     };
 
-    const AgreeGioHang = (ctUpdate: PageHoaDonChiTietDto) => {
+    const AgreeGioHang = (lstCTAfter: PageHoaDonChiTietDto[]) => {
         setIsShowEditGioHang(false);
-        // assign ctdoing --> used to update hoadhong dichvu of nhanvien
-        setCTHDDoing({
-            ...cthdDoing,
-            soLuong: ctUpdate.soLuong,
-            donGiaTruocCK: ctUpdate.donGiaTruocCK,
-            laPTChietKhau: ctUpdate.laPTChietKhau,
-            ptChietKhau: ctUpdate.ptChietKhau,
-            tienChietKhau: ctUpdate.tienChietKhau,
-            donGiaSauCK: ctUpdate.donGiaSauCK,
-            donGiaSauVAT: ctUpdate.donGiaSauVAT,
-            thanhTienTruocCK: ctUpdate.thanhTienTruocCK,
-            thanhTienSauCK: ctUpdate.thanhTienSauCK,
-            thanhTienSauVAT: ctUpdate.thanhTienSauVAT
-        });
-        // update cthd + save to cache
-        setHoaDonChiTiet(
-            hoaDonChiTiet.map((item: any) => {
-                if (item.id === ctUpdate.id) {
-                    return {
-                        ...item,
-                        soLuong: ctUpdate.soLuong,
-                        donGiaTruocCK: ctUpdate.donGiaTruocCK,
-                        laPTChietKhau: ctUpdate.laPTChietKhau,
-                        ptChietKhau: ctUpdate.ptChietKhau,
-                        tienChietKhau: ctUpdate.tienChietKhau,
-                        donGiaSauCK: ctUpdate.donGiaSauCK,
-                        donGiaSauVAT: ctUpdate.donGiaSauVAT,
-                        thanhTienTruocCK: ctUpdate.thanhTienTruocCK,
-                        thanhTienSauCK: ctUpdate.thanhTienSauCK,
-                        thanhTienSauVAT: ctUpdate.thanhTienSauVAT
-                    };
-                } else {
-                    return item;
-                }
-            })
-        );
+        if (lstCTAfter?.length > 0) {
+            const ctUpdate = lstCTAfter[0];
+            // assign ctdoing --> used to update hoadhong dichvu of nhanvien
+            setCTHDDoing({
+                ...cthdDoing,
+                soLuong: ctUpdate.soLuong,
+                donGiaTruocCK: ctUpdate.donGiaTruocCK,
+                laPTChietKhau: ctUpdate.laPTChietKhau,
+                ptChietKhau: ctUpdate.ptChietKhau,
+                tienChietKhau: ctUpdate.tienChietKhau,
+                donGiaSauCK: ctUpdate.donGiaSauCK,
+                donGiaSauVAT: ctUpdate.donGiaSauVAT,
+                thanhTienTruocCK: ctUpdate.thanhTienTruocCK,
+                thanhTienSauCK: ctUpdate.thanhTienSauCK,
+                thanhTienSauVAT: ctUpdate.thanhTienSauVAT
+            });
+            // update cthd + save to cache
+            setHoaDonChiTiet(
+                hoaDonChiTiet.map((item) => {
+                    if (item.id === ctUpdate.id) {
+                        return {
+                            ...item,
+                            soLuong: ctUpdate.soLuong,
+                            donGiaTruocCK: ctUpdate.donGiaTruocCK,
+                            laPTChietKhau: ctUpdate.laPTChietKhau,
+                            ptChietKhau: ctUpdate.ptChietKhau,
+                            tienChietKhau: ctUpdate.tienChietKhau,
+                            donGiaSauCK: ctUpdate.donGiaSauCK,
+                            donGiaSauVAT: ctUpdate.donGiaSauVAT,
+                            thanhTienTruocCK: ctUpdate.thanhTienTruocCK,
+                            thanhTienSauCK: ctUpdate.thanhTienSauCK,
+                            thanhTienSauVAT: ctUpdate.thanhTienSauVAT
+                        };
+                    } else {
+                        return item;
+                    }
+                })
+            );
+        }
     };
 
     // end modal chi tiet
