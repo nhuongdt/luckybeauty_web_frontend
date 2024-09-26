@@ -1,9 +1,14 @@
 import { Grid, Stack, Box } from '@mui/material';
+import { FC } from 'react';
+import { IHangHoaGroupTheoNhomDto, ModelHangHoaDto } from '../../services/product/dto';
 
-export default function ListProductByGroup({ listProduct, handleChoseItem }: any) {
+const ListProductByGroup: FC<{
+    listProduct: IHangHoaGroupTheoNhomDto[];
+    handleChoseItem: (productChosed: ModelHangHoaDto) => void;
+}> = ({ listProduct, handleChoseItem }) => {
     return (
         <>
-            {listProduct.map((nhom: any, index: any) => (
+            {listProduct.map((nhom, index) => (
                 <Grid container paddingTop={2} spacing={2} key={index}>
                     <Grid item xs={12} key={index}>
                         <span
@@ -16,7 +21,7 @@ export default function ListProductByGroup({ listProduct, handleChoseItem }: any
                         </span>
                     </Grid>
 
-                    {nhom.hangHoas.map((item: any, index2: any) => (
+                    {nhom.hangHoas.map((item, index2) => (
                         <Grid key={index2} item xs={12} sm={4} md={3} lg={3} onClick={() => handleChoseItem(item)}>
                             <Stack
                                 direction="column"
@@ -46,7 +51,7 @@ export default function ListProductByGroup({ listProduct, handleChoseItem }: any
                                         fontSize: 14,
                                         color: '#333233'
                                     }}>
-                                    {new Intl.NumberFormat('vi-VN').format(item.giaBan)}
+                                    {new Intl.NumberFormat('vi-VN').format(item?.giaBan ?? 0)}
                                 </Box>
                             </Stack>
                         </Grid>
@@ -55,4 +60,5 @@ export default function ListProductByGroup({ listProduct, handleChoseItem }: any
             ))}
         </>
     );
-}
+};
+export default ListProductByGroup;
