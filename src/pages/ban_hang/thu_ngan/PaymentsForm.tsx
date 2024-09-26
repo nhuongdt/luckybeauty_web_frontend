@@ -1,32 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Typography, Grid, TextField, CircularProgress } from '@mui/material';
+import { Stack, Typography, Grid, TextField, CircularProgress, InputAdornment } from '@mui/material';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import { NumericFormat } from 'react-number-format';
 import utils from '../../../utils/utils';
 import { TaiKhoanNganHangDto } from '../../../services/so_quy/Dto/TaiKhoanNganHangDto';
 import TaiKhoanNganHangServices from '../../../services/so_quy/TaiKhoanNganHangServices';
 import AutocompleteAccountBank from '../../../components/Autocomplete/AccountBank';
+import { FormNumber } from '../../../enum/FormNumber';
+import SoQuyServices from '../../../services/so_quy/SoQuyServices';
+import { format } from 'date-fns';
 interface ChildComponent {
     tongPhaiTra: number;
     onClose: () => void;
-    onSaveHoaDon: (
+    onSaveHoaDon?: (
         tienMat: number,
         tienCK: number,
         tienPOS: number,
         idTaiKhoanPos: string | null,
         idTaiKhoanCK: string | null
     ) => void;
+    formNumber?: number;
+    isShowModal?: boolean;
+    inforHD?: { id: string; maHoaDon: string; idKhachHang: string; idChiNhanh: string; tenKhachHang: string };
+    onSaveOKQuyHD?: (tongTienThu: number) => void;
 }
-const PaymentsForm: React.FC<ChildComponent> = ({ tongPhaiTra = 0, onClose, onSaveHoaDon }) => {
+const PaymentsForm: React.FC<ChildComponent> = ({
+    tongPhaiTra = 0,
+    onClose,
+    onSaveHoaDon,
+    formNumber = FormNumber.THU_NGAN,
+    isShowModal = false,
+    inforHD,
+    onSaveOKQuyHD
+}) => {
     const [tienMat, setTienMat] = useState(tongPhaiTra);
     const [isSaving, setIsSaving] = useState(false);
     const [tienChuyenKhoan, setTienChuyenKhoan] = useState(0);
     const [tienQuyeThePos, setTienQuyeThePos] = useState(0);
+    const [noiDungThu, setNoiDungThu] = useState('');
     const [allBankAccount, setAllBankAccount] = useState<TaiKhoanNganHangDto[]>([]);
 
-    const [idTaiKhoanChuyenKhoan, setIdTaiKhoanChuyenKhoan] = useState('');
-    const [idTaiKhoanPOS, setIdTaiKhoanPOS] = useState('');
+    const [idTaiKhoanChuyenKhoan, setIdTaiKhoanChuyenKhoan] = useState<string | null>('');
+    const [idTaiKhoanPOS, setIdTaiKhoanPOS] = useState<string | null>('');
     const GetAllTaiKhoanNganHang = async () => {
         const data = await TaiKhoanNganHangServices.GetAllBankAccount();
         setAllBankAccount(data);
@@ -35,6 +52,10 @@ const PaymentsForm: React.FC<ChildComponent> = ({ tongPhaiTra = 0, onClose, onSa
     useEffect(() => {
         GetAllTaiKhoanNganHang();
     }, []);
+
+    useEffect(() => {
+        //
+    }, [isShowModal]);
 
     const tienKhachDua = tienMat + tienChuyenKhoan + tienQuyeThePos;
     const tienKhachThieu = tongPhaiTra - tienKhachDua;
@@ -48,7 +69,34 @@ const PaymentsForm: React.FC<ChildComponent> = ({ tongPhaiTra = 0, onClose, onSa
 
     const thanhToan = async () => {
         setIsSaving(true);
-        onSaveHoaDon(tienMat, tienChuyenKhoan, tienQuyeThePos, idTaiKhoanChuyenKhoan, idTaiKhoanPOS);
+        if (formNumber === FormNumber.THU_NGAN) {
+            if (onSaveHoaDon) {
+                onSaveHoaDon(tienMat, tienChuyenKhoan, tienQuyeThePos, idTaiKhoanChuyenKhoan, idTaiKhoanPOS);
+            }
+        } else {
+            const dataQuyHD = await SoQuyServices.savePhieuThu_forHoaDon({
+                phaiTT: tongPhaiTra ?? 0,
+                tienmat: tienMat,
+                tienCK: tienChuyenKhoan,
+                tienPOS: tienQuyeThePos,
+                idTaiKhoanChuyenKhoan: idTaiKhoanChuyenKhoan as null,
+                idTaiKhoanPOS: idTaiKhoanPOS as null,
+                noiDungThu: noiDungThu,
+                hoadon: {
+                    maHoaDon: inforHD?.maHoaDon ?? '',
+                    id: inforHD?.id as unknown as null,
+                    idKhachHang: inforHD?.idKhachHang as unknown as null,
+                    idChiNhanh: inforHD?.idChiNhanh ?? '',
+                    ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd'),
+                    tenKhachHang: inforHD?.tenKhachHang ?? ''
+                }
+            });
+            if (dataQuyHD !== null) {
+                if (onSaveOKQuyHD) {
+                    onSaveOKQuyHD(dataQuyHD?.tongTienThu ?? 0);
+                }
+            }
+        }
         setIsSaving(false);
     };
 
@@ -63,18 +111,20 @@ const PaymentsForm: React.FC<ChildComponent> = ({ tongPhaiTra = 0, onClose, onSa
             }}>
             <Grid item xs={12} position={'relative'}>
                 <Typography fontSize="24px" fontWeight="700">
-                    Thông tin thanh toán
+                    {formNumber === FormNumber.THU_NGAN
+                        ? ' Thông tin thanh toán'
+                        : `Thêm mới phiếu thu (${inforHD?.maHoaDon ?? ''})`}
                 </Typography>
                 <CloseOutlinedIcon
                     sx={{ position: 'absolute', right: 0, top: 0, width: 36, height: 36 }}
                     onClick={onClose}
                 />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} lg={12}>
                 <Grid container padding={2} paddingLeft={0}>
                     <Grid item xs={6} lg={7} md={7} sm={6}>
                         <Typography fontSize={20} fontWeight={500}>
-                            Tổng thanh toán
+                            {formNumber === FormNumber.THU_NGAN ? ' Tổng thanh toán' : 'Nợ hóa đơn'}
                         </Typography>
                     </Grid>
                     <Grid item xs={6} lg={5} md={5} sm={6}>
@@ -226,6 +276,22 @@ const PaymentsForm: React.FC<ChildComponent> = ({ tongPhaiTra = 0, onClose, onSa
                     </Grid>
                 </Grid>
             </Grid>
+            <Grid item lg={12} marginTop={1}>
+                <TextField
+                    variant="standard"
+                    fullWidth
+                    placeholder="Nhập nội dung thu"
+                    value={noiDungThu}
+                    onChange={(e) => setNoiDungThu(e.target.value)}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <CreateOutlinedIcon />
+                            </InputAdornment>
+                        )
+                    }}
+                />
+            </Grid>
             <Grid item xs={12}>
                 <Grid container justifyContent={'space-between'} padding={2}>
                     <Grid item lg={3} md={3} sm={3} xs={0}></Grid>
@@ -265,7 +331,7 @@ const PaymentsForm: React.FC<ChildComponent> = ({ tongPhaiTra = 0, onClose, onSa
             <Grid item xs={12} marginTop={3}>
                 <Grid container justifyContent={'space-between'}>
                     <Grid item lg={3} md={2} sm={4} xs={2}></Grid>
-                    <Grid lg={6} md={8} sm={4} xs={8}>
+                    <Grid item lg={6} md={8} sm={4} xs={8}>
                         {isSaving ? (
                             <Stack
                                 sx={{
@@ -301,7 +367,7 @@ const PaymentsForm: React.FC<ChildComponent> = ({ tongPhaiTra = 0, onClose, onSa
                             </Stack>
                         )}
                     </Grid>
-                    <Grid lg={3} md={2} sm={4} xs={2}></Grid>
+                    <Grid item lg={3} md={2} sm={4} xs={2}></Grid>
                 </Grid>
             </Grid>
         </Grid>
