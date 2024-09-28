@@ -62,9 +62,15 @@ const PaymentsForm: React.FC<ChildComponent> = ({
 
     const changeTaiKhoanChuyenKhoan = (item: TaiKhoanNganHangDto) => {
         setIdTaiKhoanChuyenKhoan(item?.id);
+        if (utils.checkNull_OrEmpty(item?.id)) {
+            setTienChuyenKhoan(0);
+        }
     };
     const changeTaiKhoanPOS = (item: TaiKhoanNganHangDto) => {
         setIdTaiKhoanPOS(item?.id);
+        if (utils.checkNull_OrEmpty(item?.id)) {
+            setTienQuyeThePos(0);
+        }
     };
 
     const thanhToan = async () => {
@@ -76,18 +82,18 @@ const PaymentsForm: React.FC<ChildComponent> = ({
         } else {
             const dataQuyHD = await SoQuyServices.savePhieuThu_forHoaDon({
                 phaiTT: tongPhaiTra ?? 0,
+                idChiNhanh: inforHD?.idChiNhanh ?? '',
                 tienmat: tienMat,
                 tienCK: tienChuyenKhoan,
                 tienPOS: tienQuyeThePos,
                 idTaiKhoanChuyenKhoan: idTaiKhoanChuyenKhoan as null,
                 idTaiKhoanPOS: idTaiKhoanPOS as null,
                 noiDungThu: noiDungThu,
+                ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd'),
                 hoadon: {
                     maHoaDon: inforHD?.maHoaDon ?? '',
                     id: inforHD?.id as unknown as null,
                     idKhachHang: inforHD?.idKhachHang as unknown as null,
-                    idChiNhanh: inforHD?.idChiNhanh ?? '',
-                    ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd'),
                     tenKhachHang: inforHD?.tenKhachHang ?? ''
                 }
             });

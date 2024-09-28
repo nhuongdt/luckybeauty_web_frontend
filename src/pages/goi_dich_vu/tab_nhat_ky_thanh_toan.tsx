@@ -20,8 +20,10 @@ import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import { format } from 'date-fns';
 import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
 import { LoaiChungTu, TypeAction } from '../../lib/appconst';
+import ModalUpdatePhieuThuHoaDon from '../thu_chi/so_quy/components/modal_update_phieu_thu_hoa_don';
 
 const TabNhatKyThanhToan: FC<{ idHoaDon: string }> = ({ idHoaDon }) => {
+    const [isShowModalThanhToan, setIsShowModalThanhToan] = useState(false);
     const [lstPhieuThuChi, setLstPhieuThuChi] = useState<QuyHoaDonDto[]>([]);
     const [quyHDChosing, setQuyHDChosing] = useState<QuyHoaDonDto | null>(null);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
@@ -44,15 +46,15 @@ const TabNhatKyThanhToan: FC<{ idHoaDon: string }> = ({ idHoaDon }) => {
     }, [idHoaDon]);
 
     const doActionRow = async (typeAction: number, item: QuyHoaDonDto) => {
+        setQuyHDChosing({ ...item });
         switch (typeAction) {
             case TypeAction.UPDATE:
                 {
-                    //
+                    setIsShowModalThanhToan(true);
                 }
                 break;
             case TypeAction.DELETE:
                 {
-                    setQuyHDChosing({ ...item });
                     setConfirmDialog({
                         ...confirmDialog,
                         show: true,
@@ -63,6 +65,33 @@ const TabNhatKyThanhToan: FC<{ idHoaDon: string }> = ({ idHoaDon }) => {
                     });
                 }
                 break;
+        }
+    };
+
+    const saveSoQuyOK = (typeAction: number, quyHD: QuyHoaDonDto) => {
+        setIsShowModalThanhToan(false);
+        if (typeAction === TypeAction.DELETE) {
+            setLstPhieuThuChi(lstPhieuThuChi?.filter((x) => x.id !== quyHDChosing?.id));
+            setObjAlert({ ...objAlert, show: true, mes: 'Xóa phiếu thu thành công' });
+        } else {
+            setLstPhieuThuChi(
+                lstPhieuThuChi?.map((x) => {
+                    if (x.id === quyHDChosing?.id) {
+                        return {
+                            ...x,
+                            maHoaDon: quyHD?.maHoaDon,
+                            tongTienThu: quyHD?.tongTienThu,
+                            ngayLapHoaDon: quyHD?.ngayLapHoaDon,
+                            sHinhThucThanhToan: quyHD?.sHinhThucThanhToan,
+                            trangThai: quyHD?.trangThai,
+                            txtTrangThai: quyHD?.txtTrangThai
+                        };
+                    } else {
+                        return x;
+                    }
+                })
+            );
+            setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật phiếu thu thành công' });
         }
     };
 
@@ -77,13 +106,20 @@ const TabNhatKyThanhToan: FC<{ idHoaDon: string }> = ({ idHoaDon }) => {
 
     return (
         <>
+            <ModalUpdatePhieuThuHoaDon
+                isShowModal={isShowModalThanhToan}
+                idQuyHD={quyHDChosing?.id ?? ''}
+                idHoaDonLienQuan={idHoaDon}
+                onClose={() => setIsShowModalThanhToan(false)}
+                onSaveOK={saveSoQuyOK}
+            />
             <Grid container spacing={2}>
                 <Grid item lg={12}>
                     <TableContainer sx={{ overflow: 'auto', maxHeight: 420 }}>
                         <Table>
                             <TableHead>
                                 <MyHeaderTable
-                                    showAction={true}
+                                    showAction={false}
                                     isCheckAll={false}
                                     isShowCheck={false}
                                     sortBy=""
@@ -95,7 +131,16 @@ const TabNhatKyThanhToan: FC<{ idHoaDon: string }> = ({ idHoaDon }) => {
                             <TableBody>
                                 {lstPhieuThuChi?.map((row, index) => (
                                     <TableRow key={index}>
-                                        <TableCell>{row?.maHoaDon}</TableCell>
+                                        <TableCell
+                                            sx={{
+                                                color: 'var(--color-main)',
+                                                ' & :hover': {
+                                                    cursor: 'pointer'
+                                                }
+                                            }}
+                                            onClick={() => doActionRow(TypeAction.UPDATE, row)}>
+                                            {row?.maHoaDon}
+                                        </TableCell>
                                         <TableCell align="center">
                                             {format(new Date(row?.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')}
                                         </TableCell>
@@ -112,13 +157,13 @@ const TabNhatKyThanhToan: FC<{ idHoaDon: string }> = ({ idHoaDon }) => {
                                             }>
                                             {row?.txtTrangThai}
                                         </TableCell>
-                                        <TableCell sx={{ minWidth: 40 }}>
+                                        {/* <TableCell sx={{ minWidth: 40 }}>
                                             <Stack spacing={1} direction={'row'}>
                                                 <OpenInNewOutlinedIcon
                                                     titleAccess="Cập nhật"
                                                     className="only-icon"
                                                     sx={{ width: '16px', color: '#7e7979' }}
-                                                    //onClick={() => doActionRow(TypeAction.UPDATE, row)}
+                                                    onClick={() => doActionRow(TypeAction.UPDATE, row)}
                                                 />
                                                 <ClearIcon
                                                     titleAccess="Xóa"
@@ -129,10 +174,10 @@ const TabNhatKyThanhToan: FC<{ idHoaDon: string }> = ({ idHoaDon }) => {
                                                         }
                                                     }}
                                                     style={{ width: '16px', color: 'red' }}
-                                                    //onClick={() => doActionRow(TypeAction.DELETE, row)}
+                                                    onClick={() => doActionRow(TypeAction.DELETE, row)}
                                                 />
                                             </Stack>
-                                        </TableCell>
+                                        </TableCell> */}
                                     </TableRow>
                                 ))}
                             </TableBody>
