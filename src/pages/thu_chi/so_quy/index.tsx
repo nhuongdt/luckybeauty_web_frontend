@@ -22,7 +22,6 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import ClearIcon from '@mui/icons-material/Clear';
 import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
-import CreateOrEditSoQuyDialog from './components/CreateOrEditSoQuyDialog';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
@@ -55,6 +54,7 @@ import { IPagedResultSoQuyDto } from '../../../services/so_quy/Dto/IPagedResultS
 import Cookies from 'js-cookie';
 import PopoverFilterSoQuy from './components/PopoverFilterSoQuy';
 import suggestStore from '../../../stores/suggestStore';
+import CreateOrEditSoQuyDialog from './components/CreateOrEditSoQuyDialog';
 
 const PageSoQuy = () => {
     const today = new Date();

@@ -8,7 +8,7 @@ import { IFileDto } from '../dto/FileDto';
 import QuyChiTietDto from './QuyChiTietDto';
 import { ParamSearchSoQuyDto } from './Dto/ParamSearchSoQuyDto';
 import { IThuChiDauKyCuoiKyDto } from './Dto/IThuChiDauKyCuoiKyDto';
-import { HINH_THUC_THANH_TOAN, LoaiChungTu } from '../../lib/appconst';
+import { HINH_THUC_THANH_TOAN, LoaiChungTu, TrangThaiActive } from '../../lib/appconst';
 import { format } from 'date-fns';
 import { CreateNhatKyThaoTacDto } from '../nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
 import nhatKyHoatDongService from '../nhat_ky_hoat_dong/nhatKyHoatDongService';
@@ -22,7 +22,7 @@ class SoQuyServices {
         const result = await http.post('api/services/app/QuyHoaDon/UpdateQuyHoaDon', input);
         return result.data.result;
     };
-    UpdateQuyHD_RemoveCT_andAddAgain = async (input: QuyHoaDonDto) => {
+    UpdateQuyHD_RemoveCT_andAddAgain = async (input: QuyHoaDonDto): Promise<QuyHoaDonDto> => {
         const result = await http.post('api/services/app/QuyHoaDon/UpdateQuyHD_RemoveCT_andAddAgain', input);
         return result.data.result;
     };
@@ -83,7 +83,10 @@ class SoQuyServices {
         const response = await http.post('api/services/app/QuyHoaDon/ExportExcelQuyHoaDon', input);
         return response.data.result;
     }
-    async GetInforQuyHoaDon_byId(idQuyHD: string): Promise<QuyHoaDonDto> {
+    async GetInforQuyHoaDon_byId(idQuyHD: string): Promise<QuyHoaDonDto | null> {
+        if (utils.checkNull_OrEmpty(idQuyHD)) {
+            return null;
+        }
         const response = await http.get(`api/services/app/QuyHoaDon/GetForEdit?id=${idQuyHD}`);
         return response.data.result;
     }
@@ -112,16 +115,20 @@ class SoQuyServices {
         tienCK = 0,
         thegiatri = 0,
         tiencoc = 0,
+        maPhieuThu = '',
+        idQuyHD = '',
+        idChiNhanh = '',
+        idLoaiChungTu = LoaiChungTu.PHIEU_THU,
         idTaiKhoanChuyenKhoan = null,
         idTaiKhoanPOS = null,
         noiDungThu = '',
+        hachToanKinhDoanh = true,
+        ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd'),
         hoadon = {
-            id: '' || null,
-            idChiNhanh: '',
+            id: null,
             idKhachHang: null,
             maHoaDon: '',
-            tenKhachHang: '',
-            ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS')
+            tenKhachHang: ''
         }
     }): Promise<QuyHoaDonDto | null> => {
         const lstQuyCT_After: QuyChiTietDto[] = [];
@@ -170,20 +177,31 @@ class SoQuyServices {
         const tongThu = lstQuyCT_After.reduce((currentValue: number, item) => {
             return currentValue + item.tienThu;
         }, 0);
+        console.log('tongthu ', tongThu, 'idquy', idQuyHD);
         if (tongThu > 0) {
             const quyHD = new QuyHoaDonDto({
-                idChiNhanh: hoadon?.idChiNhanh ?? '',
-                idLoaiChungTu: LoaiChungTu.PHIEU_THU,
-                ngayLapHoaDon: hoadon?.ngayLapHoaDon,
+                maHoaDon: maPhieuThu,
+                idChiNhanh: idChiNhanh,
+                idLoaiChungTu: idLoaiChungTu,
+                ngayLapHoaDon: ngayLapHoaDon,
                 tongTienThu: tongThu,
-                noiDungThu: noiDungThu
+                noiDungThu: noiDungThu,
+                hachToanKinhDoanh: hachToanKinhDoanh
             });
             quyHD.quyHoaDon_ChiTiet = lstQuyCT_After;
-            const dataPT = await this.CreateQuyHoaDon(quyHD);
-            if (dataPT) {
-                quyHD.maHoaDon = dataPT?.maHoaDon;
-                quyHD.tenNguoiNop = hoadon?.tenKhachHang; // used to print qrCode
-                await this.saveDiarySoQuy(hoadon?.maHoaDon, quyHD);
+            if (utils.checkNull_OrEmpty(idQuyHD)) {
+                // insert
+                const dataPT = await this.CreateQuyHoaDon(quyHD);
+                if (dataPT) {
+                    quyHD.maHoaDon = dataPT?.maHoaDon;
+                    quyHD.tenNguoiNop = hoadon?.tenKhachHang; // used to print qrCode
+                    await this.saveDiarySoQuy(hoadon?.maHoaDon, quyHD);
+                    return dataPT;
+                }
+            } else {
+                quyHD.id = idQuyHD;
+                // update (remove & add again)
+                const dataPT = await this.UpdateQuyHD_RemoveCT_andAddAgain(quyHD);
                 return dataPT;
             }
         }
