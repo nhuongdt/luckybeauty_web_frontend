@@ -37,7 +37,7 @@ import HoaDonChiTietDto from '../../../services/ban_hang/HoaDonChiTietDto';
 import { NumericFormat } from 'react-number-format';
 import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
-import PaymentsForm from './Payment';
+import PaymentsForm from './PaymentsForm';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import CreateOrEditCustomerDialog from '../../customer/components/create-or-edit-customer-modal';
@@ -124,9 +124,17 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
         new PageHoaDonChiTietDto({ id: '', expanded: false })
     );
+
     const [idCTHDChosing, setIdCTHDChosing] = useState('');
 
     const [confirmDialog, setConfirmDialog] = useState<PropConfirmOKCancel>({
+        show: false,
+        title: '',
+        type: 1, // 1.remove customer, 2.change tabhoadon
+        mes: ''
+    });
+
+    const [confirmDialogUsingGDV, setConfirmDialogUsingGDV] = useState<PropConfirmOKCancel>({
         show: false,
         title: '',
         type: 1,
@@ -245,13 +253,22 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         }
     };
 
-    const ChangeLoaiHoaDon = async (loaiHoaDon: number) => {
+    const AgreeChangeLoaiHoaDon = async () => {
         setHoaDon({ ...hoadon, idLoaiChungTu: loaiHoaDon });
 
         await dbDexie.hoaDon
             .where('id')
             .equals(hoadon?.id)
             .modify((o: PageHoaDonDto) => (o.idLoaiChungTu = loaiHoaDon));
+    };
+
+    const ChangeLoaiHoaDon = async () => {
+        const check = CheckDangSuDungGDV(2);
+        if (!check) {
+            return;
+        }
+
+        await AgreeChangeLoaiHoaDon();
     };
 
     useEffect(() => {
@@ -266,7 +283,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             firstLoad_changeLoaiHD.current = false;
             return;
         }
-        ChangeLoaiHoaDon(loaiHoaDon);
+        ChangeLoaiHoaDon();
     }, [loaiHoaDon]);
 
     useEffect(() => {
@@ -333,6 +350,16 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             if (!checkSD) {
                 return;
             }
+
+            if (hoadon?.idLoaiChungTu !== LoaiChungTu.HOA_DON_BAN_LE) {
+                // update loaiHoaDon
+                setHoaDon({ ...hoadon, idLoaiChungTu: LoaiChungTu.HOA_DON_BAN_LE });
+                await dbDexie.hoaDon.update(hoadon?.id, {
+                    idLoaiChungTu: LoaiChungTu.HOA_DON_BAN_LE
+                });
+                onSetActiveTabLoaiHoaDon(LoaiChungTu.HOA_DON_BAN_LE);
+            }
+            // if = GDV --> add newHD with customer
             // remove ctold if same & add again
             const cthdRemove: PageHoaDonChiTietDto[] = [];
             const arrChosed: PageHoaDonChiTietDto[] = [];
@@ -576,22 +603,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         setCustomerHasGDV(existGDV);
     };
 
-    const AgreeRemoveCustomer = async () => {
-        setCustomerHasGDV(false);
-        setConfirmDialog({ ...confirmDialog, show: false });
-        setHoaDon({ ...hoadon, idKhachHang: null });
-        setCustomerChosed({
-            ...customerChosed,
-            id: Guid.EMPTY,
-            maKhachHang: 'KL', // todo makhachhang
-            tenKhachHang: 'Khách lẻ',
-            soDienThoai: ''
-        });
-        await dbDexie.hoaDon
-            .where('id')
-            .equals(hoadon?.id)
-            .modify((o: PageHoaDonDto) => (o.idKhachHang = null));
-
+    const ResetCTHD_ifUsingGDV = async () => {
         // reset cthd (if using GDV)
         setHoaDonChiTiet(
             hoaDonChiTiet?.map((x) => {
@@ -620,12 +632,33 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         await UpdateCTHD_toCache([...arrCT]);
     };
 
-    const CheckDangSuDungGDV = () => {
+    const AgreeRemoveCustomer = async () => {
+        const idCheckinDelete = hoadon?.idCheckIn ?? Guid.EMPTY;
+        await CheckinService.UpdateTrangThaiCheckin(idCheckinDelete, TrangThaiCheckin.DELETED);
+        await CheckinService.UpdateTrangThaiBooking_byIdCheckIn(idCheckinDelete, TrangThaiBooking.Confirm);
+        setCustomerHasGDV(false);
+        setConfirmDialog({ ...confirmDialog, show: false });
+        setHoaDon({ ...hoadon, idKhachHang: null });
+        setCustomerChosed({
+            ...customerChosed,
+            id: Guid.EMPTY,
+            maKhachHang: 'KL', // todo makhachhang
+            tenKhachHang: 'Khách lẻ',
+            soDienThoai: ''
+        });
+        await dbDexie.hoaDon
+            .where('id')
+            .equals(hoadon?.id)
+            .modify((o: PageHoaDonDto) => (o.idKhachHang = null));
+    };
+
+    const CheckDangSuDungGDV = (type: number) => {
         const ctSuDung = hoaDonChiTiet?.filter((x) => !utils.checkNull_OrEmpty(x.idChiTietHoaDon));
         if (ctSuDung?.length > 0) {
             setConfirmDialog({
                 ...confirmDialog,
                 show: true,
+                type: type,
                 mes: 'Đang sử dụng Gói dịch vụ. Bạn có muốn chuyển sang mua mới không?',
                 title: 'Xác nhận chuyển đổi'
             });
@@ -635,11 +668,11 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     };
 
     const RemoveCustomer = async () => {
-        const check = CheckDangSuDungGDV();
+        const check = CheckDangSuDungGDV(1);
         if (!check) {
             return;
         }
-        await onClickConfirmDelete();
+        await AgreeRemoveCustomer();
     };
 
     const showModalAddCustomer = () => {
@@ -670,11 +703,20 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             .modify((o: PageHoaDonDto) => (o.ngayLapHoaDon = dt));
     };
 
-    const onClickConfirmDelete = async () => {
-        const idCheckinDelete = hoadon?.idCheckIn ?? Guid.EMPTY;
-        await CheckinService.UpdateTrangThaiCheckin(idCheckinDelete, TrangThaiCheckin.DELETED);
-        await CheckinService.UpdateTrangThaiBooking_byIdCheckIn(idCheckinDelete, TrangThaiBooking.Confirm);
-        await AgreeRemoveCustomer();
+    const onClickOKConfirm = async () => {
+        switch (confirmDialog.type) {
+            case 1:
+                {
+                    await AgreeRemoveCustomer();
+                }
+                break;
+            case 2:
+                {
+                    await AgreeChangeLoaiHoaDon();
+                }
+                break;
+        }
+        await ResetCTHD_ifUsingGDV();
     };
 
     const showPopNhanVienThucHien = (item: HoaDonChiTietDto) => {
@@ -738,12 +780,52 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         setIdCTHDChosing(idChiTiet);
     };
 
-    const AgreeGioHang = async (ctUpdate: PageHoaDonChiTietDto) => {
+    const AgreeGioHang = async (lstCTAfter: PageHoaDonChiTietDto[]) => {
         setIsShowEditGioHang(false);
 
-        // update cthd + save to cache
-        setHoaDonChiTiet(
-            hoaDonChiTiet.map((item) => {
+        if (lstCTAfter?.length > 0) {
+            const ctUpdate = lstCTAfter[0];
+            // update cthd + save to cache
+            setHoaDonChiTiet(
+                hoaDonChiTiet.map((item) => {
+                    if (item.id === ctUpdate.id) {
+                        const isSuDungDV = !utils.checkNull_OrEmpty(item?.idChiTietHoaDon ?? '');
+                        return {
+                            ...item,
+                            soLuong: ctUpdate.soLuong,
+                            donGiaTruocCK: ctUpdate.donGiaTruocCK,
+                            laPTChietKhau: ctUpdate.laPTChietKhau,
+                            ptChietKhau: ctUpdate.ptChietKhau,
+                            tienChietKhau: ctUpdate.tienChietKhau,
+                            donGiaSauCK: ctUpdate.donGiaSauCK,
+                            donGiaSauVAT: ctUpdate.donGiaSauVAT,
+                            thanhTienTruocCK: isSuDungDV ? 0 : ctUpdate.thanhTienTruocCK,
+                            thanhTienSauCK: isSuDungDV ? 0 : ctUpdate.thanhTienSauCK,
+                            thanhTienSauVAT: isSuDungDV ? 0 : ctUpdate.thanhTienSauVAT,
+                            nhanVienThucHien: item?.nhanVienThucHien?.map((nv) => {
+                                if (nv.ptChietKhau > 0) {
+                                    return {
+                                        ...nv,
+                                        // soluong * dongia (tránh trường hợp sử dụng GDV: thanhtien = 0)
+                                        tienChietKhau:
+                                            (nv.ptChietKhau * ctUpdate.soLuong * (ctUpdate?.donGiaSauCK ?? 0)) / 100
+                                    };
+                                } else {
+                                    return {
+                                        ...nv,
+                                        // (tienchietkhau/soLuongCu) * slNew
+                                        tienChietKhau: (nv.tienChietKhau / item.soLuong) * ctUpdate.soLuong
+                                    };
+                                }
+                            })
+                        };
+                    } else {
+                        return item;
+                    }
+                })
+            );
+
+            const arrCT = hoaDonChiTiet.map((item) => {
                 if (item.id === ctUpdate.id) {
                     const isSuDungDV = !utils.checkNull_OrEmpty(item?.idChiTietHoaDon ?? '');
                     return {
@@ -762,14 +844,12 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                             if (nv.ptChietKhau > 0) {
                                 return {
                                     ...nv,
-                                    // soluong * dongia (tránh trường hợp sử dụng GDV: thanhtien = 0)
                                     tienChietKhau:
                                         (nv.ptChietKhau * ctUpdate.soLuong * (ctUpdate?.donGiaSauCK ?? 0)) / 100
                                 };
                             } else {
                                 return {
                                     ...nv,
-                                    // (tienchietkhau/soLuongCu) * slNew
                                     tienChietKhau: (nv.tienChietKhau / item.soLuong) * ctUpdate.soLuong
                                 };
                             }
@@ -778,44 +858,10 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 } else {
                     return item;
                 }
-            })
-        );
+            });
 
-        const arrCT = hoaDonChiTiet.map((item) => {
-            if (item.id === ctUpdate.id) {
-                const isSuDungDV = !utils.checkNull_OrEmpty(item?.idChiTietHoaDon ?? '');
-                return {
-                    ...item,
-                    soLuong: ctUpdate.soLuong,
-                    donGiaTruocCK: ctUpdate.donGiaTruocCK,
-                    laPTChietKhau: ctUpdate.laPTChietKhau,
-                    ptChietKhau: ctUpdate.ptChietKhau,
-                    tienChietKhau: ctUpdate.tienChietKhau,
-                    donGiaSauCK: ctUpdate.donGiaSauCK,
-                    donGiaSauVAT: ctUpdate.donGiaSauVAT,
-                    thanhTienTruocCK: isSuDungDV ? 0 : ctUpdate.thanhTienTruocCK,
-                    thanhTienSauCK: isSuDungDV ? 0 : ctUpdate.thanhTienSauCK,
-                    thanhTienSauVAT: isSuDungDV ? 0 : ctUpdate.thanhTienSauVAT,
-                    nhanVienThucHien: item?.nhanVienThucHien?.map((nv) => {
-                        if (nv.ptChietKhau > 0) {
-                            return {
-                                ...nv,
-                                tienChietKhau: (nv.ptChietKhau * ctUpdate.soLuong * (ctUpdate?.donGiaSauCK ?? 0)) / 100
-                            };
-                        } else {
-                            return {
-                                ...nv,
-                                tienChietKhau: (nv.tienChietKhau / item.soLuong) * ctUpdate.soLuong
-                            };
-                        }
-                    })
-                };
-            } else {
-                return item;
-            }
-        });
-
-        await UpdateCTHD_toCache(arrCT);
+            await UpdateCTHD_toCache(arrCT);
+        }
     };
 
     // end modal chi tiet
@@ -956,20 +1002,19 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         const hoadonDB = await saveHoaDon();
         if (hoadonDB) {
             await SoQuyServices.savePhieuThu_forHoaDon({
+                idChiNhanh: idChiNhanhChosed,
                 phaiTT: hoadon?.tongThanhToan ?? 0,
                 tienmat: tienMat,
                 tienCK: tienCK,
                 tienPOS: tienPOS,
                 idTaiKhoanChuyenKhoan: idTaiKhoanCK as null,
                 idTaiKhoanPOS: idTaiKHoanPos as null,
+                ngayLapHoaDon: hoadonDB?.ngayLapHoaDon,
                 hoadon: {
                     maHoaDon: hoadonDB?.maHoaDon,
                     id: (hoadonDB?.id ?? null) as unknown as null,
                     idKhachHang: customerChosed?.id as unknown as null,
-                    idChiNhanh: idChiNhanhChosed as unknown as null,
-                    ngayLapHoaDon: hoadonDB?.ngayLapHoaDon,
-                    tenKhachHang: customerChosed?.tenKhachHang,
-                    ghiChuHD: ''
+                    tenKhachHang: customerChosed?.tenKhachHang
                 }
             });
         }
@@ -1005,16 +1050,15 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
 
             if (isThanhToanTienMat) {
                 await SoQuyServices.savePhieuThu_forHoaDon({
+                    idChiNhanh: idChiNhanhChosed,
                     phaiTT: hoadon?.tongThanhToan ?? 0,
                     tienmat: sumTienKhachTra,
+                    ngayLapHoaDon: hoadon?.ngayLapHoaDon,
                     hoadon: {
                         maHoaDon: hoadonDB?.maHoaDon,
                         id: (hoadonDB?.id ?? null) as unknown as null,
                         idKhachHang: customerChosed?.id as unknown as null,
-                        idChiNhanh: idChiNhanhChosed as unknown as null,
-                        ngayLapHoaDon: hoadon?.ngayLapHoaDon,
-                        tenKhachHang: customerChosed?.tenKhachHang,
-                        ghiChuHD: ''
+                        tenKhachHang: customerChosed?.tenKhachHang
                     }
                 });
             }
@@ -1034,7 +1078,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 isShow={confirmDialog.show}
                 title={confirmDialog.title}
                 mes={confirmDialog.mes}
-                onOk={onClickConfirmDelete}
+                onOk={onClickOKConfirm}
                 onCancel={() => setConfirmDialog({ ...confirmDialog, show: false })}></ConfirmDelete>
             <SnackbarAlert
                 showAlert={objAlert.show}
@@ -1262,7 +1306,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                         }
                                     }}>
                                     <DatePickerCustom
-                                        props={{ width: '100%' }}
                                         defaultVal={hoadon?.ngayLapHoaDon}
                                         handleChangeDate={changeNgayLapHoaDon}
                                     />
