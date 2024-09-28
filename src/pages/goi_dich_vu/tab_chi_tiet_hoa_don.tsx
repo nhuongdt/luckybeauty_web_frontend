@@ -31,16 +31,19 @@ import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import ModalSearchProduct from '../product/modal_search_product';
 import { ModelHangHoaDto } from '../../services/product/dto';
 import { Guid } from 'guid-typescript';
+import fileDowloadService from '../../services/file-dowload.service';
 
 const TabChiTietHoaDon: FC<{
     idHoaDon: string;
     maHoaDon?: string;
     onChangeCTHD: (thanhTienSauVAT: number) => void;
 }> = ({ idHoaDon, maHoaDon, onChangeCTHD }) => {
+    const [txtSearchCTHD, setTxtSearchCTHD] = useState('');
     const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
     const [iShowModalProduct, setIsShowModalProduct] = useState(false);
     const [isAddNewChiTiet, setIsAddNewChiTiet] = useState(false);
     const [lstCTHD, setLstCTHD] = useState<PageHoaDonChiTietDto[]>([]);
+    const [lstSearchCTHD, setLstSearchCTHD] = useState<PageHoaDonChiTietDto[]>([]);
     const [ctDoing, setCTDoing] = useState<PageHoaDonChiTietDto>({} as PageHoaDonChiTietDto);
 
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
@@ -55,8 +58,30 @@ const TabChiTietHoaDon: FC<{
         if (!utils.checkNull(idHoaDon)) {
             const data = await HoaDonService.GetChiTietHoaDon_byIdHoaDon(idHoaDon);
             setLstCTHD(data);
+            setLstSearchCTHD([...data]);
         }
     };
+
+    const SearchCTHDClient = () => {
+        if (!utils.checkNull(txtSearchCTHD)) {
+            const txt = txtSearchCTHD.trim().toLowerCase();
+            const txtUnsign = utils.strToEnglish(txt);
+            const data = lstCTHD.filter(
+                (x) =>
+                    (x.maHangHoa !== null && x.maHangHoa.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.tenHangHoa !== null && x.tenHangHoa.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.maHangHoa !== null && utils.strToEnglish(x.maHangHoa).indexOf(txtUnsign) > -1) ||
+                    (x.tenHangHoa !== null && utils.strToEnglish(x.tenHangHoa).indexOf(txtUnsign) > -1)
+            );
+            setLstSearchCTHD([...data]);
+        } else {
+            setLstSearchCTHD([...lstCTHD]);
+        }
+    };
+
+    useEffect(() => {
+        SearchCTHDClient();
+    }, [txtSearchCTHD]);
 
     useEffect(() => {
         GetChiTietHoaDon_byIdHoaDon();
@@ -108,10 +133,33 @@ const TabChiTietHoaDon: FC<{
         const ctUpdate = lstCTAfter[0];
         if (isAddNewChiTiet) {
             setLstCTHD([...lstCTHD, ctUpdate]);
+            setLstSearchCTHD([...lstCTHD, ctUpdate]);
             setObjAlert({ ...objAlert, show: true, mes: 'Thêm mới chi tiết hóa đơn thành công' });
         } else {
             setLstCTHD(
                 lstCTHD?.map((x) => {
+                    if (x.id === ctDoing.id) {
+                        return {
+                            ...x,
+                            soLuong: ctUpdate.soLuong,
+                            donGiaTruocCK: ctUpdate.donGiaTruocCK,
+                            ptChietKhau: ctUpdate.ptChietKhau,
+                            tienChietKhau: ctUpdate.tienChietKhau,
+                            donGiaSauCK: ctUpdate.donGiaSauCK,
+                            ptThue: ctUpdate.ptThue,
+                            tienThue: ctUpdate.tienThue,
+                            donGiaSauVAT: ctUpdate.donGiaSauVAT,
+                            thanhTienTruocCK: ctUpdate.thanhTienTruocCK,
+                            thanhTienSauCK: ctUpdate.thanhTienSauCK,
+                            thanhTienSauVAT: ctUpdate.thanhTienSauVAT
+                        };
+                    } else {
+                        return x;
+                    }
+                })
+            );
+            setLstSearchCTHD(
+                lstSearchCTHD?.map((x) => {
                     if (x.id === ctDoing.id) {
                         return {
                             ...x,
@@ -146,6 +194,7 @@ const TabChiTietHoaDon: FC<{
         const deleteOK = await HoaDonService.DeleteMultipleCTHD([ctDoing.id]);
         if (deleteOK) {
             setLstCTHD(lstCTHD?.filter((x) => x.id !== ctDoing.id));
+            setLstSearchCTHD(lstSearchCTHD?.filter((x) => x.id !== ctDoing.id));
             setObjAlert({ ...objAlert, show: true, mes: `Xóa thành công chi tiết hóa đơn` });
             setConfirmDialog({ ...confirmDialog, show: false });
 
@@ -175,6 +224,11 @@ const TabChiTietHoaDon: FC<{
         setIsShowModalProduct(false);
         setIsShowEditGioHang(true);
         setIsAddNewChiTiet(true);
+    };
+
+    const exportExcelHoaDon_byId = async () => {
+        const data = await HoaDonService.ExportHoaDon_byId(idHoaDon);
+        fileDowloadService.downloadExportFile(data);
     };
 
     const listColumnHeader: IHeaderTable[] = [
@@ -222,12 +276,18 @@ const TabChiTietHoaDon: FC<{
                             size="small"
                             fullWidth
                             sx={{ flex: 3 }}
+                            value={txtSearchCTHD}
                             placeholder="Tìm dịch vụ"
                             InputProps={{
                                 startAdornment: <SearchIcon />
                             }}
+                            onChange={(e) => setTxtSearchCTHD(e.target.value)}
                         />
-                        <Button sx={{ flex: 1 }} variant="outlined" startIcon={<FileUploadIcon />}>
+                        <Button
+                            sx={{ flex: 1 }}
+                            variant="outlined"
+                            startIcon={<FileUploadIcon />}
+                            onClick={exportExcelHoaDon_byId}>
                             Xuất file
                         </Button>
                     </Stack>
@@ -249,7 +309,7 @@ const TabChiTietHoaDon: FC<{
                                 />
                             </TableHead>
                             <TableBody>
-                                {lstCTHD?.map((row, index) => (
+                                {lstSearchCTHD?.map((row, index) => (
                                     <TableRow key={index}>
                                         <TableCell>{row?.maHangHoa}</TableCell>
                                         <TableCell
@@ -320,8 +380,8 @@ const TabChiTietHoaDon: FC<{
                             <Stack direction="row" justifyContent={'end'}>
                                 <LabelDisplayedRows
                                     currentPage={1}
-                                    pageSize={lstCTHD?.length ?? 0}
-                                    totalCount={lstCTHD?.length ?? 0}
+                                    pageSize={lstSearchCTHD?.length ?? 0}
+                                    totalCount={lstSearchCTHD?.length ?? 0}
                                 />
                             </Stack>
                         </Grid>

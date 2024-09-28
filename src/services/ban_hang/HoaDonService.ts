@@ -10,6 +10,7 @@ import HoaDonDto from './HoaDonDto';
 import ChiTietSuDungGDVDto, { GroupChiTietSuDungGDVDto } from './ChiTietSuDungGDVDto';
 import ParamSearchChiTietSuDungGDVDto from './ParamSearchChiTietSuDungGDVDto';
 import HoaDonChiTietDto from './HoaDonChiTietDto';
+import INhatKySuDungGDVDto from './NhatKySuDungGDVDto';
 class HoaDonService {
     CreateHoaDon = async (input: any): Promise<HoaDonDto | null> => {
         if (input.idKhachHang === '' || input.idKhachHang === Guid.EMPTY.toString()) {
@@ -118,11 +119,21 @@ class HoaDonService {
         const result = await http.post('api/services/app/HoaDon/ExportDanhSach', input);
         return result.data.result;
     };
+    ExportHoaDon_byId = async (idHoaDon: string): Promise<IFileDto> => {
+        const result = await http.get('api/services/app/HoaDon/ExportHoaDon_byId?idHoaDon=' + idHoaDon);
+        return result.data.result;
+    };
 
     GetChiTiet_SuDungGDV_ofCustomer = async (
         param: ParamSearchChiTietSuDungGDVDto
     ): Promise<GroupChiTietSuDungGDVDto[]> => {
         const result = await http.post('api/services/app/HoaDon/GetChiTiet_SuDungGDV_ofCustomer', param);
+        return result.data.result;
+    };
+    GetNhatKySuDungGDV_ofKhachHang = async (
+        param: ParamSearchChiTietSuDungGDVDto
+    ): Promise<PagedResultDto<INhatKySuDungGDVDto>> => {
+        const result = await http.post('api/services/app/HoaDon/GetNhatKySuDungGDV_ofKhachHang', param);
         return result.data.result;
     };
     CheckCustomer_hasGDV = async (customerId: string): Promise<boolean> => {

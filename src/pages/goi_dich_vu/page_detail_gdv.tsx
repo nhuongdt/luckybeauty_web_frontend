@@ -6,6 +6,7 @@ import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
 import TabChiTietHoaDon from './tab_chi_tiet_hoa_don';
 import TabThongTinHoaDon from './tab_thong_tin_hoa_don';
 import TabNhatKyThanhToan from './tab_nhat_ky_thanh_toan';
+import TabNhatKySuDungGDV from './tab_nhat_ky_su_dung_gdv';
 
 enum DetailGDV_tabList {
     CHI_TIET_HOA_DON = 1,
@@ -66,6 +67,15 @@ const PageDetailGDV: FC<{ itemHD: PageHoaDonDto | null; gotoBack: () => void }> 
                                 index={tabActive}
                                 style={{ paddingLeft: '8px', paddingRight: '8px' }}>
                                 <TabNhatKyThanhToan idHoaDon={itemHD?.id ?? ''} />
+                            </TabPanel>
+                            <TabPanel
+                                value={DetailGDV_tabList.NHAT_KY_SU_DUNG}
+                                index={tabActive}
+                                style={{ paddingLeft: '8px', paddingRight: '8px' }}>
+                                <TabNhatKySuDungGDV
+                                    idHoaDon={itemHD?.id ?? ''}
+                                    idCustomer={itemHD?.idKhachHang ?? ''}
+                                />
                             </TabPanel>
                         </Stack>
                     </Grid>

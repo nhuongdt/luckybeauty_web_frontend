@@ -30,6 +30,7 @@ import { format } from 'date-fns';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import DialogButtonClose from '../../components/Dialog/ButtonClose';
 import utils from '../../utils/utils';
+import TabNhatKySuDungGDV from './tab_nhat_ky_su_dung_gdv';
 enum TabMain {
     GOI_DICH_VU = 1,
     NHAT_KY_SU_DUNG = 2
@@ -57,7 +58,6 @@ export default function ModalSuDungGDV({ isShowModal, idUpdate, onClose, onOK }:
         const param = { ...paramSearch };
         param.idCustomer = idUpdate ?? '';
         param.textSearch = txtSearch ?? '';
-        param.idCustomer = idUpdate ?? '';
         const data = await HoaDonService.GetChiTiet_SuDungGDV_ofCustomer(param);
         setLstChiTietGDV([...data]);
     };
@@ -295,6 +295,9 @@ export default function ModalSuDungGDV({ isShowModal, idUpdate, onClose, onOK }:
                                 ))}
                             </Grid>
                         </Grid>
+                    </TabPanel>
+                    <TabPanel value={tabActive} index={TabMain.NHAT_KY_SU_DUNG}>
+                        <TabNhatKySuDungGDV idCustomer={idUpdate ?? ''} />
                     </TabPanel>
                 </DialogContent>
                 <DialogActions>
