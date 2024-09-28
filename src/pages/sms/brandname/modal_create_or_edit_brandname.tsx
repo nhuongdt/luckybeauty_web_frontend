@@ -189,7 +189,6 @@ export default function ModalCreateOrEditBrandname({ isShow, idBrandname, onClos
                                     <Grid item xs={12} sm={12} md={12} lg={12}>
                                         <DatePickerCustom
                                             label="Ngày kích hoạt"
-                                            props={{ width: '100%', label: 'Ngày kích hoạt' }}
                                             defaultVal={values.ngayKichHoat}
                                             handleChangeDate={(newVal: string) => setFieldValue('ngayKichHoat', newVal)}
                                         />

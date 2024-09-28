@@ -1,12 +1,17 @@
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { format } from 'date-fns';
 import vi from 'date-fns/locale/vi';
-import utils from '../../utils/utils';
+import { TextFieldVariants } from '@mui/material';
 
-export default function DatePickerCustom({ defaultVal, handleChangeDate, props }: any) {
+const DatePickerCustom: FC<{
+    label?: string;
+    variant?: TextFieldVariants;
+    defaultVal?: string;
+    handleChangeDate: (dtNew: string) => void;
+}> = ({ label, variant, defaultVal, handleChangeDate }) => {
     const today = new Date();
     const [value, setValue] = useState<Date | null>(new Date(format(today, 'yyyy-MM-01')));
     const changeDate = (newVal: any) => {
@@ -15,7 +20,7 @@ export default function DatePickerCustom({ defaultVal, handleChangeDate, props }
         setValue(newVal);
     };
     useEffect(() => {
-        if (utils.checkNull(defaultVal)) {
+        if (!defaultVal) {
             setValue(null);
         } else {
             setValue(new Date(defaultVal));
@@ -26,8 +31,8 @@ export default function DatePickerCustom({ defaultVal, handleChangeDate, props }
         <>
             <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={vi}>
                 <DatePicker
-                    label={props?.label}
-                    slotProps={{ textField: { size: 'small' } }}
+                    label={label ?? ''}
+                    slotProps={{ textField: { size: 'small', fullWidth: true, variant: variant ?? 'outlined' } }}
                     dayOfWeekFormatter={(day: string) => {
                         if (day.length > 2) {
                             const dayOfWeek = day.substring(day.length - 1);
@@ -58,7 +63,6 @@ export default function DatePickerCustom({ defaultVal, handleChangeDate, props }
                         }
                     }}
                     sx={{
-                        width: props?.width,
                         '& .MuiSvgIcon-root': {
                             width: 14,
                             height: 14
@@ -70,4 +74,5 @@ export default function DatePickerCustom({ defaultVal, handleChangeDate, props }
             </LocalizationProvider>
         </>
     );
-}
+};
+export default DatePickerCustom;

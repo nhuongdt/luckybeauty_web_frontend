@@ -365,7 +365,6 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                                             variant="standard"
                                             sx={{
                                                 ' & input': {
-                                                    textAlign: 'center',
                                                     fontWeight: 500,
                                                     fontSize: '18px'
                                                 }
@@ -381,6 +380,7 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                                     </Stack>
                                     <Stack flex={2}>
                                         <DatePickerCustom
+                                            variant="standard"
                                             defaultVal={ngayLapHoaDon}
                                             handleChangeDate={changeNgayLapHD}
                                         />
