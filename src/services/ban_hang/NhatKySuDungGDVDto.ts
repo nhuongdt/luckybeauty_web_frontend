@@ -1,24 +1,32 @@
-import PageHoaDonChiTietDto from './PageHoaDonChiTietDto';
-import PageHoaDonDto from './PageHoaDonDto';
+export interface IGroupChiTietNhatKySuDungGDVDto {
+    rowSpan: number;
+    idGoiDV: string;
+    maGoiDichVu: string;
+    ngayMuaGDV: string;
+    maKhachHang: string;
+    tenKhachHang: string;
+    soDienThoai: string;
+    totalCount: number;
+
+    chitiets: INhatKySuDungGDVDto[];
+}
 
 export default interface INhatKySuDungGDVDto {
     maKhachHang: string;
     tenKhachHang: string;
-    sdtKhachHang: string;
+    soDienThoai: string;
 
     maGoiDichVu: string;
     ngayMuaGDV: string;
-    maDichVuMua: string;
-    tenDichVuMua: string;
+    maHangHoa: string;
+    tenHangHoa: string;
     soLuongMua: number;
-    donGiaMuaSauCK: number;
-    thanhTienMuaSauCK: number;
+    donGiaSauCK: number;
+    thanhTienSauCK: number;
 
     maHoaDonSD: string;
     ngayLapHoaDonSD: string;
-    maDichVuSD: string;
-    tenDichVuSD: string;
     soLuongSD: number;
-    thanhTienSDSauCK: number;
+    giaTriSuDung: number;
     nvthucHiens: string;
 }

@@ -147,13 +147,13 @@ const TabNhatKySuDungGDV: FC<{ idHoaDon?: string; idCustomer: string }> = ({ idH
                                             {format(new Date(row?.ngayLapHoaDonSD), 'dd/MM/yyyy HH:mm')}
                                         </TableCell>
                                         <TableCell>{row?.maHoaDonSD}</TableCell>
-                                        <TableCell>{row?.maDichVuSD}</TableCell>
-                                        <TableCell>{row?.tenDichVuSD}</TableCell>
+                                        <TableCell>{row?.maHangHoa}</TableCell>
+                                        <TableCell>{row?.tenHangHoa}</TableCell>
                                         <TableCell align="center">
                                             {new Intl.NumberFormat('vi-VN').format(row?.soLuongSD ?? 0)}
                                         </TableCell>
                                         <TableCell align="right">
-                                            {new Intl.NumberFormat('vi-VN').format(row?.thanhTienSDSauCK ?? 0)}
+                                            {new Intl.NumberFormat('vi-VN').format(row?.giaTriSuDung ?? 0)}
                                         </TableCell>
                                         <TableCell>{row?.nvthucHiens}</TableCell>
                                     </TableRow>
