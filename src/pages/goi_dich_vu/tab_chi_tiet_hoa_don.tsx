@@ -322,7 +322,7 @@ const TabChiTietHoaDon: FC<{
                                                     className="only-icon"
                                                     titleAccess="Chọn nhân viên thực hiện"
                                                 /> */}
-                                                <Typography> {row?.tenHangHoa}</Typography>
+                                                <Typography variant="body2"> {row?.tenHangHoa}</Typography>
                                             </Stack>
                                         </TableCell>
                                         <TableCell align="right">

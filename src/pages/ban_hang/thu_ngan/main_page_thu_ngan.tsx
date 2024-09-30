@@ -445,7 +445,7 @@ export default function MainPageThuNgan() {
 
             <Grid item lg={12} width={'100%'}>
                 <Grid container spacing={2}>
-                    <Grid item lg={tabMainActive == TabMain.THU_NGAN ? 2 : 3} md={4}>
+                    <Grid item lg={3} md={4}>
                         <Stack direction={'row'} alignItems={'center'} spacing={2}>
                             <HomeOutlinedIcon
                                 titleAccess="Đi đến trang chủ"
@@ -493,7 +493,7 @@ export default function MainPageThuNgan() {
                             </Grid>
                         </Grid>
                     ) : (
-                        <Grid item lg={5} md={8} xs={12}>
+                        <Grid item lg={4} md={8} xs={12}>
                             <TextField
                                 size="small"
                                 placeholder="Tìm kiếm dịch vụ"

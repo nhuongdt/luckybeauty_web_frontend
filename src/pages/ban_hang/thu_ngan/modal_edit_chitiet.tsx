@@ -716,7 +716,7 @@ const ModalEditChiTietGioHang: React.FC<{
                                 Hủy
                             </Button>
                             <Button variant="contained" className="button-container" onClick={agrreGioHang}>
-                                {displayComponent ? 'Đồng ý' : 'Lưu'}
+                                {formType === ConstFormNumber.BAN_HANG ? 'Đồng ý' : 'Lưu'}
                             </Button>
                         </Stack>
                     </Grid>

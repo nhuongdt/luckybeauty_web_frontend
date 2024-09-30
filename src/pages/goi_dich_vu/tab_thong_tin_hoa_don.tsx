@@ -351,8 +351,8 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                     </Stack>
                 </Stack>
 
-                <Stack padding={2} overflow={'auto'}>
-                    <Stack spacing={3}>
+                <Stack padding={2} overflow={'auto'} paddingBottom={7}>
+                    <Stack spacing={3} marginBottom={4}>
                         <Stack padding={3} sx={{ backgroundColor: ' var(--color-bg)', borderRadius: '4px' }}>
                             <Stack spacing={2}>
                                 <Stack direction={'row'} alignItems={'end'}>
