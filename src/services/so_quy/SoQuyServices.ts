@@ -177,7 +177,6 @@ class SoQuyServices {
         const tongThu = lstQuyCT_After.reduce((currentValue: number, item) => {
             return currentValue + item.tienThu;
         }, 0);
-        console.log('tongthu ', tongThu, 'idquy', idQuyHD);
         if (tongThu > 0) {
             const quyHD = new QuyHoaDonDto({
                 maHoaDon: maPhieuThu,
