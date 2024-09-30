@@ -63,6 +63,15 @@ import Loading from '../../../components/Loading';
 import ModalEditChiTietGioHang from './modal_edit_chitiet';
 import HoaHongNhanVienDichVu from '../../nhan_vien_thuc_hien/hoa_hong_nhan_vien_dich_vu';
 import NhanVienThucHienDto from '../../../services/nhan_vien_thuc_hien/NhanVienThucHienDto';
+import MauInServices from '../../../services/mau_in/MauInServices';
+import cuaHangService from '../../../services/cua_hang/cuaHangService';
+import { PagedRequestDto } from '../../../services/dto/pagedRequestDto';
+import { CuaHangDto } from '../../../services/cua_hang/Dto/CuaHangDto';
+import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
+import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
+import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
+import uploadFileService from '../../../services/uploadFileService';
+import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
 
 export type IPropsPageThuNgan = {
     txtSearch: string;
@@ -75,6 +84,7 @@ export type IPropsPageThuNgan = {
     arrIdNhomHangFilter?: string[];
     onSetActiveTabLoaiHoaDon: (idLoaiChungTu: number) => void;
     onAddHoaDon_toCache: () => void;
+    onRemoveHoaDon_toCache: () => void;
 };
 
 export default function PageThuNgan(props: IPropsPageThuNgan) {
@@ -87,7 +97,8 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         idCheckIn,
         arrIdNhomHangFilter,
         onSetActiveTabLoaiHoaDon,
-        onAddHoaDon_toCache
+        onAddHoaDon_toCache,
+        onRemoveHoaDon_toCache
     } = props;
     const firstLoad = useRef(true);
     const firstLoad_changeLoaiHD = useRef(true);
@@ -113,6 +124,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>({} as CreateOrEditKhachHangDto);
     const [customerChosed, setCustomerChosed] = useState<CreateOrEditKhachHangDto>({} as CreateOrEditKhachHangDto);
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
+    const [idCTHDChosing, setIdCTHDChosing] = useState('');
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
         new PageHoaDonDto({
             idKhachHang: null,
@@ -121,11 +133,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             idChiNhanh: idChiNhanhChosed
         })
     );
-    const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
-        new PageHoaDonChiTietDto({ id: '', expanded: false })
-    );
-
-    const [idCTHDChosing, setIdCTHDChosing] = useState('');
 
     const [confirmDialog, setConfirmDialog] = useState<PropConfirmOKCancel>({
         show: false,
@@ -134,15 +141,8 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         mes: ''
     });
 
-    const [confirmDialogUsingGDV, setConfirmDialogUsingGDV] = useState<PropConfirmOKCancel>({
-        show: false,
-        title: '',
-        type: 1,
-        mes: ''
-    });
-
-    const GetListNhomHangHoa_byId = async (arrIdNhomHangFilter: string[]) => {
-        const list = await GroupProductService.GetListNhomHangHoa_byId(arrIdNhomHangFilter);
+    const GetListNhomHangHoa_byId = async (arrIdNhomHang: string[]) => {
+        const list = await GroupProductService.GetListNhomHangHoa_byId(arrIdNhomHang);
         setNhomHangHoaChosed(list);
     };
 
@@ -211,6 +211,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 idChiNhanh: idChiNhanhChosed,
                 idLoaiChungTu: LoaiChungTu.HOA_DON_BAN_LE
             });
+            setHoaDonChiTiet([]);
         }
     };
 
@@ -263,9 +264,11 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     };
 
     const ChangeLoaiHoaDon = async () => {
-        const check = CheckDangSuDungGDV(2);
-        if (!check) {
-            return;
+        if (loaiHoaDon !== LoaiChungTu.HOA_DON_BAN_LE) {
+            const check = CheckDangSuDungGDV(2);
+            if (!check) {
+                return;
+            }
         }
 
         await AgreeChangeLoaiHoaDon();
@@ -307,8 +310,12 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     const cthd_SumThanhTienTruocCK = hoaDonChiTiet?.reduce((prevValue: number, item: PageHoaDonChiTietDto) => {
         return (item?.thanhTienTruocCK ?? 0) + prevValue;
     }, 0);
+
     const cthd_SumTienChietKhau = hoaDonChiTiet?.reduce((prevValue: number, item: PageHoaDonChiTietDto) => {
-        return (item?.tienChietKhau ?? 0) * item.soLuong + prevValue;
+        return (
+            //  sudung gdv: chietkhau = 0
+            (utils.checkNull_OrEmpty(item?.idChiTietHoaDon) ? item?.tienChietKhau ?? 0 : 0) * item.soLuong + prevValue
+        );
     }, 0);
     const cthd_SumTienThue = hoaDonChiTiet?.reduce((prevValue: number, item: PageHoaDonChiTietDto) => {
         return (item?.tienThue ?? 0) * item.soLuong + prevValue;
@@ -895,34 +902,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 return false;
             }
         }
-        // if (lstQuyCT.length === 0) {
-        //     setObjAlert({
-        //         show: true,
-        //         type: 2,
-        //         mes: 'Vui lòng chọn hình thức thanh toán '
-        //     });
-        //     return false;
-        // }
-
-        // const itemPos = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 3);
-        // if (itemPos.length > 0 && utils.checkNull(itemPos[0].idTaiKhoanNganHang)) {
-        //     setObjAlert({
-        //         show: true,
-        //         type: 2,
-        //         mes: 'Vui lòng chọn tài khoản POS'
-        //     });
-        //     return false;
-        // }
-
-        // const itemCK = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 2);
-        // if (itemCK.length > 0 && utils.checkNull(itemCK[0].idTaiKhoanNganHang)) {
-        //     setObjAlert({
-        //         show: true,
-        //         type: 2,
-        //         mes: 'Vui lòng chọn tài khoản chuyển khoản'
-        //     });
-        //     return false;
-        // }
 
         return true;
     };
@@ -935,7 +914,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         setHoaDonChiTiet([]);
         const newHD = new PageHoaDonDto({
             id: Guid.create().toString(),
-            idLoaiChungTu: LoaiChungTu.HOA_DON_BAN_LE,
+            idLoaiChungTu: hoadon.idLoaiChungTu,
             idKhachHang: customerIdChosed as unknown as undefined,
             idChiNhanh: idChiNhanhChosed,
             tenKhachHang: 'Khách lẻ'
@@ -951,9 +930,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             avatar: ''
         } as CreateOrEditKhachHangDto);
 
-        await dbDexie.hoaDon.where('id').equals(hoadon?.id).delete();
-        await dbDexie.hoaDon.add(newHD); // alway add newHD with KhachLe after save
-        onSetActiveTabLoaiHoaDon(LoaiChungTu.HOA_DON_BAN_LE);
+        onSetActiveTabLoaiHoaDon(hoadon.idLoaiChungTu);
     };
 
     const saveDiaryHoaDon = async (maHoaDon: string, ngaylapHoaDonDB: string) => {
@@ -997,11 +974,12 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         tienCK: number,
         tienPOS: number,
         idTaiKhoanCK: string | null,
-        idTaiKHoanPos: string | null
+        idTaiKHoanPos: string | null,
+        noiDungThu: string
     ) => {
         const hoadonDB = await saveHoaDon();
         if (hoadonDB) {
-            await SoQuyServices.savePhieuThu_forHoaDon({
+            const dataQuyHD = await SoQuyServices.savePhieuThu_forHoaDon({
                 idChiNhanh: idChiNhanhChosed,
                 phaiTT: hoadon?.tongThanhToan ?? 0,
                 tienmat: tienMat,
@@ -1010,6 +988,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 idTaiKhoanChuyenKhoan: idTaiKhoanCK as null,
                 idTaiKhoanPOS: idTaiKHoanPos as null,
                 ngayLapHoaDon: hoadonDB?.ngayLapHoaDon,
+                noiDungThu: noiDungThu,
                 hoadon: {
                     maHoaDon: hoadonDB?.maHoaDon,
                     id: (hoadonDB?.id ?? null) as unknown as null,
@@ -1017,6 +996,9 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                     tenKhachHang: customerChosed?.tenKhachHang
                 }
             });
+            if (dataQuyHD != null) {
+                await InHoaDon(hoadonDB?.maHoaDon, hoadonDB?.ngayLapHoaDon, dataQuyHD);
+            }
         }
     };
 
@@ -1049,7 +1031,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             await CheckinService.Update_IdHoaDon_toCheckInHoaDon(hoadon?.idCheckIn, hoadonDB.id);
 
             if (isThanhToanTienMat) {
-                await SoQuyServices.savePhieuThu_forHoaDon({
+                const dataQuyHD = await SoQuyServices.savePhieuThu_forHoaDon({
                     idChiNhanh: idChiNhanhChosed,
                     phaiTT: hoadon?.tongThanhToan ?? 0,
                     tienmat: sumTienKhachTra,
@@ -1061,16 +1043,57 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                         tenKhachHang: customerChosed?.tenKhachHang
                     }
                 });
+                if (dataQuyHD != null) {
+                    await InHoaDon(hoadonDB?.maHoaDon, hoadonDB?.ngayLapHoaDon, dataQuyHD);
+                }
             }
 
+            await dbDexie.hoaDon.where('id').equals(hoadon?.id).delete();
             ResetState_AfterSave();
+            onRemoveHoaDon_toCache();
             return hoadonDB;
         }
     };
 
-    if (isLoadingData) {
-        return <Loading />;
-    }
+    const getInforChiNhanh_byID = async (idChiNhanh: string) => {
+        const data = await chiNhanhService.GetDetail(idChiNhanh ?? '');
+        return data;
+    };
+
+    const InHoaDon = async (mahoadon = '', ngayLapHD = '', quyHD: QuyHoaDonDto) => {
+        const chinhanhPrint = await getInforChiNhanh_byID(idChiNhanhChosed ?? '');
+        const tempMauIn = await MauInServices.GetContentMauInMacDinh(1, 1);
+        const allCongTy = await cuaHangService.GetAllCongTy({} as PagedRequestDto);
+        let congty = {} as CuaHangDto;
+        if (allCongTy.length > 0) {
+            congty = allCongTy[0];
+        }
+        DataMauIn.chinhanh = chinhanhPrint;
+        DataMauIn.congty = congty;
+        DataMauIn.congty.logo = uploadFileService.GoogleApi_NewLink(congty?.logo);
+        DataMauIn.hoadon = hoadon;
+        DataMauIn.hoadon.maHoaDon = mahoadon;
+        DataMauIn.hoadon.ngayLapHoaDon = ngayLapHD; // get ngaylapHD from DB (after add hours/minutes/seconds)
+        DataMauIn.hoadon.daThanhToan = quyHD?.tongTienThu;
+        DataMauIn.hoadon.conNo = hoadon.tongThanhToan - quyHD?.tongTienThu ?? 0;
+        DataMauIn.hoadonChiTiet = hoaDonChiTiet;
+        DataMauIn.khachhang = {
+            maKhachHang: customerChosed?.maKhachHang,
+            tenKhachHang: customerChosed?.tenKhachHang,
+            soDienThoai: customerChosed?.soDienThoai
+        } as KhachHangItemDto;
+        DataMauIn.phieuthu = quyHD;
+
+        let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
+        newHtml = DataMauIn.replaceChiNhanh(newHtml);
+        newHtml = DataMauIn.replaceHoaDon(newHtml);
+        newHtml = await DataMauIn.replacePhieuThuChi(newHtml);
+        DataMauIn.Print(newHtml);
+    };
+
+    // if (isLoadingData) {
+    //     return <Loading />;
+    // }
 
     return (
         <>
@@ -1169,54 +1192,61 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                     </Stack>
                                 </Stack>
                             )}
-
-                            {listProduct.map((nhom: IHangHoaGroupTheoNhomDto, index: number) => (
-                                <Stack key={index}>
-                                    <Typography fontSize={16} fontWeight={500} marginBottom={0.5}>
-                                        {nhom?.tenNhomHang}
-                                    </Typography>
-                                    <Grid container spacing={2} paddingRight={2}>
-                                        {nhom?.hangHoas.map((item, index2) => (
-                                            <Grid key={index2} item lg={4} md={6} xs={12} sm={12}>
-                                                <Stack
-                                                    padding={2}
-                                                    title={item.tenHangHoa}
-                                                    sx={{
-                                                        backgroundColor: 'var(--color-bg)',
-                                                        border: '1px solid transparent',
-                                                        '&:hover': {
-                                                            borderColor: 'var(--color-main)',
-                                                            cursor: 'pointer'
-                                                        }
-                                                    }}>
-                                                    <Stack spacing={2} onClick={() => choseProduct(item)}>
-                                                        <Typography
-                                                            fontWeight={500}
-                                                            variant="body2"
+                            {isLoadingData ? (
+                                <Loading />
+                            ) : (
+                                <>
+                                    {listProduct.map((nhom: IHangHoaGroupTheoNhomDto, index: number) => (
+                                        <Stack key={index}>
+                                            <Typography fontSize={16} fontWeight={500} marginBottom={0.5}>
+                                                {nhom?.tenNhomHang}
+                                            </Typography>
+                                            <Grid container spacing={2} paddingRight={2}>
+                                                {nhom?.hangHoas.map((item, index2) => (
+                                                    <Grid key={index2} item lg={4} md={6} xs={12} sm={12}>
+                                                        <Stack
+                                                            padding={2}
+                                                            title={item.tenHangHoa}
                                                             sx={{
-                                                                overflow: 'hidden',
-                                                                textOverflow: 'ellipsis',
-                                                                whiteSpace: 'nowrap',
-                                                                width: '100%'
+                                                                backgroundColor: 'var(--color-bg)',
+                                                                border: '1px solid transparent',
+                                                                '&:hover': {
+                                                                    borderColor: 'var(--color-main)',
+                                                                    cursor: 'pointer'
+                                                                }
                                                             }}>
-                                                            {item?.tenHangHoa}
-                                                        </Typography>
-                                                        <Typography variant="caption">
-                                                            {Intl.NumberFormat('vi-VN').format(item?.giaBan as number)}
-                                                        </Typography>
-                                                    </Stack>
-                                                </Stack>
+                                                            <Stack spacing={2} onClick={() => choseProduct(item)}>
+                                                                <Typography
+                                                                    fontWeight={500}
+                                                                    variant="body2"
+                                                                    sx={{
+                                                                        overflow: 'hidden',
+                                                                        textOverflow: 'ellipsis',
+                                                                        whiteSpace: 'nowrap',
+                                                                        width: '100%'
+                                                                    }}>
+                                                                    {item?.tenHangHoa}
+                                                                </Typography>
+                                                                <Typography variant="caption">
+                                                                    {Intl.NumberFormat('vi-VN').format(
+                                                                        item?.giaBan as number
+                                                                    )}
+                                                                </Typography>
+                                                            </Stack>
+                                                        </Stack>
+                                                    </Grid>
+                                                ))}
                                             </Grid>
-                                        ))}
-                                    </Grid>
-                                </Stack>
-                            ))}
+                                        </Stack>
+                                    ))}
+                                </>
+                            )}
                         </Stack>
                     </Grid>
                 )}
 
                 <Grid item lg={5} md={6} xs={12} sm={7}>
-                    <Stack marginLeft={4} position={'relative'} height={'100%'}>
+                    <Stack marginLeft={2} position={'relative'} height={'100%'}>
                         <Stack>
                             <Stack
                                 direction={'row'}
@@ -1347,6 +1377,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                                             spacing={1}
                                                             direction={'row'}
                                                             justifyContent={'end'}
+                                                            title="Cập nhật giỏ hàng"
                                                             onClick={() => showPopChiTietGioHang(cthd?.id ?? '')}>
                                                             <Stack
                                                                 direction={'row'}
@@ -1546,7 +1577,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                         spacing={1}>
                                         <CircularProgress />
                                         <Typography fontSize={'16px'} padding={2} fontWeight={500}>
-                                            Đang lưu
+                                            ĐANG LƯU
                                         </Typography>
                                     </Stack>
                                 ) : (
