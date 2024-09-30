@@ -470,7 +470,12 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                     </Stack>
                 </Stack>
                 <Stack position={'absolute'} bottom={0} sx={{ backgroundColor: 'white' }} width={'100%'}>
-                    <Stack direction={'row'} spacing={1} alignItems={'center'} padding={2} justifyContent={'center'}>
+                    <Stack
+                        direction={{ lg: 'row', md: 'row', sm: 'column', xs: 'column' }}
+                        spacing={1}
+                        alignItems={'center'}
+                        padding={2}
+                        justifyContent={'center'}>
                         {conNo > 0 && (
                             <Button
                                 variant="outlined"
@@ -486,10 +491,10 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                             variant="outlined"
                             color="error"
                             fullWidth
-                            sx={{ flex: 1.5 }}
+                            sx={{ flex: 1 }}
                             startIcon={<DeleteIcon />}
                             onClick={onClickHuyGDV}>
-                            Hủy bỏ
+                            Hủy
                         </Button>
 
                         <Button

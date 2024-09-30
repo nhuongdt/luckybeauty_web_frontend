@@ -313,7 +313,7 @@ const ModalUpdatePhieuThuHoaDon: FC<{
                                     </Stack>
                                 </Stack>
                             </Grid>
-                            <Grid item lg={12}>
+                            <Grid item lg={12} md={12} sm={12} xs={12}>
                                 <TextField
                                     variant="standard"
                                     fullWidth

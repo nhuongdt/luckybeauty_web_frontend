@@ -25,23 +25,26 @@ const PageDetailGDV: FC<{ itemHD: PageHoaDonDto | null; gotoBack: () => void }> 
         <Grid container paddingTop={2}>
             <Grid item lg={12} xs={12}>
                 <Grid container spacing={2}>
-                    <Grid item lg={4} md={5} sm={6} xs={12}>
+                    <Grid item lg={4} md={6} sm={6} xs={12}>
                         <TabThongTinHoaDon itemHD={itemHD} tongThanhToanNew={sumCTHD_ThanhtienSauVAT} />
                     </Grid>
-                    <Grid item lg={8} md={7} sm={6} xs={12}>
+                    <Grid item lg={8} md={6} sm={6} xs={12}>
                         <Stack
                             className="page-full"
                             border={'1px solid #ccc'}
                             borderRadius={'4px'}
                             zIndex={5}
                             overflow={'auto'}>
-                            <Stack direction={'row'} justifyContent={'space-between'} padding={1}>
+                            <Stack
+                                direction={{ lg: 'row', md: 'column', sm: 'column', xs: 'column' }}
+                                justifyContent={'space-between'}
+                                spacing={1}>
                                 <Tabs value={tabActive} onChange={(e, value) => setTabActive(value)}>
                                     <Tab label="Chi tiết hóa đơn" value={DetailGDV_tabList.CHI_TIET_HOA_DON}></Tab>
                                     <Tab label="Nhật ký thanh toán" value={DetailGDV_tabList.NHAT_KY_THANH_TOAN}></Tab>
                                     <Tab label="Nhật ký sử dụng" value={DetailGDV_tabList.NHAT_KY_SU_DUNG}></Tab>
                                 </Tabs>
-                                <Stack>
+                                <Stack padding={1}>
                                     <Button
                                         variant="outlined"
                                         startIcon={<KeyboardDoubleArrowLeftIcon />}

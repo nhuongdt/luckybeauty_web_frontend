@@ -270,7 +270,7 @@ const TabChiTietHoaDon: FC<{
             />
 
             <Grid container spacing={2}>
-                <Grid item lg={7}>
+                <Grid item lg={7} md={12} sm={12} xs={12}>
                     <Stack spacing={1} direction={'row'} alignItems={'center'}>
                         <TextField
                             size="small"
@@ -286,13 +286,14 @@ const TabChiTietHoaDon: FC<{
                         <Button
                             sx={{ flex: 1 }}
                             variant="outlined"
+                            fullWidth
                             startIcon={<FileUploadIcon />}
                             onClick={exportExcelHoaDon_byId}>
                             Xuất file
                         </Button>
                     </Stack>
                 </Grid>
-                <Grid item lg={5}></Grid>
+                <Grid item lg={5} md={12} sm={0} xs={12}></Grid>
 
                 <Grid item lg={12}>
                     <TableContainer sx={{ overflow: 'auto', maxHeight: 420 }}>
