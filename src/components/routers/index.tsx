@@ -148,7 +148,7 @@ export const appRouters: AppRouteProps = {
                     children: [],
                     showInMenu: true,
                     isLayout: false,
-                    component: LoadableComponent(() => import('../../pages/ban_hang/thu_ngan/main_page_ban_hang'))
+                    component: LoadableComponent(() => import('../../pages/ban_hang/thu_ngan/main_page_thu_ngan'))
                 }
             ]
         },
@@ -226,6 +226,18 @@ export const appRouters: AppRouteProps = {
                             component: LoadableComponent(
                                 () => import('../../pages/ban_hang/Giao_dich_thanh_toan/index')
                             )
+                        },
+                        {
+                            path: '/goi_dich_vu',
+                            permission: 'Pages.HoaDon',
+                            title: 'Gói dịch vụ',
+                            name: 'goidichvu',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            children: [],
+                            showInMenu: true,
+                            isLayout: false,
+                            component: LoadableComponent(() => import('../../pages/goi_dich_vu/page_danh_sach_gdv'))
                         }
                     ],
                     showInMenu: true,
@@ -491,6 +503,20 @@ export const appRouters: AppRouteProps = {
                             isLayout: false,
                             children: [],
                             component: LoadableComponent(() => import('../../pages/bao_cao/bao_cao_hoa_hong/main_page'))
+                        },
+                        {
+                            path: '/bao-cao/sudung-gdv',
+                            permission: 'Pages.BaoCao.HoaHong',
+                            title: 'Báo cáo gói dịch vụ',
+                            name: 'baoCaoGoiDichVu',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(
+                                () => import('../../pages/bao_cao/bao_cao_goi_dich_vu/main_page')
+                            )
                         }
                     ],
                     component: null
