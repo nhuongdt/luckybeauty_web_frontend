@@ -36,7 +36,7 @@ export default function MainPageBaoCaoGoiDichVu() {
             currentPage: 1,
             pageSize: AppConsts.pageOption[0].value,
             fromDate: format(startOfMonth(new Date()), 'yyyy-MM-01') as unknown as undefined,
-            toDate: format(lastDayOfMonth(new Date()), 'yyyy-MM-dd') as unknown as undefined,
+            toDate: format(addDays(lastDayOfMonth(new Date()), 1), 'yyyy-MM-dd') as unknown as undefined,
             idChiNhanhs: [idChiNhanh]
         })
     );
