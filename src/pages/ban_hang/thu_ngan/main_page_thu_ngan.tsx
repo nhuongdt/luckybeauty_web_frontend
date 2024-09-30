@@ -55,7 +55,7 @@ export const ThuNganSetting = ({ idChosed, handleChoseChiNhanh }: IPropDropdownC
         const data = await chiNhanhService.GetChiNhanhByUser();
         setAllChiNhanh_byUser(data);
 
-        if (utils.checkNull_OrEmpty(idChosed)) {
+        if (!utils.checkNull_OrEmpty(idChosed)) {
             const itemCN = data?.filter((x) => x.id === idChosed);
             if (itemCN?.length > 0) {
                 setLblChiNhanh(itemCN[0]?.tenChiNhanh);
@@ -68,6 +68,7 @@ export const ThuNganSetting = ({ idChosed, handleChoseChiNhanh }: IPropDropdownC
             }
         } else {
             setLblChiNhanh(data[0]?.tenChiNhanh);
+            handleChoseChiNhanh({ id: data[0]?.id, text: data[0]?.tenChiNhanh } as IList);
         }
     };
 
@@ -110,7 +111,7 @@ export const ThuNganSetting = ({ idChosed, handleChoseChiNhanh }: IPropDropdownC
     );
 };
 
-export const InvoiceWaiting = ({ idChiNhanh, idLoaiChungTu, onChose, isAddNewHD }: any) => {
+export const InvoiceWaiting = ({ idChiNhanh, idLoaiChungTu, onChose, isAddNewHD, isRemoveHD }: any) => {
     const [isExpandShoppingCart, setIsExpandShoppingCart] = useState(false);
     const [txtSearchInvoiceWaiting, setTxtSearchInvoiceWaiting] = useState<string>('');
     const [countInvoice, setCountInvoice] = useState<number>(0);
@@ -132,11 +133,17 @@ export const InvoiceWaiting = ({ idChiNhanh, idLoaiChungTu, onChose, isAddNewHD 
         }
     }, [isAddNewHD]);
 
+    // used to after saveHoaDon
+    useEffect(() => {
+        if (isRemoveHD !== 0) {
+            setCountInvoice(() => countInvoice - 1);
+        }
+    }, [isRemoveHD]);
+
     const GetAllInvoiceWaiting = async () => {
         const allHD = await dbDexie.hoaDon
             .where('idChiNhanh')
             .equals(idChiNhanh ?? '')
-            // .and((x) => x.idLoaiChungTu === idLoaiChungTu)
             .sortBy('ngayLapHoaDon');
         setAllInvoiceWaiting([...allHD]);
         setLstSearchInvoiceWaiting([...allHD]);
@@ -195,6 +202,7 @@ export const InvoiceWaiting = ({ idChiNhanh, idLoaiChungTu, onChose, isAddNewHD 
                 }
             }
             onChose(Guid.EMPTY);
+            setCountInvoice(0);
         } else {
             setAllInvoiceWaiting(allInvoiceWaiting?.filter((x) => x.id !== invoiceChosing?.id));
             await dbDexie.hoaDon.delete(invoiceChosing?.id ?? '');
@@ -206,7 +214,10 @@ export const InvoiceWaiting = ({ idChiNhanh, idLoaiChungTu, onChose, isAddNewHD 
             const arrConLai = allInvoiceWaiting?.filter((x) => x.id !== invoiceChosing?.id);
             if (arrConLai?.length > 0) {
                 onChose(arrConLai[0]?.id);
+            } else {
+                onChose(Guid.EMPTY);
             }
+            setCountInvoice(countInvoice - 1);
         }
     };
 
@@ -353,6 +364,7 @@ export default function MainPageThuNgan() {
     const [isShowModalFilterNhomHangHoa, setIsShowModalFilterNhomHangHoa] = useState(false);
     const [arrIdNhomHangFilter, setArrIdNhomHangFilter] = useState<string[]>([]);
     const [isAddInvoiceToCache, setIsAddInvoiceToCache] = useState<number>(0);
+    const [isRemoveInvoiceToCache, setIsRemoveInvoiceToCache] = useState<number>(0);
 
     const [idChiNhanhChosed, setIdChiNhanhChosed] = useState<string>(Cookies.get('IdChiNhanh') ?? '');
     const [customerIdChosed, setCustomerIdChosed] = useState<string>('');
@@ -522,12 +534,7 @@ export default function MainPageThuNgan() {
                                         <Tab label="Hóa đơn" value={LoaiChungTu.HOA_DON_BAN_LE} />
                                         <Tab label="Gói dịch vụ" value={LoaiChungTu.GOI_DICH_VU} />
                                     </Tabs>
-                                    {/* <Button variant="outlined" color="primary" startIcon={<AddOutlinedIcon />}>
-                                        Thêm{' '}
-                                        {pageThuNgan_LoaiHoaDon == LoaiChungTu.HOA_DON_BAN_LE
-                                            ? 'hóa đơn'
-                                            : 'gói dịch vụ'}
-                                    </Button> */}
+
                                     <IconButton
                                         aria-label="add-new-invoice"
                                         sx={{ width: 30, height: 30, border: '1px solid #ccc' }}
@@ -548,6 +555,7 @@ export default function MainPageThuNgan() {
                                         idLoaiChungTu={pageThuNgan_LoaiHoaDon}
                                         onChose={onChoseInvoiceWaiting}
                                         isAddNewHD={isAddInvoiceToCache}
+                                        isRemoveHD={isRemoveInvoiceToCache}
                                     />
                                 )}
                                 <ThuNganSetting idChosed={idChiNhanhChosed} handleChoseChiNhanh={changeChiNhanh} />
@@ -582,6 +590,7 @@ export default function MainPageThuNgan() {
                         arrIdNhomHangFilter={arrIdNhomHangFilter}
                         onSetActiveTabLoaiHoaDon={onSetActiveTabLoaiHoaDon}
                         onAddHoaDon_toCache={() => setIsAddInvoiceToCache(() => isAddInvoiceToCache + 1)}
+                        onRemoveHoaDon_toCache={() => setIsRemoveInvoiceToCache(() => isRemoveInvoiceToCache + 1)}
                     />
                 </TabPanel>
             )}
