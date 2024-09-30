@@ -206,12 +206,8 @@ export default function TabKhachHangChecking(props: IPropsTabKhachHangCheckIn) {
                                     </Stack>
 
                                     <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
-                                        <Badge
-                                            badgeContent={cusItem?.loaiHoaDon === LoaiChungTu.HOA_DON_BAN_LE ? 1 : 0}
-                                            color="primary">
-                                            <Stack
-                                                direction={'row'}
-                                                spacing={1}
+                                        {cusItem?.loaiHoaDon !== LoaiChungTu.GOI_DICH_VU ? (
+                                            <Typography
                                                 sx={{
                                                     color: '#1976d2',
                                                     '&:hover': {
@@ -219,16 +215,10 @@ export default function TabKhachHangChecking(props: IPropsTabKhachHangCheckIn) {
                                                         cursor: 'pointer'
                                                     }
                                                 }}>
-                                                <Typography>Hóa đơn</Typography>
-                                            </Stack>
-                                        </Badge>
-
-                                        <Badge
-                                            color="secondary"
-                                            badgeContent={cusItem?.loaiHoaDon === LoaiChungTu.GOI_DICH_VU ? 1 : 0}>
-                                            <Stack
-                                                direction={'row'}
-                                                spacing={1}
+                                                Hóa đơn
+                                            </Typography>
+                                        ) : (
+                                            <Typography
                                                 sx={{
                                                     color: 'var(--color-second)',
                                                     '&:hover': {
@@ -236,27 +226,18 @@ export default function TabKhachHangChecking(props: IPropsTabKhachHangCheckIn) {
                                                         cursor: 'pointer'
                                                     }
                                                 }}>
-                                                <Typography> Gói dịch vụ</Typography>
-                                            </Stack>
-                                        </Badge>
+                                                Gói dịch vụ
+                                            </Typography>
+                                        )}
+                                        <Typography variant="body2" color={'var(--color-text-secondary)'}>
+                                            {cusItem?.dateCheckIn}
+                                        </Typography>
                                     </Stack>
-                                    <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <Stack alignItems={'center'} direction={'row'} spacing={1}>
-                                            <Typography variant="body2">Tổng mua:</Typography>
-                                            <Typography variant="body2" fontWeight={500}>
-                                                {new Intl.NumberFormat('vi-VN').format(cusItem?.tongThanhToan ?? 0)}
-                                            </Typography>
-                                        </Stack>
-                                        <Stack
-                                            alignItems={'center'}
-                                            direction={'row'}
-                                            spacing={1}
-                                            color={'var(--color-text-secondary)'}>
-                                            <CalendarMonthOutlinedIcon />
-                                            <Typography variant="body2" fontWeight={500}>
-                                                {cusItem?.dateCheckIn}
-                                            </Typography>
-                                        </Stack>
+                                    <Stack alignItems={'center'} direction={'row'} spacing={1}>
+                                        <Typography variant="body2">Tổng mua:</Typography>
+                                        <Typography variant="body2" fontWeight={500}>
+                                            {new Intl.NumberFormat('vi-VN').format(cusItem?.tongThanhToan ?? 0)}
+                                        </Typography>
                                     </Stack>
                                 </Stack>
                             </Stack>
