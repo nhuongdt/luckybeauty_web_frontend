@@ -30,7 +30,6 @@ import Cookies from 'js-cookie';
 import { LoaiNhatKyThaoTac } from '../../../lib/appconst';
 import { ModelHangHoaDto } from '../../../services/product/dto';
 import HoaDonChiTietDto from '../../../services/ban_hang/HoaDonChiTietDto';
-import nhanVienService from '../../../services/nhan-vien/nhanVienService';
 import NhanVienThucHienServices from '../../../services/nhan_vien_thuc_hien/NhanVienThucHienServices';
 
 export const ConstFormNumber = {
@@ -141,12 +140,13 @@ const ModalEditChiTietGioHang: React.FC<{
         setLstCTHoaDon(
             lstCTHoaDon.map((item) => {
                 if (item.id === itemCTHD.id) {
+                    const isSuDungDV = !utils.checkNull_OrEmpty(item?.idChiTietHoaDon ?? '');
                     return {
                         ...item,
                         soLuong: sluongNew,
-                        thanhTienTruocCK: sluongNew * item.donGiaTruocCK,
-                        thanhTienSauCK: sluongNew * (item?.donGiaSauCK ?? 0),
-                        thanhTienSauVAT: sluongNew * (item?.donGiaSauVAT ?? 0)
+                        thanhTienTruocCK: isSuDungDV ? 0 : sluongNew * item.donGiaTruocCK,
+                        thanhTienSauCK: isSuDungDV ? 0 : sluongNew * (item?.donGiaSauCK ?? 0),
+                        thanhTienSauVAT: isSuDungDV ? 0 : sluongNew * (item?.donGiaSauVAT ?? 0)
                     };
                 } else {
                     return item;
@@ -179,13 +179,14 @@ const ModalEditChiTietGioHang: React.FC<{
         setLstCTHoaDon(
             lstCTHoaDon.map((item) => {
                 if (item.id === itemCTHD.id) {
+                    const isSuDungDV = !utils.checkNull_OrEmpty(item?.idChiTietHoaDon ?? '');
                     const sluongNew = item.soLuong + 1;
                     return {
                         ...item,
                         soLuong: sluongNew,
-                        thanhTienTruocCK: sluongNew * (item?.donGiaTruocCK ?? 0),
-                        thanhTienSauCK: sluongNew * (item?.donGiaSauCK ?? 0),
-                        thanhTienSauVAT: sluongNew * (item?.donGiaSauVAT ?? 0)
+                        thanhTienTruocCK: isSuDungDV ? 0 : sluongNew * (item?.donGiaTruocCK ?? 0),
+                        thanhTienSauCK: isSuDungDV ? 0 : sluongNew * (item?.donGiaSauCK ?? 0),
+                        thanhTienSauVAT: isSuDungDV ? 0 : sluongNew * (item?.donGiaSauVAT ?? 0)
                     };
                 } else {
                     return item;
@@ -198,77 +199,19 @@ const ModalEditChiTietGioHang: React.FC<{
             lstCTHoaDon.map((item) => {
                 if (item.id === id) {
                     const sluongNew = item.soLuong > 0 ? item.soLuong - 1 : 0;
+                    const isSuDungDV = !utils.checkNull_OrEmpty(item?.idChiTietHoaDon ?? '');
                     return {
                         ...item,
                         soLuong: sluongNew,
-                        thanhTienTruocCK: sluongNew * (item?.donGiaTruocCK ?? 0),
-                        thanhTienSauCK: sluongNew * (item?.donGiaSauCK ?? 0),
-                        thanhTienSauVAT: sluongNew * (item?.donGiaSauVAT ?? 0)
+                        thanhTienTruocCK: isSuDungDV ? 0 : sluongNew * (item?.donGiaTruocCK ?? 0),
+                        thanhTienSauCK: isSuDungDV ? 0 : sluongNew * (item?.donGiaSauCK ?? 0),
+                        thanhTienSauVAT: isSuDungDV ? 0 : sluongNew * (item?.donGiaSauVAT ?? 0)
                     };
                 } else {
                     return item;
                 }
             })
         );
-    };
-
-    const choseProduct = (productChosed: any, indexCT: any) => {
-        if (productChosed === null) {
-            setLstCTHoaDon(
-                lstCTHoaDon.map((item: any, index: number) => {
-                    if (index === indexCT) {
-                        return {
-                            ...item,
-                            tenHangHoa: '',
-                            maHangHoa: '',
-                            id: null,
-                            idDonViQuyDoi: null,
-                            idHangHoa: null
-                        };
-                    } else {
-                        return item;
-                    }
-                })
-            );
-        } else {
-            setLstCTHoaDon(
-                lstCTHoaDon.map((item: PageHoaDonChiTietDto, index: number) => {
-                    if (index === indexCT) {
-                        const ptChietKhau = item?.ptChietKhau ?? 0;
-                        let tienCK = item?.tienChietKhau ?? 0;
-                        let dongiasauCK = item?.donGiaSauCK ?? 0;
-                        if (ptChietKhau ?? 0 > 0) {
-                            tienCK = (ptChietKhau * productChosed.giaBan) / 100;
-                            dongiasauCK = productChosed.giaBan - tienCK;
-                        } else {
-                            if (tienCK > productChosed.giaBan) {
-                                tienCK = 0;
-                                dongiasauCK = productChosed.giaBan;
-                            } else {
-                                dongiasauCK = productChosed.giaBan - tienCK;
-                            }
-                        }
-
-                        return {
-                            ...item,
-                            idHangHoa: productChosed.idHangHoa,
-                            idDonViQuyDoi: productChosed.idDonViQuyDoi,
-                            idNhomHangHoa: productChosed.idNhomHangHoa,
-                            maHangHoa: productChosed.maHangHoa,
-                            tenHangHoa: productChosed.tenHangHoa,
-                            donGiaTruocCK: productChosed.giaBan,
-                            thanhTienTruocCK: productChosed.giaBan * item.soLuong,
-                            donGiaSauCK: dongiasauCK,
-                            thanhTienSauCK: dongiasauCK * item.soLuong,
-                            donGiaSauVAT: dongiasauCK,
-                            thanhTienSauVAT: dongiasauCK * item.soLuong
-                        };
-                    } else {
-                        return item;
-                    }
-                })
-            );
-        }
     };
 
     const changeLoaiChietKhau = (laPhanTramNew: boolean, idCTHD: string) => {
@@ -680,6 +623,7 @@ const ModalEditChiTietGioHang: React.FC<{
                                                 />
                                                 <ButtonGroup>
                                                     <Button
+                                                        disabled={!utils.checkNull_OrEmpty(ct?.idChiTietHoaDon)}
                                                         sx={{
                                                             bgcolor: ct.laPTChietKhau ? 'var(--color-main)' : '',
                                                             color: ct.laPTChietKhau ? 'white' : 'var(--color-main)',
@@ -692,6 +636,7 @@ const ModalEditChiTietGioHang: React.FC<{
                                                         %
                                                     </Button>
                                                     <Button
+                                                        disabled={!utils.checkNull_OrEmpty(ct?.idChiTietHoaDon)}
                                                         sx={{
                                                             bgcolor: !ct.laPTChietKhau ? ' var(--color-main)' : '',
                                                             color: !ct.laPTChietKhau ? 'white' : 'var(--color-main)',
