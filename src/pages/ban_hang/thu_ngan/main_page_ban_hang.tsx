@@ -1,239 +1,500 @@
-import { useState, useEffect, createContext } from 'react';
-import { Grid, ButtonGroup, Button, Box, Stack, Typography } from '@mui/material';
-import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Guid } from 'guid-typescript';
-import '../style.css';
-import TableChartIcon from '@mui/icons-material/TableChart';
-
-import CheckInNew from '../../check_in/CheckInNew';
-import PageBanHang from './PageBanHangNew';
-import Cookies from 'js-cookie';
-import { PageKhachHangCheckInDto } from '../../../services/check_in/CheckinDto';
-import { SuggestNguonKhachDto } from '../../../services/suggests/dto/SuggestNguonKhachDto';
-import { SuggestNhomKhachDto } from '../../../services/suggests/dto/SuggestNhomKhachDto';
-import SuggestService from '../../../services/suggests/SuggestService';
-import { DataCustomerContext } from '../../../services/khach-hang/dto/DataContext';
-import SettingsBackupRestoreOutlinedIcon from '@mui/icons-material/SettingsBackupRestoreOutlined';
+import { Grid, Button, IconButton, Stack, Tab, Tabs, TextField, Typography, Badge } from '@mui/material';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import SearchIcon from '@mui/icons-material/Search';
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined';
+import SpaOutlinedIcon from '@mui/icons-material/SpaOutlined';
+import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import { IList } from '../../../services/dto/IList';
-import { handleClickOutside } from '../../../utils/customReactHook';
+import React, { useEffect, useState } from 'react';
+import TabPanel from '../../../components/TabPanel/TabPanel';
+import '../style.css';
+import '../../../App.css';
+
 import { useNavigate } from 'react-router-dom';
-import { isBrowser } from 'react-device-detect';
+import { LoaiChungTu, TrangThaiCheckin } from '../../../lib/appconst';
+import { dbDexie } from '../../../lib/dexie/dexieDB';
+import utils from '../../../utils/utils';
+import Cookies from 'js-cookie';
+import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
+import { Guid } from 'guid-typescript';
+import ModalFilterNhomHangHoa from '../../../components/Dialog/modal_filter_nhom_hang_hoa';
+import { SuggestChiNhanhDto } from '../../../services/suggests/dto/SuggestChiNhanhDto';
+import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
+import MenuWithDataHasSearch from '../../../components/Menu/MenuWithData_HasSearch';
+import { handleClickOutside } from '../../../utils/customReactHook';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
+import CheckinService from '../../../services/check_in/CheckinService';
+import ThuNganTabLeft from './thu_ngan_tab_left';
+import TabKhachHangChecking2 from '../../check_in/tab_khach_hang_checking2';
+import ThuNganTabRight from './thu_ngan_tab_right';
+import { ModelHangHoaDto } from '../../../services/product/dto';
+import ModalAddCustomerCheckIn from '../../check_in/modal_add_cus_checkin';
+import PaymentsForm from './PaymentsForm';
 
-export default function MainPageBanHang() {
-    const [activeTab, setActiveTab] = useState(1);
-    const [expandAction, setExpandAction] = useState(false);
-    const ref = handleClickOutside(() => setExpandAction(false));
-    const navigation = useNavigate();
-    const lstOption: IList[] = [
-        { id: '1', text: 'Trang chủ', icon: <HomeOutlinedIcon /> },
-        { id: '2', text: 'Danh sách hóa đơn', icon: <FormatListBulletedOutlinedIcon /> },
-        { id: '3', text: 'Lịch hẹn', icon: <CalendarMonthOutlinedIcon /> }
-    ];
+const TabMain = {
+    CHECK_IN: 1,
+    THU_NGAN: 2
+};
 
-    const [cusChosing, setCusChosing] = useState<PageKhachHangCheckInDto>(
-        new PageKhachHangCheckInDto({ idKhachHang: Guid.EMPTY, tenKhachHang: 'Khách lẻ' })
-    );
+type IPropDropdownChiNhanh = {
+    idChosed: string;
+    handleChoseChiNhanh: (itemChosed: IList) => void;
+};
 
-    const [nguonKhachs, setNguonKhachs] = useState<SuggestNguonKhachDto[]>([]);
-    const [nhomKhachs, setNhomKhachs] = useState<SuggestNhomKhachDto[]>([]);
+export const ThuNganSetting = ({ idChosed, handleChoseChiNhanh }: IPropDropdownChiNhanh) => {
+    const [lblChiNhanh, setLblChiNhanh] = useState('');
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const expandDropdownChiNhanh = Boolean(anchorEl);
+    const [allChiNhanh_byUser, setAllChiNhanh_byUser] = useState<SuggestChiNhanhDto[]>([]);
 
-    const clickAction = (item: IList) => {
-        setExpandAction(false);
+    const GetChiNhanhByUser = async () => {
+        const data = await chiNhanhService.GetChiNhanhByUser();
+        setAllChiNhanh_byUser(data);
 
-        switch (item.id) {
-            case '1':
-                isBrowser ? window.open('/home') : navigation('/home');
-                break;
-            case '2':
-                isBrowser ? window.open('/giao-dich-thanh-toan') : navigation('/giao-dich-thanh-toan');
-                break;
-            case '3':
-                isBrowser ? window.open('/lich-hens') : navigation('/lich-hens');
-                break;
-        }
-    };
+        if (utils.checkNull_OrEmpty(idChosed)) {
+            const itemCN = data?.filter((x) => x.id === idChosed);
+            if (itemCN?.length > 0) {
+                setLblChiNhanh(itemCN[0]?.tenChiNhanh);
 
-    const GetDM_NguonKhach = async () => {
-        const data = await SuggestService.SuggestNguonKhach();
-        setNguonKhachs(data);
-    };
-    const GetDM_NhomKhach = async () => {
-        const data = await SuggestService.SuggestNhomKhach();
-        setNhomKhachs(data);
-    };
-
-    const handleTab = (tabIndex: number) => {
-        setActiveTab(tabIndex);
-        setExpandAction(false);
-
-        if (tabIndex === 1) {
-            Cookies.set('tab', '1', { expires: 7 });
+                const itemChosed: IList = {
+                    id: itemCN[0]?.id,
+                    text: itemCN[0]?.tenChiNhanh
+                };
+                handleChoseChiNhanh(itemChosed);
+            }
         } else {
-            Cookies.set('tab', '2');
+            setLblChiNhanh(data[0]?.tenChiNhanh);
         }
-    };
-
-    const choseCustomer = (cus: any) => {
-        setCusChosing((old: any) => {
-            return {
-                ...old,
-                idCheckIn: cus.idCheckIn,
-                idKhachHang: cus.idKhachHang,
-                maKhachHang: cus.maKhachHang,
-                tenKhachHang: cus.tenKhachHang,
-                soDienThoai: cus.soDienThoai,
-                tongTichDiem: cus.tongTichDiem
-            };
-        });
-        setActiveTab(2);
     };
 
     useEffect(() => {
-        if (Cookies.get('tab') === '1') {
-            handleTab(1);
-        } else {
-            handleTab(2);
-        }
-        GetDM_NguonKhach();
-        GetDM_NhomKhach();
+        GetChiNhanhByUser();
     }, []);
 
-    // Xử lý thay đổi giao diện của tab thanh toán (giao diện ngang/dọc)
-    const [horizontalLayout, setHorizontalLayout] = useState(true);
-    useEffect(() => {
-        if (Cookies.get('horizontalLayout') === 'false') {
-            setHorizontalLayout(false);
-        } else {
-            setHorizontalLayout(true);
-        }
-    }, []);
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
 
-    const onChangeLayoutPageBanHang = (horizontalLayout: boolean) => {
-        setHorizontalLayout(true);
-        Cookies.set('horizontalLayout', horizontalLayout.toString(), { expires: 7 });
+    const choseChiNhanh = (item: IList) => {
+        setAnchorEl(null);
+        setLblChiNhanh(item?.text);
+        handleChoseChiNhanh(item);
     };
 
     return (
-        <>
-            <DataCustomerContext.Provider value={{ listNguonKhach: nguonKhachs, listNhomkhach: nhomKhachs }}>
-                <Grid
-                    container
-                    //padding={2}
-                    columnSpacing={2}
-                    rowSpacing={2}
-                    bgcolor="#f8f8f8"
-                    // pr={activeTab === 1 ? '16px' : '0'}
-                >
-                    <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
-                        <Box display="flex" gap="12px" padding={2}>
-                            <ButtonGroup
+        <Stack direction={'row'} alignItems={'center'} spacing={1} display={{ xs: 'none', lg: 'flex', md: 'flex' }}>
+            <LocationOnOutlinedIcon />
+            <Stack>
+                <Typography variant="body1" onClick={handleClick}>
+                    {lblChiNhanh}
+                </Typography>
+                <MenuWithDataHasSearch
+                    open={expandDropdownChiNhanh}
+                    lstData={allChiNhanh_byUser?.map((x) => {
+                        return {
+                            id: x.id,
+                            text: x.tenChiNhanh
+                        } as IList;
+                    })}
+                    anchorEl={anchorEl}
+                    handleClose={() => setAnchorEl(null)}
+                    handleChoseItem={choseChiNhanh}
+                />
+            </Stack>
+            <SettingsOutlinedIcon />
+        </Stack>
+    );
+};
+
+export const InvoiceWaiting = ({ idChiNhanh, idLoaiChungTu, onChose, isAddNewHD }: any) => {
+    const [isExpandShoppingCart, setIsExpandShoppingCart] = useState(false);
+    const [txtSearchInvoiceWaiting, setTxtSearchInvoiceWaiting] = useState<string>('');
+    const [countInvoice, setCountInvoice] = useState<number>(0);
+    const [invoiceChosing, setInvoiceChosing] = useState<PageHoaDonDto | null>(null);
+    const [allInvoiceWaiting, setAllInvoiceWaiting] = useState<PageHoaDonDto[]>([]);
+    const [lstSearchInvoiceWaiting, setLstSearchInvoiceWaiting] = useState<PageHoaDonDto[]>([]);
+    const ref = handleClickOutside(() => setIsExpandShoppingCart(false));
+
+    const [confirmDialog, setConfirmDialog] = useState<PropConfirmOKCancel>({
+        show: false,
+        title: '',
+        type: 1,
+        mes: ''
+    });
+
+    useEffect(() => {
+        if (isAddNewHD !== 0) {
+            setCountInvoice(() => countInvoice + 1);
+        }
+    }, [isAddNewHD]);
+
+    const GetAllInvoiceWaiting = async () => {
+        const allHD = await dbDexie.hoaDon
+            .where('idChiNhanh')
+            .equals(idChiNhanh ?? '')
+            // .and((x) => x.idLoaiChungTu === idLoaiChungTu)
+            .sortBy('ngayLapHoaDon');
+        setAllInvoiceWaiting([...allHD]);
+        setLstSearchInvoiceWaiting([...allHD]);
+        setCountInvoice(allHD?.length ?? 0);
+    };
+
+    useEffect(() => {
+        GetAllInvoiceWaiting();
+    }, [idChiNhanh, idLoaiChungTu]);
+
+    const showAllInvoiceWaiting = async () => {
+        setIsExpandShoppingCart(true);
+        setTxtSearchInvoiceWaiting('');
+        await GetAllInvoiceWaiting();
+    };
+
+    const RemoveAllInvoiceWaiting = async () => {
+        setConfirmDialog({
+            ...confirmDialog,
+            show: true,
+            title: 'Xác nhận xóa',
+            mes: 'Bạn có chắc chắn muốn xóa tất cả hóa đơn chờ không?'
+        });
+        setInvoiceChosing(null);
+    };
+
+    const RemoveInvoiceWaitingById = async (item: PageHoaDonDto) => {
+        setInvoiceChosing({ ...item });
+        setConfirmDialog({
+            ...confirmDialog,
+            show: true,
+            title: 'Xác nhận xóa',
+            mes: `Bạn có chắc chắn muốn xóa hóa đơn chờ của khách hàng ${item?.tenKhachHang} không?`
+        });
+    };
+
+    const choseItemInvoice = async (item: PageHoaDonDto) => {
+        setInvoiceChosing({ ...item });
+        setIsExpandShoppingCart(false);
+        onChose(item?.id);
+    };
+
+    const onClickConfirmDelete = async () => {
+        setConfirmDialog({
+            ...confirmDialog,
+            show: false
+        });
+        if (utils.checkNull(invoiceChosing?.id)) {
+            setAllInvoiceWaiting([]);
+            await dbDexie.hoaDon.toCollection().delete();
+
+            for (let index = 0; index < allInvoiceWaiting?.length; index++) {
+                const element = allInvoiceWaiting[index];
+                if (!utils.checkNull_OrEmpty(element?.idCheckIn ?? '')) {
+                    await CheckinService.UpdateTrangThaiCheckin(element?.idCheckIn ?? '', TrangThaiCheckin.DELETED);
+                }
+            }
+            onChose(Guid.EMPTY);
+        } else {
+            setAllInvoiceWaiting(allInvoiceWaiting?.filter((x) => x.id !== invoiceChosing?.id));
+            await dbDexie.hoaDon.delete(invoiceChosing?.id ?? '');
+
+            if (!utils.checkNull_OrEmpty(invoiceChosing?.idCheckIn ?? '')) {
+                await CheckinService.UpdateTrangThaiCheckin(invoiceChosing?.idCheckIn ?? '', TrangThaiCheckin.DELETED);
+            }
+
+            const arrConLai = allInvoiceWaiting?.filter((x) => x.id !== invoiceChosing?.id);
+            if (arrConLai?.length > 0) {
+                onChose(arrConLai[0]?.id);
+            }
+        }
+    };
+
+    return (
+        <div ref={ref}>
+            <ConfirmDelete
+                isShow={confirmDialog.show}
+                title={confirmDialog.title}
+                mes={confirmDialog.mes}
+                onOk={onClickConfirmDelete}
+                onCancel={() => setConfirmDialog({ ...confirmDialog, show: false })}></ConfirmDelete>
+            <Badge badgeContent={countInvoice} color="secondary" sx={{ position: 'relative' }}>
+                <ShoppingCartIcon sx={{ color: '#1976d2' }} titleAccess="Hóa đơn chờ" onClick={showAllInvoiceWaiting} />
+
+                <Stack
+                    width={300}
+                    spacing={1}
+                    overflow={'auto'}
+                    maxHeight={500}
+                    zIndex={4}
+                    sx={{
+                        display: isExpandShoppingCart ? '' : 'none',
+                        position: 'absolute',
+                        marginLeft: '-160px',
+                        backgroundColor: 'white',
+                        border: '1px solid #cccc',
+                        borderRadius: '4px',
+                        top: '20px'
+                    }}>
+                    <Stack sx={{ backgroundColor: 'antiquewhite' }}>
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                textAlign: 'center',
+                                borderBottom: '1px solid #cccc',
+                                padding: '8px'
+                            }}>
+                            Hóa đơn chờ
+                        </Typography>
+                        <CloseOutlinedIcon
+                            titleAccess="Xóa tất cả"
+                            onClick={RemoveAllInvoiceWaiting}
+                            sx={{
+                                position: 'absolute',
+                                right: '8px',
+                                top: '8px',
+                                width: 16,
+                                height: 16,
+                                color: 'red',
+                                '&:hover': {
+                                    filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                                }
+                            }}
+                        />
+                    </Stack>
+
+                    <TextField
+                        fullWidth
+                        size="small"
+                        variant="standard"
+                        placeholder="Tìm hóa đơn"
+                        value={txtSearchInvoiceWaiting}
+                        onChange={(e) => setTxtSearchInvoiceWaiting(e.target.value)}
+                        InputProps={{ startAdornment: <SearchIcon /> }}
+                    />
+                    <Stack>
+                        {lstSearchInvoiceWaiting?.map((item: PageHoaDonDto, index: number) => (
+                            <Stack
                                 sx={{
-                                    '& button': {
-                                        // fontSize: '16px',
-                                        // paddingX: '7px'
+                                    position: 'relative',
+                                    '&:hover': {
+                                        backgroundColor: 'var(--color-bg)',
+                                        cursor: 'pointer'
                                     }
-                                }}>
-                                <Button
+                                }}
+                                key={index}>
+                                <CloseOutlinedIcon
+                                    onClick={() => RemoveInvoiceWaitingById(item)}
                                     sx={{
-                                        textTransform: 'unset',
-
-                                        color: activeTab == 1 ? '#fff' : '#999699',
-                                        backgroundColor:
-                                            activeTab == 1 ? 'var(--color-main)!important' : 'var(--color-bg)',
-                                        borderColor: 'transparent!important',
-                                        '&:hover': {
-                                            borderColor:
-                                                activeTab == 2 ? 'var(--color-main)!important' : 'transparent!important'
-                                        }
+                                        position: 'absolute',
+                                        right: '8px',
+                                        top: '8px',
+                                        width: 16,
+                                        height: 16,
+                                        color: 'red'
                                     }}
-                                    onClick={() => handleTab(1)}
-                                    className={activeTab === 1 ? 'active' : ''}
-                                    variant={activeTab === 1 ? 'contained' : 'outlined'}>
-                                    Checkin
-                                </Button>
-                                <Button
+                                />
+                                <Stack
                                     sx={{
-                                        textTransform: 'unset',
-
-                                        color: activeTab == 2 ? '#fff' : '#999699',
-                                        borderColor: 'transparent!important',
-                                        backgroundColor:
-                                            activeTab == 2 ? 'var(--color-main)!important' : 'var(--color-bg)',
-                                        '&:hover': {
-                                            borderColor:
-                                                activeTab == 1 ? 'var(--color-main)!important' : 'transparent!important'
-                                        }
+                                        padding: '10px',
+                                        borderBottom: '1px solid #ccc'
                                     }}
-                                    onClick={() => {
-                                        handleTab(2);
-                                        setCusChosing(
-                                            new PageKhachHangCheckInDto({
-                                                idKhachHang: Guid.EMPTY,
-                                                tenKhachHang: 'Khách lẻ'
-                                            })
-                                        );
-                                    }}
-                                    className={activeTab === 2 ? 'active' : ''}
-                                    variant={activeTab === 2 ? 'contained' : 'outlined'}>
-                                    Thanh toán
-                                </Button>
-                            </ButtonGroup>
-
-                            <div ref={ref}>
-                                <Stack spacing={1} direction={'row'} alignItems={'center'}>
-                                    <Box sx={{ position: 'relative' }}>
-                                        <Button
-                                            variant="contained"
-                                            endIcon={<SettingsBackupRestoreOutlinedIcon />}
-                                            onClick={() => setExpandAction(!expandAction)}>
-                                            Quay lại
-                                        </Button>
-
-                                        <Box
+                                    onClick={() => choseItemInvoice(item)}>
+                                    <Stack direction={'row'} spacing={1} alignItems={'center'}>
+                                        <AssignmentIndOutlinedIcon
                                             sx={{
-                                                display: expandAction ? '' : 'none',
-                                                zIndex: 1,
-                                                position: 'absolute',
-                                                borderRadius: '4px',
-                                                border: '1px solid #cccc',
-                                                minWidth: 200,
-                                                backgroundColor: 'rgba(248,248,248,1)',
-                                                '& .MuiStack-root .MuiStack-root:hover': {
-                                                    backgroundColor: '#cccc'
-                                                }
-                                            }}>
-                                            <Stack>
-                                                {lstOption?.map((item: IList, index: number) => (
-                                                    <Stack
-                                                        direction={'row'}
-                                                        key={index}
-                                                        spacing={1}
-                                                        padding={'6px'}
-                                                        alignItems={'center'}
-                                                        sx={{ cursor: 'pointer' }}
-                                                        onClick={() => clickAction(item)}>
-                                                        {item.icon}
-                                                        <Typography variant="subtitle2" marginLeft={1}>
-                                                            {item.text}
-                                                        </Typography>
-                                                    </Stack>
-                                                ))}
-                                            </Stack>
-                                        </Box>
-                                    </Box>
+                                                color: '#cccc',
+                                                width: '18px',
+                                                height: '18px'
+                                            }}
+                                        />
+                                        <Typography variant="subtitle2" title={item?.tenKhachHang}>
+                                            {item.tenKhachHang}
+                                        </Typography>
+                                    </Stack>
+                                    {item?.soDienThoai && (
+                                        <Stack direction={'row'} spacing={1} alignItems={'center'}>
+                                            <PhoneOutlinedIcon
+                                                sx={{
+                                                    color: '#cccc',
+                                                    width: '18px',
+                                                    height: '18px'
+                                                }}
+                                            />
+                                            <Typography color="#999699" variant="caption">
+                                                {item?.soDienThoai}
+                                            </Typography>
+                                        </Stack>
+                                    )}
+                                    <Stack direction={'row'} spacing={1} alignItems={'center'}>
+                                        {item?.idLoaiChungTu === LoaiChungTu.HOA_DON_BAN_LE ? (
+                                            <ReceiptOutlinedIcon color="success" />
+                                        ) : (
+                                            <SpaOutlinedIcon color="secondary" />
+                                        )}
+                                        <Typography variant="body2" fontWeight="600" color={'#d39987'}>
+                                            {Intl.NumberFormat('vi-VN').format(item?.tongThanhToan)}
+                                        </Typography>
+                                    </Stack>
                                 </Stack>
-                            </div>
-                        </Box>
-                    </Grid>
+                            </Stack>
+                        ))}
+                    </Stack>
+                </Stack>
+            </Badge>
+        </div>
+    );
+};
+export default function MainPageBanHang() {
+    const navigation = useNavigate();
+    const [txtSearch, setTextSearch] = useState('');
+    const [isShowModalAdd, setIsShowModalAdd] = useState(false);
+    const [isThanhToanTienMat, setIsThanhToanTienMat] = useState(true);
+    const [tabMainActive, setTabMainActive] = useState(TabMain.CHECK_IN);
+    const [isShowModalFilterNhomHangHoa, setIsShowModalFilterNhomHangHoa] = useState(false);
+    const [arrIdNhomHangFilter, setArrIdNhomHangFilter] = useState<string[]>([]);
+    const [isAddInvoiceToCache, setIsAddInvoiceToCache] = useState<number>(0);
 
-                    {activeTab === 1 && <CheckInNew hanleChoseCustomer={choseCustomer} />}
-                    {activeTab === 2 && <PageBanHang customerChosed={cusChosing} horizontalLayout={horizontalLayout} />}
+    const [idChiNhanhChosed, setIdChiNhanhChosed] = useState<string>(Cookies.get('IdChiNhanh') ?? '');
+    const [customerIdChosed, setCustomerIdChosed] = useState<string>('');
+
+    const [pageThuNgan_idChecking, setPageThuNgan_idChecking] = useState<string>(Guid.EMPTY);
+
+    const [isChoseProduct, setIsChoseProduct] = useState(0);
+    const [productChosed, setProductChosed] = useState<ModelHangHoaDto>({} as ModelHangHoaDto);
+
+    const changeActiveTabMain = async (event: React.SyntheticEvent, tabNew: number) => {
+        setTabMainActive(tabNew);
+        setIsShowModalAdd(false);
+        setArrIdNhomHangFilter([]);
+        setIsChoseProduct(0);
+    };
+
+    const onAgreeFilterNhomHang = (arrIdNhomHang: string[]) => {
+        setArrIdNhomHangFilter([...arrIdNhomHang]);
+        setIsShowModalFilterNhomHangHoa(false);
+    };
+
+    const onClickAddHoaDon = (customerId: string, idCheckIn?: string, isAddNew?: boolean) => {
+        setCustomerIdChosed(customerId);
+        setPageThuNgan_idChecking(idCheckIn ?? '');
+        if (isAddNew ?? false) {
+            setIsShowModalAdd(false); // nếu thêm khách check-in new: close modal + add new hoadon
+        } else {
+            setTabMainActive(TabMain.THU_NGAN);
+        }
+    };
+
+    const choseProduct = (item: ModelHangHoaDto) => {
+        setIsChoseProduct(isChoseProduct + 1);
+        setProductChosed(item);
+    };
+
+    const changeChiNhanh = (idChiNhanh: string) => {
+        setIdChiNhanhChosed(idChiNhanh);
+    };
+
+    const ThuNgan_ChangeHinhThucThanhToan = (isTienMat: boolean) => {
+        setIsThanhToanTienMat(isTienMat);
+    };
+
+    return (
+        <Grid container className="main_page_thu_ngan" padding={1} position={'relative'} height={'100vh'}>
+            <ModalFilterNhomHangHoa
+                isShow={isShowModalFilterNhomHangHoa}
+                onClose={() => setIsShowModalFilterNhomHangHoa(false)}
+                onAgree={onAgreeFilterNhomHang}
+            />
+
+            <Grid container spacing={1}>
+                <Grid item xs={12} sm={3} lg={7} md={6} borderRight={'1px solid rgb(224, 228, 235)'} padding={1}>
+                    <Grid container spacing={1}>
+                        <Grid item lg={4} md={5}>
+                            <Stack direction={'row'} alignItems={'center'} spacing={1}>
+                                <HomeOutlinedIcon
+                                    titleAccess="Đi đến trang chủ"
+                                    onClick={() => navigation('/home')}
+                                    sx={{ color: 'var(--color-main)', '&:hover': { cursor: 'pointer' } }}
+                                />
+                                <Tabs
+                                    value={tabMainActive}
+                                    onChange={changeActiveTabMain}
+                                    aria-label="nav tabs example">
+                                    <Tab label="Check in" value={TabMain.CHECK_IN} />
+                                    <Tab label="Hàng hóa" value={TabMain.THU_NGAN} />
+                                </Tabs>
+                            </Stack>
+                        </Grid>
+                        <Grid item lg={8} md={7}>
+                            {tabMainActive == TabMain.CHECK_IN ? (
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    placeholder="Tìm kiếm khách hàng"
+                                    onChange={(e) => setTextSearch(e.target.value)}
+                                    InputProps={{
+                                        startAdornment: <SearchIcon />,
+                                        endAdornment: (
+                                            <IconButton
+                                                sx={{ cursor: 'pointer' }}
+                                                aria-label="Thêm khách hàng check-in"
+                                                title="Thêm khách hàng check-in"
+                                                onClick={() => setIsShowModalAdd(true)}>
+                                                <AddOutlinedIcon />
+                                            </IconButton>
+                                        )
+                                    }}
+                                />
+                            ) : (
+                                <TextField
+                                    size="small"
+                                    placeholder="Tìm kiếm dịch vụ"
+                                    fullWidth
+                                    onChange={(e) => setTextSearch(e.target.value)}
+                                    InputProps={{
+                                        startAdornment: <SearchIcon />,
+                                        endAdornment: (
+                                            <IconButton
+                                                sx={{ cursor: 'pointer' }}
+                                                aria-label="Lọc sản phẩm theo nhóm"
+                                                title="Lọc sản phẩm theo nhóm"
+                                                onClick={() => setIsShowModalFilterNhomHangHoa(true)}>
+                                                <FilterAltOutlinedIcon />
+                                            </IconButton>
+                                        )
+                                    }}
+                                />
+                            )}
+                        </Grid>
+                    </Grid>
+                    <TabPanel value={tabMainActive} index={TabMain.CHECK_IN}>
+                        <TabKhachHangChecking2
+                            txtSearch={txtSearch}
+                            idChiNhanhChosed={idChiNhanhChosed}
+                            onClickAddHoaDon={onClickAddHoaDon}
+                            isShowModalAddCheckin={tabMainActive == TabMain.CHECK_IN ? isShowModalAdd : false}
+                            onCloseModalAddCheckin={() => setIsShowModalAdd(false)}
+                        />
+                    </TabPanel>
+                    <TabPanel value={tabMainActive} index={TabMain.THU_NGAN}>
+                        <ThuNganTabLeft txtSearch={txtSearch} onChoseProduct={choseProduct} />
+                    </TabPanel>
                 </Grid>
-            </DataCustomerContext.Provider>
-        </>
+
+                <Grid item xs={12} sm={9} lg={5} md={6}>
+                    <ThuNganTabRight
+                        isChoseProduct={isChoseProduct}
+                        productChosed={productChosed}
+                        customerIdChosed={customerIdChosed}
+                        idCheckIn={pageThuNgan_idChecking}
+                        onChangeChiNhanh={changeChiNhanh}
+                    />
+                </Grid>
+            </Grid>
+        </Grid>
     );
 }
