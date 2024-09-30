@@ -19,7 +19,8 @@ interface ChildComponent {
         tienCK: number,
         tienPOS: number,
         idTaiKhoanPos: string | null,
-        idTaiKhoanCK: string | null
+        idTaiKhoanCK: string | null,
+        noiDungThu: string
     ) => void;
     formNumber?: number;
     isShowModal?: boolean;
@@ -77,7 +78,14 @@ const PaymentsForm: React.FC<ChildComponent> = ({
         setIsSaving(true);
         if (formNumber === FormNumber.THU_NGAN) {
             if (onSaveHoaDon) {
-                onSaveHoaDon(tienMat, tienChuyenKhoan, tienQuyeThePos, idTaiKhoanChuyenKhoan, idTaiKhoanPOS);
+                onSaveHoaDon(
+                    tienMat,
+                    tienChuyenKhoan,
+                    tienQuyeThePos,
+                    idTaiKhoanChuyenKhoan,
+                    idTaiKhoanPOS,
+                    noiDungThu
+                );
             }
         } else {
             const dataQuyHD = await SoQuyServices.savePhieuThu_forHoaDon({
@@ -282,7 +290,7 @@ const PaymentsForm: React.FC<ChildComponent> = ({
                     </Grid>
                 </Grid>
             </Grid>
-            <Grid item lg={12} marginTop={1}>
+            <Grid item lg={12} md={12} sm={12} xs={12} marginTop={1}>
                 <TextField
                     variant="standard"
                     fullWidth
