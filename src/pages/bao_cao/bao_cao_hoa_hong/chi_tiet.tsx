@@ -154,24 +154,36 @@ export default function PageBaoCaoHoaHongNhanVienChiTiet({ onChangePage, onChang
                                                     <TableCell align="right" sx={{ maxWidth: 200 }}>
                                                         <Stack direction={'row'} textAlign={'center'}>
                                                             <Typography variant="body2" flex={1}>
-                                                                {rowDetail?.hoaHongThucHien_PTChietKhau}
+                                                                {(rowDetail.hoaHongThucHien_TienChietKhau > 0 &&
+                                                                    rowDetail?.hoaHongThucHien_PTChietKhau == 0) ||
+                                                                rowDetail?.hoaHongTuVan_TienChietKhau > 0
+                                                                    ? '_'
+                                                                    : rowDetail?.hoaHongThucHien_PTChietKhau}
                                                             </Typography>
                                                             <Typography variant="body2" flex={1}>
-                                                                {new Intl.NumberFormat('vi-VN').format(
-                                                                    rowDetail?.hoaHongThucHien_TienChietKhau ?? 0
-                                                                )}
+                                                                {rowDetail?.hoaHongTuVan_TienChietKhau > 0
+                                                                    ? '_'
+                                                                    : new Intl.NumberFormat('vi-VN').format(
+                                                                          rowDetail?.hoaHongThucHien_TienChietKhau ?? 0
+                                                                      )}
                                                             </Typography>
                                                         </Stack>
                                                     </TableCell>
                                                     <TableCell align="right" sx={{ maxWidth: 200 }}>
                                                         <Stack direction={'row'} textAlign={'center'}>
                                                             <Typography variant="body2" flex={1}>
-                                                                {rowDetail?.hoaHongTuVan_PTChietKhau}
+                                                                {(rowDetail.hoaHongTuVan_TienChietKhau > 0 &&
+                                                                    rowDetail?.hoaHongTuVan_PTChietKhau == 0) ||
+                                                                rowDetail?.hoaHongThucHien_TienChietKhau > 0
+                                                                    ? '_'
+                                                                    : rowDetail?.hoaHongTuVan_PTChietKhau}
                                                             </Typography>
                                                             <Typography variant="body2" flex={1}>
-                                                                {new Intl.NumberFormat('vi-VN').format(
-                                                                    rowDetail?.hoaHongTuVan_TienChietKhau ?? 0
-                                                                )}
+                                                                {rowDetail?.hoaHongThucHien_TienChietKhau > 0
+                                                                    ? '_'
+                                                                    : new Intl.NumberFormat('vi-VN').format(
+                                                                          rowDetail?.hoaHongTuVan_TienChietKhau ?? 0
+                                                                      )}
                                                             </Typography>
                                                         </Stack>
                                                     </TableCell>
