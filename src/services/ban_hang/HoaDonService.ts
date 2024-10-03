@@ -7,11 +7,26 @@ import { PagedResultDto } from '../dto/pagedResultDto';
 import utils from '../../utils/utils';
 import { IFileDto } from '../dto/FileDto';
 import HoaDonDto from './HoaDonDto';
-import ChiTietSuDungGDVDto, { GroupChiTietSuDungGDVDto } from './ChiTietSuDungGDVDto';
+import { GroupChiTietSuDungGDVDto } from './ChiTietSuDungGDVDto';
 import ParamSearchChiTietSuDungGDVDto from './ParamSearchChiTietSuDungGDVDto';
 import HoaDonChiTietDto from './HoaDonChiTietDto';
 import INhatKySuDungGDVDto from './NhatKySuDungGDVDto';
 class HoaDonService {
+    CheckExists_MaHoaDon = async (maHoaDon: string): Promise<boolean> => {
+        if (utils.checkNull(maHoaDon)) {
+            return false;
+        }
+        const result = await http.post('api/services/app/HoaDon/CheckExists_MaHoaDon?maHoaDon=' + maHoaDon);
+        return result.data.result;
+    };
+    InsertBH_HoaDon = async (input: HoaDonDto): Promise<HoaDonDto | null> => {
+        // only insert to Bh_HoaDon
+        if (utils.checkNull_OrEmpty(input?.idKhachHang)) {
+            input.idKhachHang = null;
+        }
+        const result = await http.post('api/services/app/HoaDon/InsertBH_HoaDon', input);
+        return result.data.result;
+    };
     CreateHoaDon = async (input: any): Promise<HoaDonDto | null> => {
         if (input.idKhachHang === '' || input.idKhachHang === Guid.EMPTY.toString()) {
             input.idKhachHang = null;
@@ -155,6 +170,15 @@ class HoaDonService {
             return false;
         }
         const result = await http.get(`api/services/app/HoaDon/CheckChiTietGDV_DaSuDung?idChiTietGDV=${idChiTietGDV}`);
+        return result.data.result;
+    };
+    GetSoDuTheGiaTri_ofKhachHang = async (idKhachHang: string): Promise<number> => {
+        if (utils.checkNull_OrEmpty(idKhachHang)) {
+            return 0;
+        }
+        const result = await http.get(
+            `api/services/app/HoaDon/GetSoDuTheGiaTri_ofKhachHang?idKhachHang=${idKhachHang}`
+        );
         return result.data.result;
     };
 }
