@@ -74,6 +74,10 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                 return 'hóa đơn';
             case LoaiChungTu.GOI_DICH_VU:
                 return 'gói dịch vụ';
+            case LoaiChungTu.THE_GIA_TRI:
+                return 'thẻ giá trị';
+            case LoaiChungTu.PHIEU_DIEU_CHINH_TGT:
+                return 'phiếu điều chỉnh số dư thẻ giá trị';
             case LoaiChungTu.NHAP_HANG:
                 return 'phiếu nhập hàng';
             default:
@@ -340,7 +344,7 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                         borderBottom: '1px solid rgba(204, 204, 204, 0.8)'
                     }}>
                     <Typography fontSize={'20px'} fontWeight={600}>
-                        Thông tin gói dịch vụ
+                        Thông tin {sLoaiHoaDon}
                     </Typography>
                     <Stack
                         direction={'row'}
