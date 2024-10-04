@@ -33,7 +33,8 @@ export const LoaiChungTu = {
     NHAP_HANG: 4,
     THE_GIA_TRI: 8,
     PHIEU_THU: 11,
-    PHIEU_CHI: 12
+    PHIEU_CHI: 12,
+    PHIEU_DIEU_CHINH_TGT: 16
 };
 export const LoaiDoiTuong = {
     KHACH_HANG: 1,
@@ -150,7 +151,9 @@ export const HINH_THUC_THANH_TOAN = {
     KET_HOP: 0,
     TIEN_MAT: 1,
     CHUYEN_KHOAN: 2,
-    QUYET_THE: 3
+    QUYET_THE: 3,
+    THE_GIA_TRI: 4,
+    DOI_DIEM: 5
 };
 
 const AppConsts = {

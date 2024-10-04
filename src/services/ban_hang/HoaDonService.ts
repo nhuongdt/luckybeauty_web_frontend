@@ -11,6 +11,8 @@ import { GroupChiTietSuDungGDVDto } from './ChiTietSuDungGDVDto';
 import ParamSearchChiTietSuDungGDVDto from './ParamSearchChiTietSuDungGDVDto';
 import HoaDonChiTietDto from './HoaDonChiTietDto';
 import INhatKySuDungGDVDto from './NhatKySuDungGDVDto';
+import { FileUpload } from '../dto/FileUpload';
+import { BangBaoLoiFileimportDto } from '../dto/BangBaoLoiFileimportDto';
 class HoaDonService {
     CheckExists_MaHoaDon = async (maHoaDon: string): Promise<boolean> => {
         if (utils.checkNull(maHoaDon)) {
@@ -180,6 +182,17 @@ class HoaDonService {
             `api/services/app/HoaDon/GetSoDuTheGiaTri_ofKhachHang?idKhachHang=${idKhachHang}`
         );
         return result.data.result;
+    };
+    CheckData_FileImportTonDauTGT = async (input: FileUpload): Promise<BangBaoLoiFileimportDto[]> => {
+        const response = await http.post('api/services/app/HoaDon/CheckData_FileImportTonDauTGT', input);
+        return response.data.result;
+    };
+    ImportFileImportTonDauTGT = async (input: FileUpload, idChiNhanh: string): Promise<BangBaoLoiFileimportDto[]> => {
+        const response = await http.post(
+            `api/services/app/HoaDon/ImportFileImportTonDauTGT?idChiNhanh=${idChiNhanh}`,
+            input
+        );
+        return response.data.result;
     };
 }
 

@@ -26,7 +26,7 @@ import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import HoaDonService from '../../services/ban_hang/HoaDonService';
 import SoQuyServices from '../../services/so_quy/SoQuyServices';
-import { LoaiChungTu, TypeAction } from '../../lib/appconst';
+import { LoaiChungTu, LoaiNhatKyThaoTac, TypeAction } from '../../lib/appconst';
 import { CreateNhatKyThaoTacDto } from '../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
@@ -191,7 +191,7 @@ const ModalNapTheGiaTri = ({ isShowModal, isNew, idUpdate, onClose, onOK }: IPro
             )} <br /> Giảm giá:  ${Intl.NumberFormat('vi-VN').format(
                 newTGT?.tongGiamGiaHD
             )}<br /> Phải thanh toán: ${Intl.NumberFormat('vi-VN').format(newTGT?.tongThanhToan)} `,
-            loaiNhatKy: 1
+            loaiNhatKy: isNew ? LoaiNhatKyThaoTac.INSEART : LoaiNhatKyThaoTac.UPDATE
         } as CreateNhatKyThaoTacDto;
         nhatKyHoatDongService.createNhatKyThaoTac(diary);
     };

@@ -12,12 +12,15 @@ import {
     TableFooter,
     TableHead,
     TableRow,
-    TextField
+    TextField,
+    Typography
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import AddIcon from '@mui/icons-material/Add';
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import DateFilterCustom from '../../components/DatetimePicker/DateFilterCustom';
 import { format, lastDayOfMonth } from 'date-fns';
 import { HoaDonRequestDto } from '../../services/dto/ParamSearchDto';
@@ -40,6 +43,13 @@ import { IPropModal } from '../../services/dto/IPropsComponent';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
+import ImportExcel from '../../components/ImportComponent/ImportExcel';
+import { BangBaoLoiFileimportDto } from '../../services/dto/BangBaoLoiFileimportDto';
+import uploadFileService from '../../services/uploadFileService';
+import { FileUpload } from '../../services/dto/FileUpload';
+import BangBaoLoiFileImport from '../../components/ImportComponent/BangBaoLoiFileImport';
+import PageDetailsTGT from './page_details_TGT';
+import ModalDieuChinhSoDuTGT from './modal_dieu_chinh_so_du';
 
 export default function PageDanhSachTGT() {
     const appContext = useContext(AppContext);
@@ -56,8 +66,12 @@ export default function PageDanhSachTGT() {
     const [footerTable_ConNo, setFooterTable_ConNo] = useState(0);
     const [isOpenFormDetail, setIsOpenFormDetail] = useState(false);
     const [invoiceChosing, setInvoiceChosing] = useState<PageHoaDonDto | null>(null);
-
+    const [isShowImport, setShowImport] = useState<boolean>(false);
+    const [lstErrImport, setLstErrImport] = useState<BangBaoLoiFileimportDto[]>([]);
     const [propModalNapThe, setPropModalNapThe] = useState<IPropModal<PageHoaDonDto>>({
+        isShowModal: false
+    } as IPropModal<PageHoaDonDto>);
+    const [propModalDieuChinhSoDu, setPropModalDieuChinhSoDu] = useState<IPropModal<PageHoaDonDto>>({
         isShowModal: false
     } as IPropModal<PageHoaDonDto>);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
@@ -229,6 +243,9 @@ export default function PageDanhSachTGT() {
     const showModalNapThe = () => {
         setPropModalNapThe({ ...propModalNapThe, isShowModal: true, isNew: true });
     };
+    const showModalDieuChinhSoDu = () => {
+        setPropModalDieuChinhSoDu({ ...propModalDieuChinhSoDu, isShowModal: true, isNew: true });
+    };
 
     const saveOKTheNap = async (typeAction: number, dataSave: PageHoaDonDto | undefined) => {
         setPropModalNapThe({ ...propModalNapThe, isShowModal: false });
@@ -250,9 +267,59 @@ export default function PageDanhSachTGT() {
             }
         }
     };
+    const saveOKPhieuDieuChinh = async (typeAction: number, dataSave: PageHoaDonDto | undefined) => {
+        setPropModalDieuChinhSoDu({ ...propModalDieuChinhSoDu, isShowModal: false });
+        setObjAlert({
+            ...objAlert,
+            show: true,
+            mes: `${typeAction === TypeAction.INSEART ? 'Thêm mới' : 'Cập nhật'} phiếu điều chỉnh thành công`
+        });
+
+        // chỉ thêm/xóa vào danh sách: nếu bộ lọc đang lọc cả phiếu điều chỉnh
+        const pageContainsPhieuDieuChinh =
+            (paramSearch?.idLoaiChungTus?.filter((x) => x === LoaiChungTu.PHIEU_DIEU_CHINH_TGT)?.length ?? 0) > 0;
+
+        if (dataSave && pageContainsPhieuDieuChinh) {
+            switch (typeAction) {
+                case TypeAction.INSEART:
+                    {
+                        setPageDataHoaDon({
+                            ...pageDataHoaDon,
+                            items: [dataSave, ...(pageDataHoaDon?.items ?? [])]
+                        });
+                    }
+                    break;
+            }
+        }
+    };
 
     const onXoaTheNap = () => {
         //
+    };
+
+    const onImportShow = () => {
+        setShowImport(!isShowImport);
+        setLstErrImport([]);
+    };
+
+    const downloadImportTemplate = async () => {
+        const result = await uploadFileService.downloadImportTemplate('FileImport_TonDauTGT.xlsx');
+        fileDowloadService.downloadExportFile(result);
+    };
+    const handleImportData = async (input: FileUpload) => {
+        const lstErr = await HoaDonService.CheckData_FileImportTonDauTGT(input);
+        if (lstErr?.length > 0) {
+            setLstErrImport([...lstErr]);
+        } else {
+            const data = await HoaDonService.ImportFileImportTonDauTGT(input, chinhanh.id);
+            if (data?.length > 0) {
+                setLstErrImport([...data]);
+            } else {
+                setObjAlert({ ...objAlert, show: true, mes: 'Import thành công' });
+                await GetListTheGiaTri();
+            }
+        }
+        setShowImport(false);
     };
 
     const listColumnHeader: IHeaderTable[] = [
@@ -269,6 +336,8 @@ export default function PageDanhSachTGT() {
         { columnId: 'ghiChuHD', columnText: 'Ghi chú' }
     ];
 
+    if (isOpenFormDetail) return <PageDetailsTGT itemHD={invoiceChosing} gotoBack={gotoPageList} />;
+
     return (
         <>
             <ModalNapTheGiaTri
@@ -276,6 +345,25 @@ export default function PageDanhSachTGT() {
                 isNew={propModalNapThe.isNew}
                 onClose={() => setPropModalNapThe({ ...propModalNapThe, isShowModal: false })}
                 onOK={saveOKTheNap}
+            />
+            <ModalDieuChinhSoDuTGT
+                isShowModal={propModalDieuChinhSoDu?.isShowModal ?? false}
+                isNew={propModalDieuChinhSoDu.isNew}
+                onClose={() => setPropModalDieuChinhSoDu({ ...propModalDieuChinhSoDu, isShowModal: false })}
+                onOK={saveOKPhieuDieuChinh}
+            />
+            <ImportExcel
+                tieude={'Nhập file tồn đầu thẻ giá trị'}
+                isOpen={isShowImport}
+                onClose={onImportShow}
+                downloadImportTemplate={downloadImportTemplate}
+                importFile={handleImportData}
+            />
+            <BangBaoLoiFileImport
+                isOpen={lstErrImport.length > 0}
+                lstError={lstErrImport}
+                onClose={() => setLstErrImport([])}
+                clickImport={() => console.log(lstErrImport)}
             />
             <ConfirmDelete
                 isShow={confirmDialog.show}
@@ -291,34 +379,48 @@ export default function PageDanhSachTGT() {
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}
             />
             <Grid container paddingTop={2} spacing={2}>
-                <Grid item lg={12} md={12} sm={12} width={'100%'}>
+                <Grid item lg={12} md={12} sm={12}>
                     <Grid container>
-                        <Grid item lg={4} md={3} sm={12} xs={12}>
-                            <span className="page-title"> Danh sách thẻ giá trị</span>
+                        <Grid item lg={12} md={12} sm={12} xs={12}>
+                            <Typography variant="body1" fontWeight={500}>
+                                Danh sách thẻ giá trị
+                            </Typography>
                         </Grid>
-                        <Grid item lg={8} md={9} sm={12} xs={12} display={'flex'} justifyContent={'end'}>
-                            <Grid container justifyContent={'end'} spacing={1} width={'100%'}>
-                                <Grid item lg={5} md={6} sm={6} xs={12}>
-                                    <Stack direction={'row'} spacing={1}>
-                                        <Button
-                                            variant="contained"
-                                            onClick={showModalNapThe}
-                                            fullWidth
-                                            startIcon={<AddIcon />}>
-                                            Nạp thẻ
-                                        </Button>
-                                        <Button variant="outlined" fullWidth>
-                                            Điều chỉnh số dư
-                                        </Button>
-                                    </Stack>
+                        <Grid item lg={12} md={12} sm={12} xs={12} paddingTop={2}>
+                            <Grid container spacing={2} justifyContent={'space-between'}>
+                                <Grid item lg={7} md={12} sm={12} xs={12} display={'flex'} gap="8px">
+                                    <Button variant="contained" onClick={showModalNapThe} startIcon={<AddIcon />}>
+                                        Nạp thẻ
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        sx={{ backgroundColor: 'white', color: 'black' }}
+                                        onClick={onImportShow}
+                                        startIcon={<FileDownloadIcon />}>
+                                        Import tồn đầu
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        color="secondary"
+                                        startIcon={<CurrencyExchangeIcon />}
+                                        onClick={showModalDieuChinhSoDu}>
+                                        Điều chỉnh số dư
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        sx={{ backgroundColor: 'white', color: 'black' }}
+                                        onClick={ExportToExcel}
+                                        startIcon={<FileUploadIcon />}>
+                                        Xuất file
+                                    </Button>
                                 </Grid>
-                                <Grid item lg={7} md={6} sm={6} xs={12}>
-                                    <Stack spacing={1} direction={'row'} justifyContent={'end'}>
+                                <Grid item lg={5} md={12} sm={12} xs={12}>
+                                    <Stack spacing={1} direction={'row'}>
                                         <TextField
                                             size="small"
                                             placeholder="Tìm kiếm"
                                             fullWidth
-                                            sx={{ backgroundColor: 'white', flex: 3 }}
+                                            sx={{ backgroundColor: 'white' }}
                                             InputProps={{
                                                 startAdornment: (
                                                     <IconButton type="button" onClick={hanClickIconSearch}>
@@ -333,34 +435,24 @@ export default function PageDanhSachTGT() {
                                                 handleKeyDownTextSearch(event);
                                             }}
                                         />
-                                        <Stack flex={1} spacing={1} direction={'row'}>
-                                            <Button
-                                                variant="outlined"
-                                                className="btn-outline-hover"
-                                                sx={{ backgroundColor: 'white' }}
-                                                onClick={ExportToExcel}
-                                                startIcon={<FileUploadIcon />}>
-                                                Xuất
-                                            </Button>
-                                            <ButtonOnlyIcon
-                                                icon={
-                                                    <FilterAltOutlinedIcon
-                                                        titleAccess="Lọc nâng cao"
-                                                        onClick={(event) => setAnchorElFilter(event.currentTarget)}
-                                                    />
-                                                }
-                                                style={{
-                                                    width: 40,
-                                                    border: '1px solid #ccc',
-                                                    backgroundColor: 'white'
-                                                }}></ButtonOnlyIcon>
-                                            <PopoverFilterHoaDon
-                                                anchorEl={anchorElFilter}
-                                                paramFilter={paramSearch}
-                                                handleClose={() => setAnchorElFilter(null)}
-                                                handleApply={ApplyFilter}
-                                            />
-                                        </Stack>
+                                        <ButtonOnlyIcon
+                                            icon={
+                                                <FilterAltOutlinedIcon
+                                                    titleAccess="Lọc nâng cao"
+                                                    onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                                                />
+                                            }
+                                            style={{
+                                                width: 40,
+                                                border: '1px solid #ccc',
+                                                backgroundColor: 'white'
+                                            }}></ButtonOnlyIcon>
+                                        <PopoverFilterHoaDon
+                                            anchorEl={anchorElFilter}
+                                            paramFilter={paramSearch}
+                                            handleClose={() => setAnchorElFilter(null)}
+                                            handleApply={ApplyFilter}
+                                        />
                                     </Stack>
                                 </Grid>
                             </Grid>
@@ -375,6 +467,7 @@ export default function PageDanhSachTGT() {
                                     <MyHeaderTable
                                         showAction={false}
                                         isCheckAll={isCheckAll}
+                                        isShowCheck={false}
                                         sortBy={paramSearch?.columnSort ?? ''}
                                         sortType={paramSearch?.typeSort ?? 'desc'}
                                         onRequestSort={onSortTable}
@@ -385,12 +478,12 @@ export default function PageDanhSachTGT() {
                                 <TableBody>
                                     {pageDataHoaDon?.items?.map((row, index) => (
                                         <TableRow key={index}>
-                                            <TableCell align="center" className="td-check-box">
+                                            {/* <TableCell align="center" className="td-check-box">
                                                 <Checkbox
                                                     checked={arrIdChosed.includes(row.id)}
                                                     onChange={(event) => onClickCheckOne(event, row.id)}
                                                 />
-                                            </TableCell>
+                                            </TableCell> */}
                                             <TableCell
                                                 sx={{ minWidth: 100, maxWidth: 100 }}
                                                 onClick={() => OpenFormDetail(row)}>
@@ -437,7 +530,7 @@ export default function PageDanhSachTGT() {
                                 <TableFooter>
                                     {pageDataHoaDon?.totalCount > 0 ? (
                                         <TableRow>
-                                            <TableCell colSpan={7}>Tổng cộng</TableCell>
+                                            <TableCell colSpan={6}>Tổng cộng</TableCell>
                                             <TableCell align="right">
                                                 {new Intl.NumberFormat('vi-VN').format(footerTable_TongThanhToan)}
                                             </TableCell>
