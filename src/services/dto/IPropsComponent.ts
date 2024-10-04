@@ -21,6 +21,7 @@ export interface IPropsListRadioFilter {
 
 export interface IPropModal<T> {
     typeForm?: number;
+    isNew?: boolean;
     idUpdate?: string;
     isShowModal: boolean;
     lstData?: T[];
