@@ -1342,7 +1342,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                 </Stack>
                             </Stack>
 
-                            <Stack overflow={'auto'} maxHeight={350} zIndex={3}>
+                            <Stack overflow={'auto'} maxHeight={'calc(84vh - 280px)!important'} zIndex={3}>
                                 {hoaDonChiTiet
                                     ?.sort((x, y) => {
                                         // sap xep STT giamdan
