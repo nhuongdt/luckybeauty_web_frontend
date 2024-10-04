@@ -30,7 +30,7 @@ import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
 import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
 import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
-import AppConsts, { TypeAction } from '../../../lib/appconst';
+import AppConsts, { LoaiChungTu, TypeAction } from '../../../lib/appconst';
 import abpCustom from '../../../components/abp-custom';
 import { IList } from '../../../services/dto/IList';
 import { Guid } from 'guid-typescript';
@@ -59,6 +59,7 @@ const GiaoDichThanhToan: React.FC = () => {
     const [paramSearch, setParamSearch] = useState<HoaDonRequestDto>({
         textSearch: '',
         idChiNhanhs: [idChiNhanhCookies],
+        idLoaiChungTus: [LoaiChungTu.HOA_DON_BAN_LE],
         currentPage: 1,
         pageSize: AppConsts.pageOption[0].value,
         columnSort: 'NgayLapHoaDon',
