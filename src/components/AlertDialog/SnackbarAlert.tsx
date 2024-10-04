@@ -6,7 +6,7 @@ import Alert from '@mui/material/Alert';
 
 export default function SnackbarAlert({ handleClose, showAlert, type = 1, title = '' }: any) {
     return (
-        <Stack spacing={2} sx={{ width: '100%', zIndex: 10000 }}>
+        <Stack spacing={2} sx={{ zIndex: 10000 }}>
             <Snackbar
                 open={showAlert}
                 autoHideDuration={3000}
