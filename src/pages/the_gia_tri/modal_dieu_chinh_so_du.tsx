@@ -27,8 +27,10 @@ import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { format } from 'date-fns';
 import { NumericFormat } from 'react-number-format';
 import utils from '../../utils/utils';
+import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 
-const ModalDieuChinhSoDuTGT = ({ isShowModal, isNew, idUpdate, onClose, onOK }: IPropModal<PageHoaDonDto>) => {
+const ModalDieuChinhSoDuTGT = ({ isShowModal, isNew, objUpDate, onClose, onOK }: IPropModal<PageHoaDonDto>) => {
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
     const [isSaving, seIsSaving] = useState(false);
@@ -45,22 +47,44 @@ const ModalDieuChinhSoDuTGT = ({ isShowModal, isNew, idUpdate, onClose, onOK }: 
     });
 
     useEffect(() => {
-        if (isNew) {
-            setNewTGT({
-                ...newTGT,
-                idLoaiChungTu: LoaiChungTu.PHIEU_DIEU_CHINH_TGT,
-                idChiNhanh: chinhanh.id,
-                idKhachHang: '',
-                tongTienHang: 0,
-                tongThanhToan: 0,
-                ghiChuHD: '',
-                ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd')
-            });
+        if (isShowModal) {
+            if (isNew) {
+                setNewTGT({
+                    ...newTGT,
+                    idLoaiChungTu: LoaiChungTu.PHIEU_DIEU_CHINH_TGT,
+                    idChiNhanh: chinhanh.id,
+                    idKhachHang: '',
+                    tongTienHang: 0,
+                    tongThanhToan: 0,
+                    ghiChuHD: '',
+                    ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd')
+                });
+            } else {
+                if (objUpDate) {
+                    const ngayDieuChinh = format(new Date(objUpDate?.ngayLapHoaDon ?? new Date()), 'yyyy-MM-dd');
+                    setNewTGT({
+                        ...newTGT,
+                        id: objUpDate?.id,
+                        idLoaiChungTu: LoaiChungTu.PHIEU_DIEU_CHINH_TGT,
+                        idChiNhanh: objUpDate?.idChiNhanh,
+                        idKhachHang: objUpDate?.idKhachHang,
+                        tenKhachHang: objUpDate?.tenKhachHang,
+                        soDienThoai: objUpDate?.soDienThoai,
+                        tongTienHang: objUpDate?.tongTienHang,
+                        tongThanhToan: objUpDate?.tongThanhToan,
+                        tongTienHangChuaChietKhau: objUpDate?.tongTienHangChuaChietKhau,
+                        tongTienHDSauVAT: objUpDate?.tongTienHDSauVAT,
+                        ghiChuHD: objUpDate?.ghiChuHD,
+                        ngayLapHoaDon: ngayDieuChinh
+                    });
+                    GetSoDuTheGiaTri_ofKhachHang(objUpDate?.idKhachHang ?? '', ngayDieuChinh);
+                }
+            }
         }
     }, [isShowModal]);
 
-    const GetSoDuTheGiaTri_ofKhachHang = async (idKhachHang: string) => {
-        const data = await HoaDonService.GetSoDuTheGiaTri_ofKhachHang(idKhachHang);
+    const GetSoDuTheGiaTri_ofKhachHang = async (idKhachHang: string, toDate?: string) => {
+        const data = await HoaDonService.GetSoDuTheGiaTri_ofKhachHang(idKhachHang, toDate);
         setSoDuTheGiaTri(data);
     };
 
@@ -71,7 +95,7 @@ const ModalDieuChinhSoDuTGT = ({ isShowModal, isNew, idUpdate, onClose, onOK }: 
             tenKhachHang: item?.tenKhachHang,
             soDienThoai: item?.soDienThoai
         });
-        await GetSoDuTheGiaTri_ofKhachHang(item?.id?.toString());
+        await GetSoDuTheGiaTri_ofKhachHang(item?.id?.toString(), newTGT?.ngayLapHoaDon);
     };
 
     const saveDiaryPhieuDieuChinh = async (maHoaDon: string) => {
@@ -101,11 +125,11 @@ const ModalDieuChinhSoDuTGT = ({ isShowModal, isNew, idUpdate, onClose, onOK }: 
             setObjAlert({ show: true, mes: 'Vui lòng nhập số dư điều chỉnh', type: 2 });
             return false;
         }
-        const checkExists = await HoaDonService.CheckExists_MaHoaDon(newTGT?.maHoaDon ?? '');
-        if (checkExists) {
-            setObjAlert({ show: true, mes: 'Mã phiếu đã tồn tại', type: 2 });
-            return false;
-        }
+        // const checkExists = await HoaDonService.CheckExists_MaHoaDon(newTGT?.maHoaDon ?? '');
+        // if (checkExists) {
+        //     setObjAlert({ show: true, mes: 'Mã phiếu đã tồn tại', type: 2 });
+        //     return false;
+        // }
         return true;
     };
 
@@ -127,12 +151,40 @@ const ModalDieuChinhSoDuTGT = ({ isShowModal, isNew, idUpdate, onClose, onOK }: 
             onOK(TypeAction.INSEART, dataAfter);
         }
     };
+    const onXoaPhieuDieuChinh = async () => {
+        await HoaDonService.DeleteHoaDon(objUpDate?.id ?? '');
+        setConfirmDialog({ ...confirmDialog, show: false });
+        setObjAlert({ ...objAlert, show: true, mes: `Hủy phiếu điều chỉnh thành công` });
+
+        const diary = {
+            idChiNhanh: chinhanh?.id,
+            chucNang: `Danh mục phiếu điều chỉnh`,
+            noiDung: `Xóa phiếu điều chỉnh`,
+            noiDungChiTiet: `Xóa phiếu điều chỉnh ${objUpDate?.maHoaDon} của khách hàng ${objUpDate?.tenKhachHang}`,
+            loaiNhatKy: LoaiNhatKyThaoTac.DELETE
+        } as CreateNhatKyThaoTacDto;
+        await nhatKyHoatDongService.createNhatKyThaoTac(diary);
+    };
+
     return (
         <>
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}
+            />
+            <ConfirmDelete
+                isShow={confirmDialog.show}
+                title={confirmDialog.title}
+                mes={confirmDialog.mes}
+                onOk={onXoaPhieuDieuChinh}
+                onCancel={() => setConfirmDialog({ ...confirmDialog, show: false })}
+            />
             <Dialog open={isShowModal} onClose={onClose} maxWidth="sm" fullWidth>
                 <DialogButtonClose onClose={onClose} />
                 <DialogTitle>
-                    <span className="modal-title">Phiếu điều chỉnh số dư thẻ</span>
+                    <span className="modal-title">{isNew ? 'Thêm mới' : 'Cập nhật'} Phiếu điều chỉnh </span>
                 </DialogTitle>
                 <DialogContent>
                     <Stack padding={1}>
@@ -228,9 +280,15 @@ const ModalDieuChinhSoDuTGT = ({ isShowModal, isNew, idUpdate, onClose, onOK }: 
                     <Button variant="outlined" color="error" startIcon={<BlockIcon />} onClick={onClose}>
                         Bỏ qua
                     </Button>
-                    <Button variant="contained" startIcon={<SaveOutlinedIcon />} onClick={savePhieuDieuChinh}>
-                        Lưu
-                    </Button>
+                    {isSaving ? (
+                        <Button variant="contained" startIcon={<SaveOutlinedIcon />}>
+                            Đang lưu
+                        </Button>
+                    ) : (
+                        <Button variant="contained" startIcon={<SaveOutlinedIcon />} onClick={savePhieuDieuChinh}>
+                            {isNew ? 'Lưu' : 'Cập nhật'}
+                        </Button>
+                    )}
                 </DialogActions>
             </Dialog>
         </>
