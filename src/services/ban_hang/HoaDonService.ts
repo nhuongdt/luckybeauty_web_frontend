@@ -136,6 +136,14 @@ class HoaDonService {
         const result = await http.post('api/services/app/HoaDon/ExportDanhSach', input);
         return result.data.result;
     };
+    ExportDanhSach_TheGiaTri = async (input: HoaDonRequestDto): Promise<IFileDto> => {
+        const result = await http.post('api/services/app/HoaDon/ExportDanhSach_TheGiaTri', input);
+        return result.data.result;
+    };
+    ExportDanhSach_PhieuDieuChinh = async (input: HoaDonRequestDto): Promise<IFileDto> => {
+        const result = await http.post('api/services/app/HoaDon/ExportDanhSach_PhieuDieuChinh', input);
+        return result.data.result;
+    };
     ExportHoaDon_byId = async (idHoaDon: string): Promise<IFileDto> => {
         const result = await http.get('api/services/app/HoaDon/ExportHoaDon_byId?idHoaDon=' + idHoaDon);
         return result.data.result;
@@ -174,12 +182,12 @@ class HoaDonService {
         const result = await http.get(`api/services/app/HoaDon/CheckChiTietGDV_DaSuDung?idChiTietGDV=${idChiTietGDV}`);
         return result.data.result;
     };
-    GetSoDuTheGiaTri_ofKhachHang = async (idKhachHang: string): Promise<number> => {
+    GetSoDuTheGiaTri_ofKhachHang = async (idKhachHang: string, toDate?: string): Promise<number> => {
         if (utils.checkNull_OrEmpty(idKhachHang)) {
             return 0;
         }
         const result = await http.get(
-            `api/services/app/HoaDon/GetSoDuTheGiaTri_ofKhachHang?idKhachHang=${idKhachHang}`
+            `api/services/app/HoaDon/GetSoDuTheGiaTri_ofKhachHang?idKhachHang=${idKhachHang}&toDate=${toDate}`
         );
         return result.data.result;
     };
