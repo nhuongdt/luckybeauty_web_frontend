@@ -29,6 +29,7 @@ import { NumericFormat } from 'react-number-format';
 import utils from '../../utils/utils';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import HoaDonDto from '../../services/ban_hang/HoaDonDto';
 
 const ModalDieuChinhSoDuTGT = ({ isShowModal, isNew, objUpDate, onClose, onOK }: IPropModal<PageHoaDonDto>) => {
     const appContext = useContext(AppContext);
@@ -48,6 +49,7 @@ const ModalDieuChinhSoDuTGT = ({ isShowModal, isNew, objUpDate, onClose, onOK }:
 
     useEffect(() => {
         if (isShowModal) {
+            seIsSaving(false);
             if (isNew) {
                 setNewTGT({
                     ...newTGT,
@@ -142,13 +144,19 @@ const ModalDieuChinhSoDuTGT = ({ isShowModal, isNew, objUpDate, onClose, onOK }:
         if (isSaving) {
             return;
         }
-        const dataHD = await HoaDonService.InsertBH_HoaDon(newTGT);
+        let dataHD: HoaDonDto | null;
+        if (isNew) {
+            dataHD = await HoaDonService.InsertBH_HoaDon(newTGT);
+        } else {
+            dataHD = await HoaDonService.Update_InforHoaDon(newTGT);
+        }
+
         if (dataHD != null) {
             await saveDiaryPhieuDieuChinh(dataHD?.maHoaDon ?? '');
             const dataAfter = { ...newTGT };
             dataAfter.id = dataHD.id;
             dataAfter.maHoaDon = dataHD?.maHoaDon ?? '';
-            onOK(TypeAction.INSEART, dataAfter);
+            onOK(isNew ? TypeAction.INSEART : TypeAction.UPDATE, dataAfter);
         }
     };
     const onXoaPhieuDieuChinh = async () => {
