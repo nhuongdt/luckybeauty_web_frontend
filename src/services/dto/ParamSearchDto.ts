@@ -1,3 +1,5 @@
+import { DateType } from '../../lib/appconst';
+
 export class ParamSearchDto {
     idChiNhanhs?: string[];
     textSearch?: string;
@@ -29,6 +31,7 @@ export class ParamSearchDto {
 export class RequestFromToDto extends ParamSearchDto {
     fromDate?: string | null = null;
     toDate?: string | null = null;
+    dateType?: string;
 
     constructor({
         idChiNhanhs = [''],
@@ -38,7 +41,8 @@ export class RequestFromToDto extends ParamSearchDto {
         columnSort = '',
         typeSort = 'DESC',
         fromDate = null,
-        toDate = null
+        toDate = null,
+        dateType = DateType.THANG_NAY
     }) {
         super({
             idChiNhanhs: idChiNhanhs,
@@ -50,6 +54,7 @@ export class RequestFromToDto extends ParamSearchDto {
         });
         this.fromDate = fromDate;
         this.toDate = toDate;
+        this.dateType = dateType;
     }
 }
 
