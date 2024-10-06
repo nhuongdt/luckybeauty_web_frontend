@@ -76,8 +76,6 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                 return 'gói dịch vụ';
             case LoaiChungTu.THE_GIA_TRI:
                 return 'thẻ giá trị';
-            case LoaiChungTu.PHIEU_DIEU_CHINH_TGT:
-                return 'phiếu điều chỉnh số dư thẻ giá trị';
             case LoaiChungTu.NHAP_HANG:
                 return 'phiếu nhập hàng';
             default:

@@ -267,7 +267,10 @@ export default function DateFilterCustom({
                                         sx={{
                                             justifyContent: 'left',
                                             color: '#525F7A',
-                                            backgroundColor: x.id == dateType ? 'var(--color-bg)' : ''
+                                            backgroundColor: x.id == dateType ? 'var(--color-bg)' : '',
+                                            '&:hover': {
+                                                backgroundColor: 'rgb(246,253,252,1)'
+                                            }
                                         }}
                                         onClick={() => {
                                             changeDateType(x);

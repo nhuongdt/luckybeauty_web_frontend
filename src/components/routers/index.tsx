@@ -238,6 +238,18 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             component: LoadableComponent(() => import('../../pages/goi_dich_vu/page_danh_sach_gdv'))
+                        },
+                        {
+                            path: '/the_gia_tri',
+                            permission: 'Pages.HoaDon',
+                            title: 'Thẻ giá trị',
+                            name: 'thegiatri',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            children: [],
+                            showInMenu: true,
+                            isLayout: false,
+                            component: LoadableComponent(() => import('../../pages/the_gia_tri/page_danh_sach'))
                         }
                     ],
                     showInMenu: true,
