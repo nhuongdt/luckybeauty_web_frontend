@@ -186,9 +186,11 @@ class HoaDonService {
         if (utils.checkNull_OrEmpty(idKhachHang)) {
             return 0;
         }
-        const result = await http.get(
-            `api/services/app/HoaDon/GetSoDuTheGiaTri_ofKhachHang?idKhachHang=${idKhachHang}&toDate=${toDate}`
-        );
+        let url = `api/services/app/HoaDon/GetSoDuTheGiaTri_ofKhachHang?idKhachHang=${idKhachHang}`;
+        if (!utils.checkNull(toDate)) {
+            url += `&toDate=${toDate}`;
+        }
+        const result = await http.get(`${url}`);
         return result.data.result;
     };
     CheckData_FileImportTonDauTGT = async (input: FileUpload): Promise<BangBaoLoiFileimportDto[]> => {
