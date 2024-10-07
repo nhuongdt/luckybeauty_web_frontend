@@ -1,6 +1,5 @@
 import { createContext } from 'react';
-import { format, startOfMonth, lastDayOfMonth, startOfYear, endOfYear } from 'date-fns';
-import { ParamSearchBaoCaoGDV } from './ParamSearchBaoCaoGDV';
+import { format, startOfMonth, lastDayOfMonth } from 'date-fns';
 import { RequestFromToDto } from '../../dto/ParamSearchDto';
 
 export interface IBaoCaoGDV_DataContextFilter {

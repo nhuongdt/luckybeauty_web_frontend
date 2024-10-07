@@ -1,4 +1,4 @@
-import { Grid, Box, Stack, Tab, TextField, Button, SelectChangeEvent, Tabs } from '@mui/material';
+import { Grid, Box, Stack, Tab, TextField, Button, Tabs } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 
@@ -9,7 +9,6 @@ import AppConsts, { LoaiBaoCao } from '../../../lib/appconst';
 import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
 import { addDays, format, lastDayOfMonth, startOfMonth } from 'date-fns';
 import fileDowloadService from '../../../services/file-dowload.service';
-import { ParamSearchBaoCaoGDV } from '../../../services/bao_cao/bao_cao_goi_dich_vu/ParamSearchBaoCaoGDV';
 import BaoCaoGDVServices from '../../../services/bao_cao/bao_cao_goi_dich_vu/BaoCaoGDVServices';
 import { BaoCaoGoiDVDataContextFilter } from '../../../services/bao_cao/bao_cao_goi_dich_vu/BaoCaoGDVContext';
 import { useContext, useState } from 'react';
@@ -36,7 +35,7 @@ export default function MainPageBaoCaoGoiDichVu() {
             currentPage: 1,
             pageSize: AppConsts.pageOption[0].value,
             fromDate: format(startOfMonth(new Date()), 'yyyy-MM-01') as unknown as undefined,
-            toDate: format(addDays(lastDayOfMonth(new Date()), 1), 'yyyy-MM-dd') as unknown as undefined,
+            toDate: format(lastDayOfMonth(new Date()), 'yyyy-MM-dd') as unknown as undefined,
             idChiNhanhs: [idChiNhanh]
         })
     );
@@ -47,7 +46,7 @@ export default function MainPageBaoCaoGoiDichVu() {
             ...paramSearch,
             currentPage: 1,
             fromDate: from,
-            toDate: format(addDays(new Date(to), 1), 'yyyy-MM-dd')
+            toDate: to
         });
     };
 
@@ -71,8 +70,8 @@ export default function MainPageBaoCaoGoiDichVu() {
         });
     };
 
-    const handleKeyDownTextSearch = (event: any) => {
-        if (event.keyCode === 13) {
+    const handleKeyDownTextSearch = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Enter') {
             hanClickIconSearch();
         }
     };

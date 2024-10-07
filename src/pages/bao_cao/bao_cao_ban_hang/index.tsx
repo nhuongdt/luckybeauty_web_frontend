@@ -20,6 +20,7 @@ import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCusto
 import TabPanel from '@mui/lab/TabPanel';
 import PopoverFilterBCBanHang from '../components/PopoverFilterBCBanHang';
 import Cookies from 'js-cookie';
+import ButtonOnlyIcon from '../../../components/Button/ButtonOnlyIcon';
 
 export default function MainPageBaoCaoBanHang() {
     const appContext = useContext(AppContext);
@@ -221,14 +222,13 @@ export default function MainPageBaoCaoBanHang() {
                                             onClick={exportExcel}>
                                             Xuất file
                                         </Button>
-                                        <FilterAltOutlinedIcon
-                                            className="btnIcon"
-                                            sx={{
-                                                height: '40px!important',
-                                                padding: '8px!important',
-                                                background: 'white'
-                                            }}
-                                            onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                                        <ButtonOnlyIcon
+                                            icon={
+                                                <FilterAltOutlinedIcon
+                                                    onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                                                />
+                                            }
+                                            style={{ width: 40, backgroundColor: 'white' }}
                                         />
                                         <PopoverFilterBCBanHang
                                             anchorEl={anchorElFilter}

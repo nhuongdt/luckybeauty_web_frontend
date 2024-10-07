@@ -1,6 +1,5 @@
 import { IGroupChiTietNhatKySuDungGDVDto } from '../../ban_hang/NhatKySuDungGDVDto';
 import { IFileDto } from '../../dto/FileDto';
-import { PagedResultDto } from '../../dto/pagedResultDto';
 import { RequestFromToDto } from '../../dto/ParamSearchDto';
 import http from '../../httpService';
 
