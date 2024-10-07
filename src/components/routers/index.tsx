@@ -529,6 +529,18 @@ export const appRouters: AppRouteProps = {
                             component: LoadableComponent(
                                 () => import('../../pages/bao_cao/bao_cao_goi_dich_vu/main_page')
                             )
+                        },
+                        {
+                            path: '/bao-cao/the_gia_tri',
+                            permission: 'Pages.BaoCao.HoaHong',
+                            title: 'Báo cáo thẻ giá trị',
+                            name: 'baoCaoTheGiaTri',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/bao_cao/the_gia_tri/main_page'))
                         }
                     ],
                     component: null
