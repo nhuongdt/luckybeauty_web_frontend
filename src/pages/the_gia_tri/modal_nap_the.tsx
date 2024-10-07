@@ -237,6 +237,7 @@ const ModalNapTheGiaTri = ({ isShowModal, isNew, idUpdate, onClose, onOK }: IPro
     };
 
     const onAgreeThanhToan = (
+        tienTheGiaTri: number,
         tienMat: number,
         tienCK: number,
         tienPOS: number,

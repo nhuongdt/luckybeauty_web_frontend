@@ -113,7 +113,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     const [isShowModalSuDungGDV, setIsShowModalSuDungGDV] = useState(false);
     const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
     const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
-    const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
+    //const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(new PropModal({ isShow: false, isNew: true }));
 
@@ -218,7 +218,11 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     const InitData_forHoaDon = async () => {
         console.log('into ');
         const idCheckInNew = idCheckIn ?? Guid.EMPTY;
-        const hdCache = await dbDexie.hoaDon.where('idCheckIn').equals(idCheckInNew).toArray();
+        const hdCache = await dbDexie.hoaDon
+            .where('idCheckIn')
+            .equals(idCheckInNew)
+            .and((x) => x.idChiNhanh === idChiNhanhChosed)
+            .toArray();
         if (hdCache?.length > 0) {
             setHoaDon({
                 ...hdCache[0]
@@ -425,7 +429,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         const sumThanhTienSauCK = cthd_SumThanhTienTruocCK - cthd_SumTienChietKhau;
         const sumThanhTienSauVAT = sumThanhTienSauCK - cthd_SumTienThue;
         setSumTienKhachTra(sumThanhTienSauVAT);
-        setTienThuaTraKhach(0);
+        //setTienThuaTraKhach(0);
         setHoaDon({
             ...hoadon,
             tongTienHangChuaChietKhau: cthd_SumThanhTienTruocCK,
@@ -970,6 +974,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     };
 
     const thanhToanAtPaymentForm = async (
+        tienTheGiaTri: number,
         tienMat: number,
         tienCK: number,
         tienPOS: number,
@@ -982,6 +987,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             const dataQuyHD = await SoQuyServices.savePhieuThu_forHoaDon({
                 idChiNhanh: idChiNhanhChosed,
                 phaiTT: hoadon?.tongThanhToan ?? 0,
+                thegiatri: tienTheGiaTri,
                 tienmat: tienMat,
                 tienCK: tienCK,
                 tienPOS: tienPOS,
@@ -1143,6 +1149,13 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                             tongPhaiTra={hoadon?.tongThanhToan ?? 0}
                             onClose={() => setIsThanhToanTienMat(true)}
                             onSaveHoaDon={thanhToanAtPaymentForm}
+                            inforHD={{
+                                maHoaDon: '',
+                                idKhachHang: hoadon?.idKhachHang ?? '',
+                                id: hoadon?.id ?? '',
+                                idChiNhanh: hoadon?.idChiNhanh ?? '',
+                                tenKhachHang: customerChosed?.tenKhachHang ?? ''
+                            }}
                         />
                     </Grid>
                 ) : (

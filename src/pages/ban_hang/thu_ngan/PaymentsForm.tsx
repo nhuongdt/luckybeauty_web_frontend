@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Stack, Typography, Grid, TextField, CircularProgress, InputAdornment } from '@mui/material';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
@@ -11,10 +11,12 @@ import AutocompleteAccountBank from '../../../components/Autocomplete/AccountBan
 import { FormNumber } from '../../../enum/FormNumber';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import { format } from 'date-fns';
+import HoaDonService from '../../../services/ban_hang/HoaDonService';
 interface ChildComponent {
     tongPhaiTra: number;
     onClose: () => void;
     onSaveHoaDon?: (
+        tienTheGiaTri: number,
         tienMat: number,
         tienCK: number,
         tienPOS: number,
@@ -36,15 +38,21 @@ const PaymentsForm: React.FC<ChildComponent> = ({
     inforHD,
     onSaveOKQuyHD
 }) => {
-    const [tienMat, setTienMat] = useState(tongPhaiTra);
     const [isSaving, setIsSaving] = useState(false);
+    const [tienMat, setTienMat] = useState(tongPhaiTra);
     const [tienChuyenKhoan, setTienChuyenKhoan] = useState(0);
     const [tienQuyeThePos, setTienQuyeThePos] = useState(0);
+    const [tienTheGiaTri, setTienTheGiaTri] = useState(0);
+    const [soDuTheGiaTri, setSoDuTheGiaTri] = useState(0);
     const [noiDungThu, setNoiDungThu] = useState('');
     const [allBankAccount, setAllBankAccount] = useState<TaiKhoanNganHangDto[]>([]);
 
     const [idTaiKhoanChuyenKhoan, setIdTaiKhoanChuyenKhoan] = useState<string | null>('');
     const [idTaiKhoanPOS, setIdTaiKhoanPOS] = useState<string | null>('');
+
+    const refInputTienMat = useRef<HTMLInputElement>(null);
+    const refInputTienCK = useRef<HTMLInputElement>(null);
+    const refInputTienPOS = useRef<HTMLInputElement>(null);
     const GetAllTaiKhoanNganHang = async () => {
         const data = await TaiKhoanNganHangServices.GetAllBankAccount();
         setAllBankAccount(data);
@@ -55,11 +63,54 @@ const PaymentsForm: React.FC<ChildComponent> = ({
     }, []);
 
     useEffect(() => {
-        //
-    }, [isShowModal]);
+        GetSoDuTheGiaTri_ofKhachHang(inforHD?.idKhachHang ?? '');
+    }, [inforHD?.idKhachHang]);
 
-    const tienKhachDua = tienMat + tienChuyenKhoan + tienQuyeThePos;
+    const GetSoDuTheGiaTri_ofKhachHang = async (idKhachHang: string) => {
+        const data = await HoaDonService.GetSoDuTheGiaTri_ofKhachHang(idKhachHang);
+        setSoDuTheGiaTri(data);
+    };
+
+    const tienKhachDua = tienTheGiaTri + tienMat + tienChuyenKhoan + tienQuyeThePos;
     const tienKhachThieu = tongPhaiTra - tienKhachDua;
+
+    const editTienTheGiaTri = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let gtri = utils.formatNumberToFloat(e.target.value);
+        if (gtri > soDuTheGiaTri) {
+            gtri = soDuTheGiaTri;
+        }
+        setTienTheGiaTri(gtri);
+
+        let conLai = 0;
+        if (gtri < tongPhaiTra) {
+            conLai = tongPhaiTra - gtri;
+        }
+        setTienMat(conLai);
+        setTienChuyenKhoan(0);
+        setTienQuyeThePos(0);
+    };
+
+    const editTienMat = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const gtri = utils.formatNumberToFloat(e.target.value);
+        setTienMat(gtri);
+
+        const tongThanhToan = gtri + tienTheGiaTri;
+        let conLai = 0;
+        if (tongThanhToan < tongPhaiTra) {
+            conLai = tongPhaiTra - tongThanhToan;
+        }
+        if (!utils.checkNull_OrEmpty(idTaiKhoanChuyenKhoan)) {
+            setTienChuyenKhoan(conLai);
+            setTienQuyeThePos(0);
+        } else {
+            if (!utils.checkNull_OrEmpty(idTaiKhoanPOS)) {
+                setTienQuyeThePos(conLai);
+            } else {
+                setTienQuyeThePos(0);
+            }
+            setTienChuyenKhoan(0);
+        }
+    };
 
     const changeTaiKhoanChuyenKhoan = (item: TaiKhoanNganHangDto) => {
         setIdTaiKhoanChuyenKhoan(item?.id);
@@ -76,9 +127,10 @@ const PaymentsForm: React.FC<ChildComponent> = ({
 
     const thanhToan = async () => {
         setIsSaving(true);
-        if (formNumber === FormNumber.THU_NGAN) {
+        if (formNumber === FormNumber.THU_NGAN || formNumber === FormNumber.THE_GIA_TRI) {
             if (onSaveHoaDon) {
                 onSaveHoaDon(
+                    tienTheGiaTri,
                     tienMat,
                     tienChuyenKhoan,
                     tienQuyeThePos,
@@ -91,6 +143,7 @@ const PaymentsForm: React.FC<ChildComponent> = ({
             const dataQuyHD = await SoQuyServices.savePhieuThu_forHoaDon({
                 phaiTT: tongPhaiTra ?? 0,
                 idChiNhanh: inforHD?.idChiNhanh ?? '',
+                thegiatri: tienTheGiaTri,
                 tienmat: tienMat,
                 tienCK: tienChuyenKhoan,
                 tienPOS: tienQuyeThePos,
@@ -125,7 +178,7 @@ const PaymentsForm: React.FC<ChildComponent> = ({
             }}>
             <Grid item xs={12} position={'relative'}>
                 <Typography fontSize="24px" fontWeight="700">
-                    {formNumber === FormNumber.THU_NGAN
+                    {formNumber === FormNumber.THU_NGAN || formNumber === FormNumber.THE_GIA_TRI
                         ? ' Thông tin thanh toán'
                         : `Thêm mới phiếu thu (${inforHD?.maHoaDon ?? ''})`}
                 </Typography>
@@ -138,7 +191,9 @@ const PaymentsForm: React.FC<ChildComponent> = ({
                 <Grid container padding={2} paddingLeft={0}>
                     <Grid item xs={6} lg={7} md={7} sm={6}>
                         <Typography fontSize={20} fontWeight={500}>
-                            {formNumber === FormNumber.THU_NGAN ? ' Tổng thanh toán' : 'Nợ hóa đơn'}
+                            {formNumber === FormNumber.THU_NGAN || formNumber === FormNumber.THE_GIA_TRI
+                                ? ' Tổng thanh toán'
+                                : 'Nợ hóa đơn'}
                         </Typography>
                     </Grid>
                     <Grid item xs={6} lg={5} md={5} sm={6}>
@@ -180,28 +235,47 @@ const PaymentsForm: React.FC<ChildComponent> = ({
                     </Grid>
                 </Grid>
 
-                <Grid container sx={{ display: 'none' }}>
-                    <Grid item lg={2} md={3}>
-                        <Typography>Thu từ thẻ</Typography>
-                    </Grid>
-                    <Grid item lg={10} md={9}>
-                        <Grid container spacing={2}>
-                            <Grid item lg={7}>
-                                <Typography
-                                    sx={{
-                                        fontSize: '14px!important',
-                                        fontWeight: '400!important'
-                                    }}>
-                                    Số dư: 12.0000
-                                </Typography>
-                            </Grid>
-                            <Grid item lg={5}>
-                                <TextField size="small" fullWidth />
+                {formNumber !== FormNumber.THE_GIA_TRI && soDuTheGiaTri > 0 && (
+                    <Grid container justifyContent={'space-between'}>
+                        <Grid item lg={3} md={3} sm={3} xs={6}>
+                            <Typography>Thu từ thẻ</Typography>
+                        </Grid>
+                        <Grid item lg={9} md={9} sm={9} xs={6}>
+                            <Grid container spacing={2}>
+                                <Grid item lg={9} md={8} sm={9} xs={9}>
+                                    <Typography variant="body2">
+                                        Số dư thẻ: {new Intl.NumberFormat('vi-VN').format(soDuTheGiaTri)}
+                                    </Typography>
+                                </Grid>
+                                <Grid item lg={3} md={4} sm={3} xs={3}>
+                                    <NumericFormat
+                                        className="input-number"
+                                        size="small"
+                                        fullWidth
+                                        value={tienTheGiaTri}
+                                        decimalSeparator=","
+                                        thousandSeparator="."
+                                        customInput={TextField}
+                                        onChange={editTienTheGiaTri}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                if (refInputTienMat) {
+                                                    refInputTienMat?.current?.focus();
+                                                }
+                                            }
+                                        }}
+                                        isAllowed={(values) => {
+                                            const { floatValue } = values;
+                                            return (floatValue ?? 0) >= 0 && (floatValue ?? 0) <= soDuTheGiaTri;
+                                        }}
+                                    />
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
-                </Grid>
-                <Grid container justifyContent={'space-between'}>
+                )}
+
+                <Grid container justifyContent={'space-between'} paddingTop={1}>
                     <Grid item lg={3} md={3} sm={3} xs={6}>
                         <Typography>Tiền mặt</Typography>
                     </Grid>
@@ -217,8 +291,14 @@ const PaymentsForm: React.FC<ChildComponent> = ({
                                     decimalSeparator=","
                                     thousandSeparator="."
                                     customInput={TextField}
-                                    onChange={(event) => {
-                                        setTienMat(utils.formatNumberToFloat(event.target.value));
+                                    onChange={editTienMat}
+                                    inputRef={refInputTienMat}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !utils.checkNull_OrEmpty(idTaiKhoanChuyenKhoan)) {
+                                            if (refInputTienCK) {
+                                                refInputTienCK?.current?.focus();
+                                            }
+                                        }
                                     }}
                                 />
                             </Grid>
@@ -252,6 +332,14 @@ const PaymentsForm: React.FC<ChildComponent> = ({
                                     onChange={(event) => {
                                         setTienChuyenKhoan(utils.formatNumberToFloat(event.target.value));
                                     }}
+                                    inputRef={refInputTienCK}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !utils.checkNull_OrEmpty(idTaiKhoanPOS)) {
+                                            if (refInputTienPOS) {
+                                                refInputTienPOS?.current?.focus();
+                                            }
+                                        }
+                                    }}
                                 />
                             </Grid>
                         </Grid>
@@ -284,6 +372,7 @@ const PaymentsForm: React.FC<ChildComponent> = ({
                                     onChange={(event) => {
                                         setTienQuyeThePos(utils.formatNumberToFloat(event.target.value));
                                     }}
+                                    inputRef={refInputTienPOS}
                                 />
                             </Grid>
                         </Grid>
@@ -376,7 +465,7 @@ const PaymentsForm: React.FC<ChildComponent> = ({
                                 onClick={thanhToan}>
                                 <CheckOutlinedIcon />
                                 <Typography fontSize={'16px'} padding={2} fontWeight={500}>
-                                    THANH TOÁN
+                                    {formNumber === FormNumber.THE_GIA_TRI ? 'ĐỒNG Ý' : 'THANH TOÁN'}
                                 </Typography>
                             </Stack>
                         )}

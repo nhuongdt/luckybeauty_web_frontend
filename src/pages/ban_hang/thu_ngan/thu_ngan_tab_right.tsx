@@ -611,6 +611,7 @@ const ThuNganTabRight: FC<{
     };
 
     const thanhToanAtPaymentForm = async (
+        tienTheGiaTri: number,
         tienMat: number,
         tienCK: number,
         tienPOS: number,
@@ -623,6 +624,7 @@ const ThuNganTabRight: FC<{
             await SoQuyServices.savePhieuThu_forHoaDon({
                 idChiNhanh: idChiNhanhChosed,
                 phaiTT: hoadon?.tongThanhToan ?? 0,
+                thegiatri: tienTheGiaTri,
                 tienmat: tienMat,
                 tienCK: tienCK,
                 tienPOS: tienPOS,

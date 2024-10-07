@@ -143,8 +143,29 @@ class SoQuyServices {
         });
         const tienMatNew = shareMoney.TienMat,
             tienPosNew = shareMoney.TienPOS,
-            tienCKNew = shareMoney.TienChuyenKhoan;
+            tienCKNew = shareMoney.TienChuyenKhoan,
+            tienTheGiaTri = shareMoney.TienTheGiaTri,
+            tienDiemNew = shareMoney.TTBangDiem;
 
+        if (tienDiemNew > 0) {
+            const newQCT = new QuyChiTietDto({
+                hinhThucThanhToan: HINH_THUC_THANH_TOAN.DOI_DIEM,
+                tienThu: tienDiemNew,
+                idHoaDonLienQuan: hoadon?.id,
+                idKhachHang: hoadon?.idKhachHang,
+                diemThanhToan: 0 // todo
+            });
+            lstQuyCT_After.push(newQCT);
+        }
+        if (tienTheGiaTri > 0) {
+            const newQCT = new QuyChiTietDto({
+                hinhThucThanhToan: HINH_THUC_THANH_TOAN.THE_GIA_TRI,
+                tienThu: tienTheGiaTri,
+                idHoaDonLienQuan: hoadon?.id,
+                idKhachHang: hoadon?.idKhachHang
+            });
+            lstQuyCT_After.push(newQCT);
+        }
         if (tienMatNew > 0) {
             const newQCT = new QuyChiTietDto({
                 hinhThucThanhToan: HINH_THUC_THANH_TOAN.TIEN_MAT,
