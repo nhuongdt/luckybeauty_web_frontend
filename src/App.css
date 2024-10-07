@@ -455,3 +455,9 @@ font-weight: 500;
    color: var(--color-second);
    cursor: pointer;
 }
+.input-number input{
+    text-align: right;
+}
+.payment-form-hinhthucTT .input-number input{
+    font-weight: 700;
+}
