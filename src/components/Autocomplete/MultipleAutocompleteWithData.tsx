@@ -1,4 +1,4 @@
-import { Autocomplete, TextField, Stack, Typography } from '@mui/material';
+import { Autocomplete, TextField, Stack, Typography, Chip } from '@mui/material';
 import { IList } from '../../services/dto/IList';
 import { useEffect, useState } from 'react';
 
@@ -38,6 +38,11 @@ export default function MultipleAutocompleteWithData(props: IPropsMultipleAutoco
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 getOptionLabel={(option: IList) => (option?.text ? option.text : '')}
                 renderInput={(params) => <TextField {...params} label={labelInput} />}
+                renderTags={(tagValue, getTagProps) => {
+                    return tagValue?.map((option, index) => (
+                        <Chip {...getTagProps({ index })} key={index} label={option?.text} />
+                    ));
+                }}
                 renderOption={(props, option) => {
                     return (
                         <li
