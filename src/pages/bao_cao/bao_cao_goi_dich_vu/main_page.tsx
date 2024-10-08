@@ -24,9 +24,6 @@ export default function MainPageBaoCaoGoiDichVu() {
     const [anchorDateEl, setAnchorDateEl] = useState<HTMLDivElement | null>(null);
     const openDateFilter = Boolean(anchorDateEl);
 
-    const role_BaoCaoGoiDV_TongHop = abpCustom.isGrandPermission('Pages.BaoCao.GoiDV.TongHop');
-    const role_BaoCaoGoiDV_ChiTiet = abpCustom.isGrandPermission('Pages.BaoCao.GoiDV.ChiTiet');
-
     const [tabActive, setTabActive] = useState(parseInt(LoaiBaoCao.CHI_TIET));
     const [countClickSearch, setCountClickSearch] = useState(0);
     const [paramSearch, setParamSearch] = useState<RequestFromToDto>(
@@ -39,6 +36,10 @@ export default function MainPageBaoCaoGoiDichVu() {
             idChiNhanhs: [idChiNhanh]
         })
     );
+
+    const role_BaoCaoGDV_NhatKySuDung = abpCustom.isGrandPermission('Pages.BaoCao.GoiDichVu.NhatKySuDung');
+    const role_BaoCaoGDV_SoDu = abpCustom.isGrandPermission('Pages.BaoCao.GoiDichVu.SoDu');
+    const roleExport = tabActive == parseInt(LoaiBaoCao.CHI_TIET) ? role_BaoCaoGDV_NhatKySuDung : role_BaoCaoGDV_SoDu;
 
     const onApplyFilterDate = async (from: string, to: string, txtShow: string) => {
         setAnchorDateEl(null);
@@ -112,7 +113,13 @@ export default function MainPageBaoCaoGoiDichVu() {
                                 value={LoaiBaoCao.TONG_HOP}
                                 sx={{ display: role_BaoCaoGoiDV_TongHop ? '' : 'none' }}
                             /> */}
-                            <Tab label="Nhật ký sử dụng" value={parseInt(LoaiBaoCao.CHI_TIET)} />
+                            <Tab
+                                label="Nhật ký sử dụng"
+                                value={parseInt(LoaiBaoCao.CHI_TIET)}
+                                sx={{
+                                    display: role_BaoCaoGDV_NhatKySuDung ? '' : 'none'
+                                }}
+                            />
                         </Tabs>
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={7}>
@@ -172,16 +179,9 @@ export default function MainPageBaoCaoGoiDichVu() {
                                         <Button
                                             fullWidth
                                             className="btnNhapXuat"
-                                            // sx={{
-                                            //     display:
-                                            //         tabActive == parseInt(LoaiBaoCao.TONG_HOP)
-                                            //             ? abpCustom.isGrandPermission('Pages.BaoCao.GoiDV.TongHop')
-                                            //                 ? ''
-                                            //                 : 'none'
-                                            //             : abpCustom.isGrandPermission('Pages.BaoCao.GoiDV.ChiTiet')
-                                            //             ? ''
-                                            //             : 'none'
-                                            // }}
+                                            sx={{
+                                                display: roleExport ? '' : 'none'
+                                            }}
                                             variant="outlined"
                                             startIcon={<FileUploadOutlinedIcon />}
                                             onClick={exportExcel}>
@@ -194,12 +194,7 @@ export default function MainPageBaoCaoGoiDichVu() {
                         </Stack>
                     </Grid>
                     <Grid item xs={12}>
-                        <TabPanel value={parseInt(LoaiBaoCao.TONG_HOP)} index={tabActive}>
-                            {/* <PageBaoCaoGoiDVNhanVienTongHop
-                                    onChangePage={handlePageChange}
-                                    onChangePageSize={changePageSize}
-                                /> */}
-                        </TabPanel>
+                        <TabPanel value={parseInt(LoaiBaoCao.TONG_HOP)} index={tabActive}></TabPanel>
 
                         <TabPanel value={parseInt(LoaiBaoCao.CHI_TIET)} index={tabActive}>
                             <PageBCChiTietNhatKySuDungGDV

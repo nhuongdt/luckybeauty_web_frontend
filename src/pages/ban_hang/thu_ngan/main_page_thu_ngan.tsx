@@ -34,6 +34,7 @@ import { handleClickOutside } from '../../../utils/customReactHook';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import CheckinService from '../../../services/check_in/CheckinService';
+import abpCustom from '../../../components/abp-custom';
 
 const TabMain = {
     CHECK_IN: 1,
@@ -531,8 +532,24 @@ export default function MainPageThuNgan() {
                                         value={pageThuNgan_LoaiHoaDon}
                                         onChange={changeTabHoaDon}
                                         aria-label="nav tabs example">
-                                        <Tab label="Hóa đơn" value={LoaiChungTu.HOA_DON_BAN_LE} />
-                                        <Tab label="Gói dịch vụ" value={LoaiChungTu.GOI_DICH_VU} />
+                                        <Tab
+                                            label="Hóa đơn"
+                                            value={LoaiChungTu.HOA_DON_BAN_LE}
+                                            sx={{
+                                                display: abpCustom.isGrandPermission('Pages.HoaDon.Create')
+                                                    ? ''
+                                                    : 'none'
+                                            }}
+                                        />
+                                        <Tab
+                                            label="Gói dịch vụ"
+                                            value={LoaiChungTu.GOI_DICH_VU}
+                                            sx={{
+                                                display: abpCustom.isGrandPermission('Pages.GoiDichVu.Create')
+                                                    ? ''
+                                                    : 'none'
+                                            }}
+                                        />
                                     </Tabs>
 
                                     <IconButton

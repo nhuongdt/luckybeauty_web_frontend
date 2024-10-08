@@ -32,6 +32,7 @@ import ModalSearchProduct from '../product/modal_search_product';
 import { ModelHangHoaDto } from '../../services/product/dto';
 import { Guid } from 'guid-typescript';
 import fileDowloadService from '../../services/file-dowload.service';
+import abpCustom from '../../components/abp-custom';
 
 const TabChiTietHoaDon: FC<{
     idHoaDon: string;
@@ -53,6 +54,8 @@ const TabChiTietHoaDon: FC<{
         type: 1, // 1.remove customer, 2.change tabhoadon
         mes: ''
     });
+
+    const roleEdit = abpCustom.isGrandPermission('Pages.GoiDichVu.EditChiTiet');
 
     const GetChiTietHoaDon_byIdHoaDon = async () => {
         if (!utils.checkNull(idHoaDon)) {
@@ -284,7 +287,10 @@ const TabChiTietHoaDon: FC<{
                             onChange={(e) => setTxtSearchCTHD(e.target.value)}
                         />
                         <Button
-                            sx={{ flex: 1 }}
+                            sx={{
+                                flex: 1,
+                                display: abpCustom.isGrandPermission('Pages.GoiDichVu.Export') ? '' : 'none'
+                            }}
                             variant="outlined"
                             fullWidth
                             startIcon={<FileUploadIcon />}
@@ -300,7 +306,7 @@ const TabChiTietHoaDon: FC<{
                         <Table>
                             <TableHead>
                                 <MyHeaderTable
-                                    showAction={true}
+                                    showAction={roleEdit}
                                     isCheckAll={false}
                                     isShowCheck={false}
                                     sortBy=""
@@ -337,27 +343,29 @@ const TabChiTietHoaDon: FC<{
                                         <TableCell align="right">
                                             {new Intl.NumberFormat('vi-VN').format(row?.thanhTienSauCK ?? 0)}
                                         </TableCell>
-                                        <TableCell sx={{ minWidth: 40 }}>
-                                            <Stack spacing={1} direction={'row'}>
-                                                <OpenInNewOutlinedIcon
-                                                    titleAccess="Cập nhật"
-                                                    className="only-icon"
-                                                    sx={{ width: '16px', color: '#7e7979' }}
-                                                    onClick={() => doActionRow(TypeAction.UPDATE, row)}
-                                                />
-                                                <ClearIcon
-                                                    titleAccess="Xóa"
-                                                    sx={{
-                                                        ' &:hover': {
-                                                            color: 'red',
-                                                            cursor: 'pointer'
-                                                        }
-                                                    }}
-                                                    style={{ width: '16px', color: 'red' }}
-                                                    onClick={() => doActionRow(TypeAction.DELETE, row)}
-                                                />
-                                            </Stack>
-                                        </TableCell>
+                                        {roleEdit && (
+                                            <TableCell sx={{ minWidth: 40 }}>
+                                                <Stack spacing={1} direction={'row'}>
+                                                    <OpenInNewOutlinedIcon
+                                                        titleAccess="Cập nhật"
+                                                        className="only-icon"
+                                                        sx={{ width: '16px', color: '#7e7979' }}
+                                                        onClick={() => doActionRow(TypeAction.UPDATE, row)}
+                                                    />
+                                                    <ClearIcon
+                                                        titleAccess="Xóa"
+                                                        sx={{
+                                                            ' &:hover': {
+                                                                color: 'red',
+                                                                cursor: 'pointer'
+                                                            }
+                                                        }}
+                                                        style={{ width: '16px', color: 'red' }}
+                                                        onClick={() => doActionRow(TypeAction.DELETE, row)}
+                                                    />
+                                                </Stack>
+                                            </TableCell>
+                                        )}
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -367,15 +375,21 @@ const TabChiTietHoaDon: FC<{
                 <Grid item xs={12}>
                     <Grid container paddingLeft={1} paddingRight={1}>
                         <Grid item lg={6}>
-                            <Stack
-                                direction={'row'}
-                                spacing={1}
-                                alignItems={'center'}
-                                sx={{ textDecoration: 'underline', color: '#1976d2', cursor: 'pointer' }}
-                                onClick={() => setIsShowModalProduct(true)}>
-                                <ControlPointIcon />
-                                <Typography>Thêm chi tiết mới</Typography>
-                            </Stack>
+                            {roleEdit && (
+                                <Stack
+                                    direction={'row'}
+                                    spacing={1}
+                                    alignItems={'center'}
+                                    sx={{
+                                        textDecoration: 'underline',
+                                        color: '#1976d2',
+                                        cursor: 'pointer'
+                                    }}
+                                    onClick={() => setIsShowModalProduct(true)}>
+                                    <ControlPointIcon />
+                                    <Typography>Thêm chi tiết mới</Typography>
+                                </Stack>
+                            )}
                         </Grid>
                         <Grid item lg={6}>
                             <Stack direction="row" justifyContent={'end'}>

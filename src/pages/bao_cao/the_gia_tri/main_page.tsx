@@ -46,7 +46,9 @@ export default function MainpageBaoCaoTheGiaTri() {
         })
     );
 
-    const role_BaoCaoTGT_NhatKySuDung = abpCustom.isGrandPermission('Pages.BaoCao.GoiDV.TongHop');
+    const role_BaoCaoTGT_NhatKySuDung = abpCustom.isGrandPermission('Pages.BaoCao.TheGiaTri.NhatKySuDung');
+    const role_BaoCaoTGT_SoDu = abpCustom.isGrandPermission('Pages.BaoCao.TheGiaTri.SoDu');
+    const roleExport = tabActive == parseInt(LoaiBaoCao.CHI_TIET) ? role_BaoCaoTGT_NhatKySuDung : role_BaoCaoTGT_SoDu;
 
     const onApplyFilterDate = async (from: string, to: string, txtShow: string) => {
         setAnchorDateEl(null);
@@ -125,7 +127,13 @@ export default function MainpageBaoCaoTheGiaTri() {
                 <Grid container paddingTop={2}>
                     <Grid item xs={12} sm={12} md={6} lg={5}>
                         <Tabs value={tabActive} onChange={handleChangeTab}>
-                            <Tab label="Nhật ký sử dụng thẻ giá trị" value={parseInt(LoaiBaoCao.CHI_TIET)} />
+                            <Tab
+                                label="Nhật ký sử dụng thẻ giá trị"
+                                value={parseInt(LoaiBaoCao.CHI_TIET)}
+                                sx={{
+                                    display: role_BaoCaoTGT_NhatKySuDung ? '' : 'none'
+                                }}
+                            />
                         </Tabs>
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={7}>
@@ -185,16 +193,9 @@ export default function MainpageBaoCaoTheGiaTri() {
                                         <Button
                                             fullWidth
                                             className="btnNhapXuat"
-                                            // sx={{
-                                            //     display:
-                                            //         tabActive == parseInt(LoaiBaoCao.TONG_HOP)
-                                            //             ? abpCustom.isGrandPermission('Pages.BaoCao.GoiDV.TongHop')
-                                            //                 ? ''
-                                            //                 : 'none'
-                                            //             : abpCustom.isGrandPermission('Pages.BaoCao.GoiDV.ChiTiet')
-                                            //             ? ''
-                                            //             : 'none'
-                                            // }}
+                                            sx={{
+                                                display: roleExport ? '' : 'none'
+                                            }}
                                             variant="outlined"
                                             startIcon={<FileUploadOutlinedIcon />}
                                             onClick={exportExcel}>
@@ -220,12 +221,7 @@ export default function MainpageBaoCaoTheGiaTri() {
                         </Stack>
                     </Grid>
                     <Grid item xs={12}>
-                        <TabPanel value={parseInt(LoaiBaoCao.TONG_HOP)} index={tabActive}>
-                            {/* <PageBaoCaoGoiDVNhanVienTongHop
-                                    onChangePage={handlePageChange}
-                                    onChangePageSize={changePageSize}
-                                /> */}
-                        </TabPanel>
+                        <TabPanel value={parseInt(LoaiBaoCao.TONG_HOP)} index={tabActive}></TabPanel>
 
                         <TabPanel value={parseInt(LoaiBaoCao.CHI_TIET)} index={tabActive}>
                             <PageBCNhatKySuDungTGTTGT

@@ -19,6 +19,7 @@ import QuyHoaDonDto from '../../../../services/so_quy/QuyHoaDonDto';
 import Cookies from 'js-cookie';
 import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
+import abpCustom from '../../../../components/abp-custom';
 
 const ModalUpdatePhieuThuHoaDon: FC<{
     isShowModal: boolean;
@@ -516,27 +517,32 @@ const ModalUpdatePhieuThuHoaDon: FC<{
                             <Grid item lg={6} md={6} sm={6} xs={12}></Grid>
                             <Grid item lg={6} md={6} sm={6} xs={12}>
                                 <Stack direction={'row'} spacing={1} alignItems={'center'} justifyContent={'end'}>
-                                    <Button
-                                        size="large"
-                                        variant="contained"
-                                        color="error"
-                                        startIcon={<DeleteIcon />}
-                                        onClick={() =>
-                                            setConfirmDialog({
-                                                ...confirmDialog,
-                                                show: true,
-                                                mes: `Bạn có chắc chắn muốn xóa ${sLoaiChungTu} ${quyHDOld?.maHoaDon} không?`
-                                            })
-                                        }>
-                                        Xóa
-                                    </Button>
-                                    <Button
-                                        size="large"
-                                        variant="contained"
-                                        startIcon={<CheckOutlinedIcon />}
-                                        onClick={saveSoQuy}>
-                                        Lưu
-                                    </Button>
+                                    {abpCustom.isGrandPermission('Pages.QuyHoaDon.Delete') && (
+                                        <Button
+                                            size="large"
+                                            variant="contained"
+                                            color="error"
+                                            startIcon={<DeleteIcon />}
+                                            onClick={() =>
+                                                setConfirmDialog({
+                                                    ...confirmDialog,
+                                                    show: true,
+                                                    mes: `Bạn có chắc chắn muốn xóa ${sLoaiChungTu} ${quyHDOld?.maHoaDon} không?`
+                                                })
+                                            }>
+                                            Xóa
+                                        </Button>
+                                    )}
+                                    {abpCustom.isGrandPermission('Pages.QuyHoaDon.Edit') && (
+                                        <Button
+                                            size="large"
+                                            variant="contained"
+                                            startIcon={<CheckOutlinedIcon />}
+                                            onClick={saveSoQuy}>
+                                            Lưu
+                                        </Button>
+                                    )}
+
                                     <Button
                                         size="large"
                                         variant="outlined"

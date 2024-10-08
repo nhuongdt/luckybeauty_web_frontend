@@ -35,6 +35,7 @@ import { OptionPage } from '../../components/Pagination/OptionPage';
 import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
 import fileDowloadService from '../../services/file-dowload.service';
 import PageDetailGDV from './page_detail_gdv';
+import abpCustom from '../../components/abp-custom';
 
 export default function PageDanhSachGDV() {
     const appContext = useContext(AppContext);
@@ -51,6 +52,7 @@ export default function PageDanhSachGDV() {
     const [footerTable_ConNo, setFooterTable_ConNo] = useState(0);
     const [isOpenFormDetail, setIsOpenFormDetail] = useState(false);
     const [invoiceChosing, setInvoiceChosing] = useState<PageHoaDonDto | null>(null);
+    const roleXemDanhSach = abpCustom.isGrandPermission('Pages.GoiDichVu.XemDanhSach');
 
     const [paramSearch, setParamSearch] = useState<HoaDonRequestDto>({
         textSearch: '',
@@ -72,6 +74,7 @@ export default function PageDanhSachGDV() {
     });
 
     const GetListGoiDichVu = async () => {
+        if (!roleXemDanhSach) return;
         const param = { ...paramSearch };
         param.textSearch = txtSearch;
         const data = await HoaDonService.GetListHoaDon(paramSearch);
@@ -235,6 +238,7 @@ export default function PageDanhSachGDV() {
                                 <TextField
                                     size="small"
                                     placeholder="Tìm kiếm"
+                                    sx={{ backgroundColor: 'white' }}
                                     fullWidth
                                     InputProps={{
                                         startAdornment: (
@@ -284,6 +288,11 @@ export default function PageDanhSachGDV() {
                                             variant="outlined"
                                             className="btn-outline-hover"
                                             onClick={ExportToExcel}
+                                            sx={{
+                                                display: abpCustom.isGrandPermission('Pages.GoiDichVu.Export')
+                                                    ? ''
+                                                    : 'none'
+                                            }}
                                             startIcon={<FileUploadIcon />}>
                                             Xuất
                                         </Button>
@@ -294,7 +303,11 @@ export default function PageDanhSachGDV() {
                                                     onClick={(event) => setAnchorElFilter(event.currentTarget)}
                                                 />
                                             }
-                                            style={{ width: 40, border: '1px solid #ccc' }}></ButtonOnlyIcon>
+                                            style={{
+                                                width: 40,
+                                                border: '1px solid #ccc',
+                                                backgroundColor: 'white'
+                                            }}></ButtonOnlyIcon>
                                         <PopoverFilterHoaDon
                                             anchorEl={anchorElFilter}
                                             paramFilter={paramSearch}
@@ -323,6 +336,7 @@ export default function PageDanhSachGDV() {
                                     listColumnHeader={listColumnHeader}
                                 />
                             </TableHead>
+
                             <TableBody>
                                 {pageDataHoaDon?.items?.map((row, index) => (
                                     <TableRow key={index}>
@@ -366,29 +380,37 @@ export default function PageDanhSachGDV() {
                                     </TableRow>
                                 ))}
                             </TableBody>
-                            <TableFooter>
-                                {pageDataHoaDon?.totalCount > 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={4}>Tổng cộng</TableCell>
-                                        <TableCell align="right">
-                                            {new Intl.NumberFormat('vi-VN').format(footerTable_TongThanhToan)}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            {new Intl.NumberFormat('vi-VN').format(footerTable_DaThanhToan)}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            {new Intl.NumberFormat('vi-VN').format(footerTable_ConNo)}
-                                        </TableCell>
-                                        <TableCell></TableCell>
-                                    </TableRow>
-                                ) : (
-                                    <TableRow className="table-empty">
-                                        <TableCell colSpan={20} align="center">
-                                            Không có dữ liệu
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableFooter>
+                            {roleXemDanhSach ? (
+                                <TableFooter>
+                                    {pageDataHoaDon?.totalCount > 0 ? (
+                                        <TableRow>
+                                            <TableCell colSpan={4}>Tổng cộng</TableCell>
+                                            <TableCell align="right">
+                                                {new Intl.NumberFormat('vi-VN').format(footerTable_TongThanhToan)}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {new Intl.NumberFormat('vi-VN').format(footerTable_DaThanhToan)}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {new Intl.NumberFormat('vi-VN').format(footerTable_ConNo)}
+                                            </TableCell>
+                                            <TableCell></TableCell>
+                                        </TableRow>
+                                    ) : (
+                                        <TableRow className="table-empty">
+                                            <TableCell colSpan={20} align="center">
+                                                Không có dữ liệu
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableFooter>
+                            ) : (
+                                <TableFooter>
+                                    <TableCell colSpan={20} align="center">
+                                        Không có quyền xem danh sách
+                                    </TableCell>
+                                </TableFooter>
+                            )}
                         </Table>
                     </TableContainer>
                 </Stack>

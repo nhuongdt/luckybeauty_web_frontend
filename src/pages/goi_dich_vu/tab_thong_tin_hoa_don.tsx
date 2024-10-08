@@ -32,6 +32,7 @@ import { TrangThaiHoaDon } from '../../services/ban_hang/HoaDonConst';
 import uploadFileService from '../../services/uploadFileService';
 import PaymentsForm from '../ban_hang/thu_ngan/PaymentsForm';
 import { FormNumber } from '../../enum/FormNumber';
+import abpCustom from '../../components/abp-custom';
 
 const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: number }> = ({
     itemHD,
@@ -84,6 +85,39 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
     };
 
     const sLoaiHoaDon = getLoaiHoaDon(itemHD?.idLoaiChungTu ?? 0);
+
+    const [roleEditInvoice, setRoleEditInvoice] = useState(false);
+    const [roleDeleteInvoice, setRoleDeleteInvoice] = useState(false);
+    const [rolePrintInvoice, setRolePrintInvoice] = useState(false);
+    const CheckRole_byLoaiChungTu = () => {
+        switch (itemHD?.idLoaiChungTu ?? 0) {
+            case LoaiChungTu.HOA_DON_BAN_LE:
+                {
+                    setRoleEditInvoice(abpCustom.isGrandPermission('Pages.HoaDon.Edit'));
+                    setRoleDeleteInvoice(abpCustom.isGrandPermission('Pages.HoaDon.Delete'));
+                    setRolePrintInvoice(abpCustom.isGrandPermission('Pages.HoaDon.Print'));
+                }
+                break;
+            case LoaiChungTu.GOI_DICH_VU:
+                {
+                    setRoleEditInvoice(abpCustom.isGrandPermission('Pages.GoiDichVu.Edit'));
+                    setRoleDeleteInvoice(abpCustom.isGrandPermission('Pages.GoiDichVu.Delete'));
+                    setRolePrintInvoice(abpCustom.isGrandPermission('Pages.GoiDichVu.Print'));
+                }
+                break;
+            case LoaiChungTu.THE_GIA_TRI:
+                {
+                    setRoleEditInvoice(abpCustom.isGrandPermission('Pages.TheGiaTri.Edit'));
+                    setRoleDeleteInvoice(abpCustom.isGrandPermission('Pages.TheGiaTri.Delete'));
+                    setRolePrintInvoice(abpCustom.isGrandPermission('Pages.TheGiaTri.Print'));
+                }
+                break;
+        }
+    };
+
+    useEffect(() => {
+        CheckRole_byLoaiChungTu();
+    }, [itemHD?.idLoaiChungTu ?? 0]);
 
     useEffect(() => {
         setNgayLapHoaDon(itemHD?.ngayLapHoaDon ?? '');
@@ -349,7 +383,14 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                         spacing={1}
                         sx={{ position: 'absolute', top: 8, right: 8, color: '#47e7e' }}>
                         <MoreHorizIcon titleAccess="Thao tác khác" />
-                        <PrintIcon titleAccess="In hóa đơn" className="only-icon" onClick={InHoaDon} />
+                        <PrintIcon
+                            titleAccess="In hóa đơn"
+                            className="only-icon"
+                            onClick={InHoaDon}
+                            sx={{
+                                display: rolePrintInvoice ? '' : 'none'
+                            }}
+                        />
                     </Stack>
                 </Stack>
 
@@ -399,6 +440,9 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                                             <EditOutlinedIcon
                                                 titleAccess="Thay đổi khách hàng"
                                                 className="only-icon"
+                                                sx={{
+                                                    display: roleEditInvoice ? '' : 'none'
+                                                }}
                                                 onClick={showModalChangeCustomer}
                                             />
                                         </Stack>
@@ -478,7 +522,7 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                         alignItems={'center'}
                         padding={2}
                         justifyContent={'center'}>
-                        {conNo > 0 && (
+                        {conNo > 0 && abpCustom.isGrandPermission('Pages.QuyHoaDon.ThanhToanCongNoHoaDon') && (
                             <Button
                                 variant="outlined"
                                 sx={{ flex: 2 }}
@@ -493,7 +537,10 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                             variant="outlined"
                             color="error"
                             fullWidth
-                            sx={{ flex: 1 }}
+                            sx={{
+                                flex: 1,
+                                display: roleDeleteInvoice ? '' : 'none'
+                            }}
                             startIcon={<DeleteIcon />}
                             onClick={onClickHuyGDV}>
                             Hủy
@@ -502,7 +549,10 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                         <Button
                             variant="contained"
                             fullWidth
-                            sx={{ flex: 1 }}
+                            sx={{
+                                flex: 1,
+                                display: roleEditInvoice ? '' : 'none'
+                            }}
                             startIcon={<SaveIcon />}
                             onClick={updateInvoice}>
                             Lưu

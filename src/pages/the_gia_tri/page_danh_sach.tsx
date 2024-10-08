@@ -55,6 +55,7 @@ import PageDetailsTGT from './page_details_TGT';
 import ModalDieuChinhSoDuTGT from './modal_dieu_chinh_so_du';
 import { CreateNhatKyThaoTacDto } from '../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
 import nhatKyHoatDongService from '../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
+import abpCustom from '../../components/abp-custom';
 
 export default function PageDanhSachTGT() {
     const appContext = useContext(AppContext);
@@ -109,7 +110,19 @@ export default function PageDanhSachTGT() {
         items: []
     });
 
+    const roleXemDanhSach =
+        loaiChungTuFilter === LoaiChungTu.THE_GIA_TRI
+            ? abpCustom.isGrandPermission('Pages.TheGiaTri.XemDanhSach')
+            : abpCustom.isGrandPermission('Pages.PhieuDieuChinh.XemDanhSach');
+    const roleExport =
+        loaiChungTuFilter === LoaiChungTu.THE_GIA_TRI
+            ? abpCustom.isGrandPermission('Pages.TheGiaTri.Export')
+            : abpCustom.isGrandPermission('Pages.PhieuDieuChinh.Export');
+    const roleEditPhieuDieuChinh = abpCustom.isGrandPermission('Pages.PhieuDieuChinh.Edit');
+    const roleDeletePhieuDieuChinh = abpCustom.isGrandPermission('Pages.PhieuDieuChinh.Delete');
+
     const GetListTheGiaTri = async () => {
+        if (!roleXemDanhSach) return;
         const param = { ...paramSearch };
         param.textSearch = txtSearch;
         param.idLoaiChungTus = [loaiChungTuFilter];
@@ -511,30 +524,40 @@ export default function PageDanhSachTGT() {
                         <Grid item lg={12} md={12} sm={12} xs={12} paddingTop={2}>
                             <Grid container spacing={2} justifyContent={'space-between'}>
                                 <Grid item lg={7} md={12} sm={12} xs={12} display={'flex'} gap="8px">
-                                    <Button variant="contained" onClick={showModalNapThe} startIcon={<AddIcon />}>
-                                        Nạp thẻ
-                                    </Button>
-                                    <Button
-                                        variant="outlined"
-                                        sx={{ backgroundColor: 'white', color: 'black' }}
-                                        onClick={onImportShow}
-                                        startIcon={<FileDownloadIcon />}>
-                                        Import tồn đầu
-                                    </Button>
-                                    <Button
-                                        variant="outlined"
-                                        color="secondary"
-                                        startIcon={<CurrencyExchangeIcon />}
-                                        onClick={showModalDieuChinhSoDu}>
-                                        Điều chỉnh số dư
-                                    </Button>
-                                    <Button
-                                        variant="outlined"
-                                        sx={{ backgroundColor: 'white', color: 'black' }}
-                                        onClick={ExportToExcel}
-                                        startIcon={<FileUploadIcon />}>
-                                        Xuất file
-                                    </Button>
+                                    {abpCustom.isGrandPermission('Pages.TheGiaTri.Create') && (
+                                        <Button variant="contained" onClick={showModalNapThe} startIcon={<AddIcon />}>
+                                            Nạp thẻ
+                                        </Button>
+                                    )}
+
+                                    {abpCustom.isGrandPermission('Pages.PhieuDieuChinh.Import') && (
+                                        <Button
+                                            variant="outlined"
+                                            sx={{ backgroundColor: 'white', color: 'black' }}
+                                            onClick={onImportShow}
+                                            startIcon={<FileDownloadIcon />}>
+                                            Import tồn đầu
+                                        </Button>
+                                    )}
+                                    {abpCustom.isGrandPermission('Pages.PhieuDieuChinh.Create') && (
+                                        <Button
+                                            variant="outlined"
+                                            color="secondary"
+                                            startIcon={<CurrencyExchangeIcon />}
+                                            onClick={showModalDieuChinhSoDu}>
+                                            Điều chỉnh số dư
+                                        </Button>
+                                    )}
+
+                                    {roleExport && (
+                                        <Button
+                                            variant="outlined"
+                                            sx={{ backgroundColor: 'white', color: 'black' }}
+                                            onClick={ExportToExcel}
+                                            startIcon={<FileUploadIcon />}>
+                                            Xuất file
+                                        </Button>
+                                    )}
                                 </Grid>
                                 <Grid item lg={5} md={12} sm={12} xs={12}>
                                     <Stack spacing={1} direction={'row'}>
@@ -644,35 +667,47 @@ export default function PageDanhSachTGT() {
                                             </TableRow>
                                         ))}
                                     </TableBody>
-                                    <TableFooter>
-                                        {pageDataHoaDon?.totalCount > 0 ? (
-                                            <TableRow>
-                                                <TableCell colSpan={6}>Tổng cộng</TableCell>
-                                                <TableCell align="right">
-                                                    {new Intl.NumberFormat('vi-VN').format(footerTable_TongThanhToan)}
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    {new Intl.NumberFormat('vi-VN').format(footerTable_DaThanhToan)}
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    {new Intl.NumberFormat('vi-VN').format(footerTable_ConNo)}
-                                                </TableCell>
-                                                <TableCell></TableCell>
-                                            </TableRow>
-                                        ) : (
+                                    {roleXemDanhSach ? (
+                                        <TableFooter>
+                                            {pageDataHoaDon?.totalCount > 0 ? (
+                                                <TableRow>
+                                                    <TableCell colSpan={6}>Tổng cộng</TableCell>
+                                                    <TableCell align="right">
+                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                            footerTable_TongThanhToan
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {new Intl.NumberFormat('vi-VN').format(footerTable_DaThanhToan)}
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {new Intl.NumberFormat('vi-VN').format(footerTable_ConNo)}
+                                                    </TableCell>
+                                                    <TableCell></TableCell>
+                                                </TableRow>
+                                            ) : (
+                                                <TableRow className="table-empty">
+                                                    <TableCell colSpan={20} align="center">
+                                                        Không có dữ liệu
+                                                    </TableCell>
+                                                </TableRow>
+                                            )}
+                                        </TableFooter>
+                                    ) : (
+                                        <TableFooter>
                                             <TableRow className="table-empty">
                                                 <TableCell colSpan={20} align="center">
-                                                    Không có dữ liệu
+                                                    Không có quyền xem danh sách thẻ
                                                 </TableCell>
                                             </TableRow>
-                                        )}
-                                    </TableFooter>
+                                        </TableFooter>
+                                    )}
                                 </Table>
                             ) : (
                                 <Table>
                                     <TableHead>
                                         <MyHeaderTable
-                                            showAction={true}
+                                            showAction={roleEditPhieuDieuChinh || roleDeletePhieuDieuChinh}
                                             isCheckAll={false}
                                             isShowCheck={false}
                                             sortBy={paramSearch?.columnSort ?? ''}
@@ -712,7 +747,11 @@ export default function PageDanhSachTGT() {
                                                         <OpenInNewOutlinedIcon
                                                             titleAccess="Cập nhật"
                                                             className="only-icon"
-                                                            sx={{ width: '16px', color: '#7e7979' }}
+                                                            sx={{
+                                                                width: '16px',
+                                                                color: '#7e7979',
+                                                                display: roleEditPhieuDieuChinh ? '' : 'none'
+                                                            }}
                                                             onClick={() =>
                                                                 phieuDieuChinh_doActionRow(TypeAction.UPDATE, row)
                                                             }
@@ -723,7 +762,8 @@ export default function PageDanhSachTGT() {
                                                                 ' &:hover': {
                                                                     color: 'red',
                                                                     cursor: 'pointer'
-                                                                }
+                                                                },
+                                                                display: roleDeletePhieuDieuChinh ? '' : 'none'
                                                             }}
                                                             style={{ width: '16px', color: 'red' }}
                                                             onClick={() =>
@@ -735,11 +775,14 @@ export default function PageDanhSachTGT() {
                                             </TableRow>
                                         ))}
                                     </TableBody>
+
                                     {pageDataHoaDon?.totalCount == 0 && (
                                         <TableFooter>
                                             <TableRow className="table-empty">
                                                 <TableCell colSpan={20} align="center">
-                                                    Không có dữ liệu
+                                                    {roleXemDanhSach
+                                                        ? 'Không có dữ liệu'
+                                                        : 'Không có quyền xem danh sách phiếu điều chỉnh'}
                                                 </TableCell>
                                             </TableRow>
                                         </TableFooter>

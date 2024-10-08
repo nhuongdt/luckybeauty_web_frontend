@@ -229,7 +229,7 @@ export const appRouters: AppRouteProps = {
                         },
                         {
                             path: '/goi_dich_vu',
-                            permission: 'Pages.HoaDon',
+                            permission: 'Pages.GoiDichVu',
                             title: 'Gói dịch vụ',
                             name: 'goidichvu',
                             icon: <BsDot style={{ fontSize: 20 }} />,
@@ -241,7 +241,7 @@ export const appRouters: AppRouteProps = {
                         },
                         {
                             path: '/the_gia_tri',
-                            permission: 'Pages.HoaDon',
+                            permission: 'Pages.TheGiaTri',
                             title: 'Thẻ giá trị',
                             name: 'thegiatri',
                             icon: <BsDot style={{ fontSize: 20 }} />,
@@ -518,7 +518,7 @@ export const appRouters: AppRouteProps = {
                         },
                         {
                             path: '/bao-cao/sudung-gdv',
-                            permission: 'Pages.BaoCao.HoaHong',
+                            permission: 'Pages.BaoCao.GoiDichVu',
                             title: 'Báo cáo gói dịch vụ',
                             name: 'baoCaoGoiDichVu',
                             icon: <BsDot style={{ fontSize: 20 }} />,
@@ -532,7 +532,7 @@ export const appRouters: AppRouteProps = {
                         },
                         {
                             path: '/bao-cao/the_gia_tri',
-                            permission: 'Pages.BaoCao.HoaHong',
+                            permission: 'Pages.BaoCao.TheGiaTri',
                             title: 'Báo cáo thẻ giá trị',
                             name: 'baoCaoTheGiaTri',
                             icon: <BsDot style={{ fontSize: 20 }} />,
