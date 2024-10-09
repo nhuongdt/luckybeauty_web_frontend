@@ -11,7 +11,7 @@ export default function ActionRowSelect({ lstOption, countRowSelected, title, ch
     const [expandAction, setExpandAction] = useState(false);
     const ref = handleClickOutside(() => setExpandAction(false));
 
-    const clickAction = (item: any) => {
+    const clickAction = (item: IList) => {
         choseAction(item);
         setExpandAction(false);
     };

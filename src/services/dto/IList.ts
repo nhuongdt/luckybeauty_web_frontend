@@ -1,5 +1,3 @@
-import { SvgIconProps } from '@mui/material';
-
 export interface IList {
     id: string;
     text: string;

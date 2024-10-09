@@ -258,6 +258,7 @@
     border-color: var(--border-color) !important;
     transition: '.3s';
     color: #525f7a !important;
+    background-color: white;
 }
 
 .btn-outline-hover:hover {
