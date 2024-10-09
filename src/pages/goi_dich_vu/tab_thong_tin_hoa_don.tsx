@@ -186,7 +186,7 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
             DataMauIn.chinhanh = { tenChiNhanh: itemHD?.tenChiNhanh } as ChiNhanhDto;
             DataMauIn.congty = appContext.congty;
             DataMauIn.congty.logo = uploadFileService.GoogleApi_NewLink(DataMauIn.congty?.logo);
-            const tempMauIn = await MauInServices.GetContentMauInMacDinh(1, 1);
+            const tempMauIn = await MauInServices.GetContentMauInMacDinh(1, itemHD?.idLoaiChungTu ?? 0);
             let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
             newHtml = DataMauIn.replaceChiNhanh(newHtml);
             newHtml = DataMauIn.replaceHoaDon(newHtml);
@@ -219,12 +219,38 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
         return await HoaDonService.CheckGDV_DaSuDung(itemHD?.id ?? '');
     };
 
-    const onClickHuyGDV = async () => {
-        const check = await CheckGDV_DaSuDung();
-        if (check) {
-            setObjAlert({ ...objAlert, show: true, mes: 'Gói dịch vụ đã được sử dụng. Không thể hủy' });
-            return;
+    const onClickHuyHoaDon = async () => {
+        switch (itemHD?.idLoaiChungTu ?? 0) {
+            case LoaiChungTu.GOI_DICH_VU:
+                {
+                    const check = await CheckGDV_DaSuDung();
+                    if (check) {
+                        setObjAlert({
+                            ...objAlert,
+                            show: true,
+                            mes: 'Gói dịch vụ đã được sử dụng. Không thể hủy',
+                            type: 2
+                        });
+                        return;
+                    }
+                }
+                break;
+            case LoaiChungTu.THE_GIA_TRI:
+                {
+                    const check = await HoaDonService.CheckTheGiaTri_DaSuDung(itemHD?.id ?? '');
+                    if (check) {
+                        setObjAlert({
+                            ...objAlert,
+                            show: true,
+                            mes: 'Thẻ giá trị đã được sử dụng. Không thể hủy',
+                            type: 2
+                        });
+                        return;
+                    }
+                }
+                break;
         }
+
         setConfirmDialog({
             ...confirmDialog,
             show: true,
@@ -542,7 +568,7 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                                 display: roleDeleteInvoice ? '' : 'none'
                             }}
                             startIcon={<DeleteIcon />}
-                            onClick={onClickHuyGDV}>
+                            onClick={onClickHuyHoaDon}>
                             Hủy
                         </Button>
 

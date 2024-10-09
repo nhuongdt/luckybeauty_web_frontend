@@ -175,6 +175,13 @@ class HoaDonService {
         const result = await http.get(`api/services/app/HoaDon/CheckGDV_DaSuDung?idGoiDV=${idGoiDV}`);
         return result.data.result;
     };
+    CheckTheGiaTri_DaSuDung = async (idTheGiaTri: string): Promise<boolean> => {
+        if (utils.checkNull_OrEmpty(idTheGiaTri)) {
+            return false;
+        }
+        const result = await http.get(`api/services/app/HoaDon/CheckTheGiaTri_DaSuDung?idTheGiaTri=${idTheGiaTri}`);
+        return result.data.result;
+    };
     CheckChiTietGDV_DaSuDung = async (idChiTietGDV: string): Promise<boolean> => {
         if (utils.checkNull_OrEmpty(idChiTietGDV)) {
             return false;

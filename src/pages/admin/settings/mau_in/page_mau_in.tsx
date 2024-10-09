@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useContext } from 'react';
 import { Box, Grid, Tabs, Tab, Stack, Button } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -20,6 +18,7 @@ import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import TokenMauIn from './TokenMauIn';
 import abpCustom from '../../../../components/abp-custom';
 import { ButtonNavigate } from '../../../../components/Button/ButtonNavigate';
+import { LoaiChungTu } from '../../../../lib/appconst';
 
 export default function PageMauIn() {
     const [html, setHtml] = useState('');
@@ -49,9 +48,10 @@ export default function PageMauIn() {
     };
 
     const BindDataPrint = async (shtml: string) => {
-        // !import: replace cthd --> hoadon
+        // !import: replace theo thu tu: cthd, hoadon
         switch (idLoaiChungTu) {
-            case 1:
+            case LoaiChungTu.HOA_DON_BAN_LE:
+            case LoaiChungTu.GOI_DICH_VU:
                 {
                     let dataAfter = DataMauIn.replaceChiTietHoaDon(shtml);
                     dataAfter = DataMauIn.replaceChiNhanh(dataAfter);
@@ -62,8 +62,18 @@ export default function PageMauIn() {
                     setdataPrint(dataAfter);
                 }
                 break;
-            case 11:
-            case 12:
+            case LoaiChungTu.THE_GIA_TRI:
+                {
+                    let dataAfter = DataMauIn.replaceHoaDon(shtml);
+                    dataAfter = DataMauIn.replaceChiNhanh(dataAfter);
+                    if (shtml.includes('QRCode')) {
+                        dataAfter = await DataMauIn.replacePhieuThuChi(dataAfter);
+                    }
+                    setdataPrint(dataAfter);
+                }
+                break;
+            case LoaiChungTu.PHIEU_THU:
+            case LoaiChungTu.PHIEU_CHI:
                 {
                     let dataAfter = DataMauIn.replaceChiNhanh(shtml);
                     dataAfter = await DataMauIn.replacePhieuThuChi(dataAfter);
@@ -75,58 +85,23 @@ export default function PageMauIn() {
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setIdLoaiChungTu(newValue);
-        switch (newValue) {
-            case 1:
-                {
-                    setListMauInHoaDon(allMauIn);
-                }
-                break;
-            case 11:
-            case 12:
-                {
-                    const mauInByLoaiChungTu = allMauIn.filter((x: MauInDto) => x.loaiChungTu === newValue);
-                    const mauMacDinh = mauInByLoaiChungTu.filter((x: MauInDto) => x.laMacDinh);
-                    const tempK80: MauInDto = {
-                        id: '1',
-                        tenMauIn: 'Mẫu mặc định',
-                        laMacDinh: false
-                    } as MauInDto;
-                    if (mauMacDinh.length === 0) {
-                        tempK80.laMacDinh = true;
-                        setListMauIn([tempK80, ...mauInByLoaiChungTu]);
-                        setIdMauInChosed('1');
-                    } else {
-                        setListMauIn([...mauInByLoaiChungTu, tempK80]);
-                        setIdMauInChosed(mauMacDinh[0].id);
-                        setNewMauIn(mauMacDinh[0]);
-                    }
-                }
-                break;
-            default:
-                setListMauInHoaDon(allMauIn);
-                break;
-        }
+        setListMauInHoaDon(allMauIn, newValue);
     };
 
-    const setListMauInHoaDon = (allMauIn: MauInDto[]) => {
-        const mauInByLoaiChungTu = allMauIn.filter((x: MauInDto) => x.loaiChungTu === 1);
+    const setListMauInHoaDon = (allMauIn: MauInDto[], idLoaiChungTu = LoaiChungTu.HOA_DON_BAN_LE) => {
+        const mauInByLoaiChungTu = allMauIn.filter((x: MauInDto) => x.loaiChungTu === idLoaiChungTu);
         const mauMacDinh = mauInByLoaiChungTu.filter((x: MauInDto) => x.laMacDinh);
         const tempK80: MauInDto = {
             id: '1',
-            tenMauIn: 'Mẫu mặc định K80',
-            laMacDinh: false
-        } as MauInDto;
-        const tempA4: MauInDto = {
-            id: '2',
-            tenMauIn: 'Mẫu mặc định A4',
+            tenMauIn: 'Mẫu mặc định',
             laMacDinh: false
         } as MauInDto;
         if (mauMacDinh.length === 0) {
             tempK80.laMacDinh = true;
-            setListMauIn([tempK80, tempA4, ...mauInByLoaiChungTu]);
+            setListMauIn([tempK80, ...mauInByLoaiChungTu]);
             setIdMauInChosed('1');
         } else {
-            setListMauIn([...mauInByLoaiChungTu, tempK80, tempA4]);
+            setListMauIn([...mauInByLoaiChungTu, tempK80]);
             setIdMauInChosed(mauMacDinh[0].id);
             setNewMauIn(mauMacDinh[0]);
         }
@@ -137,7 +112,7 @@ export default function PageMauIn() {
         setIdMauInUpdate('');
     };
 
-    const changeMauIn = (item: any) => {
+    const changeMauIn = (item: MauInDto) => {
         setIdMauInChosed(item.id);
         setNewMauIn(item);
     };
@@ -254,13 +229,16 @@ export default function PageMauIn() {
     const tenLoaiChungTu = () => {
         let sLoai = '';
         switch (idLoaiChungTu) {
-            case 1:
+            case LoaiChungTu.HOA_DON_BAN_LE:
                 sLoai = 'HD';
                 break;
-            case 11:
+            case LoaiChungTu.GOI_DICH_VU:
+                sLoai = 'GDV';
+                break;
+            case LoaiChungTu.PHIEU_THU:
                 sLoai = 'SQPT';
                 break;
-            case 12:
+            case LoaiChungTu.PHIEU_CHI:
                 sLoai = 'SQPC';
                 break;
         }
@@ -347,9 +325,11 @@ export default function PageMauIn() {
                                 onClick={() => setIsShowToken(true)}
                             />
 
-                            <Tab label="Hóa đơn" value={1} />
-                            <Tab label="Phiếu thu" value={11} />
-                            <Tab label="Phiếu chi" value={12} />
+                            <Tab label="Hóa đơn" value={LoaiChungTu.HOA_DON_BAN_LE} />
+                            <Tab label="Gói dịch vụ" value={LoaiChungTu.GOI_DICH_VU} />
+                            <Tab label="Thẻ giá trị" value={LoaiChungTu.THE_GIA_TRI} />
+                            <Tab label="Phiếu thu" value={LoaiChungTu.PHIEU_THU} />
+                            <Tab label="Phiếu chi" value={LoaiChungTu.PHIEU_CHI} />
                         </Tabs>
                     </Box>
                 </Grid>

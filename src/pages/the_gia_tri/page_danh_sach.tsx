@@ -250,6 +250,16 @@ export default function PageDanhSachTGT() {
                 break;
             case TypeAction.DELETE:
                 {
+                    const check = await HoaDonService.CheckTheGiaTri_DaSuDung(item?.id ?? '');
+                    if (check) {
+                        setObjAlert({
+                            ...objAlert,
+                            show: true,
+                            mes: `Số dư của Phiếu điều chỉnh ${item.maHoaDon} đã được sử dụng. Không thể hủy`,
+                            type: 2
+                        });
+                        return;
+                    }
                     setInvoiceChosing({ ...item });
                     setConfirmDialog({
                         ...confirmDialog,

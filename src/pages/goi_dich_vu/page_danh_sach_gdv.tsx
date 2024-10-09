@@ -21,7 +21,7 @@ import DateFilterCustom from '../../components/DatetimePicker/DateFilterCustom';
 import { format, lastDayOfMonth } from 'date-fns';
 import { HoaDonRequestDto } from '../../services/dto/ParamSearchDto';
 import { useContext, useEffect, useRef, useState } from 'react';
-import AppConsts, { LoaiChungTu } from '../../lib/appconst';
+import AppConsts, { LoaiChungTu, LoaiNhatKyThaoTac } from '../../lib/appconst';
 import { TrangThaiHoaDon } from '../../services/ban_hang/HoaDonConst';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
@@ -36,6 +36,19 @@ import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRo
 import fileDowloadService from '../../services/file-dowload.service';
 import PageDetailGDV from './page_detail_gdv';
 import abpCustom from '../../components/abp-custom';
+import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
+import { IList } from '../../services/dto/IList';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
+import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
+import SoQuyServices from '../../services/so_quy/SoQuyServices';
+import { CreateNhatKyThaoTacDto } from '../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
+import nhatKyHoatDongService from '../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
+import DataMauIn from '../admin/settings/mau_in/DataMauIn';
+import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
+import { ChiNhanhDto } from '../../services/chi_nhanh/Dto/chiNhanhDto';
+import uploadFileService from '../../services/uploadFileService';
+import MauInServices from '../../services/mau_in/MauInServices';
 
 export default function PageDanhSachGDV() {
     const appContext = useContext(AppContext);
@@ -53,7 +66,13 @@ export default function PageDanhSachGDV() {
     const [isOpenFormDetail, setIsOpenFormDetail] = useState(false);
     const [invoiceChosing, setInvoiceChosing] = useState<PageHoaDonDto | null>(null);
     const roleXemDanhSach = abpCustom.isGrandPermission('Pages.GoiDichVu.XemDanhSach');
-
+    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+    const [confirmDialog, setConfirmDialog] = useState<PropConfirmOKCancel>({
+        show: false,
+        title: '',
+        type: 1,
+        mes: ''
+    });
     const [paramSearch, setParamSearch] = useState<HoaDonRequestDto>({
         textSearch: '',
         idChiNhanhs: [chinhanh?.id],
@@ -212,6 +231,79 @@ export default function PageDanhSachGDV() {
     const gotoPageList = () => {
         setIsOpenFormDetail(false);
     };
+    const DataGrid_handleAction = async (item: any) => {
+        switch (item.id) {
+            case '1':
+                {
+                    setConfirmDialog({
+                        ...confirmDialog,
+                        show: true,
+                        mes: `Bạn có chắc chắn muốn xóa ${arrIdChosed.length} gói dịch vụ này không?`
+                    });
+                }
+                break;
+            case '2':
+                {
+                    let htmlPrint = '';
+                    for (let i = 0; i < arrIdChosed.length; i++) {
+                        const idHoaDon = arrIdChosed[i].toString();
+                        const dataHoaDon = await HoaDonService.GetInforHoaDon_byId(idHoaDon);
+                        const dataCTHD = await HoaDonService.GetChiTietHoaDon_byIdHoaDon(idHoaDon);
+
+                        if (dataHoaDon.length > 0) {
+                            DataMauIn.hoadon = dataHoaDon[0];
+                            DataMauIn.hoadonChiTiet = dataCTHD;
+                            DataMauIn.khachhang = {
+                                maKhachHang: dataHoaDon[0]?.maKhachHang,
+                                tenKhachHang: dataHoaDon[0]?.tenKhachHang,
+                                soDienThoai: DataMauIn.hoadon?.soDienThoai
+                            } as KhachHangItemDto;
+                            DataMauIn.chinhanh = {
+                                tenChiNhanh: DataMauIn.hoadon?.tenChiNhanh
+                            } as ChiNhanhDto;
+                            DataMauIn.congty = appContext.congty;
+                            DataMauIn.congty.logo = uploadFileService.GoogleApi_NewLink(DataMauIn.congty?.logo);
+                            const tempMauIn = await MauInServices.GetContentMauInMacDinh(1, LoaiChungTu.GOI_DICH_VU);
+                            let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
+                            newHtml = DataMauIn.replaceChiNhanh(newHtml);
+                            newHtml = DataMauIn.replaceHoaDon(newHtml);
+                            newHtml = await DataMauIn.replacePhieuThuChi(newHtml);
+                            if (i < arrIdChosed?.length - 1) {
+                                htmlPrint = htmlPrint.concat(newHtml, `<p style="page-break-before:always;"></p>`);
+                            } else {
+                                htmlPrint = htmlPrint.concat(newHtml);
+                            }
+                        }
+                    }
+                    DataMauIn.Print(htmlPrint);
+                }
+                break;
+        }
+    };
+
+    const onAgreeRemoveInvoice = async () => {
+        setArrIdChosed([]);
+        setIsCheckAll(false);
+
+        await HoaDonService.Delete_MultipleHoaDon(arrIdChosed);
+        setConfirmDialog({ ...confirmDialog, show: false });
+        setObjAlert({ show: true, mes: `Xóa thành công ${arrIdChosed?.length} hóa đơn`, type: 1 });
+
+        setPageDataHoaDon({
+            ...pageDataHoaDon,
+            items: pageDataHoaDon?.items?.filter((x) => !arrIdChosed.includes(x.id)),
+            totalCount: pageDataHoaDon?.totalCount - arrIdChosed?.length
+        });
+
+        const diary = {
+            idChiNhanh: chinhanh.id,
+            chucNang: `Danh mục gói dịch vụ`,
+            noiDung: `Xóa ${arrIdChosed?.length} hóa đơn`,
+            noiDungChiTiet: `Xóa ${arrIdChosed?.length} hóa đơn `,
+            loaiNhatKy: LoaiNhatKyThaoTac.DELETE
+        } as CreateNhatKyThaoTacDto;
+        await nhatKyHoatDongService.createNhatKyThaoTac(diary);
+    };
 
     const listColumnHeader: IHeaderTable[] = [
         { columnId: 'maHoaDon', columnText: 'Mã hóa đơn' },
@@ -226,219 +318,260 @@ export default function PageDanhSachGDV() {
     if (isOpenFormDetail) return <PageDetailGDV itemHD={invoiceChosing} gotoBack={gotoPageList} />;
 
     return (
-        <Grid container paddingTop={2}>
-            <Grid item lg={12} md={12} sm={12} width={'100%'}>
-                <Grid container>
-                    <Grid item lg={4} md={4} sm={5} xs={12}>
-                        <span className="page-title"> Danh sách gói dịch vụ</span>
-                    </Grid>
-                    <Grid item lg={8} md={8} sm={7} xs={12} display={'flex'} justifyContent={'end'}>
-                        <Grid container justifyContent={'end'} spacing={1} width={'100%'}>
-                            <Grid item lg={7} md={6} sm={12} xs={12}>
-                                <TextField
-                                    size="small"
-                                    placeholder="Tìm kiếm"
-                                    sx={{ backgroundColor: 'white' }}
-                                    fullWidth
-                                    InputProps={{
-                                        startAdornment: (
-                                            <IconButton type="button" onClick={hanClickIconSearch}>
-                                                <Search />
-                                            </IconButton>
-                                        )
-                                    }}
-                                    onChange={(event) => {
-                                        setTxtSearch(event.target.value);
-                                    }}
-                                    onKeyDown={(event) => {
-                                        handleKeyDownTextSearch(event);
+        <>
+            <ConfirmDelete
+                isShow={confirmDialog.show}
+                title={confirmDialog.title}
+                mes={confirmDialog.mes}
+                onOk={onAgreeRemoveInvoice}
+                onCancel={() => setConfirmDialog({ ...confirmDialog, show: false })}></ConfirmDelete>
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
+
+            <Grid container paddingTop={2}>
+                <Grid item lg={12} md={12} sm={12} width={'100%'}>
+                    <Grid container>
+                        <Grid item lg={4} md={4} sm={5} xs={12}>
+                            <span className="page-title"> Danh sách gói dịch vụ</span>
+                        </Grid>
+                        <Grid item lg={8} md={8} sm={7} xs={12} display={'flex'} justifyContent={'end'}>
+                            <Grid container justifyContent={'end'} spacing={1} width={'100%'}>
+                                <Grid item lg={7} md={6} sm={12} xs={12}>
+                                    <TextField
+                                        size="small"
+                                        placeholder="Tìm kiếm"
+                                        sx={{ backgroundColor: 'white' }}
+                                        fullWidth
+                                        InputProps={{
+                                            startAdornment: (
+                                                <IconButton type="button" onClick={hanClickIconSearch}>
+                                                    <Search />
+                                                </IconButton>
+                                            )
+                                        }}
+                                        onChange={(event) => {
+                                            setTxtSearch(event.target.value);
+                                        }}
+                                        onKeyDown={(event) => {
+                                            handleKeyDownTextSearch(event);
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item lg={5} md={6} sm={12} xs={12}>
+                                    <Stack spacing={1} direction={'row'}>
+                                        <Stack flex={3}>
+                                            <TextField
+                                                label="Thời gian"
+                                                size="small"
+                                                fullWidth
+                                                variant="outlined"
+                                                sx={{
+                                                    '& .MuiInputBase-root': {
+                                                        height: '40px!important'
+                                                    },
+                                                    backgroundColor: 'white'
+                                                }}
+                                                onClick={(event) => setAnchorDateEl(event.currentTarget)}
+                                                value={`${format(
+                                                    new Date(paramSearch.fromDate as string),
+                                                    'dd/MM/yyyy'
+                                                )} - ${format(new Date(paramSearch.toDate as string), 'dd/MM/yyyy')}`}
+                                            />
+                                            <DateFilterCustom
+                                                id="popover-date-filter"
+                                                open={openDateFilter}
+                                                anchorEl={anchorDateEl}
+                                                onClose={() => setAnchorDateEl(null)}
+                                                onApplyDate={onApplyFilterDate}
+                                            />
+                                        </Stack>
+                                        <Stack flex={1} spacing={1} direction={'row'}>
+                                            <Button
+                                                variant="outlined"
+                                                className="btn-outline-hover"
+                                                onClick={ExportToExcel}
+                                                sx={{
+                                                    display: abpCustom.isGrandPermission('Pages.GoiDichVu.Export')
+                                                        ? ''
+                                                        : 'none'
+                                                }}
+                                                startIcon={<FileUploadIcon />}>
+                                                Xuất
+                                            </Button>
+                                            <ButtonOnlyIcon
+                                                icon={
+                                                    <FilterAltOutlinedIcon
+                                                        titleAccess="Lọc nâng cao"
+                                                        onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                                                    />
+                                                }
+                                                style={{
+                                                    width: 40,
+                                                    border: '1px solid #ccc',
+                                                    backgroundColor: 'white'
+                                                }}></ButtonOnlyIcon>
+                                            <PopoverFilterHoaDon
+                                                anchorEl={anchorElFilter}
+                                                paramFilter={paramSearch}
+                                                handleClose={() => setAnchorElFilter(null)}
+                                                handleApply={ApplyFilter}
+                                            />
+                                        </Stack>
+                                    </Stack>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        {arrIdChosed?.length > 0 && (
+                            <Grid item lg={12} md={12} sm={12} xs={12}>
+                                <ActionRowSelect
+                                    lstOption={
+                                        [
+                                            {
+                                                id: '1',
+                                                text: 'Xóa hóa đơn',
+                                                isShow: abpCustom.isGrandPermission('Pages.GoiDichVu.Delete')
+                                            },
+                                            {
+                                                id: '2',
+                                                text: 'In hóa đơn',
+                                                isShow: abpCustom.isGrandPermission('Pages.GoiDichVu.Print')
+                                            }
+                                        ] as IList[]
+                                    }
+                                    countRowSelected={arrIdChosed.length}
+                                    title="gói dịch vụ"
+                                    choseAction={DataGrid_handleAction}
+                                    removeItemChosed={() => {
+                                        setArrIdChosed([]);
+                                        setIsCheckAll(false);
                                     }}
                                 />
                             </Grid>
-                            <Grid item lg={5} md={6} sm={12} xs={12}>
-                                <Stack spacing={1} direction={'row'}>
-                                    <Stack flex={3}>
-                                        <TextField
-                                            label="Thời gian"
-                                            size="small"
-                                            fullWidth
-                                            variant="outlined"
-                                            sx={{
-                                                '& .MuiInputBase-root': {
-                                                    height: '40px!important'
-                                                },
-                                                backgroundColor: 'white'
-                                            }}
-                                            onClick={(event) => setAnchorDateEl(event.currentTarget)}
-                                            value={`${format(
-                                                new Date(paramSearch.fromDate as string),
-                                                'dd/MM/yyyy'
-                                            )} - ${format(new Date(paramSearch.toDate as string), 'dd/MM/yyyy')}`}
-                                        />
-                                        <DateFilterCustom
-                                            id="popover-date-filter"
-                                            open={openDateFilter}
-                                            anchorEl={anchorDateEl}
-                                            onClose={() => setAnchorDateEl(null)}
-                                            onApplyDate={onApplyFilterDate}
-                                        />
-                                    </Stack>
-                                    <Stack flex={1} spacing={1} direction={'row'}>
-                                        <Button
-                                            variant="outlined"
-                                            className="btn-outline-hover"
-                                            onClick={ExportToExcel}
-                                            sx={{
-                                                display: abpCustom.isGrandPermission('Pages.GoiDichVu.Export')
-                                                    ? ''
-                                                    : 'none'
-                                            }}
-                                            startIcon={<FileUploadIcon />}>
-                                            Xuất
-                                        </Button>
-                                        <ButtonOnlyIcon
-                                            icon={
-                                                <FilterAltOutlinedIcon
-                                                    titleAccess="Lọc nâng cao"
-                                                    onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                        )}
+                    </Grid>
+                </Grid>
+                <Grid item lg={12} md={12} sm={12} paddingTop={3} width={'100%'}>
+                    <Stack className="page-box-right">
+                        <TableContainer className="data-grid-row">
+                            <Table>
+                                <TableHead>
+                                    <MyHeaderTable
+                                        showAction={false}
+                                        isCheckAll={isCheckAll}
+                                        sortBy={paramSearch?.columnSort ?? ''}
+                                        sortType={paramSearch?.typeSort ?? 'desc'}
+                                        onRequestSort={onSortTable}
+                                        onSelectAllClick={onClickCheckAll}
+                                        listColumnHeader={listColumnHeader}
+                                    />
+                                </TableHead>
+
+                                <TableBody>
+                                    {pageDataHoaDon?.items?.map((row, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell align="center" className="td-check-box">
+                                                <Checkbox
+                                                    checked={arrIdChosed.includes(row.id)}
+                                                    onChange={(event) => onClickCheckOne(event, row.id)}
                                                 />
-                                            }
-                                            style={{
-                                                width: 40,
-                                                border: '1px solid #ccc',
-                                                backgroundColor: 'white'
-                                            }}></ButtonOnlyIcon>
-                                        <PopoverFilterHoaDon
-                                            anchorEl={anchorElFilter}
-                                            paramFilter={paramSearch}
-                                            handleClose={() => setAnchorElFilter(null)}
-                                            handleApply={ApplyFilter}
-                                        />
-                                    </Stack>
-                                </Stack>
-                            </Grid>
+                                            </TableCell>
+                                            <TableCell
+                                                sx={{ minWidth: 100, maxWidth: 100 }}
+                                                onClick={() => OpenFormDetail(row)}>
+                                                {row?.maHoaDon}
+                                            </TableCell>
+                                            <TableCell sx={{ maxWidth: 150 }} onClick={() => OpenFormDetail(row)}>
+                                                {format(new Date(row?.ngayLapHoaDon), 'dd/MM/yyyy')}
+                                            </TableCell>
+                                            <TableCell
+                                                className="lableOverflow"
+                                                sx={{ maxWidth: 200 }}
+                                                title={row?.tenKhachHang}
+                                                onClick={() => OpenFormDetail(row)}>
+                                                {row?.tenKhachHang}
+                                            </TableCell>
+                                            <TableCell align="right" onClick={() => OpenFormDetail(row)}>
+                                                {new Intl.NumberFormat('vi-VN').format(row?.tongThanhToan ?? 0)}
+                                            </TableCell>
+                                            <TableCell align="right" onClick={() => OpenFormDetail(row)}>
+                                                {new Intl.NumberFormat('vi-VN').format(row?.daThanhToan ?? 0)}
+                                            </TableCell>
+                                            <TableCell align="right" onClick={() => OpenFormDetail(row)}>
+                                                {new Intl.NumberFormat('vi-VN').format(row?.conNo ?? 0)}
+                                            </TableCell>
+                                            <TableCell
+                                                className="lableOverflow"
+                                                title={row?.ghiChuHD}
+                                                sx={{ minWidth: 150, maxWidth: 200 }}
+                                                onClick={() => OpenFormDetail(row)}>
+                                                {row?.ghiChuHD}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                                {roleXemDanhSach ? (
+                                    <TableFooter>
+                                        {pageDataHoaDon?.totalCount > 0 ? (
+                                            <TableRow>
+                                                <TableCell colSpan={4}>Tổng cộng</TableCell>
+                                                <TableCell align="right">
+                                                    {new Intl.NumberFormat('vi-VN').format(footerTable_TongThanhToan)}
+                                                </TableCell>
+                                                <TableCell align="right">
+                                                    {new Intl.NumberFormat('vi-VN').format(footerTable_DaThanhToan)}
+                                                </TableCell>
+                                                <TableCell align="right">
+                                                    {new Intl.NumberFormat('vi-VN').format(footerTable_ConNo)}
+                                                </TableCell>
+                                                <TableCell></TableCell>
+                                            </TableRow>
+                                        ) : (
+                                            <TableRow className="table-empty">
+                                                <TableCell colSpan={20} align="center">
+                                                    Không có dữ liệu
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableFooter>
+                                ) : (
+                                    <TableFooter>
+                                        <TableCell colSpan={20} align="center">
+                                            Không có quyền xem danh sách
+                                        </TableCell>
+                                    </TableFooter>
+                                )}
+                            </Table>
+                        </TableContainer>
+                    </Stack>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Grid container>
+                        <Grid item xs={4} md={4} lg={4} sm={4}>
+                            <OptionPage changeNumberOfpage={changeNumberOfpage} />
+                        </Grid>
+                        <Grid item xs={8} md={8} lg={8} sm={8}>
+                            <Stack direction="row" style={{ float: 'right' }}>
+                                <LabelDisplayedRows
+                                    currentPage={paramSearch.currentPage}
+                                    pageSize={paramSearch.pageSize}
+                                    totalCount={pageDataHoaDon.totalCount}
+                                />
+                                <Pagination
+                                    shape="rounded"
+                                    count={pageDataHoaDon.totalPage}
+                                    page={paramSearch.currentPage}
+                                    defaultPage={paramSearch.pageSize}
+                                    onChange={(e, newVal) => handleChangePage(newVal)}
+                                />
+                            </Stack>
                         </Grid>
                     </Grid>
                 </Grid>
             </Grid>
-            <Grid item lg={12} md={12} sm={12} paddingTop={3} width={'100%'}>
-                <Stack className="page-box-right">
-                    <TableContainer className="data-grid-row">
-                        <Table>
-                            <TableHead>
-                                <MyHeaderTable
-                                    showAction={false}
-                                    isCheckAll={isCheckAll}
-                                    sortBy={paramSearch?.columnSort ?? ''}
-                                    sortType={paramSearch?.typeSort ?? 'desc'}
-                                    onRequestSort={onSortTable}
-                                    onSelectAllClick={onClickCheckAll}
-                                    listColumnHeader={listColumnHeader}
-                                />
-                            </TableHead>
-
-                            <TableBody>
-                                {pageDataHoaDon?.items?.map((row, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell align="center" className="td-check-box">
-                                            <Checkbox
-                                                checked={arrIdChosed.includes(row.id)}
-                                                onChange={(event) => onClickCheckOne(event, row.id)}
-                                            />
-                                        </TableCell>
-                                        <TableCell
-                                            sx={{ minWidth: 100, maxWidth: 100 }}
-                                            onClick={() => OpenFormDetail(row)}>
-                                            {row?.maHoaDon}
-                                        </TableCell>
-                                        <TableCell sx={{ maxWidth: 150 }} onClick={() => OpenFormDetail(row)}>
-                                            {format(new Date(row?.ngayLapHoaDon), 'dd/MM/yyyy')}
-                                        </TableCell>
-                                        <TableCell
-                                            className="lableOverflow"
-                                            sx={{ maxWidth: 200 }}
-                                            title={row?.tenKhachHang}
-                                            onClick={() => OpenFormDetail(row)}>
-                                            {row?.tenKhachHang}
-                                        </TableCell>
-                                        <TableCell align="right" onClick={() => OpenFormDetail(row)}>
-                                            {new Intl.NumberFormat('vi-VN').format(row?.tongThanhToan ?? 0)}
-                                        </TableCell>
-                                        <TableCell align="right" onClick={() => OpenFormDetail(row)}>
-                                            {new Intl.NumberFormat('vi-VN').format(row?.daThanhToan ?? 0)}
-                                        </TableCell>
-                                        <TableCell align="right" onClick={() => OpenFormDetail(row)}>
-                                            {new Intl.NumberFormat('vi-VN').format(row?.conNo ?? 0)}
-                                        </TableCell>
-                                        <TableCell
-                                            className="lableOverflow"
-                                            title={row?.ghiChuHD}
-                                            sx={{ minWidth: 150, maxWidth: 200 }}
-                                            onClick={() => OpenFormDetail(row)}>
-                                            {row?.ghiChuHD}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                            {roleXemDanhSach ? (
-                                <TableFooter>
-                                    {pageDataHoaDon?.totalCount > 0 ? (
-                                        <TableRow>
-                                            <TableCell colSpan={4}>Tổng cộng</TableCell>
-                                            <TableCell align="right">
-                                                {new Intl.NumberFormat('vi-VN').format(footerTable_TongThanhToan)}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {new Intl.NumberFormat('vi-VN').format(footerTable_DaThanhToan)}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {new Intl.NumberFormat('vi-VN').format(footerTable_ConNo)}
-                                            </TableCell>
-                                            <TableCell></TableCell>
-                                        </TableRow>
-                                    ) : (
-                                        <TableRow className="table-empty">
-                                            <TableCell colSpan={20} align="center">
-                                                Không có dữ liệu
-                                            </TableCell>
-                                        </TableRow>
-                                    )}
-                                </TableFooter>
-                            ) : (
-                                <TableFooter>
-                                    <TableCell colSpan={20} align="center">
-                                        Không có quyền xem danh sách
-                                    </TableCell>
-                                </TableFooter>
-                            )}
-                        </Table>
-                    </TableContainer>
-                </Stack>
-            </Grid>
-
-            <Grid item xs={12}>
-                <Grid container>
-                    <Grid item xs={4} md={4} lg={4} sm={4}>
-                        <OptionPage changeNumberOfpage={changeNumberOfpage} />
-                    </Grid>
-                    <Grid item xs={8} md={8} lg={8} sm={8}>
-                        <Stack direction="row" style={{ float: 'right' }}>
-                            <LabelDisplayedRows
-                                currentPage={paramSearch.currentPage}
-                                pageSize={paramSearch.pageSize}
-                                totalCount={pageDataHoaDon.totalCount}
-                            />
-                            <Pagination
-                                shape="rounded"
-                                count={pageDataHoaDon.totalPage}
-                                page={paramSearch.currentPage}
-                                defaultPage={paramSearch.pageSize}
-                                onChange={(e, newVal) => handleChangePage(newVal)}
-                            />
-                        </Stack>
-                    </Grid>
-                </Grid>
-            </Grid>
-        </Grid>
+        </>
     );
 }
