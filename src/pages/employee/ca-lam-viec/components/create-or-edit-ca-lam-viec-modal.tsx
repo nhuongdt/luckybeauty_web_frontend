@@ -20,6 +20,7 @@ import { Form, Formik } from 'formik';
 import caLamViecService from '../../../../services/nhan-vien/ca_lam_viec/caLamViecService';
 import { enqueueSnackbar } from 'notistack';
 import AppConsts from '../../../../lib/appconst';
+import DialogButtonClose from '../../../../components/Dialog/ButtonClose';
 interface CreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
@@ -59,25 +60,11 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
         };
         return (
             <Dialog open={visible} onClose={onCancel} maxWidth="md">
+                <DialogButtonClose onClose={onCancel} />
                 <DialogTitle>
-                    <div className="row">
-                        <Box className="col-8" sx={{ float: 'left', fontWeight: '500', fontSize: '24px' }}>
-                            {title}
-                        </Box>
-                        <Box
-                            className="col-4"
-                            sx={{
-                                float: 'right',
-                                '& svg:hover': {
-                                    filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
-                                }
-                            }}>
-                            <CloseIcon
-                                style={{ float: 'right', height: '24px', cursor: 'pointer' }}
-                                onClick={onCancel}
-                            />
-                        </Box>
-                    </div>
+                    <Box className="modal-title" sx={{ float: 'left' }}>
+                        {title}
+                    </Box>
                 </DialogTitle>
                 <DialogContent>
                     <Formik initialValues={initValues} validationSchema={rules} onSubmit={handleSubmit}>
