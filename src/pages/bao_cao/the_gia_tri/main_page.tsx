@@ -204,10 +204,12 @@ export default function MainpageBaoCaoTheGiaTri() {
                                         <ButtonOnlyIcon
                                             icon={
                                                 <FilterAltOutlinedIcon
+                                                    titleAccess="Lọc nâng cao"
+                                                    sx={{ width: 20 }}
                                                     onClick={(event) => setAnchorElFilter(event.currentTarget)}
                                                 />
                                             }
-                                            style={{ width: 40, backgroundColor: 'white' }}
+                                            style={{ width: 50, backgroundColor: 'white' }}
                                         />
                                         <PopoverFilterBaoCaoTGT
                                             anchorEl={anchorElFilter}

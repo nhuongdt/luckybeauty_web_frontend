@@ -52,6 +52,7 @@ import ModalGuiTinNhanZalo from '../../zalo/modal_gui_tin_zalo';
 import ModalGuiTinNhan from '../../sms/components/modal_gui_tin_nhan';
 import { BrandnameDto } from '../../../services/sms/brandname/BrandnameDto';
 import { MauTinSMSDto } from '../../../services/sms/mau_tin_sms/mau_tin_dto';
+import ButtonOnlyIcon from '../../../components/Button/ButtonOnlyIcon';
 
 export default function BaoCaoKhachHangCheckIn() {
     const today = new Date();
@@ -356,15 +357,15 @@ export default function BaoCaoKhachHangCheckIn() {
                                         Xuất
                                     </Button>
 
-                                    <FilterAltOutlinedIcon
-                                        titleAccess="Lọc nâng cao"
-                                        className="btnIcon"
-                                        sx={{
-                                            height: '40px!important',
-                                            padding: '8px!important',
-                                            background: 'white'
-                                        }}
-                                        onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                                    <ButtonOnlyIcon
+                                        icon={
+                                            <FilterAltOutlinedIcon
+                                                titleAccess="Lọc nâng cao"
+                                                sx={{ width: 20 }}
+                                                onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                                            />
+                                        }
+                                        style={{ width: 50, backgroundColor: 'white' }}
                                     />
                                     <PopoverFilterBaoCaoCheckIn
                                         anchorEl={anchorElFilter}

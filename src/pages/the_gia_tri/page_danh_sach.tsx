@@ -593,6 +593,7 @@ export default function PageDanhSachTGT() {
                                         <ButtonOnlyIcon
                                             icon={
                                                 <FilterAltOutlinedIcon
+                                                    sx={{ width: 20 }}
                                                     titleAccess="Lọc nâng cao"
                                                     onClick={(event) => setAnchorElFilter(event.currentTarget)}
                                                 />

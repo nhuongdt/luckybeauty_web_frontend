@@ -180,6 +180,7 @@ export default function MainPageBaoCaoGoiDichVu() {
                                             fullWidth
                                             className="btnNhapXuat"
                                             sx={{
+                                                whiteSpace: 'nowrap',
                                                 display: roleExport ? '' : 'none'
                                             }}
                                             variant="outlined"
@@ -187,7 +188,12 @@ export default function MainPageBaoCaoGoiDichVu() {
                                             onClick={exportExcel}>
                                             Xuất file
                                         </Button>
-                                        <ButtonOnlyIcon icon={<FilterAltOutlinedIcon />} style={{ width: 40 }} />
+                                        <ButtonOnlyIcon
+                                            icon={
+                                                <FilterAltOutlinedIcon sx={{ width: 20 }} titleAccess="Lọc nâng cao" />
+                                            }
+                                            style={{ width: 50 }}
+                                        />
                                     </Stack>
                                 </Stack>
                             </Stack>

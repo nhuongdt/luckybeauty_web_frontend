@@ -40,6 +40,7 @@ import Cookies from 'js-cookie';
 import { TrangThaiHoaDon } from '../../../services/ban_hang/HoaDonConst';
 import suggestStore from '../../../stores/suggestStore';
 import uploadFileService from '../../../services/uploadFileService';
+import ButtonOnlyIcon from '../../../components/Button/ButtonOnlyIcon';
 
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
@@ -568,15 +569,15 @@ const GiaoDichThanhToan: React.FC = () => {
                                 className="btn-outline-hover">
                                 Xuất
                             </Button>
-                            <FilterAltOutlinedIcon
-                                titleAccess="Lọc nâng cao"
-                                className="btnIcon"
-                                sx={{
-                                    height: '40px!important',
-                                    padding: '8px!important',
-                                    background: 'white'
-                                }}
-                                onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                            <ButtonOnlyIcon
+                                icon={
+                                    <FilterAltOutlinedIcon
+                                        titleAccess="Lọc nâng cao"
+                                        sx={{ width: 20 }}
+                                        onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                                    />
+                                }
+                                style={{ width: 40, backgroundColor: 'white' }}
                             />
                             <PopoverFilterHoaDon
                                 anchorEl={anchorElFilter}

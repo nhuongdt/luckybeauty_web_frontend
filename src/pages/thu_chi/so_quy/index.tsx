@@ -55,6 +55,7 @@ import Cookies from 'js-cookie';
 import PopoverFilterSoQuy from './components/PopoverFilterSoQuy';
 import suggestStore from '../../../stores/suggestStore';
 import CreateOrEditSoQuyDialog from './components/CreateOrEditSoQuyDialog';
+import ButtonOnlyIcon from '../../../components/Button/ButtonOnlyIcon';
 
 const PageSoQuy = () => {
     const today = new Date();
@@ -818,15 +819,15 @@ const PageSoQuy = () => {
                                 }}>
                                 Lập phiếu
                             </Button>
-                            <FilterAltOutlinedIcon
-                                titleAccess="Lọc nâng cao"
-                                className="btnIcon"
-                                sx={{
-                                    height: '40px!important',
-                                    padding: '8px!important',
-                                    background: 'white'
-                                }}
-                                onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                            <ButtonOnlyIcon
+                                icon={
+                                    <FilterAltOutlinedIcon
+                                        titleAccess="Lọc nâng cao"
+                                        sx={{ width: 20 }}
+                                        onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                                    />
+                                }
+                                style={{ width: 40, backgroundColor: 'white' }}
                             />
                             <PopoverFilterSoQuy
                                 anchorEl={anchorElFilter}

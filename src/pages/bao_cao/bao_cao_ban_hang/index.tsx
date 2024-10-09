@@ -208,6 +208,7 @@ export default function MainPageBaoCaoBanHang() {
                                             fullWidth
                                             className="btnNhapXuat"
                                             sx={{
+                                                whiteSpace: 'nowrap',
                                                 display:
                                                     tabActive == '1'
                                                         ? role_BaoCaoBanHang_TongHop
@@ -225,10 +226,12 @@ export default function MainPageBaoCaoBanHang() {
                                         <ButtonOnlyIcon
                                             icon={
                                                 <FilterAltOutlinedIcon
+                                                    titleAccess="Lọc nâng cao"
+                                                    sx={{ width: 20 }}
                                                     onClick={(event) => setAnchorElFilter(event.currentTarget)}
                                                 />
                                             }
-                                            style={{ width: 40, backgroundColor: 'white' }}
+                                            style={{ width: 50, backgroundColor: 'white' }}
                                         />
                                         <PopoverFilterBCBanHang
                                             anchorEl={anchorElFilter}

@@ -405,6 +405,7 @@ export default function PageDanhSachGDV() {
                                                 icon={
                                                     <FilterAltOutlinedIcon
                                                         titleAccess="Lọc nâng cao"
+                                                        sx={{ width: 20 }}
                                                         onClick={(event) => setAnchorElFilter(event.currentTarget)}
                                                     />
                                                 }

@@ -18,6 +18,7 @@ import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCusto
 import { format, lastDayOfMonth, startOfDay } from 'date-fns';
 import BaoCaoHoaHongServices from '../../../services/bao_cao/bao_cao_hoa_hong/BaoCaoHoaHongServices';
 import fileDowloadService from '../../../services/file-dowload.service';
+import ButtonOnlyIcon from '../../../components/Button/ButtonOnlyIcon';
 
 export default function MainPageBaoCaoHoaHong() {
     const appContext = useContext(AppContext);
@@ -178,6 +179,7 @@ export default function MainPageBaoCaoHoaHong() {
                                             fullWidth
                                             className="btnNhapXuat"
                                             sx={{
+                                                whiteSpace: 'nowrap',
                                                 display:
                                                     tabActive == LoaiBaoCao.TONG_HOP
                                                         ? abpCustom.isGrandPermission('Pages.BaoCao.HoaHong.TongHop')
@@ -192,13 +194,15 @@ export default function MainPageBaoCaoHoaHong() {
                                             onClick={exportExcel}>
                                             Xuất file
                                         </Button>
-                                        <FilterAltOutlinedIcon
-                                            className="btnIcon"
-                                            sx={{
-                                                height: '40px!important',
-                                                padding: '8px!important',
-                                                background: 'white'
-                                            }}
+                                        <ButtonOnlyIcon
+                                            icon={
+                                                <FilterAltOutlinedIcon
+                                                    titleAccess="Lọc nâng cao"
+                                                    sx={{ width: 20 }}
+                                                    //onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                                                />
+                                            }
+                                            style={{ width: 50, backgroundColor: 'white' }}
                                         />
                                     </Stack>
                                 </Stack>

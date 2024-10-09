@@ -18,6 +18,7 @@ import { BaoCaoTaiChinhDatataFilterContext } from '../../../services/bao_cao/bao
 import BaoCaoTaiChinhChiTietSoQuy from './chi_tiet_so_quy';
 import BaoCaoChiTietCongNo from './chi_tiet_cong_no';
 import BaoCaoTaiChinhService from '../../../services/bao_cao/bao_cao_tai_chinh/BaoCaoTaiChinhService';
+import ButtonOnlyIcon from '../../../components/Button/ButtonOnlyIcon';
 
 export const BaoCaoTaiChinh_TabActive = {
     TONG_QUY: '1',
@@ -183,6 +184,7 @@ export default function MainPageBaoCaoTaiChinh() {
                                             fullWidth
                                             className="btnNhapXuat"
                                             sx={{
+                                                whiteSpace: 'nowrap',
                                                 display:
                                                     tabActive == '1'
                                                         ? abpCustom.isGrandPermission(
@@ -201,13 +203,15 @@ export default function MainPageBaoCaoTaiChinh() {
                                             onClick={exportExcel}>
                                             Xuất file
                                         </Button>
-                                        <FilterAltOutlinedIcon
-                                            className="btnIcon"
-                                            sx={{
-                                                height: '40px!important',
-                                                padding: '8px!important',
-                                                background: 'white'
-                                            }}
+                                        <ButtonOnlyIcon
+                                            icon={
+                                                <FilterAltOutlinedIcon
+                                                    sx={{ width: 20 }}
+                                                    titleAccess="Lọc nâng cao"
+                                                    //onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                                                />
+                                            }
+                                            style={{ width: 50, backgroundColor: 'white' }}
                                         />
                                     </Stack>
                                 </Stack>
