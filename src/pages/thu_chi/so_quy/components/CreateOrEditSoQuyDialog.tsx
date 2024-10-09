@@ -45,11 +45,11 @@ import AutocompleteNhanVien from '../../../../components/Autocomplete/NhanVien';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
 import { PagedNhanSuRequestDto } from '../../../../services/nhan-vien/dto/PagedNhanSuRequestDto';
-import ModalTaiKhoanNganHang from './modal_tai_khoan_ngan_hang';
 import AutocompleteAccountBank from '../../../../components/Autocomplete/AccountBank';
 import suggestStore from '../../../../stores/suggestStore';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
 import abpCustom from '../../../../components/abp-custom';
+import DialogButtonClose from '../../../../components/Dialog/ButtonClose';
 
 interface SoQuyDialogProps {
     visiable: boolean;
@@ -318,32 +318,16 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                 mes={inforDelete.mes}
                 onOk={deleteSoQuy}
                 onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
-            <ModalTaiKhoanNganHang
-                show={isShowModalAccountBank}
-                onClose={() => {
-                    setIsShowModalAccountBank(false);
-                }}
-                onOk={saveOKAccountBank}
-            />
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Dialog open={visiable} fullWidth maxWidth={'sm'} onClose={onClose}>
+                <DialogButtonClose onClose={onClose} />
                 <DialogTitle>
                     <Box className="modal-title" sx={{ float: 'left' }}>
                         {utils.checkNull(idQuyHD) ? 'Thêm mới' : 'Cập nhật'} sổ quỹ
-                    </Box>
-                    <Box
-                        className="col-4"
-                        sx={{
-                            float: 'right',
-                            '& svg:hover': {
-                                filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
-                            }
-                        }}>
-                        <CloseIcon style={{ float: 'right', height: '24px', cursor: 'pointer' }} onClick={onClose} />
                     </Box>
                 </DialogTitle>
                 <DialogContent>
