@@ -18,6 +18,7 @@ import { SuggestNhomHangHoaDto } from './dto/SuggestNhomHangHoaDto';
 import { SuggestLoaiChungTu } from './dto/SuggestLoaiChungTu';
 import { SuggestNganHangDto } from './dto/SuggestNganHangDto';
 import { SuggestTaiKhoanNganHangQrDto } from './dto/SuggestTaiKhoanNganHangQrDTo';
+import utils from '../../utils/utils';
 
 class SuggestService {
     public async SuggestPhongBan(): Promise<SuggestPhongBanDto[]> {
@@ -190,6 +191,7 @@ class SuggestService {
     }
     public async SuggestNhanVienByIdDichVu(idDichVu: string): Promise<SuggestNhanVienDichVuDto[]> {
         try {
+            if (utils.checkNull_OrEmpty(idDichVu)) return [];
             let apiUrl = `api/services/app/Suggest/SuggestNhanVienByIdDichVu?idChiNhanh=${Cookies.get('IdChiNhanh')}`;
 
             apiUrl += `&idDichVu=${idDichVu}`;
