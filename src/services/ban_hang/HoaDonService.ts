@@ -211,6 +211,14 @@ class HoaDonService {
         );
         return response.data.result;
     };
+    CheckData_FileImportTonDauGDV = async (input: FileUpload): Promise<BangBaoLoiFileimportDto[]> => {
+        const response = await http.post('api/services/app/HoaDon/CheckData_FileImportTonDauGDV', input);
+        return response.data.result;
+    };
+    ImportFileTonDauGDV = async (input: FileUpload, idChiNhanh: string): Promise<BangBaoLoiFileimportDto[]> => {
+        const response = await http.post(`api/services/app/HoaDon/ImportFileTonDauGDV?idChiNhanh=${idChiNhanh}`, input);
+        return response.data.result;
+    };
 }
 
 export default new HoaDonService();

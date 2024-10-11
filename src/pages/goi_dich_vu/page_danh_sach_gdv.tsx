@@ -17,6 +17,8 @@ import {
 import { Search } from '@mui/icons-material';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+
 import DateFilterCustom from '../../components/DatetimePicker/DateFilterCustom';
 import { format, lastDayOfMonth } from 'date-fns';
 import { HoaDonRequestDto } from '../../services/dto/ParamSearchDto';
@@ -41,7 +43,6 @@ import { IList } from '../../services/dto/IList';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
-import SoQuyServices from '../../services/so_quy/SoQuyServices';
 import { CreateNhatKyThaoTacDto } from '../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
 import nhatKyHoatDongService from '../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
 import DataMauIn from '../admin/settings/mau_in/DataMauIn';
@@ -49,6 +50,10 @@ import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto
 import { ChiNhanhDto } from '../../services/chi_nhanh/Dto/chiNhanhDto';
 import uploadFileService from '../../services/uploadFileService';
 import MauInServices from '../../services/mau_in/MauInServices';
+import { BangBaoLoiFileimportDto } from '../../services/dto/BangBaoLoiFileimportDto';
+import { FileUpload } from '../../services/dto/FileUpload';
+import ImportExcel from '../../components/ImportComponent/ImportExcel';
+import BangBaoLoiFileImport from '../../components/ImportComponent/BangBaoLoiFileImport';
 
 export default function PageDanhSachGDV() {
     const appContext = useContext(AppContext);
@@ -66,6 +71,8 @@ export default function PageDanhSachGDV() {
     const [isOpenFormDetail, setIsOpenFormDetail] = useState(false);
     const [invoiceChosing, setInvoiceChosing] = useState<PageHoaDonDto | null>(null);
     const roleXemDanhSach = abpCustom.isGrandPermission('Pages.GoiDichVu.XemDanhSach');
+    const [isShowImport, setShowImport] = useState<boolean>(false);
+    const [lstErrImport, setLstErrImport] = useState<BangBaoLoiFileimportDto[]>([]);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [confirmDialog, setConfirmDialog] = useState<PropConfirmOKCancel>({
         show: false,
@@ -305,6 +312,30 @@ export default function PageDanhSachGDV() {
         await nhatKyHoatDongService.createNhatKyThaoTac(diary);
     };
 
+    const onImportShow = () => {
+        setShowImport(!isShowImport);
+        setLstErrImport([]);
+    };
+    const downloadImportTemplate = async () => {
+        const result = await uploadFileService.downloadImportTemplate('FileImport_TonDauGoiDichVu.xlsx');
+        fileDowloadService.downloadExportFile(result);
+    };
+    const handleImportData = async (input: FileUpload) => {
+        const lstErr = await HoaDonService.CheckData_FileImportTonDauGDV(input);
+        if (lstErr?.length > 0) {
+            setLstErrImport([...lstErr]);
+        } else {
+            const data = await HoaDonService.ImportFileTonDauGDV(input, chinhanh.id);
+            if (data?.length > 0) {
+                setLstErrImport([...data]);
+            } else {
+                setObjAlert({ ...objAlert, show: true, mes: 'Import thành công' });
+                await GetListGoiDichVu();
+            }
+        }
+        setShowImport(false);
+    };
+
     const listColumnHeader: IHeaderTable[] = [
         { columnId: 'maHoaDon', columnText: 'Mã hóa đơn' },
         { columnId: 'ngayLapHoaDon', columnText: 'Ngày lập' },
@@ -330,101 +361,133 @@ export default function PageDanhSachGDV() {
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
+            <ImportExcel
+                tieude={'Nhập file tồn đầu gói dịch vụ'}
+                isOpen={isShowImport}
+                onClose={onImportShow}
+                downloadImportTemplate={downloadImportTemplate}
+                importFile={handleImportData}
+            />
+            <BangBaoLoiFileImport
+                isOpen={lstErrImport.length > 0}
+                lstError={lstErrImport}
+                onClose={() => setLstErrImport([])}
+                clickImport={() => console.log(lstErrImport)}
+            />
 
             <Grid container paddingTop={2}>
                 <Grid item lg={12} md={12} sm={12} width={'100%'}>
                     <Grid container>
-                        <Grid item lg={4} md={4} sm={5} xs={12}>
+                        <Grid item lg={12} md={12} sm={12} xs={12}>
                             <span className="page-title"> Danh sách gói dịch vụ</span>
                         </Grid>
-                        <Grid item lg={8} md={8} sm={7} xs={12} display={'flex'} justifyContent={'end'}>
-                            <Grid container justifyContent={'end'} spacing={1} width={'100%'}>
-                                <Grid item lg={7} md={6} sm={12} xs={12}>
-                                    <TextField
-                                        size="small"
-                                        placeholder="Tìm kiếm"
-                                        sx={{ backgroundColor: 'white' }}
-                                        fullWidth
-                                        InputProps={{
-                                            startAdornment: (
-                                                <IconButton type="button" onClick={hanClickIconSearch}>
-                                                    <Search />
-                                                </IconButton>
-                                            )
-                                        }}
-                                        onChange={(event) => {
-                                            setTxtSearch(event.target.value);
-                                        }}
-                                        onKeyDown={(event) => {
-                                            handleKeyDownTextSearch(event);
-                                        }}
-                                    />
-                                </Grid>
-                                <Grid item lg={5} md={6} sm={12} xs={12}>
-                                    <Stack spacing={1} direction={'row'}>
-                                        <Stack flex={3}>
-                                            <TextField
-                                                label="Thời gian"
-                                                size="small"
-                                                fullWidth
-                                                variant="outlined"
-                                                sx={{
-                                                    '& .MuiInputBase-root': {
-                                                        height: '40px!important'
-                                                    },
-                                                    backgroundColor: 'white'
-                                                }}
-                                                onClick={(event) => setAnchorDateEl(event.currentTarget)}
-                                                value={`${format(
-                                                    new Date(paramSearch.fromDate as string),
-                                                    'dd/MM/yyyy'
-                                                )} - ${format(new Date(paramSearch.toDate as string), 'dd/MM/yyyy')}`}
-                                            />
-                                            <DateFilterCustom
-                                                id="popover-date-filter"
-                                                open={openDateFilter}
-                                                anchorEl={anchorDateEl}
-                                                onClose={() => setAnchorDateEl(null)}
-                                                onApplyDate={onApplyFilterDate}
-                                            />
-                                        </Stack>
-                                        <Stack flex={1} spacing={1} direction={'row'}>
+                        <Grid item lg={12} md={12} sm={12} xs={12} marginTop={3}>
+                            <Grid container justifyContent={'space-between'}>
+                                <Grid item lg={5} md={6} sm={7} xs={12}>
+                                    <Stack direction={'row'} spacing={1}>
+                                        {abpCustom.isGrandPermission('Pages.GoiDichVu') && (
                                             <Button
                                                 variant="outlined"
                                                 className="btn-outline-hover"
-                                                onClick={ExportToExcel}
-                                                sx={{
-                                                    display: abpCustom.isGrandPermission('Pages.GoiDichVu.Export')
-                                                        ? ''
-                                                        : 'none'
-                                                }}
-                                                startIcon={<FileUploadIcon />}>
-                                                Xuất
+                                                onClick={onImportShow}
+                                                startIcon={<FileDownloadIcon />}>
+                                                Import tồn đầu
                                             </Button>
-                                            <ButtonOnlyIcon
-                                                icon={
-                                                    <FilterAltOutlinedIcon
-                                                        titleAccess="Lọc nâng cao"
-                                                        sx={{ width: 20 }}
-                                                        onClick={(event) => setAnchorElFilter(event.currentTarget)}
-                                                    />
-                                                }
-                                                style={{
-                                                    width: 40,
-                                                    border: '1px solid #ccc',
-                                                    backgroundColor: 'white'
-                                                }}></ButtonOnlyIcon>
-                                            <PopoverFilterHoaDon
-                                                anchorEl={anchorElFilter}
-                                                paramFilter={paramSearch}
-                                                handleClose={() => setAnchorElFilter(null)}
-                                                handleApply={ApplyFilter}
-                                            />
-                                        </Stack>
+                                        )}
+                                        <Button
+                                            variant="outlined"
+                                            className="btn-outline-hover"
+                                            onClick={ExportToExcel}
+                                            sx={{
+                                                display: abpCustom.isGrandPermission('Pages.GoiDichVu.Export')
+                                                    ? ''
+                                                    : 'none'
+                                            }}
+                                            startIcon={<FileUploadIcon />}>
+                                            Xuất file
+                                        </Button>
                                     </Stack>
+                                </Grid>
+                                <Grid item lg={6} md={6} sm={5} xs={12} display={'flex'} justifyContent={'end'}>
+                                    <Grid container spacing={1}>
+                                        <Grid item lg={8} md={6} sm={12} xs={12}>
+                                            <TextField
+                                                size="small"
+                                                placeholder="Tìm kiếm"
+                                                sx={{ backgroundColor: 'white' }}
+                                                fullWidth
+                                                InputProps={{
+                                                    startAdornment: (
+                                                        <IconButton type="button" onClick={hanClickIconSearch}>
+                                                            <Search />
+                                                        </IconButton>
+                                                    )
+                                                }}
+                                                onChange={(event) => {
+                                                    setTxtSearch(event.target.value);
+                                                }}
+                                                onKeyDown={(event) => {
+                                                    handleKeyDownTextSearch(event);
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item lg={4} md={6} sm={12} xs={12}>
+                                            <Stack spacing={1} direction={'row'}>
+                                                <Stack>
+                                                    <TextField
+                                                        label="Thời gian"
+                                                        size="small"
+                                                        fullWidth
+                                                        variant="outlined"
+                                                        sx={{
+                                                            '& .MuiInputBase-root': {
+                                                                height: '40px!important'
+                                                            },
+                                                            backgroundColor: 'white'
+                                                        }}
+                                                        onClick={(event) => setAnchorDateEl(event.currentTarget)}
+                                                        value={`${format(
+                                                            new Date(paramSearch.fromDate as string),
+                                                            'dd/MM/yyyy'
+                                                        )} - ${format(
+                                                            new Date(paramSearch.toDate as string),
+                                                            'dd/MM/yyyy'
+                                                        )}`}
+                                                    />
+                                                    <DateFilterCustom
+                                                        id="popover-date-filter"
+                                                        open={openDateFilter}
+                                                        anchorEl={anchorDateEl}
+                                                        onClose={() => setAnchorDateEl(null)}
+                                                        onApplyDate={onApplyFilterDate}
+                                                    />
+                                                </Stack>
+                                                <ButtonOnlyIcon
+                                                    icon={
+                                                        <FilterAltOutlinedIcon
+                                                            titleAccess="Lọc nâng cao"
+                                                            sx={{ width: 20 }}
+                                                            onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                                                        />
+                                                    }
+                                                    style={{
+                                                        width: 40,
+                                                        border: '1px solid #ccc',
+                                                        backgroundColor: 'white'
+                                                    }}></ButtonOnlyIcon>
+                                                <PopoverFilterHoaDon
+                                                    anchorEl={anchorElFilter}
+                                                    paramFilter={paramSearch}
+                                                    handleClose={() => setAnchorElFilter(null)}
+                                                    handleApply={ApplyFilter}
+                                                />
+                                            </Stack>
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
                             </Grid>
                         </Grid>
+
                         {arrIdChosed?.length > 0 && (
                             <Grid item lg={12} md={12} sm={12} xs={12}>
                                 <ActionRowSelect
@@ -454,7 +517,7 @@ export default function PageDanhSachGDV() {
                         )}
                     </Grid>
                 </Grid>
-                <Grid item lg={12} md={12} sm={12} paddingTop={3} width={'100%'}>
+                <Grid item lg={12} md={12} sm={12} paddingTop={2} width={'100%'}>
                     <Stack className="page-box-right">
                         <TableContainer className="data-grid-row">
                             <Table>
