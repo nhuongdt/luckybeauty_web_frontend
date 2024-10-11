@@ -9,6 +9,13 @@ import {
     Popover,
     SelectChangeEvent,
     Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableFooter,
+    TableHead,
+    TableRow,
     TextField,
     Typography
 } from '@mui/material';
@@ -20,11 +27,12 @@ import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg'
 import React, { useEffect, useState } from 'react';
 import NhatKyThaoTacItemDto from '../../../services/nhat_ky_hoat_dong/dto/NhatKyThaoTacItemDto';
 import nhatKyHoatDongService from '../../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
-import { format as formatDate, startOfMonth, endOfMonth } from 'date-fns';
+import { format as formatDate, startOfMonth, endOfMonth, format } from 'date-fns';
 import { ReactComponent as FilterIcon } from '../../../images/icons/i-filter.svg';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import htmlParse from 'html-react-parser';
 import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
+import { IHeaderTable, MyHeaderTable } from '../../../components/Table/MyHeaderTable';
 
 const Accordion = styled((props: AccordionProps) => <MuiAccordion disableGutters elevation={0} square {...props} />)(
     ({ theme }) => ({
@@ -110,6 +118,22 @@ const NhatKyHoatDongPage = () => {
         setTimeFrom(new Date(from));
         setTimeTo(new Date(to));
     };
+
+    const onClickRow = (index: number) => {
+        setSelectedRow(index);
+        if (index != selectedRow) {
+            setShowContentRowSelect(true);
+        } else {
+            setShowContentRowSelect(!showContentRowSelect);
+        }
+    };
+    const listColumnHeader: IHeaderTable[] = [
+        { columnId: 'tenNhanVien', columnText: 'Tên nhân viên' },
+        { columnId: 'chucNang', columnText: 'Chức năng' },
+        { columnId: 'thoiGian', columnText: 'Thời gian' },
+        { columnId: 'noiDung', columnText: 'Nội dung' },
+        { columnId: 'chiNhanh', columnText: 'Chi nhánh' }
+    ];
     const openDateSelect = Boolean(anchorDateEl);
     const filterContent = (
         <Box>
@@ -295,89 +319,48 @@ const NhatKyHoatDongPage = () => {
                         </Grid>
                     </Grid>
                     <Box mt={2}>
-                        <table className="table">
-                            <thead>
-                                <tr key="table-nhat-ky">
-                                    <th style={{ color: '#3d475c', fontSize: 14, fontWeight: 600 }}>Tên nhân viên</th>
-                                    <th style={{ color: '#3d475c', fontSize: 14, fontWeight: 600 }}>Chức năng</th>
-                                    <th style={{ color: '#3d475c', fontSize: 14, fontWeight: 600 }}>Thời gian</th>
-                                    <th style={{ color: '#3d475c', fontSize: 14, fontWeight: 600 }}>Nội dung</th>
-                                    <th style={{ color: '#3d475c', fontSize: 14, fontWeight: 600 }}>Chi nhánh</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {nhatKyHoatDongData.map((item, index) => {
-                                    return (
-                                        <>
-                                            <tr
-                                                key={index}
-                                                onClick={() => {
-                                                    setSelectedRow(index);
-                                                    setShowContentRowSelect(!showContentRowSelect);
-                                                }}>
-                                                <td
-                                                    style={{
-                                                        color: '#3d475c',
-                                                        fontSize: 14,
-                                                        fontWeight: 400,
-                                                        fontFamily: 'Roboto'
-                                                    }}>
-                                                    {item.tenNguoiThaoTac}
-                                                </td>
-                                                <td
-                                                    style={{
-                                                        color: '#3d475c',
-                                                        fontSize: 14,
-                                                        fontWeight: 400,
-                                                        fontFamily: 'Roboto'
-                                                    }}>
-                                                    {item.chucNang}
-                                                </td>
-                                                <td
-                                                    style={{
-                                                        color: '#3d475c',
-                                                        fontSize: 14,
-                                                        fontWeight: 400,
-                                                        fontFamily: 'Roboto'
-                                                    }}>
-                                                    {formatDate(new Date(item.creationTime), 'dd/MM/yyyy HH:mm')}
-                                                </td>
-                                                <td
-                                                    style={{
-                                                        color: '#3d475c',
-                                                        fontSize: 14,
-                                                        fontWeight: 400,
-                                                        fontFamily: 'Roboto'
-                                                    }}>
-                                                    {item.noiDung}
-                                                </td>
-                                                <td
-                                                    style={{
-                                                        color: '#3d475c',
-                                                        fontSize: 14,
-                                                        fontWeight: 400,
-                                                        fontFamily: 'Roboto'
-                                                    }}>
-                                                    {item.chiNhanh}
-                                                </td>
-                                            </tr>
-                                            <tr key={item.noiDungChiTiet}>
-                                                {selectedRow !== -1 &&
-                                                    selectedRow === index &&
-                                                    showContentRowSelect && (
-                                                        <td
-                                                            colSpan={4}
-                                                            className="text-start p-3"
-                                                            style={{ background: '#e6e6e6' }}>
-                                                            {htmlParse(item.noiDungChiTiet ?? '')}
-                                                        </td>
-                                                    )}
-                                            </tr>
-                                        </>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
+                        <TableContainer className="data-grid-row">
+                            <Table>
+                                <TableHead>
+                                    <MyHeaderTable
+                                        isShowCheck={false}
+                                        showAction={false}
+                                        isCheckAll={false}
+                                        sortBy={''}
+                                        sortType={'desc'}
+                                        onRequestSort={() => console.log('sort')}
+                                        listColumnHeader={listColumnHeader}
+                                    />
+                                </TableHead>
+                                {nhatKyHoatDongData?.map((row, index) => (
+                                    <TableBody key={index}>
+                                        <TableRow onClick={() => onClickRow(index)}>
+                                            <TableCell sx={{ minWidth: 100, maxWidth: 100 }}>
+                                                {row?.tenNguoiThaoTac}
+                                            </TableCell>
+                                            <TableCell sx={{ minWidth: 100, maxWidth: 150 }}>{row?.chucNang}</TableCell>
+                                            <TableCell sx={{ maxWidth: 150 }}>
+                                                {format(new Date(row?.creationTime), 'dd/MM/yyyy HH:mm')}
+                                            </TableCell>
+                                            <TableCell
+                                                className="lableOverflow"
+                                                sx={{ maxWidth: 200 }}
+                                                title={row?.noiDung}>
+                                                {row?.noiDung}
+                                            </TableCell>
+                                            <TableCell className="lableOverflow">{row?.chiNhanh}</TableCell>
+                                        </TableRow>
+                                        {selectedRow !== -1 && selectedRow === index && showContentRowSelect && (
+                                            <TableRow>
+                                                <TableCell colSpan={7} sx={{ borderLeft: '1px solid #ccc' }}>
+                                                    {htmlParse(row?.noiDungChiTiet ?? '')}
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                ))}
+                            </Table>
+                        </TableContainer>
                         <CustomTablePagination
                             currentPage={skipCount}
                             rowPerPage={maxResultCount}

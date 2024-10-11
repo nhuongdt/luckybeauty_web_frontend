@@ -553,6 +553,7 @@ export default function PageDanhSachTGT() {
                                         <Button
                                             variant="outlined"
                                             color="secondary"
+                                            sx={{ backgroundColor: 'white' }}
                                             startIcon={<CurrencyExchangeIcon />}
                                             onClick={showModalDieuChinhSoDu}>
                                             Điều chỉnh số dư

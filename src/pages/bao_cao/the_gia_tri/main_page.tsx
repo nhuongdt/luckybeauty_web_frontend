@@ -194,6 +194,7 @@ export default function MainpageBaoCaoTheGiaTri() {
                                             fullWidth
                                             className="btnNhapXuat"
                                             sx={{
+                                                whiteSpace: 'nowrap',
                                                 display: roleExport ? '' : 'none'
                                             }}
                                             variant="outlined"
