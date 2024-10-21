@@ -75,6 +75,7 @@ export default function PageDanhSachTGT() {
     const [isOpenFormDetail, setIsOpenFormDetail] = useState(false);
     const [invoiceChosing, setInvoiceChosing] = useState<PageHoaDonDto | null>(null);
     const [isShowImport, setShowImport] = useState<boolean>(false);
+    const [isImporting, setIsImporting] = useState<boolean>(false);
     const [lstErrImport, setLstErrImport] = useState<BangBaoLoiFileimportDto[]>([]);
     const [propModalNapThe, setPropModalNapThe] = useState<IPropModal<PageHoaDonDto>>({
         isShowModal: false
@@ -417,6 +418,7 @@ export default function PageDanhSachTGT() {
 
     const onImportShow = () => {
         setShowImport(!isShowImport);
+        setIsImporting(false);
         setLstErrImport([]);
     };
 
@@ -425,6 +427,7 @@ export default function PageDanhSachTGT() {
         fileDowloadService.downloadExportFile(result);
     };
     const handleImportData = async (input: FileUpload) => {
+        setIsImporting(true);
         const lstErr = await HoaDonService.CheckData_FileImportTonDauTGT(input);
         if (lstErr?.length > 0) {
             setLstErrImport([...lstErr]);
@@ -438,6 +441,7 @@ export default function PageDanhSachTGT() {
             }
         }
         setShowImport(false);
+        setIsImporting(false);
     };
 
     const listColumnHeader: IHeaderTable[] = [
@@ -483,6 +487,7 @@ export default function PageDanhSachTGT() {
                 tieude={'Nhập file tồn đầu thẻ giá trị'}
                 isOpen={isShowImport}
                 onClose={onImportShow}
+                isImporting={isImporting}
                 downloadImportTemplate={downloadImportTemplate}
                 importFile={handleImportData}
             />

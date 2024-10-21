@@ -8,11 +8,10 @@ import {
     Radio,
     Typography,
     Button,
-    IconButton,
-    Box,
     DialogActions,
     TextField,
-    InputAdornment
+    InputAdornment,
+    CircularProgress
 } from '@mui/material';
 import VerticalAlignBottomOutlinedIcon from '@mui/icons-material/VerticalAlignBottomOutlined';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
@@ -21,7 +20,25 @@ import { useEffect, useState } from 'react';
 import { FileUpload } from '../../services/dto/FileUpload';
 import utils from '../../utils/utils';
 
-export default function ImportExcel({ tieude, listOption, isOpen, onClose, downloadImportTemplate, importFile }: any) {
+type PropsImportExcel = {
+    tieude: string;
+    listOption?: any;
+    isOpen: boolean;
+    isImporting?: boolean;
+    onClose: () => void;
+    downloadImportTemplate: () => void;
+    importFile: (fileChosed: FileUpload) => void;
+};
+
+export default function ImportExcel({
+    tieude,
+    listOption,
+    isOpen,
+    isImporting = false,
+    onClose,
+    downloadImportTemplate,
+    importFile
+}: PropsImportExcel) {
     const [error, setError] = useState('');
     const [filePath, setFilePath] = useState('');
     const [fileSelect, setFileSelect] = useState<FileUpload>({} as FileUpload);
@@ -72,6 +89,16 @@ export default function ImportExcel({ tieude, listOption, isOpen, onClose, downl
     return (
         <>
             <Dialog open={isOpen} maxWidth="sm" fullWidth onClose={onClose}>
+                {isImporting && (
+                    <CircularProgress
+                        sx={{
+                            position: 'absolute',
+                            right: '40%',
+                            top: '40%'
+                        }}
+                    />
+                )}
+
                 <DialogTitle className="modal-title">
                     {utils.checkNull(tieude) ? 'Nhập từ file excel' : tieude}
                     <CloseOutlinedIcon
@@ -160,9 +187,13 @@ export default function ImportExcel({ tieude, listOption, isOpen, onClose, downl
                     <Button variant="outlined" onClick={onClose}>
                         Thoát
                     </Button>
-                    <Button variant="contained" onClick={clickImport}>
-                        Import
-                    </Button>
+                    {isImporting ? (
+                        <Button variant="contained">Đang lưu</Button>
+                    ) : (
+                        <Button variant="contained" onClick={clickImport}>
+                            Import
+                        </Button>
+                    )}
                 </DialogActions>
             </Dialog>
         </>

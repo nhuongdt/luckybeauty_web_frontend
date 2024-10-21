@@ -69,6 +69,7 @@ const PageProduct = () => {
     const [triggerModalProduct, setTriggerModalProduct] = useState<PropModal>(new PropModal({ isShow: false }));
     const [triggerModalNhomHang, setTriggerModalNhomHang] = useState<PropModal>(new PropModal({ isShow: false }));
     const [isShowImport, setShowImport] = useState<boolean>(false);
+    const [isImporting, setIsImporting] = useState<boolean>(false);
     const [treeNhomHangHoa, setTreeNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
     const [treeSearchNhomHangHoa, setTreeSearchNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
     const [lstErrImport, setLstErrImport] = useState<BangBaoLoiFileimportDto[]>([]);
@@ -447,9 +448,11 @@ const PageProduct = () => {
     };
     const onImportShow = () => {
         setShowImport(!isShowImport);
+        setIsImporting(false);
         setLstErrImport([]);
     };
     const handleImportData = async (input: FileUpload) => {
+        setIsImporting(true);
         const data = await ProductService.importHangHoa(input);
         setLstErrImport(data);
         if (data.length === 0) {
@@ -466,6 +469,7 @@ const PageProduct = () => {
             }
         }
         setShowImport(false);
+        setIsImporting(false);
         GetListHangHoa();
         GetTreeNhomHangHoa();
     };
@@ -751,6 +755,7 @@ const PageProduct = () => {
             <ImportExcel
                 tieude={'Nhập file dịch vụ'}
                 isOpen={isShowImport}
+                isImporting={isImporting}
                 onClose={onImportShow}
                 downloadImportTemplate={downloadImportTemplate}
                 importFile={handleImportData}

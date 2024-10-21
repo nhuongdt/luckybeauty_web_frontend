@@ -71,6 +71,7 @@ export default function PageDanhSachGDV() {
     const [isOpenFormDetail, setIsOpenFormDetail] = useState(false);
     const [invoiceChosing, setInvoiceChosing] = useState<PageHoaDonDto | null>(null);
     const roleXemDanhSach = abpCustom.isGrandPermission('Pages.GoiDichVu.XemDanhSach');
+    const [isImporting, setIsImporting] = useState<boolean>(false);
     const [isShowImport, setShowImport] = useState<boolean>(false);
     const [lstErrImport, setLstErrImport] = useState<BangBaoLoiFileimportDto[]>([]);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
@@ -314,6 +315,7 @@ export default function PageDanhSachGDV() {
 
     const onImportShow = () => {
         setShowImport(!isShowImport);
+        setIsImporting(false);
         setLstErrImport([]);
     };
     const downloadImportTemplate = async () => {
@@ -321,6 +323,7 @@ export default function PageDanhSachGDV() {
         fileDowloadService.downloadExportFile(result);
     };
     const handleImportData = async (input: FileUpload) => {
+        setIsImporting(true);
         const lstErr = await HoaDonService.CheckData_FileImportTonDauGDV(input);
         if (lstErr?.length > 0) {
             setLstErrImport([...lstErr]);
@@ -333,6 +336,7 @@ export default function PageDanhSachGDV() {
                 await GetListGoiDichVu();
             }
         }
+        setIsImporting(false);
         setShowImport(false);
     };
 
@@ -364,6 +368,7 @@ export default function PageDanhSachGDV() {
             <ImportExcel
                 tieude={'Nhập file tồn đầu gói dịch vụ'}
                 isOpen={isShowImport}
+                isImporting={isImporting}
                 onClose={onImportShow}
                 downloadImportTemplate={downloadImportTemplate}
                 importFile={handleImportData}
