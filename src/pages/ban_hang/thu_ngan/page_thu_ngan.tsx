@@ -1555,7 +1555,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                                             </Stack>
                                                         </Stack>
                                                     </Grid>
-                                                    {/* <Grid item lg={6}></Grid> */}
                                                 </Grid>
                                             </Grid>
                                         </Grid>

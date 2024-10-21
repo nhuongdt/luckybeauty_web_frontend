@@ -25,7 +25,8 @@ export default class HoaDonDto {
 
     ptThueHD? = 0;
     tongTienThue? = 0;
-    tongTienHDSauVAT? = 0; // get
+    tongTienHDSauVAT? = 0;
+    laHoaDonDauKy? = false;
     hoaDonChiTiet?: PageHoaDonChiTietDto[];
 
     constructor({
