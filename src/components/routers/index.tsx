@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import MainAppLayout from '../layouts/MainAppLayout';
 import AnonymousLayout from '../layouts/AnonymousLayout';
 import renderRoutes from './generate-routes';
@@ -24,6 +23,7 @@ import { ReactComponent as AdminActive } from '../../images/admin2.svg';
 import { ReactComponent as MoneyIcon } from '../../images/moneys.svg';
 import { ReactComponent as MoneyActive } from '../../images/moneysActive.svg';
 import SettingRoutes from '../../pages/admin/settings/settingRoutes';
+import { AppFeatures } from '../../enum/Features';
 type RenderRouteProps = {
     layout: React.ElementType;
     name: string;
@@ -39,6 +39,7 @@ export type RouteProps = {
     children: RouteProps[];
     showInMenu: boolean;
     isLayout: boolean;
+    featureName?: string;
     component: any;
 };
 export type AppRouteProps = {
@@ -237,6 +238,7 @@ export const appRouters: AppRouteProps = {
                             children: [],
                             showInMenu: true,
                             isLayout: false,
+                            featureName: AppFeatures.GOI_DICH_VU,
                             component: LoadableComponent(() => import('../../pages/goi_dich_vu/page_danh_sach_gdv'))
                         },
                         {
@@ -249,6 +251,7 @@ export const appRouters: AppRouteProps = {
                             children: [],
                             showInMenu: true,
                             isLayout: false,
+                            featureName: AppFeatures.THE_GIA_TRI,
                             component: LoadableComponent(() => import('../../pages/the_gia_tri/page_danh_sach'))
                         }
                     ],
@@ -525,6 +528,7 @@ export const appRouters: AppRouteProps = {
                             iconActive: null,
                             showInMenu: true,
                             isLayout: false,
+                            featureName: AppFeatures.GOI_DICH_VU,
                             children: [],
                             component: LoadableComponent(
                                 () => import('../../pages/bao_cao/bao_cao_goi_dich_vu/main_page')
@@ -539,6 +543,7 @@ export const appRouters: AppRouteProps = {
                             iconActive: null,
                             showInMenu: true,
                             isLayout: false,
+                            featureName: AppFeatures.THE_GIA_TRI,
                             children: [],
                             component: LoadableComponent(() => import('../../pages/bao_cao/the_gia_tri/main_page'))
                         }
@@ -683,6 +688,7 @@ function flattenRoutes(routes: RouteProps[], flatList: RouteProps[] = []) {
             flattenRoutes(route.children, flatList);
         }
     });
+
     return flatList;
 }
 

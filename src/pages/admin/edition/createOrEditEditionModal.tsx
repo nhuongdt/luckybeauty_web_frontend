@@ -12,6 +12,7 @@ import {
     DialogTitle,
     FormGroup,
     IconButton,
+    Stack,
     Tab,
     TextField,
     Typography
@@ -166,15 +167,14 @@ const CreateOrEditEditionModal = (props: ICreateOrEditUserProps) => {
                                             .filter((x) => x.parentName === null)
                                             .map((item, index) => {
                                                 return (
-                                                    <Box
-                                                        display={'flex'}
-                                                        flexDirection={'row'}
+                                                    <Stack
+                                                        direction={'row'}
                                                         key={index}
-                                                        gap={2}
-                                                        alignItems={'center'}
-                                                        justifyContent={'start'}>
+                                                        spacing={2}
+                                                        alignItems={'center'}>
                                                         {item.inputType.name === 'CHECKBOX' ? (
                                                             <Checkbox
+                                                                sx={{ flex: 1 }}
                                                                 defaultChecked={item.defaultValue === 'true'}
                                                                 checked={
                                                                     values.featureValues.find(
@@ -206,6 +206,7 @@ const CreateOrEditEditionModal = (props: ICreateOrEditUserProps) => {
                                                         ) : null}
                                                         {item.inputType.name === 'SINGLE_LINE_STRING' ? (
                                                             <Checkbox
+                                                                sx={{ flex: 1 }}
                                                                 checked={
                                                                     values.featureValues
                                                                         .map((item) => {
@@ -237,32 +238,41 @@ const CreateOrEditEditionModal = (props: ICreateOrEditUserProps) => {
                                                                 }}
                                                             />
                                                         ) : null}
-                                                        <Typography>{item.displayName}</Typography>
-                                                        {item.inputType.name === 'SINGLE_LINE_STRING' ? (
-                                                            <TextField
-                                                                type={
-                                                                    item.inputType.validator.name === 'NUMERIC'
-                                                                        ? 'number'
-                                                                        : 'text'
-                                                                }
-                                                                size="small"
-                                                                defaultValue={item.defaultValue}
-                                                                value={
-                                                                    values.featureValues.find(
-                                                                        (x) => x.name == item.name
-                                                                    )?.value
-                                                                }
-                                                                onChange={(e) => {
-                                                                    const indexValue = values.featureValues.findIndex(
-                                                                        (x) => x.name == item.name
-                                                                    );
-                                                                    setFieldValue(
-                                                                        `featureValues[${indexValue}].value`,
-                                                                        e.target.value
-                                                                    );
-                                                                }}></TextField>
-                                                        ) : null}
-                                                    </Box>
+                                                        <Stack
+                                                            direction={'row'}
+                                                            alignItems={'center'}
+                                                            spacing={2}
+                                                            sx={{ flex: 11 }}>
+                                                            <Typography variant="body2" sx={{ flex: 2 }}>
+                                                                {item.displayName}
+                                                            </Typography>
+                                                            {item.inputType.name === 'SINGLE_LINE_STRING' ? (
+                                                                <TextField
+                                                                    type={
+                                                                        item.inputType.validator.name === 'NUMERIC'
+                                                                            ? 'number'
+                                                                            : 'text'
+                                                                    }
+                                                                    size="small"
+                                                                    defaultValue={item.defaultValue}
+                                                                    value={
+                                                                        values.featureValues.find(
+                                                                            (x) => x.name == item.name
+                                                                        )?.value
+                                                                    }
+                                                                    onChange={(e) => {
+                                                                        const indexValue =
+                                                                            values.featureValues.findIndex(
+                                                                                (x) => x.name == item.name
+                                                                            );
+                                                                        setFieldValue(
+                                                                            `featureValues[${indexValue}].value`,
+                                                                            e.target.value
+                                                                        );
+                                                                    }}></TextField>
+                                                            ) : null}
+                                                        </Stack>
+                                                    </Stack>
                                                 );
                                             })}
                                     </Box>

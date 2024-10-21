@@ -11,6 +11,7 @@ import { Box } from '@mui/material';
 import { observer } from 'mobx-react';
 import sessionStore from '../../stores/sessionStore';
 import { NavLink } from 'react-router-dom';
+declare var abp: any;
 
 interface Props {
     collapsed: boolean;
@@ -28,6 +29,7 @@ interface MenuItem {
 }
 
 function convertMenuItemsToMenu(menuItems: any[], listPermission: string[]): MenuItem[] {
+    const isHost = abp.auth.isGranted('Pages.Tenants');
     const menu: MenuItem[] = [];
     const routerMenu = menuItems.filter((x) => x.showInMenu === true);
     routerMenu.forEach((item) => {
@@ -48,7 +50,18 @@ function convertMenuItemsToMenu(menuItems: any[], listPermission: string[]): Men
                 type: item.isLayout ? 'group' : undefined,
                 children: item.children.length > 0 ? convertMenuItemsToMenu(item.children, listPermission) : undefined
             };
-            menu.push(menuItem);
+            if (item?.featureName) {
+                if (isHost) {
+                    menu.push(menuItem);
+                } else {
+                    // ẩn/hiện tính năng theo phiên bản (Edition)
+                    if (abp.features.isEnabled(item?.featureName)) {
+                        menu.push(menuItem);
+                    }
+                }
+            } else {
+                menu.push(menuItem);
+            }
         }
     });
     return menu;

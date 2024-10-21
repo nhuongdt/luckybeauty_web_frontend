@@ -16,6 +16,7 @@ import React, { useEffect, useState } from 'react';
 import TabPanel from '../../../components/TabPanel/TabPanel';
 import '../style.css';
 import '../../../App.css';
+declare var abp: any;
 
 import PageThuNgan from './page_thu_ngan';
 import { useNavigate } from 'react-router-dom';
@@ -358,6 +359,8 @@ export const InvoiceWaiting = ({ idChiNhanh, idLoaiChungTu, onChose, isAddNewHD,
     );
 };
 export default function MainPageThuNgan() {
+    const isHost = abp.auth.isGranted('Pages.Tenants');
+    const isShowFeatureGDV = abp.features.isEnabled('GoiDichVu');
     const navigation = useNavigate();
     const [txtSearch, setTextSearch] = useState('');
     const [isShowModalAdd, setIsShowModalAdd] = useState(false);
@@ -545,9 +548,11 @@ export default function MainPageThuNgan() {
                                             label="Gói dịch vụ"
                                             value={LoaiChungTu.GOI_DICH_VU}
                                             sx={{
-                                                display: abpCustom.isGrandPermission('Pages.GoiDichVu.Create')
-                                                    ? ''
-                                                    : 'none'
+                                                display:
+                                                    (isHost || isShowFeatureGDV) &&
+                                                    abpCustom.isGrandPermission('Pages.GoiDichVu.Create')
+                                                        ? ''
+                                                        : 'none'
                                             }}
                                         />
                                     </Tabs>
