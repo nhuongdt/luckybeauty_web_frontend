@@ -92,6 +92,11 @@ body .font-normal {
 .MuiAutocomplete-option {
     font-size: var(--font-size-main) !important;
 }
+.MuiSvgIcon-root:hover{
+    filter: saturate(1.2); /*tăng độ bão hòa của màu --> làm đậm màu hơn so với màu gốc*/
+    cursor: pointer;
+}
+
 
 /* style main button*/
 
