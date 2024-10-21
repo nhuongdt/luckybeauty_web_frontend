@@ -12,6 +12,7 @@ import {
     CircularProgress,
     Chip
 } from '@mui/material';
+import MoreOutlinedIcon from '@mui/icons-material/MoreOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
@@ -72,6 +73,7 @@ import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 import uploadFileService from '../../../services/uploadFileService';
 import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
+import PopoverGiamGiaHD from '../../../components/Popover/GiamGiaHD';
 
 export type IPropsPageThuNgan = {
     txtSearch: string;
@@ -105,6 +107,8 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     const firstLoad_changeIdInvoiceWaiting = useRef(true);
     const [anchorDropdownCustomer, setAnchorDropdownCustomer] = useState<null | HTMLElement>(null);
     const expandSearchCus = Boolean(anchorDropdownCustomer);
+    const [anchorGiamGiaHD, setAnchorGiamGiaHD] = useState<null | HTMLElement | SVGElement>(null);
+    const isShowPopoverGiamGia = Boolean(anchorGiamGiaHD);
 
     const [isLoadingData, setIsLoadingData] = useState(false);
     const [isSavingHoaDon, setIsSavingHoaDon] = useState(false);
@@ -325,6 +329,35 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         return (item?.tienThue ?? 0) * item.soLuong + prevValue;
     }, 0);
 
+    const openPopoverGiamGia = (event: React.MouseEvent<HTMLElement | SVGElement>) => {
+        setAnchorGiamGiaHD(event.currentTarget);
+    };
+
+    const closePopoverGiamGia = () => {
+        setAnchorGiamGiaHD(null);
+    };
+
+    const changeGiamGiaHoaDon = async (ptGiamGia: number, tongGiamGia: number) => {
+        const tongPhaiTra = (hoadon?.tongTienHDSauVAT ?? 0) - tongGiamGia;
+        setSumTienKhachTra(tongPhaiTra);
+
+        setHoaDon({
+            ...hoadon,
+            pTGiamGiaHD: ptGiamGia,
+            tongGiamGiaHD: tongGiamGia,
+            tongThanhToan: tongPhaiTra
+        });
+
+        dbDexie.hoaDon
+            .where('id')
+            .equals(hoadon?.id)
+            .modify((o: PageHoaDonDto) => {
+                o.pTGiamGiaHD = ptGiamGia;
+                o.tongGiamGiaHD = tongGiamGia;
+                o.tongThanhToan = tongPhaiTra;
+            });
+    };
+
     const showModalSuDungGDV = async () => {
         setIsShowModalSuDungGDV(true);
     };
@@ -428,25 +461,33 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         // change cthd --> update hoadon
         const sumThanhTienSauCK = cthd_SumThanhTienTruocCK - cthd_SumTienChietKhau;
         const sumThanhTienSauVAT = sumThanhTienSauCK - cthd_SumTienThue;
-        setSumTienKhachTra(sumThanhTienSauVAT);
+        const ptGiamGiaHD = sumThanhTienSauCK > 0 ? hoadon?.pTGiamGiaHD ?? 0 : 0;
+        const tongGiamHD = sumThanhTienSauCK > 0 ? hoadon?.tongGiamGiaHD ?? 0 : 0;
+        const tongPhaiTra = sumThanhTienSauCK - tongGiamHD;
+
+        setSumTienKhachTra(tongPhaiTra);
         //setTienThuaTraKhach(0);
         setHoaDon({
             ...hoadon,
+            pTGiamGiaHD: ptGiamGiaHD,
+            tongGiamGiaHD: tongGiamHD,
             tongTienHangChuaChietKhau: cthd_SumThanhTienTruocCK,
             tongChietKhauHangHoa: cthd_SumTienChietKhau,
             tongTienHang: sumThanhTienSauCK,
             tongTienHDSauVAT: sumThanhTienSauVAT,
-            tongThanhToan: sumThanhTienSauVAT - (hoadon?.tongGiamGiaHD ?? 0)
+            tongThanhToan: tongPhaiTra
         });
         dbDexie.hoaDon
             .where('id')
             .equals(hoadon?.id)
             .modify((o: PageHoaDonDto) => {
+                o.pTGiamGiaHD = ptGiamGiaHD;
+                o.tongGiamGiaHD = tongGiamHD;
                 o.tongTienHangChuaChietKhau = cthd_SumThanhTienTruocCK;
                 o.tongChietKhauHangHoa = cthd_SumTienChietKhau;
                 o.tongTienHang = sumThanhTienSauCK;
                 o.tongTienHDSauVAT = sumThanhTienSauVAT;
-                o.tongThanhToan = sumThanhTienSauVAT - (hoadon?.tongGiamGiaHD ?? 0);
+                o.tongThanhToan = tongPhaiTra;
             });
     }, [cthd_SumThanhTienTruocCK, cthd_SumTienChietKhau, cthd_SumTienThue]);
 
@@ -1081,7 +1122,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         DataMauIn.hoadon.maHoaDon = mahoadon;
         DataMauIn.hoadon.ngayLapHoaDon = ngayLapHD; // get ngaylapHD from DB (after add hours/minutes/seconds)
         DataMauIn.hoadon.daThanhToan = quyHD?.tongTienThu;
-        DataMauIn.hoadon.conNo = hoadon.tongThanhToan - quyHD?.tongTienThu ?? 0;
+        DataMauIn.hoadon.conNo = hoadon?.tongThanhToan ?? 0 - quyHD?.tongTienThu ?? 0;
         DataMauIn.hoadonChiTiet = hoaDonChiTiet;
         DataMauIn.khachhang = {
             maKhachHang: customerChosed?.maKhachHang,
@@ -1141,6 +1182,15 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 itemHoaDonChiTiet={propNVThucHien.item}
                 onSaveOK={AgreeNVThucHien}
                 onClose={() => setPropNVThucHien({ ...propNVThucHien, isShow: false })}
+            />
+            <PopoverGiamGiaHD
+                tongTienHang={hoadon?.tongTienHang}
+                ptGiamGia={hoadon?.pTGiamGiaHD ?? 0}
+                tongGiamGia={hoadon?.tongGiamGiaHD ?? 0}
+                open={isShowPopoverGiamGia}
+                anchorEl={anchorGiamGiaHD}
+                onClosePopover={closePopoverGiamGia}
+                onUpdateGiamGia={changeGiamGiaHoaDon}
             />
             <Grid container minHeight={'86vh'} maxHeight={'86vh'}>
                 {!isThanhToanTienMat ? (
@@ -1375,6 +1425,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                                     <Stack direction={'row'} spacing={1} alignItems={'center'}>
                                                         <PersonAddOutlinedIcon
                                                             titleAccess="Chọn nhân viên thực hiện"
+                                                            sx={{ cursor: 'pointer' }}
                                                             onClick={() => showPopNhanVienThucHien(cthd)}
                                                         />
                                                         <Typography className="lableOverflow" title={cthd?.tenHangHoa}>
@@ -1525,10 +1576,27 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                             }}>
                             <Stack spacing={2}>
                                 <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
-                                    <Typography sx={{ fontSize: '18px', fontWeight: 500 }}>Tổng thanh toán</Typography>
-                                    <Typography sx={{ fontSize: '18px', fontWeight: 500 }}>
-                                        {Intl.NumberFormat('vi-VN').format(hoadon?.tongTienHang ?? 0)}
-                                    </Typography>
+                                    <Stack direction={'row'} spacing={1} alignItems={'center'}>
+                                        <Typography sx={{ fontSize: '18px', fontWeight: 500 }}>
+                                            Tổng thanh toán
+                                        </Typography>
+                                        <MoreOutlinedIcon
+                                            titleAccess="Nhập giảm giá hóa đơn"
+                                            sx={{ color: 'var(--color-text-secondary)' }}
+                                            onClick={(e) => openPopoverGiamGia(e)}
+                                        />
+
+                                        {(hoadon?.tongGiamGiaHD ?? 0) > 0 && (
+                                            <Typography variant="body2" color={'var(--color-text-secondary)'}>
+                                                - {Intl.NumberFormat('vi-VN').format(hoadon?.tongGiamGiaHD ?? 0)}
+                                            </Typography>
+                                        )}
+                                    </Stack>
+                                    <Stack spacing={1} alignItems={'center'}>
+                                        <Typography sx={{ fontSize: '18px', fontWeight: 500 }}>
+                                            {Intl.NumberFormat('vi-VN').format(hoadon?.tongThanhToan ?? 0)}
+                                        </Typography>
+                                    </Stack>
                                 </Stack>
                                 <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
                                     <Typography fontWeight={500}>Tiền khách đưa</Typography>
