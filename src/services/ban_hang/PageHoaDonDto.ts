@@ -46,7 +46,9 @@ export default class PageHoaDonDto extends HoaDonDto {
         ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS'),
         tongTienHang = 0,
         daThanhToan = 0,
-        tongTienThue = 0
+        tongTienThue = 0,
+        ptGiamGiaHD = 0,
+        tongGiamGiaHD = 0
     }) {
         super({
             id: id,
@@ -56,7 +58,9 @@ export default class PageHoaDonDto extends HoaDonDto {
             maHoaDon: maHoaDon,
             ngayLapHoaDon: ngayLapHoaDon,
             tongTienHang: tongTienHang,
-            tongTienThue: tongTienThue
+            tongTienThue: tongTienThue,
+            pTGiamGiaHD: ptGiamGiaHD,
+            tongGiamGiaHD: tongGiamGiaHD
         });
         this.maKhachHang = maKhachHang;
         this.tenKhachHang = tenKhachHang;
