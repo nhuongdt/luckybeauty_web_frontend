@@ -93,8 +93,8 @@ body .font-normal {
     font-size: var(--font-size-main) !important;
 }
 .MuiSvgIcon-root:hover{
-    filter: saturate(1.2); /*tăng độ bão hòa của màu --> làm đậm màu hơn so với màu gốc*/
-    cursor: pointer;
+    filter: saturate(1.2)!important; /*tăng độ bão hòa của màu --> làm đậm màu hơn so với màu gốc*/
+    cursor: pointer!important;
 }
 
 
