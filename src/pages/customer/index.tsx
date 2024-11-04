@@ -534,11 +534,11 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 )
             },
             {
-                field: 'tenKhachHang',
-                headerName: 'Tên khách hàng',
-                minWidth: 170,
-                maxWidth: 200,
-                flex: 1.5,
+                field: 'maKhachHang',
+                headerName: 'Mã khách',
+                minWidth: 120,
+                maxWidth: 120,
+                flex: 1,
                 renderCell: (params) => (
                     <Box
                         style={{
@@ -553,6 +553,34 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             alt="Avatar"
                             style={{ width: 24, height: 24, marginRight: 8 }}
                         />
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                textOverflow: 'ellipsis',
+                                overflow: 'hidden',
+                                width: '100%'
+                            }}>
+                            {params.value}
+                        </Typography>
+                    </Box>
+                ),
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
+            },
+            {
+                field: 'tenKhachHang',
+                headerName: 'Tên khách hàng',
+                minWidth: 170,
+                maxWidth: 200,
+                flex: 1.5,
+                renderCell: (params) => (
+                    <Box
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+
+                            width: '100%'
+                        }}
+                        title={params.value}>
                         <Typography
                             variant="body2"
                             sx={{
