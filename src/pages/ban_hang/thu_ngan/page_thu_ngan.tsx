@@ -462,8 +462,12 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         const sumThanhTienSauCK = cthd_SumThanhTienTruocCK - cthd_SumTienChietKhau;
         const sumThanhTienSauVAT = sumThanhTienSauCK - cthd_SumTienThue;
         const ptGiamGiaHD = sumThanhTienSauCK > 0 ? hoadon?.pTGiamGiaHD ?? 0 : 0;
-        const tongGiamHD = sumThanhTienSauCK > 0 ? hoadon?.tongGiamGiaHD ?? 0 : 0;
-        const tongPhaiTra = sumThanhTienSauCK - tongGiamHD;
+        let tongGiamHD = sumThanhTienSauCK > 0 ? hoadon?.tongGiamGiaHD ?? 0 : 0;
+
+        if (ptGiamGiaHD > 0) {
+            tongGiamHD = (ptGiamGiaHD * sumThanhTienSauVAT) / 100;
+        }
+        const tongPhaiTra = sumThanhTienSauVAT - tongGiamHD;
 
         setSumTienKhachTra(tongPhaiTra);
         //setTienThuaTraKhach(0);
@@ -1194,7 +1198,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             />
             <Grid container minHeight={'86vh'} maxHeight={'86vh'}>
                 {!isThanhToanTienMat ? (
-                    <Grid item lg={7} md={6} xs={12}>
+                    <Grid item lg={7} md={6} xs={12} zIndex={5}>
                         <PaymentsForm
                             tongPhaiTra={hoadon?.tongThanhToan ?? 0}
                             onClose={() => setIsThanhToanTienMat(true)}
