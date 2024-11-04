@@ -45,6 +45,7 @@ const PaymentsForm: React.FC<ChildComponent> = ({
     const [tienTheGiaTri, setTienTheGiaTri] = useState(0);
     const [soDuTheGiaTri, setSoDuTheGiaTri] = useState(0);
     const [noiDungThu, setNoiDungThu] = useState('');
+    const [qrCode, setQRCode] = useState('');
     const [allBankAccount, setAllBankAccount] = useState<TaiKhoanNganHangDto[]>([]);
 
     const [idTaiKhoanChuyenKhoan, setIdTaiKhoanChuyenKhoan] = useState<string | null>('');
@@ -112,7 +113,31 @@ const PaymentsForm: React.FC<ChildComponent> = ({
         }
     };
 
-    const changeTaiKhoanChuyenKhoan = (item: TaiKhoanNganHangDto) => {
+    const genarateQrCode = async () => {
+        if (!utils.checkNull(idTaiKhoanChuyenKhoan)) {
+            const acc = allBankAccount?.find((x) => x.id === idTaiKhoanChuyenKhoan);
+            if (acc) {
+                const accountBank: TaiKhoanNganHangDto = {
+                    id: idTaiKhoanChuyenKhoan,
+                    soTaiKhoan: acc?.soTaiKhoan,
+                    tenChuThe: acc?.tenChuThe,
+                    maPinNganHang: acc?.maPinNganHang
+                } as TaiKhoanNganHangDto;
+                const qrCode = await TaiKhoanNganHangServices.GetQRCode(accountBank, tienChuyenKhoan);
+                setQRCode(qrCode);
+            } else {
+                setQRCode('');
+            }
+        } else {
+            setQRCode('');
+        }
+    };
+
+    useEffect(() => {
+        genarateQrCode();
+    }, [idTaiKhoanChuyenKhoan, tienChuyenKhoan]);
+
+    const changeTaiKhoanChuyenKhoan = async (item: TaiKhoanNganHangDto) => {
         setIdTaiKhoanChuyenKhoan(item?.id);
         if (utils.checkNull_OrEmpty(item?.id)) {
             setTienChuyenKhoan(0);
@@ -399,47 +424,49 @@ const PaymentsForm: React.FC<ChildComponent> = ({
                 <Grid container justifyContent={'space-between'} padding={2}>
                     <Grid item lg={3} md={3} sm={3} xs={0}></Grid>
                     <Grid item lg={9} md={9} sm={9} xs={12}>
-                        <Grid container>
-                            <Grid item lg={9} md={8} sm={9} xs={9}>
-                                <Typography textAlign={'right'} fontSize={18} fontWeight={500}>
-                                    Tổng khách trả
-                                </Typography>
+                        <Grid container spacing={2}>
+                            <Grid item lg={4} md={5} sm={4} xs={12}>
+                                {qrCode && <img src={qrCode} style={{ width: '100%', height: '100%' }} />}
                             </Grid>
-                            <Grid item lg={3} md={4} sm={3} xs={3}>
-                                <Typography textAlign={'right'} fontSize={18} fontWeight={500}>
-                                    {new Intl.NumberFormat('vi-VN').format(tienKhachDua)}
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid container justifyContent={'space-between'} paddingRight={2}>
-                    <Grid item lg={3} md={3} sm={3} xs={0}></Grid>
-                    <Grid item lg={9} md={9} sm={9} xs={12}>
-                        <Grid container>
-                            <Grid item lg={9} md={8} sm={9} xs={9}>
-                                <Typography textAlign={'right'} fontSize={16} fontWeight={500}>
-                                    {tienKhachThieu >= 0 ? 'Tiền thiếu' : 'Tiền thừa'}
-                                </Typography>
-                            </Grid>
-                            <Grid item lg={3} md={4} sm={3} xs={3}>
-                                <Typography textAlign={'right'} fontSize={16} fontWeight={500}>
-                                    {new Intl.NumberFormat('vi-VN').format(Math.abs(tienKhachThieu))}
-                                </Typography>
+                            <Grid item lg={8} md={7} sm={8} xs={12}>
+                                <Grid container justifyContent={'end'}>
+                                    <Grid item lg={7} md={12} sm={6} xs={12}>
+                                        <Typography textAlign={'right'} fontSize={18} fontWeight={500}>
+                                            Tổng khách trả
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item lg={5} md={12} sm={6} xs={12}>
+                                        <Typography textAlign={'right'} fontSize={18} fontWeight={500}>
+                                            {new Intl.NumberFormat('vi-VN').format(tienKhachDua)}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <Grid container justifyContent={'end'} paddingTop={2}>
+                                    <Grid item lg={7} md={12} sm={6} xs={12}>
+                                        <Typography textAlign={'right'} fontSize={16} fontWeight={500}>
+                                            {tienKhachThieu >= 0 ? 'Tiền thiếu' : 'Tiền thừa'}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item lg={5} md={12} sm={6} xs={12}>
+                                        <Typography textAlign={'right'} fontSize={16} fontWeight={500}>
+                                            {new Intl.NumberFormat('vi-VN').format(Math.abs(tienKhachThieu))}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
             </Grid>
             <Grid item xs={12} marginTop={3}>
-                <Grid container justifyContent={'space-between'}>
-                    <Grid item lg={3} md={2} sm={4} xs={2}></Grid>
-                    <Grid item lg={6} md={8} sm={4} xs={8}>
+                <Grid container>
+                    <Grid item lg={3} md={3} sm={3} xs={2}></Grid>
+                    <Grid item lg={6} md={6} sm={6} xs={8}>
                         {isSaving ? (
                             <Stack
                                 sx={{
                                     backgroundColor: '#1976d2',
-                                    borderRadius: '8px',
+                                    borderRadius: '4px',
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                     color: 'white'
@@ -470,7 +497,7 @@ const PaymentsForm: React.FC<ChildComponent> = ({
                             </Stack>
                         )}
                     </Grid>
-                    <Grid item lg={3} md={2} sm={4} xs={2}></Grid>
+                    <Grid item lg={3} md={3} sm={3} xs={2}></Grid>
                 </Grid>
             </Grid>
         </Grid>
