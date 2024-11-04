@@ -256,9 +256,9 @@
 
 .btn-outline-hover {
     border-color: var(--border-color) !important;
-    transition: '.3s';
+    transition: 0.3s!important;
     color: #525f7a !important;
-    background-color: white;
+    background-color: white!important;
 }
 
 .btn-outline-hover:hover {

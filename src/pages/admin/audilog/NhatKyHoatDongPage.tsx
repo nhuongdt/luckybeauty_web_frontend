@@ -276,10 +276,7 @@ const NhatKyHoatDongPage = () => {
                                 sx={{
                                     textTransform: 'capitalize',
                                     fontWeight: '400',
-                                    color: '#666466',
                                     padding: '10px 16px',
-                                    borderColor: '#E6E1E6',
-                                    bgcolor: '#fff!important',
                                     minWidth: 'fit-content',
                                     display: window.screen.width > 500 ? 'none' : 'inherit'
                                 }}
@@ -320,7 +317,7 @@ const NhatKyHoatDongPage = () => {
                     </Grid>
                     <Box mt={2}>
                         <TableContainer className="data-grid-row">
-                            <Table>
+                            <Table sx={{ backgroundColor: 'white' }}>
                                 <TableHead>
                                     <MyHeaderTable
                                         isShowCheck={false}

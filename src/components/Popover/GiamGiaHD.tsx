@@ -104,6 +104,7 @@ const PopoverGiamGiaHD = ({
                         <NumericFormat
                             size="small"
                             fullWidth
+                            autoFocus
                             value={gtriXX}
                             decimalSeparator=","
                             thousandSeparator="."

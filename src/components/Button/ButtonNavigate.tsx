@@ -18,6 +18,7 @@ export function ButtonNavigate({ navigateTo = '', btnText = '', title = '' }: Bu
         <>
             <Button
                 variant="outlined"
+                className="btn-outline-hover"
                 title={title}
                 sx={{ color: '#525f7a' }}
                 startIcon={<ArrowBackOutlinedIcon />}

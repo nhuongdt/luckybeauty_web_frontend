@@ -384,7 +384,10 @@ export default function PageMauIn() {
                                             variant="outlined"
                                             color="error"
                                             sx={{
-                                                display: abpCustom.isGrandPermission('Pages.MauIn.Delete') ? '' : 'none'
+                                                display: abpCustom.isGrandPermission('Pages.MauIn.Delete')
+                                                    ? ''
+                                                    : 'none',
+                                                backgroundColor: 'white'
                                             }}
                                             onClick={() => {
                                                 setInforObjDelete(

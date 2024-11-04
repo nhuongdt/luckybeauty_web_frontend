@@ -7,7 +7,7 @@ export default function SelectMauIn({ idChosed, data, handleChange }: any) {
     };
     return (
         <>
-            <FormControl fullWidth size="small">
+            <FormControl fullWidth size="small" sx={{ backgroundColor: 'white' }}>
                 <Select labelId="demo-simple-select-label" id="demo-simple-select" value={idChosed} label="Age">
                     {data.map((item: MauInDto, index: number) => (
                         <MenuItem key={index} value={item.id} onClick={() => changeItem(item)}>
