@@ -20,7 +20,7 @@ class LichLamViecStore {
         idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
         idCaLamViec: '',
         tuNgay: formatDate(new Date(), 'yyyy-MM-dd'),
-        denNgay: '',
+        denNgay: formatDate(new Date(), 'yyyy-MM-dd'),
         lapLai: false,
         kieuLapLai: 0,
         giaTriLap: 0,
