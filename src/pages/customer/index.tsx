@@ -63,6 +63,7 @@ import ActionRow2Button from '../../components/DataGrid/ActionRow2Button';
 import { TypeAction } from '../../lib/appconst';
 import ZaloService from '../../services/zalo/ZaloService';
 import ModalGuiTinNhanZalo from '../zalo/modal_gui_tin_zalo';
+import { TypeErrorImport } from '../../enum/TypeErrorImport';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -279,15 +280,22 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         this.getData();
     };
     handleImportData = async (input: FileUpload) => {
-        const result = await khachHangService.importKhachHang(input);
-        this.setState({ lstErrImport: result });
+        const result = await khachHangService.checkData_FileImportKhachHang(input);
         if (result.length === 0) {
-            enqueueSnackbar('Import khách hàng thành công', {
-                variant: 'success',
-                autoHideDuration: 3000
-            });
+            const dataImport = await khachHangService.importKhachHang(input);
+            if (dataImport?.result > 0) {
+                this.setState({ lstErrImport: dataImport });
+            } else {
+                enqueueSnackbar('Import khách hàng thành công', {
+                    variant: 'success',
+                    autoHideDuration: 3000
+                });
+            }
         } else {
-            const errImport = result.filter((x: BangBaoLoiFileimportDto) => x.loaiErr === 2).length;
+            this.setState({ lstErrImport: result });
+            const errImport = result.filter(
+                (x: BangBaoLoiFileimportDto) => x.loaiErr === TypeErrorImport.IMPORT
+            ).length;
             if (errImport > 0) {
                 // import 1 số thành côg, 1 số thất bại
                 enqueueSnackbar(`Import thành công,  ${errImport} thất bại`, {

@@ -95,8 +95,12 @@ class KhachHangService {
         const result = await http.get(`api/services/app/KhachHang/GetKhachHang_noBooking?${param}`);
         return result.data.result;
     }
+    async checkData_FileImportKhachHang(input: FileUpload) {
+        const response = await http.post('api/services/app/KhachHang/CheckData_FileImportKhachHang', input);
+        return response.data.result;
+    }
     async importKhachHang(input: FileUpload) {
-        const response = await http.post('api/services/app/KhachHang/ImportFile_DanhMucKhachHang', input);
+        const response = await http.post('api/services/app/KhachHang/ImportDanhMucKhachHang', input);
         return response.data.result;
     }
     async lichSuGiaoDich(idKhachHang: string, input: PagedRequestDto): Promise<PagedResultDto<LichSuGiaoDich>> {
