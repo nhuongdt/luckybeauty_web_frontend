@@ -74,6 +74,7 @@ import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 import uploadFileService from '../../../services/uploadFileService';
 import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
 import PopoverGiamGiaHD from '../../../components/Popover/GiamGiaHD';
+import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
 
 export type IPropsPageThuNgan = {
     txtSearch: string;
@@ -1048,6 +1049,10 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 }
             });
             if (dataQuyHD != null) {
+                // used to print content in QRCode
+                dataQuyHD?.quyHoaDon_ChiTiet?.map((x: QuyChiTietDto) => {
+                    x.maHoaDonLienQuan = hoadonDB?.maHoaDon;
+                });
                 await InHoaDon(hoadonDB?.maHoaDon, hoadonDB?.ngayLapHoaDon, dataQuyHD);
             }
         }

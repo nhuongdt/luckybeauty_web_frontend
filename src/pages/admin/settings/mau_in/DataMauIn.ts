@@ -10,6 +10,7 @@ import QuyHoaDonDto from '../../../../services/so_quy/QuyHoaDonDto';
 import QuyChiTietDto from '../../../../services/so_quy/QuyChiTietDto';
 import TaiKhoanNganHangServices from '../../../../services/so_quy/TaiKhoanNganHangServices';
 import { TaiKhoanNganHangDto } from '../../../../services/so_quy/Dto/TaiKhoanNganHangDto';
+import { HINH_THUC_THANH_TOAN } from '../../../../lib/appconst';
 
 const dv1 = new PageHoaDonChiTietDto({
     maHangHoa: 'DV01',
@@ -105,7 +106,6 @@ class DataMauIn {
     hoadonChiTiet = [dv1, dv2];
     replaceChiNhanh = (shtml: string) => {
         let data = shtml;
-        console.log('logocuahang ', this.congty.logo);
         data = data.replaceAll('{TenCuaHang}', this.congty.tenCongTy.toUpperCase());
         data = data.replaceAll(
             '{LogoCuaHang}',
@@ -136,11 +136,17 @@ class DataMauIn {
         data = data.replaceAll('{NoiDungThu}', this.phieuthu?.noiDungThu ?? '');
         data = data.replaceAll('{TienBangChu}', utils.DocSo(this.phieuthu.tongTienThu));
         if (this.phieuthu.quyHoaDon_ChiTiet !== undefined && this.phieuthu.quyHoaDon_ChiTiet?.length > 0) {
-            const quyTM = this.phieuthu.quyHoaDon_ChiTiet.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 1);
+            const quyTM = this.phieuthu.quyHoaDon_ChiTiet.filter(
+                (x: QuyChiTietDto) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.TIEN_MAT
+            );
             const tienMat = quyTM.length > 0 ? quyTM[0].tienThu : 0;
-            const quyCK = this.phieuthu.quyHoaDon_ChiTiet.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 2);
+            const quyCK = this.phieuthu.quyHoaDon_ChiTiet.filter(
+                (x: QuyChiTietDto) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN
+            );
             const tienCK = quyCK.length > 0 ? quyCK[0].tienThu : 0;
-            const quyPos = this.phieuthu.quyHoaDon_ChiTiet.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 3);
+            const quyPos = this.phieuthu.quyHoaDon_ChiTiet.filter(
+                (x: QuyChiTietDto) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.QUYET_THE
+            );
             const tienPOS = quyPos.length > 0 ? quyPos[0].tienThu : 0;
 
             data = data.replaceAll('{TienMat}', new Intl.NumberFormat('vi-VN').format(tienMat));
@@ -168,30 +174,40 @@ class DataMauIn {
                 let qrCode = '';
 
                 if (quyCK.length > 0) {
-                    qrCode = await TaiKhoanNganHangServices.GetQRCode(
-                        {
-                            tenChuThe: quyCK[0].tenChuThe,
-                            soTaiKhoan: quyCK[0].soTaiKhoan,
-                            tenNganHang: quyCK[0].tenNganHang,
-                            maPinNganHang: quyCK[0].maPinNganHang
-                        } as TaiKhoanNganHangDto,
-                        tienCK,
-                        this.phieuthu?.tenNguoiNop,
-                        sHoaDonLienQuan
+                    const bankAcc = await TaiKhoanNganHangServices.GetBankAccount_byId(
+                        quyCK[0].idTaiKhoanNganHang ?? ''
                     );
-                } else {
-                    if (quyPos.length > 0) {
+                    if (bankAcc != null) {
                         qrCode = await TaiKhoanNganHangServices.GetQRCode(
                             {
-                                tenChuThe: quyPos[0].tenChuThe,
-                                soTaiKhoan: quyPos[0].soTaiKhoan,
-                                tenNganHang: quyPos[0].tenNganHang,
-                                maPinNganHang: quyPos[0].maPinNganHang
+                                tenChuThe: bankAcc.tenChuThe,
+                                soTaiKhoan: bankAcc.soTaiKhoan,
+                                tenNganHang: bankAcc.tenNganHang,
+                                maPinNganHang: bankAcc.maPinNganHang
                             } as TaiKhoanNganHangDto,
                             tienCK,
                             this.phieuthu?.tenNguoiNop,
                             sHoaDonLienQuan
                         );
+                    }
+                } else {
+                    if (quyPos.length > 0) {
+                        const bankAcc = await TaiKhoanNganHangServices.GetBankAccount_byId(
+                            quyPos[0].idTaiKhoanNganHang ?? ''
+                        );
+                        if (bankAcc != null) {
+                            qrCode = await TaiKhoanNganHangServices.GetQRCode(
+                                {
+                                    tenChuThe: bankAcc.tenChuThe,
+                                    soTaiKhoan: bankAcc.soTaiKhoan,
+                                    tenNganHang: bankAcc.tenNganHang,
+                                    maPinNganHang: bankAcc.maPinNganHang
+                                } as TaiKhoanNganHangDto,
+                                tienPOS,
+                                this.phieuthu?.tenNguoiNop,
+                                sHoaDonLienQuan
+                            );
+                        }
                     }
                 }
                 if (utils.checkNull(qrCode)) {
@@ -264,7 +280,6 @@ class DataMauIn {
     };
     replaceChiTietHoaDon = (shtml: string) => {
         let data = shtml;
-        console.log('replaceChiTietHoaDon ');
         // find table contain cthd
         let cthd_from = data.lastIndexOf('tbody', data.indexOf('{TenHangHoa')) - 1;
         let cthd_to = data.indexOf('tbody', data.indexOf('{TenHangHoa')) + 6;

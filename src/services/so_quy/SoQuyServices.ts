@@ -214,8 +214,10 @@ class SoQuyServices {
                 const dataPT = await this.CreateQuyHoaDon(quyHD);
                 if (dataPT) {
                     quyHD.maHoaDon = dataPT?.maHoaDon;
-                    quyHD.tenNguoiNop = hoadon?.tenKhachHang; // used to print qrCode
+                    quyHD.tenNguoiNop = hoadon?.tenKhachHang;
                     await this.saveDiarySoQuy(hoadon?.maHoaDon, quyHD);
+                    dataPT.tenNguoiNop = hoadon?.tenKhachHang;
+                    dataPT.quyHoaDon_ChiTiet = lstQuyCT_After; // used to print qrCode
                     return dataPT;
                 }
             } else {
