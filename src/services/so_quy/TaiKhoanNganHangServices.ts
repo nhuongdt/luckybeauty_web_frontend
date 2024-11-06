@@ -23,6 +23,16 @@ class TaiKhoanNganHangServices {
         );
         return xx.data.result;
     };
+    GetBankAccount_byId = async (idTaiKhoanNganHang = Guid.EMPTY): Promise<TaiKhoanNganHangDto | null> => {
+        try {
+            const xx = await http.get(
+                `api/services/app/TaiKhoanNganHang/GetBankAccount_byId?idTaiKhoanNganHang=${idTaiKhoanNganHang}`
+            );
+            return xx.data.result;
+        } catch (error) {
+            return null;
+        }
+    };
     CreateOrEditBankAccount = async (params: any) => {
         const xx = await http.post(`api/services/app/TaiKhoanNganHang/CreateOrEdit`, params);
         return xx.data.result;
