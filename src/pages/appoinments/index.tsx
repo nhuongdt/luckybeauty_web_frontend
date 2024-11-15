@@ -10,10 +10,20 @@ import {
     Radio,
     Stack,
     TextField,
-    IconButton
+    IconButton,
+    Table,
+    TableHead,
+    TableBody,
+    TableRow,
+    TableCell,
+    TableFooter,
+    Pagination
 } from '@mui/material';
-import { ReactComponent as AddIcon } from '../../images/add.svg';
+import AddIcon from '@mui/icons-material/Add';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import ClearIcon from '@mui/icons-material/Clear';
+import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import { Search } from '@mui/icons-material';
 import bookingStore from '../../stores/bookingStore';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
@@ -26,8 +36,7 @@ import '../customer/customerPage.css';
 import suggestStore from '../../stores/suggestStore';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import datLichService from '../../services/dat-lich/datLichService';
-import { enqueueSnackbar } from 'notistack';
-import AppConsts from '../../lib/appconst';
+import AppConsts, { TypeAction } from '../../lib/appconst';
 import * as signalR from '@microsoft/signalr';
 import { DateSelectArg, DayHeaderContentArg, EventClickArg, EventContentArg } from '@fullcalendar/core';
 import FullCalendar from '@fullcalendar/react';
@@ -44,9 +53,17 @@ import { QueryBuilder } from '@mui/icons-material';
 import NotificationStore from '../../stores/notificationStore';
 import Stores from '../../stores/storeIdentifier';
 import { FullCalendar_TypeView } from '../../enum/FullCalendar_TypeView';
-import { SuggestNhanSuDto } from '../../services/suggests/dto/SuggestNhanSuDto';
 import ToolbarHeader from './components/Toolbarheader';
-import { IHeaderTable } from '../../components/Table/MyHeaderTable';
+import { IHeaderTable, MyHeaderTable } from '../../components/Table/MyHeaderTable';
+import TrangThaiBooking from '../../enum/TrangThaiBooking';
+import { OptionPage } from '../../components/Pagination/OptionPage';
+import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
+import { BookingGetAllItemDto } from '../../services/dat-lich/dto/BookingGetAllItemDto';
+import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
+import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
+import fileDowloadService from '../../services/file-dowload.service';
+import ButtonOnlyIcon from '../../components/Button/ButtonOnlyIcon';
+import DateFilterCustom from '../../components/DatetimePicker/DateFilterCustom';
 
 enum KieuHienThi {
     DANG_LUOI = 0,
@@ -60,10 +77,15 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
     const toDay = new Date();
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
-    const [kieuHienThi, setKieuHienThi] = useState(KieuHienThi.DANG_LUOI);
+    const cacheKieuHienThi = localStorage.getItem('lichhen_KieuHienThi');
+    const [kieuHienThi, setKieuHienThi] = useState(
+        cacheKieuHienThi != null ? parseInt(cacheKieuHienThi) : KieuHienThi.DANG_LUOI
+    );
     const [txtSearch, setTxtSearch] = useState('');
     const [fromDate, setFromDate] = useState(addDays(startOfWeek(toDay), 1));
     const [toDate, setToDate] = useState(addDays(endOfWeek(toDay), 1));
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
     const [modalVisible, setModalVisible] = useState(false);
     const [initialView, setInitialView] = useState<string>(FullCalendar_TypeView.WEEK);
     const [initialDate, setInitialDate] = useState<Date>(toDay);
@@ -71,8 +93,22 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
     const [idBooking, setIdBooking] = useState<string>('');
     const [connection, setConnection] = useState<signalR.HubConnection>();
     const [notificationConnectionHub, setNotificationConnectionHub] = useState<signalR.HubConnection>();
+    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+    const [confirmDialog, setConfirmDialog] = useState<PropConfirmOKCancel>({
+        show: false,
+        title: '',
+        type: 1,
+        mes: ''
+    });
+
+    const roleXemDanhSach = true;
+    const roleEditLichHen = true;
+    const roleDeleteLichHen = true;
 
     const getData = async () => {
+        console.log('into ');
+        let from: Date = new Date(),
+            to: Date = new Date();
         const lichHenView = Cookies.get('lich-hen-view') ?? FullCalendar_TypeView.WEEK;
         setInitialView(lichHenView);
         const calendarComponent = calendarRef.current;
@@ -81,8 +117,6 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
             const calendarApi = calendarComponent.getApi();
             calendarApi.changeView(lichHenView);
 
-            let from: Date = new Date(),
-                to: Date = new Date();
             switch (lichHenView) {
                 case FullCalendar_TypeView.MONTH:
                     {
@@ -104,11 +138,14 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
             }
             setFromDate(from);
             setToDate(to);
-
-            bookingStore.fromDate = formatDateFns(from, 'yyyy-MM-dd');
-            bookingStore.toDate = formatDateFns(to, 'yyyy-MM-dd');
-            await bookingStore.getData();
+        } else {
+            // hiển thị dạng bảng: mặc định tháng này
+            from = startOfMonth(toDay);
+            to = endOfMonth(toDay);
         }
+        bookingStore.fromDate = formatDateFns(from, 'yyyy-MM-dd');
+        bookingStore.toDate = formatDateFns(to, 'yyyy-MM-dd');
+        await bookingStore.getData();
     };
 
     const suggestData = async () => {
@@ -180,6 +217,7 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
     const changeKieuHienThi = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const newVal = parseInt(e.target.value);
         setKieuHienThi(newVal);
+        localStorage.setItem('lichhen_KieuHienThi', newVal.toString());
     };
 
     const handleKeyDownTextSearch = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -244,15 +282,96 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
         }
     };
 
+    const changeNumberOfpage = (pageSize: number) => {
+        setPageSize(pageSize);
+    };
+
+    const handleChangePage = (value: number) => {
+        setCurrentPage(value);
+    };
+
+    const dataTable_doActionRow = async (typeAction: number, item: BookingGetAllItemDto) => {
+        switch (typeAction) {
+            case TypeAction.UPDATE:
+                {
+                    bookingStore.isShowCreateOrEdit = true;
+                    await bookingStore.getForEditBooking(item.id);
+                }
+                break;
+            case TypeAction.DELETE:
+                {
+                    setIdBooking(item?.id);
+                    setConfirmDialog({
+                        ...confirmDialog,
+                        show: true,
+                        title: 'Xác nhận hủy',
+                        mes: `Bạn có chắc chắn muốn hủy lịch hẹn ${item.tenDichVu} của khách ${item?.tenKhachHang} không?`
+                    });
+                }
+                break;
+        }
+    };
+
+    const huyLichHen = async () => {
+        const deleteReult = await datLichService.HuyLichHen(idBooking);
+        if (deleteReult) {
+            setObjAlert({ show: true, mes: 'Hủy lịch hẹn thành công', type: 1 });
+        }
+        setConfirmDialog({ ...confirmDialog, show: false });
+        bookingStore.listBooking = bookingStore?.listBooking?.map((x) => {
+            if (x.id === idBooking) {
+                return {
+                    ...x,
+                    trangThai: TrangThaiBooking.Cancel
+                };
+            } else {
+                return x;
+            }
+        });
+    };
+
+    const [anchorDateEl, setAnchorDateEl] = useState<HTMLDivElement | null>(null);
+    const openDateFilter = Boolean(anchorDateEl);
+    const [anchorElFilter, setAnchorElFilter] = useState<SVGSVGElement | null>(null);
+
+    const onApplyFilterDate = async (from: string, to: string, txtShow: string) => {
+        setAnchorDateEl(null);
+        // setParamSearch({ ...paramSearch, fromDate: from, toDate: to, currentPage: 1 });
+        // setArrIdChosed([]);
+    };
+
+    const ApplyFilter = (paramFilter: any) => {
+        setAnchorElFilter(null);
+        // setParamSearch({
+        //     ...paramSearch,
+        //     currentPage: 1,
+        //     trangThais: paramFilter?.trangThais,
+        //     trangThaiNos: paramFilter?.trangThaiNos,
+        //     idChiNhanhs: paramFilter?.idChiNhanhs,
+        //     fromDate: paramFilter?.fromDate,
+        //     toDate: paramFilter?.toDate,
+        //     dateType: paramFilter?.dateType
+        // });
+    };
+
+    const ExportToExcel = async () => {
+        // const param = { ...paramSearch };
+        // param.textSearch = txtSearch;
+        // param.currentPage = 1;
+        // param.pageSize = pageDataHoaDon?.totalCount ?? 0;
+        // const data = await HoaDonService.ExportDanhSach_TheGiaTri(param);
+        // fileDowloadService.downloadExportFile(data);
+    };
+
     const listColumnHeader: IHeaderTable[] = [
         { columnId: 'tenKhachHang', columnText: 'Tên khách' },
         { columnId: 'soDienThoai', columnText: 'Số điện thoại' },
-        { columnId: 'tongTienHang', columnText: 'Tổng tiền nạp', align: 'right' },
-        { columnId: 'tongGiamGiaHD', columnText: 'Giảm giá', align: 'right' },
-        { columnId: 'tongThanhToan', columnText: 'Phải thanh toán', align: 'right' },
-        { columnId: 'khachDaTra', columnText: 'Đã thanh toán', align: 'right' },
-        { columnId: 'conNo', columnText: 'Còn nợ', align: 'right' },
-        { columnId: 'ghiChuHD', columnText: 'Ghi chú' }
+        { columnId: 'bookingDate', columnText: 'Ngày hẹn', align: 'center' },
+        { columnId: 'startTime', columnText: 'Giờ hẹn', align: 'center' },
+        { columnId: 'tenDichVu', columnText: 'Dịch vụ hẹn' },
+        { columnId: 'nhanVienThucHien', columnText: 'Nhân viên' },
+        { columnId: 'ghiChu', columnText: 'Ghi chú' },
+        { columnId: 'trangThai', columnText: 'Trạng thái' }
     ];
 
     return (
@@ -261,6 +380,11 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
                 height: '100%',
                 backgroundColor: 'white'
             }}>
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Stack
                 direction={'row'}
                 justifyContent={'space-between'}
@@ -284,37 +408,62 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
                     />
                 </RadioGroup>
             </Stack>
-            <Grid container sx={{ borderBottom: '1px solid #ccc', paddingBottom: 2 }}>
-                <Grid item lg={6}></Grid>
+            <Grid container justifyContent={'space-between'} sx={{ borderBottom: '1px solid #ccc', paddingBottom: 2 }}>
                 <Grid item lg={6}>
+                    <Stack direction={'row'} spacing={1} flex={1}>
+                        <Button
+                            hidden={!abpCustom.isGrandPermission('Pages.Booking.Create')}
+                            startIcon={window.screen.width > 768 ? <AddIcon /> : null}
+                            variant="outlined"
+                            color="secondary"
+                            title="Thêm cuộc hẹn"
+                            onClick={async () => {
+                                bookingStore.createNewBookingDto();
+                                handleCreateUpdateShow('');
+                            }}
+                            sx={{ fontSize: '14px', fontWeight: '400' }}>
+                            {window.screen.width > 767 ? 'Thêm cuộc hẹn' : <AddIcon />}
+                        </Button>
+                        <Button
+                            size="small"
+                            variant="outlined"
+                            sx={{ backgroundColor: 'white', color: 'black' }}
+                            onClick={ExportToExcel}
+                            startIcon={<FileUploadIcon />}>
+                            Xuất file
+                        </Button>
+                    </Stack>
+                </Grid>
+                <Grid item lg={kieuHienThi === KieuHienThi.DANG_LUOI ? 4 : 6}>
                     <Stack direction={'row'} spacing={1}>
-                        <Stack direction={'row'} spacing={1} flex={1}>
-                            <Button
-                                size="small"
-                                fullWidth
-                                hidden={!abpCustom.isGrandPermission('Pages.Booking.Create')}
-                                startIcon={window.screen.width > 768 ? <AddIcon /> : null}
-                                variant="contained"
-                                title="Thêm cuộc hẹn"
-                                onClick={async () => {
-                                    bookingStore.createNewBookingDto();
-                                    handleCreateUpdateShow('');
-                                }}
-                                className="btn-container-hover"
-                                sx={{ bgcolor: 'var(--color-main)', fontSize: '14px', fontWeight: '400' }}>
-                                {window.screen.width > 767 ? 'Thêm cuộc hẹn' : <AddIcon />}
-                            </Button>
-                            {/* <Button
-                                fullWidth
-                                size="small"
-                                variant="outlined"
-                                sx={{ backgroundColor: 'white', color: 'black' }}
-                                //onClick={ExportToExcel}
-                                startIcon={<FileUploadIcon />}>
-                                Xuất file
-                            </Button> */}
-                        </Stack>
-                        <Stack flex={3}>
+                        {kieuHienThi === KieuHienThi.DANG_BANG && (
+                            <Stack flex={1}>
+                                <TextField
+                                    label="Thời gian"
+                                    size="small"
+                                    variant="outlined"
+                                    sx={{
+                                        '& .MuiInputBase-root': {
+                                            height: '40px!important'
+                                        },
+                                        backgroundColor: 'white'
+                                    }}
+                                    onClick={(event) => setAnchorDateEl(event.currentTarget)}
+                                    value={`${formatDateFns(fromDate, 'dd/MM/yyyy')} - ${formatDateFns(
+                                        toDate,
+                                        'dd/MM/yyyy'
+                                    )}`}
+                                />
+                                <DateFilterCustom
+                                    id="popover-date-filter"
+                                    open={openDateFilter}
+                                    anchorEl={anchorDateEl}
+                                    onClose={() => setAnchorDateEl(null)}
+                                    onApplyDate={onApplyFilterDate}
+                                />
+                            </Stack>
+                        )}
+                        <Stack flex={2} direction={'row'} spacing={1}>
                             <TextField
                                 size="small"
                                 placeholder="Tìm kiếm dịch vụ, nhân viên, khách hàng"
@@ -334,70 +483,222 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
                                     handleKeyDownTextSearch(event);
                                 }}
                             />
+                            <ButtonOnlyIcon
+                                icon={
+                                    <FilterAltOutlinedIcon
+                                        sx={{ width: 20 }}
+                                        titleAccess="Lọc nâng cao"
+                                        onClick={(event) => setAnchorElFilter(event.currentTarget)}
+                                    />
+                                }
+                                style={{
+                                    width: 40,
+                                    border: '1px solid #ccc',
+                                    backgroundColor: 'white'
+                                }}></ButtonOnlyIcon>
                         </Stack>
                     </Stack>
                 </Grid>
             </Grid>
 
-            <Box sx={{ marginTop: 3 }}>
-                <ToolbarHeader
-                    defaultFromDate={fromDate}
-                    defaultToDate={toDate}
-                    onChangeDate={handleChangeDate}
-                    onChangeView={handleChangeViewType}
-                />
-                <FullCalendar
-                    ref={calendarRef}
-                    plugins={[
-                        dayGridPlugin,
-                        timeGridPlugin,
-                        interactionPlugin,
-                        listPlugin,
-                        resourceTimelinePlugin,
-                        resourceTimeGridPlugin
-                    ]}
-                    schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
-                    // chỉ get nhân viên được booking
-                    resources={bookingStore?.listNhanVien?.map((item) => ({
-                        title: `${JSON.stringify(item)}`,
-                        id: item.id
-                    }))}
-                    resourceLabelContent={renderResourceLabelContent}
-                    headerToolbar={false}
-                    locale={'vi'}
-                    initialView={initialView}
-                    firstDay={1}
-                    editable={true}
-                    selectable={true}
-                    titleFormat={{
-                        weekday: 'long'
-                    }}
-                    height={748}
-                    initialDate={initialDate}
-                    selectMirror={false}
-                    dayMaxEvents={true}
-                    dayMaxEventRows={4}
-                    slotMinTime={'07:00:00'}
-                    slotMaxTime={'23:00:00'}
-                    allDaySlot={false}
-                    dayHeaderFormat={{
-                        weekday: 'long',
-                        day: initialView === 'timeGridWeek' ? 'numeric' : '2-digit'
-                    }}
-                    slotLabelFormat={{
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        omitZeroMinute: false // Set this to true if you want to omit ":00" for minutes
-                    }}
-                    nowIndicator={true}
-                    events={bookingStore.fullCalendarEvents !== undefined ? bookingStore.fullCalendarEvents : []}
-                    weekends={true}
-                    select={handleDateSelect}
-                    eventContent={renderEventContent} // custom render function
-                    eventClick={handleEventClick}
-                    dayHeaderContent={renderDayHeaderContent}
-                />
-            </Box>
+            {kieuHienThi === KieuHienThi.DANG_BANG ? (
+                <Table>
+                    <TableHead>
+                        <MyHeaderTable
+                            showAction={true}
+                            isCheckAll={false}
+                            isShowCheck={false}
+                            sortBy={''}
+                            sortType={''}
+                            onRequestSort={() => console.log(1)}
+                            listColumnHeader={listColumnHeader}
+                        />
+                    </TableHead>
+                    {roleXemDanhSach ? (
+                        bookingStore?.totalRowLichHen == 0 ? (
+                            <TableFooter>
+                                <TableRow className="table-empty">
+                                    <TableCell colSpan={20} align="center">
+                                        Không có lịch hẹn
+                                    </TableCell>
+                                </TableRow>
+                            </TableFooter>
+                        ) : (
+                            <TableBody>
+                                {bookingStore?.listBooking?.map((row, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell sx={{ minWidth: 200, maxWidth: 200 }}>{row?.tenKhachHang}</TableCell>
+                                        <TableCell sx={{ minWidth: 100, maxWidth: 100 }}>{row?.soDienThoai}</TableCell>
+                                        <TableCell sx={{ maxWidth: 150 }} align="center">
+                                            {row?.bookingDate
+                                                ? formatDateFns(new Date(row?.bookingDate), 'dd/MM/yyyy')
+                                                : ''}
+                                        </TableCell>
+                                        <TableCell sx={{ maxWidth: 200 }} title={row?.tenKhachHang} align="center">
+                                            {row?.startTime}
+                                        </TableCell>
+                                        <TableCell className="lableOverflow">{row?.tenDichVu}</TableCell>
+                                        <TableCell>{row?.nhanVienThucHien}</TableCell>
+                                        <TableCell className="lableOverflow">{row?.ghiChu}</TableCell>
+                                        <TableCell
+                                            className={
+                                                row?.trangThai === TrangThaiBooking.Wait
+                                                    ? 'data-grid-cell-trangthai-active'
+                                                    : row?.trangThai === TrangThaiBooking.Cancel
+                                                    ? 'data-grid-cell-trangthai-notActive'
+                                                    : ''
+                                            }>
+                                            {row?.trangThai === TrangThaiBooking.Confirm
+                                                ? 'Đã xác nhận'
+                                                : row?.trangThai === TrangThaiBooking.Wait
+                                                ? 'Chờ xác nhận'
+                                                : row?.trangThai === TrangThaiBooking.CheckIn
+                                                ? 'Đang checkin'
+                                                : row?.trangThai === TrangThaiBooking.Cancel
+                                                ? 'Đã hủy'
+                                                : 'Hoàn thành'}
+                                        </TableCell>
+                                        <TableCell sx={{ minWidth: 40 }}>
+                                            <Stack spacing={1} direction={'row'}>
+                                                <OpenInNewOutlinedIcon
+                                                    titleAccess="Cập nhật"
+                                                    className="only-icon"
+                                                    sx={{
+                                                        width: '16px',
+                                                        color: '#7e7979',
+                                                        display: roleEditLichHen ? '' : 'none'
+                                                    }}
+                                                    onClick={() => dataTable_doActionRow(TypeAction.UPDATE, row)}
+                                                />
+                                                <ClearIcon
+                                                    titleAccess="Xóa"
+                                                    sx={{
+                                                        ' &:hover': {
+                                                            color: 'red',
+                                                            cursor: 'pointer'
+                                                        },
+                                                        display: roleDeleteLichHen ? '' : 'none'
+                                                    }}
+                                                    style={{ width: '16px', color: 'red' }}
+                                                    onClick={() => dataTable_doActionRow(TypeAction.DELETE, row)}
+                                                />
+                                            </Stack>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        )
+                    ) : (
+                        <TableFooter>
+                            <TableRow className="table-empty">
+                                <TableCell colSpan={20} align="center">
+                                    Không có quyền xem danh sách lịch hẹn
+                                </TableCell>
+                            </TableRow>
+                        </TableFooter>
+                    )}
+                </Table>
+            ) : (
+                <Box sx={{ marginTop: 3 }}>
+                    <ToolbarHeader
+                        defaultFromDate={fromDate}
+                        defaultToDate={toDate}
+                        onChangeDate={handleChangeDate}
+                        onChangeView={handleChangeViewType}
+                    />
+                    <FullCalendar
+                        ref={calendarRef}
+                        plugins={[
+                            dayGridPlugin,
+                            timeGridPlugin,
+                            interactionPlugin,
+                            listPlugin,
+                            resourceTimelinePlugin,
+                            resourceTimeGridPlugin
+                        ]}
+                        schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
+                        // chỉ get nhân viên được booking
+                        resources={
+                            bookingStore?.listNhanVienBooking?.length == 0
+                                ? [
+                                      {
+                                          id: '0',
+                                          title: `${JSON.stringify({
+                                              id: '0',
+                                              tenNhanVien: 'Không có lịch hẹn',
+                                              avatar: '',
+                                              chucVu: ''
+                                          })}`
+                                      }
+                                  ]
+                                : bookingStore?.listNhanVienBooking?.map((item) => ({
+                                      title: `${JSON.stringify(item)}`,
+                                      id: item.id
+                                  }))
+                        }
+                        resourceLabelContent={renderResourceLabelContent}
+                        headerToolbar={false}
+                        locale={'vi'}
+                        initialView={initialView}
+                        firstDay={1}
+                        editable={true}
+                        selectable={true}
+                        titleFormat={{
+                            weekday: 'long'
+                        }}
+                        height={748}
+                        initialDate={initialDate}
+                        selectMirror={false}
+                        dayMaxEvents={true}
+                        dayMaxEventRows={4}
+                        slotMinTime={'07:00:00'}
+                        slotMaxTime={'23:00:00'}
+                        allDaySlot={false}
+                        dayHeaderFormat={{
+                            weekday: 'long',
+                            day: initialView === 'timeGridWeek' ? 'numeric' : '2-digit'
+                        }}
+                        slotLabelFormat={{
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            omitZeroMinute: false // Set this to true if you want to omit ":00" for minutes
+                        }}
+                        nowIndicator={true}
+                        events={bookingStore.fullCalendarEvents !== undefined ? bookingStore.fullCalendarEvents : []}
+                        weekends={true}
+                        select={handleDateSelect}
+                        eventContent={renderEventContent} // custom render function
+                        eventClick={handleEventClick}
+                        dayHeaderContent={renderDayHeaderContent}
+                    />
+                </Box>
+            )}
+            {kieuHienThi === KieuHienThi.DANG_BANG && (
+                <Grid item xs={12} marginTop={3}>
+                    <Grid container>
+                        <Grid item xs={4} md={4} lg={4} sm={4}>
+                            <OptionPage changeNumberOfpage={changeNumberOfpage} />
+                        </Grid>
+                        <Grid item xs={8} md={8} lg={8} sm={8}>
+                            <Stack direction="row" style={{ float: 'right' }}>
+                                <LabelDisplayedRows
+                                    currentPage={currentPage}
+                                    pageSize={pageSize}
+                                    totalCount={bookingStore?.totalRowLichHen}
+                                />
+                                <Pagination
+                                    shape="rounded"
+                                    count={1}
+                                    page={currentPage}
+                                    defaultPage={pageSize}
+                                    onChange={(e, newVal) => handleChangePage(newVal)}
+                                />
+                            </Stack>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            )}
+
             <CreateOrEditLichHenModal
                 visible={bookingStore.isShowCreateOrEdit}
                 onCancel={() => {
@@ -405,31 +706,17 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
                     bookingStore.isShowCreateOrEdit = false;
                 }}
                 onOk={handleSubmit}
-                idLichHen={idBooking}></CreateOrEditLichHenModal>
+                idLichHen={idBooking}
+            />
             <LichhenDetail />
+
             <ConfirmDelete
-                isShow={bookingStore.isShowConfirmDelete}
-                mes="Bạn có chắc chắn muốn hủy lịch hẹn không?"
-                title="Xác nhận hủy"
-                onOk={async () => {
-                    const deleteReult = await datLichService.HuyLichHen(bookingStore.idBooking);
-                    deleteReult === true
-                        ? enqueueSnackbar('Hủy lịch hẹn thành công', {
-                              variant: 'success',
-                              autoHideDuration: 3000
-                          })
-                        : enqueueSnackbar('Có lỗi xảy ra vui lòng thử lại sau!', {
-                              variant: 'error',
-                              autoHideDuration: 3000
-                          });
-                    bookingStore.isShowConfirmDelete = false;
-                    await bookingStore.onShowBookingInfo();
-                    bookingStore.idBooking = AppConsts.guidEmpty;
-                    getData();
-                }}
-                onCancel={() => {
-                    bookingStore.isShowConfirmDelete = false;
-                }}></ConfirmDelete>
+                isShow={confirmDialog.show}
+                title={confirmDialog.title}
+                mes={confirmDialog.mes}
+                onOk={huyLichHen}
+                onCancel={() => setConfirmDialog({ ...confirmDialog, show: false })}
+            />
         </Box>
     );
 };
@@ -448,11 +735,14 @@ function renderResourceLabelContent(args: any) {
             sx={{
                 minHeight: '65px'
             }}>
-            <Box>
+            {lable.id !== '0' && (
                 <Box>
-                    <Avatar src={lable.avatar} alt={lable.tenNhanVien} />
+                    <Box>
+                        <Avatar src={lable.avatar} alt={lable.tenNhanVien} />
+                    </Box>
                 </Box>
-            </Box>
+            )}
+
             <Box
                 marginLeft={'5px'}
                 display={'flex'}

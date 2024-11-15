@@ -15,7 +15,7 @@ export interface IMyTableProps {
     isShowCheck?: boolean;
     showAction: boolean;
     listColumnHeader: IHeaderTable[];
-    onRequestSort: (columnSort: string) => void;
+    onRequestSort?: (columnSort: string) => void;
     onSelectAllClick?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -24,7 +24,9 @@ export function MyHeaderTable(props: IMyTableProps) {
         props;
 
     const createSortHandler = (columnSort: string) => {
-        onRequestSort(columnSort);
+        if (onRequestSort) {
+            onRequestSort(columnSort);
+        }
     };
 
     return (
