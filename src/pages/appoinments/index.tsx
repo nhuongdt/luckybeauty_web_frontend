@@ -1,7 +1,20 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Box, Typography, Button, SelectChangeEvent, Avatar } from '@mui/material';
-import { ReactComponent as SettingIcon } from '../../images/settingIcon.svg';
+import {
+    Box,
+    Typography,
+    Button,
+    Avatar,
+    Grid,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
+    Stack,
+    TextField,
+    IconButton
+} from '@mui/material';
 import { ReactComponent as AddIcon } from '../../images/add.svg';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { Search } from '@mui/icons-material';
 import bookingStore from '../../stores/bookingStore';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import Cookies from 'js-cookie';
@@ -16,15 +29,7 @@ import datLichService from '../../services/dat-lich/datLichService';
 import { enqueueSnackbar } from 'notistack';
 import AppConsts from '../../lib/appconst';
 import * as signalR from '@microsoft/signalr';
-import notificationStore from '../../stores/notificationStore';
-import ToolbarHeader from './components/Toolbarheader';
-import {
-    CustomContentGenerator,
-    DateSelectArg,
-    DayHeaderContentArg,
-    EventClickArg,
-    EventContentArg
-} from '@fullcalendar/core';
+import { DateSelectArg, DayHeaderContentArg, EventClickArg, EventContentArg } from '@fullcalendar/core';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -32,46 +37,80 @@ import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid';
-import { format as formatDateFns, parseISO } from 'date-fns';
+import { addDays, endOfMonth, endOfWeek, format as formatDateFns, parseISO, startOfMonth, startOfWeek } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import './appointment.css';
 import { QueryBuilder } from '@mui/icons-material';
 import NotificationStore from '../../stores/notificationStore';
 import Stores from '../../stores/storeIdentifier';
+import { FullCalendar_TypeView } from '../../enum/FullCalendar_TypeView';
+import { SuggestNhanSuDto } from '../../services/suggests/dto/SuggestNhanSuDto';
+import ToolbarHeader from './components/Toolbarheader';
+import { IHeaderTable } from '../../components/Table/MyHeaderTable';
+
+enum KieuHienThi {
+    DANG_LUOI = 0,
+    DANG_BANG = 1
+}
 interface ILichHenProps {
     notificationStore: NotificationStore;
 }
 const LichHen: React.FC<ILichHenProps> = (props) => {
     const { notificationStore } = props;
+    const toDay = new Date();
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
+    const [kieuHienThi, setKieuHienThi] = useState(KieuHienThi.DANG_LUOI);
+    const [txtSearch, setTxtSearch] = useState('');
+    const [fromDate, setFromDate] = useState(addDays(startOfWeek(toDay), 1));
+    const [toDate, setToDate] = useState(addDays(endOfWeek(toDay), 1));
     const [modalVisible, setModalVisible] = useState(false);
-    const [initialView, setInitialView] = useState<string>('dayGridMonth');
-    const [initialDate, setInitialDate] = useState<Date>(new Date());
+    const [initialView, setInitialView] = useState<string>(FullCalendar_TypeView.WEEK);
+    const [initialDate, setInitialDate] = useState<Date>(toDay);
     const calendarRef = useRef<FullCalendar>(null);
     const [idBooking, setIdBooking] = useState<string>('');
     const [connection, setConnection] = useState<signalR.HubConnection>();
     const [notificationConnectionHub, setNotificationConnectionHub] = useState<signalR.HubConnection>();
+
     const getData = async () => {
-        let calendarView = 'week';
-        const lichHenView = Cookies.get('lich-hen-view') ?? 'timeGridWeek';
+        const lichHenView = Cookies.get('lich-hen-view') ?? FullCalendar_TypeView.WEEK;
         setInitialView(lichHenView);
         const calendarComponent = calendarRef.current;
         if (calendarComponent && calendarComponent.getApi) {
             // Change the view to the new initialView
-            calendarComponent.getApi().changeView(lichHenView);
+            const calendarApi = calendarComponent.getApi();
+            calendarApi.changeView(lichHenView);
+
+            let from: Date = new Date(),
+                to: Date = new Date();
+            switch (lichHenView) {
+                case FullCalendar_TypeView.MONTH:
+                    {
+                        from = startOfMonth(toDay);
+                        to = endOfMonth(toDay);
+                    }
+                    break;
+                case FullCalendar_TypeView.WEEK:
+                    {
+                        from = addDays(startOfWeek(toDay), 1);
+                        to = addDays(endOfWeek(toDay), 1);
+                    }
+                    break;
+                default:
+                    {
+                        from = to = toDay;
+                    }
+                    break;
+            }
+            setFromDate(from);
+            setToDate(to);
+
+            bookingStore.fromDate = formatDateFns(from, 'yyyy-MM-dd');
+            bookingStore.toDate = formatDateFns(to, 'yyyy-MM-dd');
+            await bookingStore.getData();
         }
-        if (lichHenView == 'dayGridMonth') {
-            calendarView = 'month';
-        } else if (lichHenView == 'timeGridWeek') {
-            calendarView = 'week';
-        } else {
-            calendarView = 'day';
-        }
-        bookingStore.selectedDate = formatDateFns(initialDate, 'yyyy-MM-dd');
-        bookingStore.typeView = calendarView;
-        await bookingStore.getData();
     };
+
     const suggestData = async () => {
         await suggestStore.getSuggestKhachHang();
         await suggestStore.getSuggestKyThuatVien();
@@ -81,6 +120,7 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
         getData();
         suggestData();
     }, [chinhanh.id]);
+
     const handleSubmit = async () => {
         await getData();
         setModalVisible(!modalVisible);
@@ -137,60 +177,45 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
         Modal();
     };
 
-    const handleChangeViewType = async (event: SelectChangeEvent<string>) => {
-        setInitialView(event.target.value);
-        const calendarComponent = calendarRef.current;
-        if (calendarComponent && calendarComponent.getApi) {
-            // Change the view to the new initialView
-            calendarComponent.getApi().changeView(event.target.value);
-        }
-        let newValue = event.target.value as string;
-        if (newValue == 'dayGridMonth') {
-            newValue = 'month';
-        } else if (newValue == 'timeGridWeek') {
-            newValue = 'week';
-        } else {
-            newValue = 'day';
-        }
-        Cookies.set('lich-hen-view', event.target.value);
-        await bookingStore.onChangeTypeView(newValue);
+    const changeKieuHienThi = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newVal = parseInt(e.target.value);
+        setKieuHienThi(newVal);
     };
-    const toDayClick = async () => {
-        const newDate = new Date();
-        setInitialDate(newDate);
-        const calendarComponent = calendarRef.current;
-        if (calendarComponent && calendarComponent.getApi) {
-            // Change the view to the new initialView
-            calendarComponent.getApi().today();
-            const time = calendarComponent.getApi().getDate();
-            setInitialDate(time);
-            await bookingStore.onChangeDate(formatDateFns(time, 'yyyy-MM-dd'));
-        }
-    };
-    const handlePrevious = async () => {
-        const calendarComponent = calendarRef.current;
-        if (calendarComponent && calendarComponent.getApi) {
-            // Change the view to the new initialView
-            calendarComponent.getApi().prev();
-            const time = calendarComponent.getApi().getDate();
-            setInitialDate(time);
-            await bookingStore.onChangeDate(formatDateFns(time, 'yyyy-MM-dd'));
-            console.log(time);
-            bookingStore.selectedDate = formatDateFns(time, 'yyyy-MM-dd');
-        }
-    };
-    const handleNext = async () => {
-        const calendarComponent = calendarRef.current;
-        if (calendarComponent && calendarComponent.getApi) {
-            // Change the view to the new initialView
-            calendarComponent.getApi().next();
-            const time = calendarComponent.getApi().getDate();
 
-            setInitialDate(time);
-            await bookingStore.onChangeDate(formatDateFns(time, 'yyyy-MM-dd'));
-            bookingStore.selectedDate = formatDateFns(time, 'yyyy-MM-dd');
+    const handleKeyDownTextSearch = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Enter') {
+            hanClickIconSearch();
         }
     };
+    const hanClickIconSearch = async () => {
+        bookingStore.textSearch = txtSearch;
+        await bookingStore.getData();
+    };
+
+    const handleChangeDate = async (fromDate: Date, toDate: Date) => {
+        const calendarComponent = calendarRef.current;
+        if (calendarComponent && calendarComponent.getApi) {
+            const calendarApi = calendarComponent.getApi();
+            calendarApi.gotoDate(fromDate);
+            calendarApi.gotoDate(toDate);
+            setFromDate(fromDate);
+            setToDate(toDate);
+            bookingStore.fromDate = formatDateFns(fromDate, 'yyyy-MM-dd');
+            bookingStore.toDate = formatDateFns(toDate, 'yyyy-MM-dd');
+            await bookingStore.getData();
+        }
+    };
+
+    const handleChangeViewType = async (type: FullCalendar_TypeView) => {
+        setInitialView(type);
+        const calendarComponent = calendarRef.current;
+        if (calendarComponent && calendarComponent.getApi) {
+            const calendarApi = calendarComponent.getApi();
+            calendarApi.changeView(type);
+        }
+        Cookies.set('lich-hen-view', type);
+    };
+
     const handleDateSelect = async (selectInfo: DateSelectArg) => {
         const calendarApi = selectInfo.view.calendar;
         const isoStartDate = selectInfo.startStr;
@@ -218,79 +243,108 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
             await bookingStore.onShowBookingInfo();
         }
     };
+
+    const listColumnHeader: IHeaderTable[] = [
+        { columnId: 'tenKhachHang', columnText: 'Tên khách' },
+        { columnId: 'soDienThoai', columnText: 'Số điện thoại' },
+        { columnId: 'tongTienHang', columnText: 'Tổng tiền nạp', align: 'right' },
+        { columnId: 'tongGiamGiaHD', columnText: 'Giảm giá', align: 'right' },
+        { columnId: 'tongThanhToan', columnText: 'Phải thanh toán', align: 'right' },
+        { columnId: 'khachDaTra', columnText: 'Đã thanh toán', align: 'right' },
+        { columnId: 'conNo', columnText: 'Còn nợ', align: 'right' },
+        { columnId: 'ghiChuHD', columnText: 'Ghi chú' }
+    ];
+
     return (
         <Box
             sx={{
-                padding: '16px 8px',
-                height: '100%'
+                height: '100%',
+                backgroundColor: 'white'
             }}>
-            <Box
+            <Stack
+                direction={'row'}
+                justifyContent={'space-between'}
+                alignItems={'center'}
                 sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    borderBottom: '1px solid #E6E1E6',
                     paddingBottom: '1.5277777777777777vw'
                 }}>
-                <Typography
-                    marginTop="4px"
-                    //color="#0C050A"
-                    fontSize="16px"
-                    fontWeight="700">
+                <Typography fontSize="16px" fontWeight="700">
                     Lịch hẹn
                 </Typography>
-                <Box
-                    sx={{
-                        '& button': {
-                            minWidth: 'unset'
-                        },
-                        display: 'flex',
-                        gap: '8px'
-                    }}>
-                    <Button
-                        variant="outlined"
-                        className="btn-outline-hover"
-                        sx={{ bgcolor: '#fff!important', paddingX: '8px' }}>
-                        <SettingIcon />
-                    </Button>
-                    {/* <Button
-                        startIcon={<AddIcon />}
-                        variant="outlined"
-                        className="btn-outline-hover"
-                        sx={{
-                            bgcolor: '#fff!important',
-                            fontSize: '14px',
-                            fontWeight: '400',
-                            color: '#666466',
-                            '& svg': {
-                                filter: ' brightness(0) saturate(100%) invert(39%) sepia(6%) saturate(131%) hue-rotate(251deg) brightness(95%) contrast(85%)'
-                            }
-                        }}>
-                        Thêm thời gian chặn
-                    </Button> */}
-                    <Button
-                        hidden={!abpCustom.isGrandPermission('Pages.Booking.Create')}
-                        startIcon={window.screen.width > 768 ? <AddIcon /> : null}
-                        variant="contained"
-                        title="Thêm cuộc hẹn"
-                        onClick={async () => {
-                            bookingStore.createNewBookingDto();
-                            handleCreateUpdateShow('');
-                        }}
-                        className="btn-container-hover"
-                        sx={{ bgcolor: 'var(--color-main)', fontSize: '14px', fontWeight: '400' }}>
-                        {window.screen.width > 767 ? 'Thêm cuộc hẹn' : <AddIcon />}
-                    </Button>
-                </Box>
-            </Box>
-            <Box>
+                <RadioGroup row value={kieuHienThi} onChange={changeKieuHienThi}>
+                    <FormControlLabel
+                        value={KieuHienThi.DANG_LUOI}
+                        label="Dạng lưới"
+                        control={<Radio size="small" />}
+                    />
+                    <FormControlLabel
+                        value={KieuHienThi.DANG_BANG}
+                        label="Dạng bảng"
+                        control={<Radio size="small" />}
+                    />
+                </RadioGroup>
+            </Stack>
+            <Grid container sx={{ borderBottom: '1px solid #ccc', paddingBottom: 2 }}>
+                <Grid item lg={6}></Grid>
+                <Grid item lg={6}>
+                    <Stack direction={'row'} spacing={1}>
+                        <Stack direction={'row'} spacing={1} flex={1}>
+                            <Button
+                                size="small"
+                                fullWidth
+                                hidden={!abpCustom.isGrandPermission('Pages.Booking.Create')}
+                                startIcon={window.screen.width > 768 ? <AddIcon /> : null}
+                                variant="contained"
+                                title="Thêm cuộc hẹn"
+                                onClick={async () => {
+                                    bookingStore.createNewBookingDto();
+                                    handleCreateUpdateShow('');
+                                }}
+                                className="btn-container-hover"
+                                sx={{ bgcolor: 'var(--color-main)', fontSize: '14px', fontWeight: '400' }}>
+                                {window.screen.width > 767 ? 'Thêm cuộc hẹn' : <AddIcon />}
+                            </Button>
+                            {/* <Button
+                                fullWidth
+                                size="small"
+                                variant="outlined"
+                                sx={{ backgroundColor: 'white', color: 'black' }}
+                                //onClick={ExportToExcel}
+                                startIcon={<FileUploadIcon />}>
+                                Xuất file
+                            </Button> */}
+                        </Stack>
+                        <Stack flex={3}>
+                            <TextField
+                                size="small"
+                                placeholder="Tìm kiếm dịch vụ, nhân viên, khách hàng"
+                                fullWidth
+                                sx={{ backgroundColor: 'white' }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <IconButton type="button" onClick={hanClickIconSearch}>
+                                            <Search />
+                                        </IconButton>
+                                    )
+                                }}
+                                onChange={(event) => {
+                                    setTxtSearch(event.target.value);
+                                }}
+                                onKeyDown={(event) => {
+                                    handleKeyDownTextSearch(event);
+                                }}
+                            />
+                        </Stack>
+                    </Stack>
+                </Grid>
+            </Grid>
+
+            <Box sx={{ marginTop: 3 }}>
                 <ToolbarHeader
-                    initialView={initialView}
-                    initialDate={initialDate}
-                    handleChangeViewType={handleChangeViewType}
-                    toDayClick={toDayClick}
-                    handlePrevious={handlePrevious}
-                    handleNext={handleNext}
+                    defaultFromDate={fromDate}
+                    defaultToDate={toDate}
+                    onChangeDate={handleChangeDate}
+                    onChangeView={handleChangeViewType}
                 />
                 <FullCalendar
                     ref={calendarRef}
@@ -303,21 +357,11 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
                         resourceTimeGridPlugin
                     ]}
                     schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
-                    resources={
-                        bookingStore.idNhanVien !== undefined && bookingStore.idNhanVien !== ''
-                            ? suggestStore.suggestKyThuatVien
-                                  ?.filter((nhanVien) => nhanVien.id === bookingStore.idNhanVien)
-                                  .map((item) => {
-                                      return {
-                                          id: item.id,
-                                          title: `${JSON.stringify(item)}`
-                                      };
-                                  }) ?? []
-                            : suggestStore.suggestKyThuatVien?.map((nhanVien) => ({
-                                  title: `${JSON.stringify(nhanVien)}`,
-                                  id: nhanVien.id
-                              })) ?? []
-                    }
+                    // chỉ get nhân viên được booking
+                    resources={bookingStore?.listNhanVien?.map((item) => ({
+                        title: `${JSON.stringify(item)}`,
+                        id: item.id
+                    }))}
                     resourceLabelContent={renderResourceLabelContent}
                     headerToolbar={false}
                     locale={'vi'}
@@ -394,6 +438,7 @@ export default inject(Stores.NotificationStore)(observer(LichHen));
 //lable header theo ngày của từng nhân viên
 function renderResourceLabelContent(args: any) {
     const lable = JSON.parse(args.resource.title);
+
     return (
         <Box
             display={'flex'}
