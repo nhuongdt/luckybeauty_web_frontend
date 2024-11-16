@@ -1,15 +1,16 @@
 import http from '../httpService';
-import { BookingDto } from './dto/BookingDto';
 import { BookingDetail_ofCustomerDto, BookingGetAllItemDto } from './dto/BookingGetAllItemDto';
 import { CreateBookingDto } from './dto/CreateBookingDto';
 import qs from 'qs';
-import { BookingRequestDto, PagedBookingResultRequestDto } from './dto/PagedBookingResultRequestDto';
+import { BookingRequestDto } from './dto/PagedBookingResultRequestDto';
 import utils from '../../utils/utils';
 import { Guid } from 'guid-typescript';
 import { BookingInfoDto } from './dto/BookingInfoDto';
 import { PagedResultDto } from '../dto/pagedResultDto';
+import { RequestFromToDto } from '../dto/ParamSearchDto';
+import { IFileDto } from '../dto/FileDto';
 class BookingServices {
-    public async getAllBooking(input: PagedBookingResultRequestDto): Promise<BookingGetAllItemDto[]> {
+    public async getAllBooking(input: RequestFromToDto): Promise<PagedResultDto<BookingGetAllItemDto>> {
         const result = await http.get('api/services/app/Booking/GetAll', { params: input });
         return result.data.result;
     }
@@ -55,6 +56,11 @@ class BookingServices {
     HuyLichHen = async (idBooking: string) => {
         // # xóalichhen: chỉ update trangthai
         const result = await http.post(`api/services/app/Booking/CancelBooking?id=${idBooking}`);
+        return result.data.result;
+    };
+
+    ExportExcel_LichHen = async (input: RequestFromToDto): Promise<IFileDto> => {
+        const result = await http.post('api/services/app/Booking/ExportExcel_LichHen', input);
         return result.data.result;
     };
 }
