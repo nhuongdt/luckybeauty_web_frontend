@@ -6,17 +6,26 @@ import { BookingInfoDto } from '../services/dat-lich/dto/BookingInfoDto';
 import AppConsts from '../lib/appconst';
 import { CreateBookingDto } from '../services/dat-lich/dto/CreateBookingDto';
 import { FullCalendarEvent } from '../services/dat-lich/dto/FullCalendarEvent';
-import { format as formatDate, parse } from 'date-fns';
+import { addDays, endOfWeek, format as formatDate, startOfWeek } from 'date-fns';
 import suggestStore from './suggestStore';
 import utils from '../utils/utils';
-import { Guid } from 'guid-typescript';
 import PageHoaDonChiTietDto from '../services/ban_hang/PageHoaDonChiTietDto';
 import { dbDexie } from '../lib/dexie/dexieDB';
 import PageHoaDonDto from '../services/ban_hang/PageHoaDonDto';
+import { SuggestNhanSuDto } from '../services/suggests/dto/SuggestNhanSuDto';
+import TrangThaiBooking from '../enum/TrangThaiBooking';
 
 class BookingStore {
     selectedDate: string = new Date().toString();
+    fromDate: string = formatDate(addDays(startOfWeek(new Date()), 1), 'yyyy-MM-dd');
+    toDate: string = formatDate(addDays(endOfWeek(new Date()), 1), 'yyyy-MM-dd');
+    textSearch!: string;
+    currentPage = 1;
+    pageSize = 10;
+    trangThaiBooks: number[] = [TrangThaiBooking.Wait, TrangThaiBooking.Confirm];
     listBooking!: BookingGetAllItemDto[];
+    totalRowLichHen!: number;
+    listNhanVienBooking: SuggestNhanSuDto[] = [];
     fullCalendarEvents!: FullCalendarEvent[];
     typeView!: string;
     idNhanVien!: string;
@@ -117,14 +126,33 @@ class BookingStore {
     }
     async getData() {
         const result = await datLichService.getAllBooking({
-            dateSelected: this.selectedDate,
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
-            typeView: this.typeView ?? 'week',
-            idNhanVien: this.idNhanVien,
-            idDichVu: this.idService
+            idChiNhanhs: [Cookies.get('IdChiNhanh') ?? ''],
+            fromDate: this.fromDate,
+            toDate: this.toDate,
+            textSearch: this.textSearch,
+            currentPage: this.currentPage,
+            pageSize: this.pageSize,
+            trangThais: this.trangThaiBooks
         });
-        this.listBooking = result;
-        this.fullCalendarEvents = result.map((item) => {
+        this.listBooking = result?.items;
+        this.totalRowLichHen = result?.totalCount ?? 0;
+        const arrIdNhanVien: string[] = [];
+        this.listNhanVienBooking = [];
+        for (let index = 0; index < result?.items?.length; index++) {
+            const element = result?.items[index];
+            if (!arrIdNhanVien.includes(element.idNhanVien)) {
+                const newNV: SuggestNhanSuDto = {
+                    id: element?.idNhanVien,
+                    tenNhanVien: element?.nhanVienThucHien,
+                    soDienThoai: '',
+                    avatar: element?.avatar,
+                    chucVu: element?.tenChucVu
+                };
+                this.listNhanVienBooking.push(newNV);
+            }
+        }
+
+        this.fullCalendarEvents = result?.items?.map((item) => {
             const [hoursStart, minutesStart] = item.startTime.split(':').map(Number);
             const [hoursEnd, minutesEnd] = item.endTime.split(':').map(Number);
             const bookingDateTime = new Date(item.bookingDate);
@@ -132,14 +160,14 @@ class BookingStore {
             const endTime = bookingDateTime.setHours(hoursEnd, minutesEnd);
             const event: FullCalendarEvent = {
                 id: item.id,
-                title: item.services,
+                title: item.tenDichVu,
                 start: new Date(startTime),
                 end: new Date(endTime),
                 backgroundColor: item.color + '1a',
                 textColor: item.color,
                 borderColor: item.color + '1a',
-                display: item.customer,
-                resourceId: item.sourceId,
+                display: item.tenKhachHang,
+                resourceId: item.idNhanVien,
                 startStr: new Date(startTime).toISOString(),
                 endStr: new Date(endTime).toISOString()
             };
