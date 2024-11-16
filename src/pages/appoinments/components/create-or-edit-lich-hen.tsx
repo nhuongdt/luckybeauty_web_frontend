@@ -19,13 +19,10 @@ import {
 } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { ReactComponent as AddIcon } from '../../../images/add.svg';
-import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import { Formik, Form } from 'formik';
-import AppConsts, { TrangThaiCheckin } from '../../../lib/appconst';
+import AppConsts from '../../../lib/appconst';
 import Cookies from 'js-cookie';
 import { enqueueSnackbar } from 'notistack';
-import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
-import { ReactComponent as IconMore } from '../../../images/iconContainer.svg';
 import { ReactComponent as CustomerIcon } from '../../../images/icons/profile-2user.svg';
 import rules from './create-or-edit-lich-hen.validate';
 import khachHangStore from '../../../stores/khachHangStore';
@@ -33,17 +30,12 @@ import CreateOrEditCustomerDialog from '../../customer/components/create-or-edit
 import { observer } from 'mobx-react';
 import suggestStore from '../../../stores/suggestStore';
 import bookingStore from '../../../stores/bookingStore';
-import { SuggestKhachHangDto } from '../../../services/suggests/dto/SuggestKhachHangDto';
 import { SuggestDichVuDto } from '../../../services/suggests/dto/SuggestDichVuDto';
 import { SuggestNhanVienDichVuDto } from '../../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import DatePickerRequiredCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
-import { format as formatDate } from 'date-fns';
 import AutocompleteCustomer from '../../../components/Autocomplete/Customer';
 import DialogButtonClose from '../../../components/Dialog/ButtonClose';
 import TrangThaiBooking from '../../../enum/TrangThaiBooking';
-import { ICheckInHoaDonto, KHCheckInDto } from '../../../services/check_in/CheckinDto';
-import datLichService from '../../../services/dat-lich/datLichService';
-import CheckinService from '../../../services/check_in/CheckinService';
 interface ICreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
