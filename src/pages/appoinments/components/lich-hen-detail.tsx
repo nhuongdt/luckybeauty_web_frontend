@@ -31,9 +31,6 @@ import { ICheckInHoaDonto, KHCheckInDto } from '../../../services/check_in/Check
 import CheckinService from '../../../services/check_in/CheckinService';
 import Cookies from 'js-cookie';
 import TrangThaiBooking from '../../../enum/TrangThaiBooking';
-import { BookingDetail_ofCustomerDto } from '../../../services/dat-lich/dto/BookingGetAllItemDto';
-import PageHoaDonChiTietDto from '../../../services/ban_hang/PageHoaDonChiTietDto';
-import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import { dbDexie } from '../../../lib/dexie/dexieDB';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
@@ -194,12 +191,12 @@ const LichHenDetail: FC = () => {
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
-            {/* <ConfirmDelete
+            <ConfirmDelete
                 isShow={inforDelete.show}
                 title={inforDelete.title}
                 mes={inforDelete.mes}
                 onOk={huyLichHen}
-                onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete> */}
+                onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
             <Dialog open={bookingStore.isShowBookingInfo} maxWidth="sm" fullWidth onClose={onCloseThisForm}>
                 <DialogTitle sx={{ backgroundColor: bookingStore?.bookingInfoDto?.color, color: 'white' }}>
                     <Stack direction={'row'} spacing={1}>
@@ -380,7 +377,12 @@ const LichHenDetail: FC = () => {
                                         color="error"
                                         startIcon={<DeleteOutlinedIcon />}
                                         onClick={() => {
-                                            bookingStore.isShowConfirmDelete = true;
+                                            setinforDelete({
+                                                ...inforDelete,
+                                                show: true,
+                                                title: 'Xác nhận hủy',
+                                                mes: `Bạn có chắc chắn muốn hủy lịch hẹn ${bookingStore?.bookingInfoDto?.tenDichVu} của khách ${bookingStore?.bookingInfoDto?.tenKhachHang} không?`
+                                            });
                                         }}>
                                         Hủy lịch hẹn
                                     </Button>
