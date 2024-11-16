@@ -64,6 +64,8 @@ import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import fileDowloadService from '../../services/file-dowload.service';
 import ButtonOnlyIcon from '../../components/Button/ButtonOnlyIcon';
 import DateFilterCustom from '../../components/DatetimePicker/DateFilterCustom';
+import PopoverFilterLichHen from './components/PopoverFilterLichHen';
+import { RequestFromToDto } from '../../services/dto/ParamSearchDto';
 
 enum KieuHienThi {
     DANG_LUOI = 0,
@@ -84,8 +86,6 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
     const [txtSearch, setTxtSearch] = useState('');
     const [fromDate, setFromDate] = useState(addDays(startOfWeek(toDay), 1));
     const [toDate, setToDate] = useState(addDays(endOfWeek(toDay), 1));
-    const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
     const [modalVisible, setModalVisible] = useState(false);
     const [initialView, setInitialView] = useState<string>(FullCalendar_TypeView.WEEK);
     const [initialDate, setInitialDate] = useState<Date>(toDay);
@@ -105,8 +105,17 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
     const roleEditLichHen = true;
     const roleDeleteLichHen = true;
 
+    const paramFilter: RequestFromToDto = {
+        idChiNhanhs: [chinhanh.id],
+        textSearch: bookingStore.textSearch,
+        fromDate: bookingStore.fromDate,
+        toDate: bookingStore.toDate,
+        trangThais: bookingStore.trangThaiBooks,
+        currentPage: bookingStore.currentPage,
+        pageSize: bookingStore.pageSize
+    };
+
     const getData = async () => {
-        console.log('into ');
         let from: Date = new Date(),
             to: Date = new Date();
         const lichHenView = Cookies.get('lich-hen-view') ?? FullCalendar_TypeView.WEEK;
@@ -136,10 +145,13 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
                     }
                     break;
             }
+            bookingStore.pageSize = 100000;
+
             setFromDate(from);
             setToDate(to);
         } else {
             // hiển thị dạng bảng: mặc định tháng này
+            bookingStore.pageSize = 10;
             from = startOfMonth(toDay);
             to = endOfMonth(toDay);
         }
@@ -159,8 +171,8 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
     }, [chinhanh.id]);
 
     const handleSubmit = async () => {
-        await getData();
         setModalVisible(!modalVisible);
+        await bookingStore.getData();
         await sendNotification();
         await notificationStore.GetUserNotification();
         // Nếu đang mở xem thông tin lịch hẹn: không đóng form mà thực hiện gọi lại
@@ -227,6 +239,7 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
     };
     const hanClickIconSearch = async () => {
         bookingStore.textSearch = txtSearch;
+        bookingStore.currentPage = 1;
         await bookingStore.getData();
     };
 
@@ -282,12 +295,15 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
         }
     };
 
-    const changeNumberOfpage = (pageSize: number) => {
-        setPageSize(pageSize);
+    const changeNumberOfpage = async (pageSize: number) => {
+        bookingStore.currentPage = 1;
+        bookingStore.pageSize = pageSize;
+        await bookingStore.getData();
     };
 
-    const handleChangePage = (value: number) => {
-        setCurrentPage(value);
+    const handleChangePage = async (value: number) => {
+        bookingStore.currentPage = value;
+        await bookingStore.getData();
     };
 
     const dataTable_doActionRow = async (typeAction: number, item: BookingGetAllItemDto) => {
@@ -336,31 +352,28 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
 
     const onApplyFilterDate = async (from: string, to: string, txtShow: string) => {
         setAnchorDateEl(null);
-        // setParamSearch({ ...paramSearch, fromDate: from, toDate: to, currentPage: 1 });
-        // setArrIdChosed([]);
+        bookingStore.currentPage = 1;
+        bookingStore.fromDate = from;
+        bookingStore.toDate = to;
+
+        await bookingStore.getData();
     };
 
-    const ApplyFilter = (paramFilter: any) => {
+    const ApplyFilter = async (paramFilter: RequestFromToDto) => {
         setAnchorElFilter(null);
-        // setParamSearch({
-        //     ...paramSearch,
-        //     currentPage: 1,
-        //     trangThais: paramFilter?.trangThais,
-        //     trangThaiNos: paramFilter?.trangThaiNos,
-        //     idChiNhanhs: paramFilter?.idChiNhanhs,
-        //     fromDate: paramFilter?.fromDate,
-        //     toDate: paramFilter?.toDate,
-        //     dateType: paramFilter?.dateType
-        // });
+        bookingStore.currentPage = 1;
+        bookingStore.fromDate = paramFilter?.fromDate ?? '';
+        bookingStore.toDate = paramFilter?.toDate ?? '';
+        bookingStore.trangThaiBooks = paramFilter?.trangThais ?? [];
+
+        await bookingStore.getData();
     };
 
     const ExportToExcel = async () => {
-        // const param = { ...paramSearch };
-        // param.textSearch = txtSearch;
-        // param.currentPage = 1;
-        // param.pageSize = pageDataHoaDon?.totalCount ?? 0;
-        // const data = await HoaDonService.ExportDanhSach_TheGiaTri(param);
-        // fileDowloadService.downloadExportFile(data);
+        bookingStore.currentPage = 1;
+        bookingStore.pageSize = bookingStore?.totalRowLichHen ?? 1;
+        const data = await datLichService.ExportExcel_LichHen(paramFilter);
+        fileDowloadService.downloadExportFile(data);
     };
 
     const listColumnHeader: IHeaderTable[] = [
@@ -495,7 +508,14 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
                                     width: 40,
                                     border: '1px solid #ccc',
                                     backgroundColor: 'white'
-                                }}></ButtonOnlyIcon>
+                                }}
+                            />
+                            <PopoverFilterLichHen
+                                anchorEl={anchorElFilter}
+                                paramFilter={paramFilter}
+                                handleClose={() => setAnchorElFilter(null)}
+                                handleApply={ApplyFilter}
+                            />
                         </Stack>
                     </Stack>
                 </Grid>
@@ -519,7 +539,7 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
                             <TableFooter>
                                 <TableRow className="table-empty">
                                     <TableCell colSpan={20} align="center">
-                                        Không có lịch hẹn
+                                        Không có dữ liệu
                                     </TableCell>
                                 </TableRow>
                             </TableFooter>
@@ -682,15 +702,15 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
                         <Grid item xs={8} md={8} lg={8} sm={8}>
                             <Stack direction="row" style={{ float: 'right' }}>
                                 <LabelDisplayedRows
-                                    currentPage={currentPage}
-                                    pageSize={pageSize}
+                                    currentPage={bookingStore?.currentPage ?? 1}
+                                    pageSize={bookingStore?.pageSize ?? 10}
                                     totalCount={bookingStore?.totalRowLichHen}
                                 />
                                 <Pagination
                                     shape="rounded"
-                                    count={1}
-                                    page={currentPage}
-                                    defaultPage={pageSize}
+                                    count={Math.ceil(bookingStore?.totalRowLichHen / bookingStore?.pageSize)}
+                                    page={bookingStore?.currentPage}
+                                    defaultPage={bookingStore?.pageSize}
                                     onChange={(e, newVal) => handleChangePage(newVal)}
                                 />
                             </Stack>
