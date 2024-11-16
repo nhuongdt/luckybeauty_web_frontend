@@ -1,16 +1,22 @@
 import { ModelHangHoaDto } from '../../product/dto';
 
 export interface BookingGetAllItemDto {
-    id: string;
-    sourceId: string;
+    id: string; // idbooking
+    idNhanVien: string;
     startTime: string;
     endTime: string;
-    customer: string;
-    employee: string;
-    services: string;
-    dayOfWeek: string;
-    color: string;
     bookingDate: Date;
+    tenDichVu: string;
+    dayOfWeek: string;
+    maKhachHang: string;
+    tenKhachHang: string;
+    soDienThoai: string;
+    nhanVienThucHien: string;
+    tenChucVu: string;
+    avatar: string; // ảnh nhân viên
+    color: string;
+    ghiChu: string;
+    trangThai: number;
 }
 export class BookingDetailDto extends ModelHangHoaDto {
     maHangHoa = '';
