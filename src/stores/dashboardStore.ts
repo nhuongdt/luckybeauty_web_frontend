@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import { DanhSachDichVuHot } from '../services/dashboard/dto/danhSachDichVuHot';
 import { DanhSachLichHen } from '../services/dashboard/dto/danhSachLichHen';
-import { DashboardFilter } from '../services/dashboard/dto/dashboardFilter';
 import { ThongKeDoanhThu } from '../services/dashboard/dto/thongKeDoanhThu';
 import { ThongKeLichHen } from '../services/dashboard/dto/thongKeLichHen';
 import { ThongKeSoLuong } from '../services/dashboard/dto/thongKeSoLuong';
@@ -9,9 +8,10 @@ import Cookies from 'js-cookie';
 import AppConsts from '../lib/appconst';
 import dashboardService from '../services/dashboard/dashboardService';
 import { format as format_date } from 'date-fns';
+import { RequestFromToDto } from '../services/dto/ParamSearchDto';
 
 class DashboardStore {
-    filter!: DashboardFilter;
+    filter!: RequestFromToDto;
     danhSachLichHen!: DanhSachLichHen[];
     thongKeLichHen!: ThongKeLichHen[];
     thongKeDoanhThu!: ThongKeDoanhThu[];
@@ -21,36 +21,38 @@ class DashboardStore {
     constructor() {
         makeAutoObservable(this);
         this.filter = {
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty,
-            thoiGianDen: new Date().toLocaleDateString(),
-            thoiGianTu: new Date().toLocaleDateString()
+            idChiNhanhs: [Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty],
+            currentPage: 1,
+            pageSize: 3,
+            toDate: new Date().toLocaleDateString(),
+            fromDate: new Date().toLocaleDateString()
         };
     }
-    async getData(input: DashboardFilter) {
-        input.idChiNhanh = Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty;
+    async getData(input: RequestFromToDto) {
+        input.idChiNhanhs = [Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty];
         this.getThongKeSoLuong(input);
         this.getDanhSachLichHen(input);
         this.getThongKeDoanhThu(input);
         this.getThongKeHotService(input);
         this.getThongKeLichHen(input);
     }
-    async getThongKeSoLuong(input: DashboardFilter) {
+    async getThongKeSoLuong(input: RequestFromToDto) {
         const result = await dashboardService.thongKeSoLuong(input);
         this.thongKeSoLuong = result;
     }
-    async getDanhSachLichHen(input: DashboardFilter) {
+    async getDanhSachLichHen(input: RequestFromToDto) {
         const result = await dashboardService.danhSachLichHen(input);
         this.danhSachLichHen = result;
     }
-    async getThongKeLichHen(input: DashboardFilter) {
+    async getThongKeLichHen(input: RequestFromToDto) {
         const result = await dashboardService.thongKeLichHen(input);
         this.thongKeLichHen = result;
     }
-    async getThongKeDoanhThu(input: DashboardFilter) {
+    async getThongKeDoanhThu(input: RequestFromToDto) {
         const result = await dashboardService.thongKeDoanhThu(input);
         this.thongKeDoanhThu = result;
     }
-    async getThongKeHotService(input: DashboardFilter) {
+    async getThongKeHotService(input: RequestFromToDto) {
         const result = await dashboardService.thongKeHotService(input);
         if (result != null) {
             this.danhSachDichVuHot = result;
@@ -75,20 +77,20 @@ class DashboardStore {
         const endDayOfYear = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999); // Lấy ngày cuối năm
 
         if (type === 'day') {
-            this.filter.thoiGianTu = format_date(today, 'yyyy/MM/dd').toString();
-            this.filter.thoiGianDen = format_date(today, 'yyyy/MM/dd').toString();
+            this.filter.fromDate = format_date(today, 'yyyy-MM-dd').toString();
+            this.filter.toDate = format_date(today, 'yyyy-MM-dd').toString();
         } else if (type === 'week') {
-            this.filter.thoiGianTu = format_date(firstDayOfWeek, 'yyyy/MM/dd').toString();
-            this.filter.thoiGianDen = format_date(endDayOfWeek, 'yyyy/MM/dd').toString();
+            this.filter.fromDate = format_date(firstDayOfWeek, 'yyyy-MM-dd').toString();
+            this.filter.toDate = format_date(endDayOfWeek, 'yyyy-MM-dd').toString();
         } else if (type === 'month') {
-            this.filter.thoiGianTu = format_date(firstDayOfMonth, 'yyyy/MM/dd').toString();
-            this.filter.thoiGianDen = format_date(endDayOfMonth, 'yyyy/MM/dd').toString();
+            this.filter.fromDate = format_date(firstDayOfMonth, 'yyyy-MM-dd').toString();
+            this.filter.toDate = format_date(endDayOfMonth, 'yyyy-MM-dd').toString();
         } else if (type === 'year') {
-            this.filter.thoiGianTu = format_date(firstDayOfYear, 'yyyy/MM/dd').toString();
-            this.filter.thoiGianDen = format_date(endDayOfYear, 'yyyy/MM/dd').toString();
+            this.filter.fromDate = format_date(firstDayOfYear, 'yyyy-MM-dd').toString();
+            this.filter.toDate = format_date(endDayOfYear, 'yyyy-MM-dd').toString();
         } else {
-            this.filter.thoiGianTu = format_date(today, 'yyyy/MM/dd').toString();
-            this.filter.thoiGianDen = format_date(today, 'yyyy/MM/dd').toString();
+            this.filter.fromDate = format_date(today, 'yyyy-MM-dd').toString();
+            this.filter.toDate = format_date(today, 'yyyy-MM-dd').toString();
         }
 
         this.getData(this.filter);

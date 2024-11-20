@@ -17,7 +17,8 @@ import {
     TableRow,
     TableCell,
     TableFooter,
-    Pagination
+    Pagination,
+    TableContainer
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
@@ -352,6 +353,8 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
 
     const onApplyFilterDate = async (from: string, to: string, txtShow: string) => {
         setAnchorDateEl(null);
+        setFromDate(new Date(from));
+        setToDate(new Date(to));
         bookingStore.currentPage = 1;
         bookingStore.fromDate = from;
         bookingStore.toDate = to;
@@ -522,102 +525,107 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
             </Grid>
 
             {kieuHienThi === KieuHienThi.DANG_BANG ? (
-                <Table>
-                    <TableHead>
-                        <MyHeaderTable
-                            showAction={true}
-                            isCheckAll={false}
-                            isShowCheck={false}
-                            sortBy={''}
-                            sortType={''}
-                            onRequestSort={() => console.log(1)}
-                            listColumnHeader={listColumnHeader}
-                        />
-                    </TableHead>
-                    {roleXemDanhSach ? (
-                        bookingStore?.totalRowLichHen == 0 ? (
+                <TableContainer className="data-grid-row">
+                    <Table>
+                        <TableHead>
+                            <MyHeaderTable
+                                showAction={true}
+                                isCheckAll={false}
+                                isShowCheck={false}
+                                sortBy={''}
+                                sortType={''}
+                                listColumnHeader={listColumnHeader}
+                            />
+                        </TableHead>
+                        {roleXemDanhSach ? (
+                            bookingStore?.totalRowLichHen == 0 ? (
+                                <TableFooter>
+                                    <TableRow className="table-empty">
+                                        <TableCell colSpan={20} align="center">
+                                            Không có dữ liệu
+                                        </TableCell>
+                                    </TableRow>
+                                </TableFooter>
+                            ) : (
+                                <TableBody>
+                                    {bookingStore?.listBooking?.map((row, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell sx={{ minWidth: 200, maxWidth: 200 }}>
+                                                {row?.tenKhachHang}
+                                            </TableCell>
+                                            <TableCell sx={{ minWidth: 100, maxWidth: 100 }}>
+                                                {row?.soDienThoai}
+                                            </TableCell>
+                                            <TableCell sx={{ maxWidth: 150 }} align="center">
+                                                {row?.bookingDate
+                                                    ? formatDateFns(new Date(row?.bookingDate), 'dd/MM/yyyy')
+                                                    : ''}
+                                            </TableCell>
+                                            <TableCell sx={{ maxWidth: 200 }} title={row?.tenKhachHang} align="center">
+                                                {row?.startTime}
+                                            </TableCell>
+                                            <TableCell className="lableOverflow">{row?.tenDichVu}</TableCell>
+                                            <TableCell>{row?.nhanVienThucHien}</TableCell>
+                                            <TableCell className="lableOverflow">{row?.ghiChu}</TableCell>
+                                            <TableCell
+                                                className={
+                                                    row?.trangThai === TrangThaiBooking.Wait
+                                                        ? 'data-grid-cell-trangthai-active'
+                                                        : row?.trangThai === TrangThaiBooking.Cancel
+                                                        ? 'data-grid-cell-trangthai-notActive'
+                                                        : ''
+                                                }>
+                                                {row?.trangThai === TrangThaiBooking.Confirm
+                                                    ? 'Đã xác nhận'
+                                                    : row?.trangThai === TrangThaiBooking.Wait
+                                                    ? 'Chờ xác nhận'
+                                                    : row?.trangThai === TrangThaiBooking.CheckIn
+                                                    ? 'Đang checkin'
+                                                    : row?.trangThai === TrangThaiBooking.Cancel
+                                                    ? 'Đã hủy'
+                                                    : 'Hoàn thành'}
+                                            </TableCell>
+                                            <TableCell sx={{ minWidth: 40 }}>
+                                                <Stack spacing={1} direction={'row'}>
+                                                    <OpenInNewOutlinedIcon
+                                                        titleAccess="Cập nhật"
+                                                        className="only-icon"
+                                                        sx={{
+                                                            width: '16px',
+                                                            color: '#7e7979',
+                                                            display: roleEditLichHen ? '' : 'none'
+                                                        }}
+                                                        onClick={() => dataTable_doActionRow(TypeAction.UPDATE, row)}
+                                                    />
+                                                    <ClearIcon
+                                                        titleAccess="Xóa"
+                                                        sx={{
+                                                            ' &:hover': {
+                                                                color: 'red',
+                                                                cursor: 'pointer'
+                                                            },
+                                                            display: roleDeleteLichHen ? '' : 'none'
+                                                        }}
+                                                        style={{ width: '16px', color: 'red' }}
+                                                        onClick={() => dataTable_doActionRow(TypeAction.DELETE, row)}
+                                                    />
+                                                </Stack>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            )
+                        ) : (
                             <TableFooter>
                                 <TableRow className="table-empty">
                                     <TableCell colSpan={20} align="center">
-                                        Không có dữ liệu
+                                        Không có quyền xem danh sách lịch hẹn
                                     </TableCell>
                                 </TableRow>
                             </TableFooter>
-                        ) : (
-                            <TableBody>
-                                {bookingStore?.listBooking?.map((row, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell sx={{ minWidth: 200, maxWidth: 200 }}>{row?.tenKhachHang}</TableCell>
-                                        <TableCell sx={{ minWidth: 100, maxWidth: 100 }}>{row?.soDienThoai}</TableCell>
-                                        <TableCell sx={{ maxWidth: 150 }} align="center">
-                                            {row?.bookingDate
-                                                ? formatDateFns(new Date(row?.bookingDate), 'dd/MM/yyyy')
-                                                : ''}
-                                        </TableCell>
-                                        <TableCell sx={{ maxWidth: 200 }} title={row?.tenKhachHang} align="center">
-                                            {row?.startTime}
-                                        </TableCell>
-                                        <TableCell className="lableOverflow">{row?.tenDichVu}</TableCell>
-                                        <TableCell>{row?.nhanVienThucHien}</TableCell>
-                                        <TableCell className="lableOverflow">{row?.ghiChu}</TableCell>
-                                        <TableCell
-                                            className={
-                                                row?.trangThai === TrangThaiBooking.Wait
-                                                    ? 'data-grid-cell-trangthai-active'
-                                                    : row?.trangThai === TrangThaiBooking.Cancel
-                                                    ? 'data-grid-cell-trangthai-notActive'
-                                                    : ''
-                                            }>
-                                            {row?.trangThai === TrangThaiBooking.Confirm
-                                                ? 'Đã xác nhận'
-                                                : row?.trangThai === TrangThaiBooking.Wait
-                                                ? 'Chờ xác nhận'
-                                                : row?.trangThai === TrangThaiBooking.CheckIn
-                                                ? 'Đang checkin'
-                                                : row?.trangThai === TrangThaiBooking.Cancel
-                                                ? 'Đã hủy'
-                                                : 'Hoàn thành'}
-                                        </TableCell>
-                                        <TableCell sx={{ minWidth: 40 }}>
-                                            <Stack spacing={1} direction={'row'}>
-                                                <OpenInNewOutlinedIcon
-                                                    titleAccess="Cập nhật"
-                                                    className="only-icon"
-                                                    sx={{
-                                                        width: '16px',
-                                                        color: '#7e7979',
-                                                        display: roleEditLichHen ? '' : 'none'
-                                                    }}
-                                                    onClick={() => dataTable_doActionRow(TypeAction.UPDATE, row)}
-                                                />
-                                                <ClearIcon
-                                                    titleAccess="Xóa"
-                                                    sx={{
-                                                        ' &:hover': {
-                                                            color: 'red',
-                                                            cursor: 'pointer'
-                                                        },
-                                                        display: roleDeleteLichHen ? '' : 'none'
-                                                    }}
-                                                    style={{ width: '16px', color: 'red' }}
-                                                    onClick={() => dataTable_doActionRow(TypeAction.DELETE, row)}
-                                                />
-                                            </Stack>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        )
-                    ) : (
-                        <TableFooter>
-                            <TableRow className="table-empty">
-                                <TableCell colSpan={20} align="center">
-                                    Không có quyền xem danh sách lịch hẹn
-                                </TableCell>
-                            </TableRow>
-                        </TableFooter>
-                    )}
-                </Table>
+                        )}
+                    </Table>
+                </TableContainer>
             ) : (
                 <Box sx={{ marginTop: 3 }}>
                     <ToolbarHeader

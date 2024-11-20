@@ -1,9 +1,10 @@
 export interface DanhSachLichHen {
     avatar: string;
     tenKhachHang: string;
+    soDienThoai: string;
     startTime: Date;
     endTime: Date;
-    tongTien: number;
+    giaBan: number;
     trangThai: string;
-    dichVu: string;
+    tenHangHoa: string;
 }

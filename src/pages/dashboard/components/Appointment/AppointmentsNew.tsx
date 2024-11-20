@@ -1,10 +1,13 @@
 import React from 'react';
 import clockIcon from '../../../../images/clock.svg';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined';
 import './appointmentsNew.css';
 import dashboardStore from '../../../../stores/dashboardStore';
 import { observer } from 'mobx-react';
 import { format } from 'date-fns';
-import { Avatar, Box, Typography } from '@mui/material';
+import { Avatar, Box, Stack, Typography } from '@mui/material';
+import utils from '../../../../utils/utils';
 const AppoimentsNew: React.FC = () => {
     const datas = dashboardStore.danhSachLichHen ?? [];
 
@@ -16,73 +19,66 @@ const AppoimentsNew: React.FC = () => {
                         <Box
                             key={key}
                             display={'flex'}
+                            padding={1}
                             justifyContent={'space-between'}
                             borderBottom={'1px solid #EEF0F4'}>
-                            <Box display={'flex'} justifyContent={'start'} alignItems={'center'} padding={'6px 4px'}>
-                                <Avatar src={data.avatar} />
-                                <Box
-                                    sx={{ marginLeft: '24px' }}
-                                    display={'flex'}
-                                    justifyContent={'space-between'}
-                                    flexDirection={'column'}>
-                                    <Typography
-                                        sx={{
-                                            // color: '#525F7A',
-                                            fontFamily: 'Roboto',
-                                            fontSize: '14px',
-                                            fontWeight: '400'
-                                        }}>
-                                        {data.tenKhachHang}
-                                    </Typography>
-                                    <Box display={'flex'} justifyContent={'start'} alignItems={'center'}>
-                                        <img src={clockIcon} alt="clock" />
-                                        <Typography
+                            <Stack direction={'row'} spacing={2} alignItems={'center'}>
+                                <Stack>
+                                    {data?.avatar ? (
+                                        <Avatar src={data?.avatar} sx={{ width: 24, height: 24 }} />
+                                    ) : (
+                                        <Avatar
                                             sx={{
-                                                //color: '#525F7A',
-                                                fontFamily: 'Roboto',
+                                                width: 40,
+                                                height: 40,
                                                 fontSize: '14px',
-                                                fontWeight: '400',
-                                                marginLeft: '4px'
+                                                color: 'white',
+                                                backgroundColor: '#c3c3d5'
                                             }}>
-                                            {data.startTime != undefined
-                                                ? format(new Date(data.startTime), 'HH:mm')
-                                                : ''}
-                                            {' - '}
-                                            {data.endTime != undefined ? format(new Date(data.endTime), 'HH:mm') : ''}
-                                        </Typography>
-                                    </Box>
-
+                                            {utils.getFirstLetter(data?.tenKhachHang, 2)}
+                                        </Avatar>
+                                    )}
+                                </Stack>
+                                <Stack spacing={1}>
+                                    <Typography component={'span'} sx={{ fontWeight: 600, fontSize: '18px' }}>
+                                        {data?.tenKhachHang}
+                                        {data?.soDienThoai && (
+                                            <Stack
+                                                spacing={1}
+                                                direction={'row'}
+                                                color={'#6c6c81'}
+                                                alignItems={'center'}>
+                                                <LocalPhoneOutlinedIcon sx={{ width: '18px' }} />
+                                                <Typography component={'span'} fontSize={'14px'}>
+                                                    {' '}
+                                                    ({data?.soDienThoai})
+                                                </Typography>
+                                            </Stack>
+                                        )}
+                                    </Typography>
+                                    <Typography variant="body1" fontSize={'16px'}>
+                                        {data?.tenHangHoa}
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                            <Stack justifyContent={'end'} alignItems={'end'}>
+                                <Stack spacing={1} direction={'row'} color={'#6c6c81'}>
+                                    <AccessTimeIcon sx={{ width: 20 }} />
                                     <Typography
                                         sx={{
-                                            //color: '#3D475C',
-                                            fontFamily: 'Roboto',
-                                            fontSize: '16px',
-                                            fontWeight: '700'
+                                            marginLeft: '4px'
                                         }}>
-                                        {data.dichVu}
+                                        {data.startTime != undefined ? format(new Date(data.startTime), 'HH:mm') : ''}
                                     </Typography>
-                                </Box>
-                            </Box>
-                            <Box display={'flex'} justifyContent={'end'} flexDirection={'column'} alignItems={'end'}>
+                                </Stack>
                                 <Typography
                                     sx={{
                                         color: '#009EF7',
-                                        fontFamily: 'Roboto',
-                                        fontSize: '12px',
-                                        fontWeight: '400'
+                                        fontSize: '12px'
                                     }}>
                                     {data.trangThai}
                                 </Typography>
-                                <Typography
-                                    sx={{
-                                        color: '#3D475C',
-                                        fontFamily: 'Roboto',
-                                        fontSize: '16px',
-                                        fontWeight: '700'
-                                    }}>
-                                    {new Intl.NumberFormat('vi-VN').format(data.tongTien ?? 0)}
-                                </Typography>
-                            </Box>
+                            </Stack>
                         </Box>
                     );
                 })
