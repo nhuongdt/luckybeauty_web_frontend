@@ -1,12 +1,14 @@
+import { PagedResultDto } from '../dto/pagedResultDto';
 import { RequestFromToDto } from '../dto/ParamSearchDto';
 import http from '../httpService';
+import { DanhSachLichHen } from './dto/danhSachLichHen';
 
 class DashboardService {
     public async thongKeSoLuong(input: RequestFromToDto) {
         const response = await http.post(`api/services/app/Dashboard/ThongKeSoLuong`, input);
         return response.data.result;
     }
-    public async danhSachLichHen(input: RequestFromToDto) {
+    public async danhSachLichHen(input: RequestFromToDto): Promise<PagedResultDto<DanhSachLichHen>> {
         const response = await http.post(`api/services/app/Dashboard/DanhSachLichHen`, input);
         return response.data.result;
     }

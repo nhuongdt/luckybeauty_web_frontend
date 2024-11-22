@@ -3,33 +3,37 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import dashboardStore from '../../../../stores/dashboardStore';
 import { observer } from 'mobx-react';
 import { ThongKeDoanhThu } from '../../../../services/dashboard/dto/thongKeDoanhThu';
-function formatCurrency(number: any) {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(number);
-}
-const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-        return (
-            <div>
-                <p className="label">{label}</p>
-                {payload.map((entry: any, index: number) => (
-                    <div key={index}>
-                        <p key={`value-${index}`} className="value" style={{ color: entry.color }}>
-                            {entry.name == 'thangTruoc'
-                                ? 'Năm trước'
-                                : entry.name == 'thangNay'
-                                ? 'Năm này'
-                                : entry.name}
-                            : {formatCurrency(entry.value)}
-                        </p>
-                    </div>
-                ))}
-            </div>
-        );
-    }
+// function formatCurrency(number: any) {
+//     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(number);
+// }
 
-    return null;
-};
 const ColumnChartNew: React.FC = () => {
+    const formatNumber = (num: number) => {
+        return new Intl.NumberFormat('vi-VN').format(num);
+    };
+    const CustomTooltip = ({ active, payload, label }: any) => {
+        if (active && payload && payload.length) {
+            return (
+                <div>
+                    <p className="label">{label}</p>
+                    {payload.map((entry: any, index: number) => (
+                        <div key={index}>
+                            <p key={`value-${index}`} className="value" style={{ color: entry.color }}>
+                                {entry.name == 'thangTruoc'
+                                    ? 'Năm trước'
+                                    : entry.name == 'thangNay'
+                                    ? 'Năm này'
+                                    : entry.name}
+                                : {formatNumber(entry.value)}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        return null;
+    };
     const data =
         dashboardStore.thongKeDoanhThu !== undefined &&
         dashboardStore.thongKeDoanhThu != ([] as ThongKeDoanhThu[]) &&
@@ -64,18 +68,19 @@ const ColumnChartNew: React.FC = () => {
                     <CartesianGrid strokeDasharray="0 0" vertical={false} />
                     <XAxis
                         dataKey="month"
-                        tick={{ fontSize: 12, fill: '#666466' }}
+                        tick={{ fontSize: 14, fill: '#666466' }}
                         axisLine={{ stroke: '#E6E1E6' }}
                         tickMargin={9}
                         tickSize={0}
                     />
                     <YAxis
                         tickCount={4}
-                        //ticks={yTicks}
-                        tick={{ fontSize: 12, fill: '#666466' }}
+                        width={100}
+                        tick={{ fontSize: 14, fill: '#666466' }}
                         axisLine={{ stroke: 'transparent' }}
                         tickSize={0}
                         tickMargin={9}
+                        tickFormatter={formatNumber}
                     />
                     <Tooltip
                         wrapperStyle={{

@@ -1,22 +1,49 @@
-import React from 'react';
+import { Avatar, Box, Dialog, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined';
-import './appointmentsNew.css';
 import dashboardStore from '../../../../stores/dashboardStore';
-import { observer } from 'mobx-react';
 import { format } from 'date-fns';
-import { Avatar, Box, Stack, Typography } from '@mui/material';
 import utils from '../../../../utils/utils';
-const AppoimentsNew: React.FC = () => {
-    const datas = dashboardStore.danhSachLichHen ?? [];
+import { IPropModal } from '../../../../services/dto/IPropsComponent';
+import DialogButtonClose from '../../../../components/Dialog/ButtonClose';
+import { RequestFromToDto } from '../../../../services/dto/ParamSearchDto';
+import { useEffect, useState } from 'react';
+import dashboardService from '../../../../services/dashboard/dashboardService';
+import { PagedResultDto } from '../../../../services/dto/pagedResultDto';
+import { DanhSachLichHen } from '../../../../services/dashboard/dto/danhSachLichHen';
 
+const ModalAllLichHenDoard = ({ isShowModal, onClose, onOK, objUpDate }: IPropModal<RequestFromToDto>) => {
+    const [pageDataLichHen, setPageDataLichHen] = useState<PagedResultDto<DanhSachLichHen>>({
+        items: [],
+        totalCount: 0,
+        totalPage: 0
+    });
+
+    const getListCuocHen = async () => {
+        const param = { ...objUpDate };
+        param.pageSize = dashboardStore?.countLichHen ?? 10;
+        const data = await dashboardService.danhSachLichHen(param);
+        setPageDataLichHen({
+            ...pageDataLichHen,
+            items: data?.items,
+            totalCount: data?.totalCount
+        });
+    };
+
+    useEffect(() => {
+        if (isShowModal) {
+            getListCuocHen();
+        }
+    }, [isShowModal]);
     return (
-        <Box>
-            {datas.length > 0 ? (
-                datas.map((data, key) => {
-                    return (
+        <Dialog open={isShowModal} maxWidth="sm" fullWidth>
+            <DialogTitle>Danh sách cuộc hẹn</DialogTitle>
+            <DialogButtonClose onClose={onClose} />
+            <DialogContent>
+                <Box>
+                    {pageDataLichHen?.items?.map((data, index) => (
                         <Box
-                            key={key}
+                            key={index}
                             display={'flex'}
                             padding={1}
                             justifyContent={'space-between'}
@@ -58,6 +85,11 @@ const AppoimentsNew: React.FC = () => {
                                 </Stack>
                             </Stack>
                             <Stack justifyContent={'end'} alignItems={'end'}>
+                                <Typography variant="body2">
+                                    {data?.bookingDate != undefined
+                                        ? format(new Date(data?.bookingDate), 'dd/MM/yyyy')
+                                        : ''}
+                                </Typography>
                                 <Stack spacing={1} direction={'row'} color={'#6c6c81'}>
                                     <AccessTimeIcon sx={{ width: 20 }} />
                                     <Typography
@@ -80,13 +112,10 @@ const AppoimentsNew: React.FC = () => {
                                 </Typography>
                             </Stack>
                         </Box>
-                    );
-                })
-            ) : (
-                <Box padding={2}>Không có dữ liệu</Box>
-            )}
-        </Box>
+                    ))}
+                </Box>
+            </DialogContent>
+        </Dialog>
     );
 };
-
-export default observer(AppoimentsNew);
+export default ModalAllLichHenDoard;

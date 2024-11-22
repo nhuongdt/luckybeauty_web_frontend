@@ -55,7 +55,7 @@ const OverView = () => {
                                 <Typography variant="body1" fontWeight={500} color={x.color}>
                                     {x.text}
                                 </Typography>
-                                <Typography fontSize={18} fontWeight={500} color={x.color}>
+                                <Typography fontSize={20} fontWeight={500} color={x.color}>
                                     {new Intl.NumberFormat('vi-VN').format(x.value)}
                                 </Typography>
                             </Stack>

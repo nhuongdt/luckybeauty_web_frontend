@@ -186,6 +186,7 @@ const ToolbarHeader = ({ defaultFromDate, defaultToDate, onChangeDate, onChangeV
                     {arrTypeView?.map((x) => (
                         <Button
                             key={x.id}
+                            sx={{ backgroundColor: typeCalendar != x.id ? 'white' : '' }}
                             variant={typeCalendar == x.id ? 'contained' : 'outlined'}
                             onClick={() => changeView(x.id)}>
                             {x.text}

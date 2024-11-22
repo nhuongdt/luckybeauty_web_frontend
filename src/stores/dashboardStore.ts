@@ -13,6 +13,7 @@ import { RequestFromToDto } from '../services/dto/ParamSearchDto';
 class DashboardStore {
     filter!: RequestFromToDto;
     danhSachLichHen!: DanhSachLichHen[];
+    countLichHen!: number;
     thongKeLichHen!: ThongKeLichHen[];
     thongKeDoanhThu!: ThongKeDoanhThu[];
     danhSachDichVuHot!: DanhSachDichVuHot[];
@@ -42,7 +43,8 @@ class DashboardStore {
     }
     async getDanhSachLichHen(input: RequestFromToDto) {
         const result = await dashboardService.danhSachLichHen(input);
-        this.danhSachLichHen = result;
+        this.danhSachLichHen = result?.items;
+        this.countLichHen = result?.totalCount;
     }
     async getThongKeLichHen(input: RequestFromToDto) {
         const result = await dashboardService.thongKeLichHen(input);

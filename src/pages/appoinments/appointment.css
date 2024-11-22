@@ -39,3 +39,6 @@ h2 {
   .fc .fc-daygrid-day-number{
     color:rgb(41, 48, 61);
   }
+  .fc-view-harness{
+    background-color: white;
+  }

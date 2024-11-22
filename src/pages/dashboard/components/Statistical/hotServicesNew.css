@@ -1,4 +1,6 @@
-
+.recharts-legend-wrapper {
+    display:none!important
+}
 .recharts-tooltip-item::before{
     content:'';
     width: 0.3472222222222222vw;

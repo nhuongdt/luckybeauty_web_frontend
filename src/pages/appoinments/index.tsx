@@ -393,8 +393,7 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
     return (
         <Box
             sx={{
-                height: '100%',
-                backgroundColor: 'white'
+                height: '100%'
             }}>
             <SnackbarAlert
                 showAlert={objAlert.show}
@@ -437,7 +436,7 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
                                 bookingStore.createNewBookingDto();
                                 handleCreateUpdateShow('');
                             }}
-                            sx={{ fontSize: '14px', fontWeight: '400' }}>
+                            sx={{ fontSize: '14px', fontWeight: '400', backgroundColor: 'white' }}>
                             {window.screen.width > 767 ? 'Thêm cuộc hẹn' : <AddIcon />}
                         </Button>
                         <Button
@@ -525,7 +524,7 @@ const LichHen: React.FC<ILichHenProps> = (props) => {
             </Grid>
 
             {kieuHienThi === KieuHienThi.DANG_BANG ? (
-                <TableContainer className="data-grid-row">
+                <TableContainer className="data-grid-row" sx={{ backgroundColor: 'white' }}>
                     <Table>
                         <TableHead>
                             <MyHeaderTable
