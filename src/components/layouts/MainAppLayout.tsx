@@ -150,7 +150,7 @@ const MainAppLayout: React.FC<IMainAppLayout> = (props) => {
                                 borderLeft: 'solid 0.1rem #e6e1e6',
                                 marginTop: '70px',
                                 minHeight: 'calc(100vh - 70px)',
-                                bgcolor: 'rgba(248,248,248,1)'
+                                bgcolor: 'rgba(245,247,244,1)'
                             }}>
                             <AppContext.Provider value={{ chinhanhCurrent, congty }}>
                                 <Outlet />
