@@ -6,12 +6,37 @@ import { SuggestNhomKhachDto } from '../../services/suggests/dto/SuggestNhomKhac
 import utils from '../../utils/utils'; // func common
 import { red } from '@mui/material/colors';
 import abpCustom from '../abp-custom';
+import CakeIcon from '@mui/icons-material/Cake';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
+interface AccordionNhomKhachHang {
+    filterByDate: () => void;
+}
 
-export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeItem }: any) {
+export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeItem, filterByDate }: any) {
     const [rowHover, setRowHover] = useState<SuggestNhomKhachDto>({} as SuggestNhomKhachDto);
     const [isHover, setIsHover] = useState(false);
     const [idChosing, setIdChosing] = useState('');
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const handleClickMenu = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
 
+    const handleCloseMenu = () => {
+        setAnchorEl(null);
+    };
+    // const filterByDate = (data: any[]): any[] => {
+    //     const today = new Date();
+    //     const month = today.getMonth();
+    //     const date = today.getDate();
+    //     return data.filter((item) => {
+    //         if(!ngaySinh) return false;
+    //         const birthDate = new Date(item.ngaySinh)
+    //         return birthDate.getMonth() === todayMonth && birthDate.getDate() === todayDate;
+    //     })
+    //     };
     const handleHover = (event: any, rowData: any, index: number) => {
         const data = JSON.parse(JSON.stringify(rowData));
         const objNhomKhach: SuggestNhomKhachDto = { id: data.id, tenNhomKhach: data.tenNhomKhach };
@@ -34,12 +59,12 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
 
         setIdChosing(idChosing);
     };
+
     return (
         <>
             <Accordion
                 disableGutters
                 sx={{
-                    // borderBottom: '1px solid #cccc',
                     boxShadow: 'unset',
                     '&.MuiAccordion-root::before': { content: 'none' },
                     '& .MuiAccordionSummary-root': { minHeight: '46px', maxHeight: '46px' }
@@ -75,6 +100,68 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                         Tất cả
                     </Typography>
                 </AccordionSummary>
+            </Accordion>
+            <Accordion
+                disableGutters
+                sx={{
+                    boxShadow: 'unset',
+                    '&.MuiAccordion-root::before': { content: 'none' },
+                    '& .MuiAccordionSummary-root': { minHeight: '46px', maxHeight: '46px' }
+                }}>
+                <AccordionSummary
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        '&:hover': {
+                            bgcolor: 'var(--color-bg)'
+                        },
+                        '& .MuiAccordionSummary-content': {
+                            display: 'flex', // Đảm bảo nội dung của AccordionSummary được căn chỉnh theo chiều ngang
+                            alignItems: 'center' // Căn giữa nội dung theo chiều dọc
+                        }
+                    }}
+                    onClick={() => handleClickTreeItem(false, '')}>
+                    <CakeIcon sx={{ color: 'var(--color-main)' }} />
+                    <Typography
+                        variant="body2"
+                        fontWeight="700"
+                        textTransform="capitalize"
+                        sx={{
+                            marginLeft: '9px',
+                            display: 'flex',
+                            alignItems: 'center', // Căn giữa theo chiều dọc
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            WebkitBoxOrient: 'vertical',
+                            WebkitLineClamp: 1,
+                            paddingRight: '20px'
+                        }}
+                        title={'Sinh Nhật'}>
+                        Sinh Nhật
+                    </Typography>
+                    <IconButton sx={{ marginLeft: 'auto', color: 'var(--color-main)' }} onClick={handleClickMenu}>
+                        <ExpandMoreIcon />
+                    </IconButton>
+                </AccordionSummary>
+
+                <AccordionDetails>
+                    <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleCloseMenu}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right'
+                        }}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right'
+                        }}>
+                        <MenuItem onClick={filterByDate}>Sinh nhật ngày hôm nay</MenuItem>
+                        <MenuItem>Sinh nhật tuần này</MenuItem>
+                        <MenuItem>Sinh nhật tháng này</MenuItem>
+                    </Menu>
+                </AccordionDetails>
             </Accordion>
             {dataNhomKhachHang?.map((item: any, index: any) => (
                 <Accordion

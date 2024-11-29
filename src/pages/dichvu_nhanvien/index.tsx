@@ -91,7 +91,7 @@ class SettingDichVuNhanVien extends Component {
                                     getOptionLabel={(option) => `${option.tenNhanVien}`}
                                     renderOption={(props, option) => (
                                         <Box
-                                            key={option.id}
+                                            //key={option.id}
                                             component="li"
                                             sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
                                             {...props}>

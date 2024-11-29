@@ -129,6 +129,7 @@ export default function TabKhachHangNoBooking(props: IPropsTabKhachHangNoBooking
             diaChi: newCus?.diaChi ?? '',
             tongChiTieu: 0,
             conNo: 0,
+            ngaySinh: new Date(),
             cuocHenGanNhat: new Date(),
             tongTichDiem: 0,
             soLanCheckIn: 0,

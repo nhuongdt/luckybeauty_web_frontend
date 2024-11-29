@@ -5,7 +5,6 @@ import { Routes } from './components/routers';
 import { SnackbarProvider, MaterialDesignContent } from 'notistack';
 import { ReactComponent as SuccessIcon } from './images/success.svg';
 import styled from 'styled-components';
-import notificationStore from './stores/notificationStore';
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
     '&.notistack-MuiContent-success': {

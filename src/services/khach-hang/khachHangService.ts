@@ -15,6 +15,7 @@ import { PagedResultDto } from '../dto/pagedResultDto';
 import { HoatDongKhachHang, ThongTinKhachHangTongHopDto } from './dto/ThongTinKhachHangTongHopDto';
 import { ILichSuDatLich } from './dto/ILichSuDatLich';
 import { LichSuGiaoDich } from './dto/LichSuGiaoDich';
+import { log } from 'console';
 
 class KhachHangService {
     public async getAll(input: PagedKhachHangResultRequestDto): Promise<PagedResultDto<KhachHangItemDto>> {

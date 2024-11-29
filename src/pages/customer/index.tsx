@@ -22,6 +22,7 @@ import {
     SelectChangeEvent,
     Checkbox
 } from '@mui/material';
+import { Component } from 'react';
 import { Add } from '@mui/icons-material';
 import './customerPage.css';
 import DownloadIcon from '../../images/download.svg';
@@ -64,7 +65,14 @@ import { TypeAction } from '../../lib/appconst';
 import ZaloService from '../../services/zalo/ZaloService';
 import ModalGuiTinNhanZalo from '../zalo/modal_gui_tin_zalo';
 import { TypeErrorImport } from '../../enum/TypeErrorImport';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel } from '@mui/material';
+import { useState } from 'react';
+import { log } from 'console';
 interface CustomerScreenState {
+    selectedColumns: Record<string, boolean>;
+    originalData: KhachHangItemDto[];
+    openDialog: boolean;
     rowTable: KhachHangItemDto[];
     toggle: boolean;
     idkhachHang: string;
@@ -85,7 +93,7 @@ interface CustomerScreenState {
     moreOpen: boolean;
     anchorEl: any;
     selectedRowId: any;
-    visibilityColumn: any;
+    visibilityColumn: Record<string, boolean>;
     information: boolean;
     idNhomKhach: string;
     isShowNhomKhachModal: boolean;
@@ -105,6 +113,17 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         super(props);
 
         this.state = {
+            selectedColumns: {
+                maKhachHang: true,
+                tenKhachHang: true,
+                soDienThoai: true,
+                ngaySinh: true,
+                tenNhomKhach: true,
+                tongChiTieu: true,
+                conNo: true
+            },
+            originalData: [],
+            openDialog: false,
             rowTable: [],
             toggle: false,
             idkhachHang: '',
@@ -141,6 +160,31 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             isShowModalGuiTinZalo: false
         };
     }
+    handleCheckboxChange = (column: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newSelectedColumns = {
+            ...this.state.selectedColumns,
+            [column]: event.target.checked
+        };
+
+        this.setState({
+            selectedColumns: newSelectedColumns,
+            visibilityColumn: Object.keys(newSelectedColumns).reduce((result, col) => {
+                result[col] = newSelectedColumns[col];
+                return result;
+            }, {} as Record<string, boolean>) // Khai báo kiểu rõ ràng cho visibilityColumn
+        });
+    };
+
+    handleApply = () => {
+        this.handleClose(); // Đóng dialog
+    };
+    handleClickOpen = () => {
+        this.setState({ openDialog: true });
+    };
+
+    handleClose = () => {
+        this.setState({ openDialog: false });
+    };
     componentDidMount(): void {
         this.getData();
         const visibilityColumn = localStorage.getItem('visibilityColumn') ?? {};
@@ -175,7 +219,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             totalItems: khachHangs.totalCount,
             totalPage: Math.ceil(khachHangs.totalCount / this.state.rowPerPage)
         });
-
         this.setState((prev) => {
             return {
                 ...prev,
@@ -522,6 +565,19 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         }
         this.setState({ checkAllRow: !this.state.checkAllRow });
     };
+    //chọn ngày hiện tại rồi thay thế dữ liệu tổng
+    filterByDate = () => {
+        console.log('em ở đây');
+        const today = new Date();
+        const filteredData = this.state.rowTable.filter((item) => {
+            const birthDate = new Date(item.ngaySinh);
+            return birthDate.getDate() === today.getDate() && birthDate.getMonth() === today.getMonth();
+        });
+        this.setState({ rowTable: filteredData });
+    };
+    resetFilter = () => {
+        this.setState({ rowTable: this.state.originalData });
+    };
     render(): React.ReactNode {
         // const apiRef = useGridApiRef();
         const columns: GridColDef[] = [
@@ -531,6 +587,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 filterable: false,
                 disableColumnMenu: true,
                 flex: 0.2,
+                //hide: !this.state.selectedColumns['checkBox'],
                 renderHeader: (params) => {
                     return <Checkbox onClick={this.handleSelectAllGridRowClick} checked={this.state.checkAllRow} />;
                 },
@@ -547,6 +604,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 minWidth: 120,
                 maxWidth: 120,
                 flex: 1,
+                // /hide: !this.state.selectedColumns['maKhachHang'],
                 renderCell: (params) => (
                     <Box
                         style={{
@@ -744,11 +802,92 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid xs={12} md={6} lg={6} item display="flex" gap="8px" justifyContent="end">
+                            <Grid xs={12} md={6} lg={6} item display="flex" gap="3px" justifyContent="end">
                                 <ButtonGroup
                                     variant="contained"
-                                    sx={{ gap: '8px' }}
+                                    sx={{ gap: '3px' }}
                                     className="rounded-4px resize-height">
+                                    <div>
+                                        <Button
+                                            className="border-color btn-outline-hover"
+                                            variant="outlined"
+                                            startIcon={<SettingsIcon />}
+                                            onClick={this.handleClickOpen}
+                                            sx={{
+                                                textTransform: 'capitalize',
+                                                fontWeight: '400',
+                                                color: '#666466',
+                                                bgcolor: '#fff!important',
+                                                display: abpCustom.isGrandPermission('Pages.KhachHang.Import')
+                                                    ? ''
+                                                    : 'none'
+                                            }}>
+                                            Cài Đặt
+                                        </Button>
+                                        <Dialog open={this.state.openDialog} onClose={this.handleClose}>
+                                            <DialogTitle>Chọn các cột hiển thị</DialogTitle>
+                                            <DialogContent>
+                                                <Grid container spacing={2}>
+                                                    {[
+                                                        'maKhachHang',
+                                                        'tenKhachHang',
+                                                        'soDienThoai',
+                                                        'ngaySinh',
+                                                        'tenNhomKhach',
+                                                        'tongChiTieu',
+                                                        'conNo'
+                                                    ].map((column) => (
+                                                        <Grid item xs={6} sm={4} key={column}>
+                                                            <FormControlLabel
+                                                                control={
+                                                                    <Checkbox
+                                                                        checked={this.state.selectedColumns[column]}
+                                                                        onChange={this.handleCheckboxChange(column)}
+                                                                    />
+                                                                }
+                                                                label={
+                                                                    {
+                                                                        maKhachHang: 'Mã khách hàng',
+                                                                        tenKhachHang: 'Tên khách hàng',
+                                                                        soDienThoai: 'Số điện thoại',
+                                                                        ngaySinh: 'Ngày sinh',
+                                                                        tenNhomKhach: 'Nhóm khách hàng',
+                                                                        tongChiTieu: 'Tổng chi tiêu',
+                                                                        conNo: 'Còn nợ'
+                                                                    }[column]
+                                                                }
+                                                            />
+                                                        </Grid>
+                                                    ))}
+                                                </Grid>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <button
+                                                    onClick={this.handleClose}
+                                                    className="button-close"
+                                                    style={{
+                                                        backgroundColor: '#dc3546',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        padding: '10px 20px',
+                                                        cursor: 'pointer',
+                                                        borderRadius: '4px',
+                                                        fontSize: '14px'
+                                                    }}>
+                                                    Đóng
+                                                </button>
+                                            </DialogActions>
+                                        </Dialog>
+                                    </div>
+                                    <div style={{ marginBottom: 16 }}>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={this.filterByDate}
+                                            style={{ marginRight: 8 }}>
+                                            Lọc
+                                        </Button>
+                                    </div>
                                     <Button
                                         className="border-color btn-outline-hover"
                                         variant="outlined"
@@ -838,7 +977,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
 
                                         <Add
                                             sx={{
-                                                // color: '#fff',
                                                 transition: '.4s',
                                                 height: '32px',
                                                 cursor: 'pointer',
@@ -964,18 +1102,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         }}
                                         rowSelectionModel={this.state.rowSelectionModel}
                                     />
-                                    {/* <ActionMenuTable
-                                        selectedRowId={this.state.selectedRowId}
-                                        anchorEl={this.state.anchorEl}
-                                        closeMenu={this.handleCloseMenu}
-                                        handleView={this.handleOpenInfor}
-                                        permissionView=""
-                                        handleEdit={this.handleEdit}
-                                        permissionEdit="Pages.KhachHang.Edit"
-                                        handleDelete={this.showConfirmDelete}
-                                        permissionDelete="Pages.KhachHang.Delete"
-                                    /> */}
-
                                     <CustomTablePagination
                                         currentPage={this.state.currentPage}
                                         rowPerPage={this.state.rowPerPage}
