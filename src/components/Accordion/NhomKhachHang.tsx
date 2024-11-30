@@ -11,9 +11,6 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
-interface AccordionNhomKhachHang {
-    filterByDate: () => void;
-}
 
 export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeItem, filterByDate }: any) {
     const [rowHover, setRowHover] = useState<SuggestNhomKhachDto>({} as SuggestNhomKhachDto);
@@ -116,11 +113,10 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                             bgcolor: 'var(--color-bg)'
                         },
                         '& .MuiAccordionSummary-content': {
-                            display: 'flex', // Đảm bảo nội dung của AccordionSummary được căn chỉnh theo chiều ngang
-                            alignItems: 'center' // Căn giữa nội dung theo chiều dọc
+                            display: 'flex',
+                            alignItems: 'center'
                         }
-                    }}
-                    onClick={() => handleClickTreeItem(false, '')}>
+                    }}>
                     <CakeIcon sx={{ color: 'var(--color-main)' }} />
                     <Typography
                         variant="body2"
@@ -157,9 +153,9 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                             vertical: 'top',
                             horizontal: 'right'
                         }}>
-                        <MenuItem onClick={filterByDate}>Sinh nhật ngày hôm nay</MenuItem>
-                        <MenuItem>Sinh nhật tuần này</MenuItem>
-                        <MenuItem>Sinh nhật tháng này</MenuItem>
+                        <MenuItem onClick={() => filterByDate('today')}>Sinh nhật ngày hôm nay</MenuItem>
+                        <MenuItem onClick={() => filterByDate('thisWeek')}>Sinh nhật tuần này</MenuItem>
+                        <MenuItem onClick={() => filterByDate('thisMonth')}>Sinh nhật tháng này</MenuItem>
                     </Menu>
                 </AccordionDetails>
             </Accordion>

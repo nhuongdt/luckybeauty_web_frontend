@@ -68,7 +68,9 @@ import { TypeErrorImport } from '../../enum/TypeErrorImport';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel } from '@mui/material';
 import { useState } from 'react';
-import { log } from 'console';
+import { Console, log } from 'console';
+import VisibilityIcon from '@mui/icons-material/Visibility'; // Import icon con mắt
+
 interface CustomerScreenState {
     selectedColumns: Record<string, boolean>;
     originalData: KhachHangItemDto[];
@@ -565,16 +567,46 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         }
         this.setState({ checkAllRow: !this.state.checkAllRow });
     };
-    //chọn ngày hiện tại rồi thay thế dữ liệu tổng
-    filterByDate = () => {
-        console.log('em ở đây');
+    filterByDate = (filterType: 'today' | 'thisWeek' | 'thisMonth') => {
         const today = new Date();
         const filteredData = this.state.rowTable.filter((item) => {
             const birthDate = new Date(item.ngaySinh);
-            return birthDate.getDate() === today.getDate() && birthDate.getMonth() === today.getMonth();
+            if (isNaN(birthDate.getTime())) {
+                console.error('Invalid birthDate:', item.ngaySinh);
+                return false;
+            }
+
+            birthDate.setFullYear(today.getFullYear());
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - today.getDay());
+            startOfWeek.setFullYear(today.getFullYear());
+
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+            endOfWeek.setFullYear(today.getFullYear());
+
+            switch (filterType) {
+                // this.getData();
+                case 'today': {
+                    return birthDate.getDate() === today.getDate() && birthDate.getMonth() === today.getMonth();
+                }
+
+                case 'thisWeek': {
+                    return birthDate >= startOfWeek && birthDate <= endOfWeek;
+                }
+
+                case 'thisMonth': {
+                    return birthDate.getMonth() === today.getMonth();
+                }
+
+                default:
+                    return true;
+            }
         });
+
         this.setState({ rowTable: filteredData });
     };
+
     resetFilter = () => {
         this.setState({ rowTable: this.state.originalData });
     };
@@ -811,18 +843,20 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         <Button
                                             className="border-color btn-outline-hover"
                                             variant="outlined"
-                                            startIcon={<SettingsIcon />}
                                             onClick={this.handleClickOpen}
                                             sx={{
-                                                textTransform: 'capitalize',
+                                                textTransform: 'none', // Bỏ chữ viết hoa
                                                 fontWeight: '400',
                                                 color: '#666466',
                                                 bgcolor: '#fff!important',
                                                 display: abpCustom.isGrandPermission('Pages.KhachHang.Import')
                                                     ? ''
-                                                    : 'none'
-                                            }}>
-                                            Cài Đặt
+                                                    : 'none',
+                                                padding: '6px 12px' // Cân chỉnh khoảng cách nếu cần
+                                            }}
+                                            startIcon={<VisibilityIcon />} // Thêm icon con mắt
+                                        >
+                                            Hiển thị
                                         </Button>
                                         <Dialog open={this.state.openDialog} onClose={this.handleClose}>
                                             <DialogTitle>Chọn các cột hiển thị</DialogTitle>
@@ -878,15 +912,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 </button>
                                             </DialogActions>
                                         </Dialog>
-                                    </div>
-                                    <div style={{ marginBottom: 16 }}>
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={this.filterByDate}
-                                            style={{ marginRight: 8 }}>
-                                            Lọc
-                                        </Button>
                                     </div>
                                     <Button
                                         className="border-color btn-outline-hover"
@@ -1014,6 +1039,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                             <AccordionNhomKhachHang
                                                 dataNhomKhachHang={this.state.listNhomKhachSearch}
                                                 clickTreeItem={this.onEditNhomKhach}
+                                                filterByDate={this.filterByDate} // Thêm prop này nếu cần
                                             />
                                         </Stack>
                                     </Box>
