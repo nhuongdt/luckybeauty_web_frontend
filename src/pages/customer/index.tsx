@@ -88,6 +88,7 @@ interface CustomerScreenState {
     tongChiTieuTu?: number;
     tongChiTieuDen?: number;
     gioiTinh?: boolean;
+    creationTime?: Date;
     totalItems: number;
     totalPage: number;
     isShowConfirmDelete: boolean;
@@ -122,7 +123,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 ngaySinh: true,
                 tenNhomKhach: true,
                 tongChiTieu: true,
-                conNo: true
+                conNo: true,
+                creationTime: false
             },
             originalData: [],
             openDialog: false,
@@ -139,6 +141,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             tongChiTieuDen: undefined,
             tongChiTieuTu: undefined,
             gioiTinh: undefined,
+            creationTime: undefined,
             importShow: false,
             totalItems: 0,
             totalPage: 0,
@@ -210,6 +213,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             sortType: this.state.sortType,
             timeFrom: this.state.timeFrom,
             timeTo: this.state.timeTo,
+            creationTime: this.state.creationTime,
             gioiTinh: this.state.gioiTinh,
             tongChiTieuDen: this.state.tongChiTieuDen,
             tongChiTieuTu: this.state.tongChiTieuTu,
@@ -219,7 +223,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         await this.setState({
             rowTable: khachHangs.items,
             totalItems: khachHangs.totalCount,
-            totalPage: Math.ceil(khachHangs.totalCount / this.state.rowPerPage)
+            totalPage: Math.ceil(khachHangs.totalCount / this.state.rowPerPage),
+            originalData: [...khachHangs.items] // Dữ liệu gốc
         });
         this.setState((prev) => {
             return {
@@ -568,8 +573,9 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         this.setState({ checkAllRow: !this.state.checkAllRow });
     };
     filterByDate = (filterType: 'today' | 'thisWeek' | 'thisMonth') => {
+        this.countBirthdays();
         const today = new Date();
-        const filteredData = this.state.rowTable.filter((item) => {
+        const filteredData = this.state.originalData.filter((item) => {
             const birthDate = new Date(item.ngaySinh);
             if (isNaN(birthDate.getTime())) {
                 console.error('Invalid birthDate:', item.ngaySinh);
@@ -586,7 +592,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             endOfWeek.setFullYear(today.getFullYear());
 
             switch (filterType) {
-                // this.getData();
                 case 'today': {
                     return birthDate.getDate() === today.getDate() && birthDate.getMonth() === today.getMonth();
                 }
@@ -610,6 +615,41 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     resetFilter = () => {
         this.setState({ rowTable: this.state.originalData });
     };
+
+    countBirthdays = () => {
+        const today = new Date();
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - today.getDay());
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        let todayCount = 0;
+        let thisWeekCount = 0;
+        let thisMonthCount = 0;
+        this.state.originalData.forEach((item) => {
+            const birthDate = new Date(item.ngaySinh);
+            if (isNaN(birthDate.getTime())) {
+                console.error('Invalid birthDate:', item.ngaySinh);
+                return;
+            }
+            birthDate.setFullYear(today.getFullYear());
+            if (birthDate.getDate() === today.getDate() && birthDate.getMonth() === today.getMonth()) {
+                todayCount++;
+            }
+            if (birthDate >= startOfWeek && birthDate <= endOfWeek) {
+                thisWeekCount++;
+            }
+            if (birthDate.getMonth() === today.getMonth()) {
+                thisMonthCount++;
+            }
+        });
+        console.log('sum', todayCount, thisMonthCount, thisWeekCount);
+        return {
+            today: todayCount,
+            thisWeek: thisWeekCount,
+            thisMonth: thisMonthCount
+        };
+    };
+
     render(): React.ReactNode {
         // const apiRef = useGridApiRef();
         const columns: GridColDef[] = [
@@ -636,7 +676,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 minWidth: 120,
                 maxWidth: 120,
                 flex: 1,
-                // /hide: !this.state.selectedColumns['maKhachHang'],
                 renderCell: (params) => (
                     <Box
                         style={{
@@ -746,7 +785,18 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     </Box>
                 )
             },
-
+            {
+                field: 'creationTime',
+                headerName: 'Ngày Tạo',
+                minWidth: 120,
+                flex: 1,
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
+                renderCell: (params) => (
+                    <Typography variant="body2">
+                        {params.value ? format(new Date(params.value), 'dd/MM/yyyy') : ''}
+                    </Typography>
+                )
+            },
             {
                 field: 'action',
                 headerName: '#',
@@ -761,6 +811,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
             }
         ];
+        // const visibleColumns = GridColDef.filter((column) => this.state.selectedColumns[column.field]);
 
         return (
             <>
@@ -869,7 +920,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                         'ngaySinh',
                                                         'tenNhomKhach',
                                                         'tongChiTieu',
-                                                        'conNo'
+                                                        'conNo',
+                                                        'creationTime'
                                                     ].map((column) => (
                                                         <Grid item xs={6} sm={4} key={column}>
                                                             <FormControlLabel
@@ -887,7 +939,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                                         ngaySinh: 'Ngày sinh',
                                                                         tenNhomKhach: 'Nhóm khách hàng',
                                                                         tongChiTieu: 'Tổng chi tiêu',
-                                                                        conNo: 'Còn nợ'
+                                                                        conNo: 'Còn nợ',
+                                                                        creationTime: 'Ngày tạo'
                                                                     }[column]
                                                                 }
                                                             />
@@ -1039,7 +1092,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                             <AccordionNhomKhachHang
                                                 dataNhomKhachHang={this.state.listNhomKhachSearch}
                                                 clickTreeItem={this.onEditNhomKhach}
-                                                filterByDate={this.filterByDate} // Thêm prop này nếu cần
+                                                filterByDate={this.filterByDate}
+                                                birthdayCounts={this.countBirthdays()}
                                             />
                                         </Stack>
                                     </Box>
@@ -1103,7 +1157,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         onCellClick={this.handleCellClick}
                                         hideFooter
                                         onColumnVisibilityModelChange={this.toggleColumnVisibility}
-                                        columnVisibilityModel={this.state.visibilityColumn}
+                                        columnVisibilityModel={this.state.selectedColumns}
                                         checkboxSelection={false}
                                         localeText={TextTranslate}
                                         sortingOrder={['desc', 'asc']}

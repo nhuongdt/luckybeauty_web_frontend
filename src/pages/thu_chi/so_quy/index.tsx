@@ -1044,9 +1044,7 @@ const PageSoQuy = () => {
                                                         )}
                                                     </TableCell>
                                                     <TableCell align="right">
-                                                        {new Intl.NumberFormat('vi-VN').format(
-                                                            pageDataSoQuy?.sumTongThuChi ?? 0
-                                                        )}
+                                                        {new Intl.NumberFormat('vi-VN').format(thuTrongKy - chiTrongKy)}
                                                     </TableCell>
                                                     <TableCell colSpan={2}></TableCell>
                                                 </TableRow>

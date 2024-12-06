@@ -12,7 +12,12 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 
-export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeItem, filterByDate }: any) {
+export default function AccordionNhomKhachHang({
+    dataNhomKhachHang,
+    clickTreeItem,
+    filterByDate,
+    birthdayCounts
+}: any) {
     const [rowHover, setRowHover] = useState<SuggestNhomKhachDto>({} as SuggestNhomKhachDto);
     const [isHover, setIsHover] = useState(false);
     const [idChosing, setIdChosing] = useState('');
@@ -34,6 +39,11 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
     //         return birthDate.getMonth() === todayMonth && birthDate.getDate() === todayDate;
     //     })
     //     };
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    const handleToggle = () => {
+        setIsExpanded((prev) => !prev);
+    };
     const handleHover = (event: any, rowData: any, index: number) => {
         const data = JSON.parse(JSON.stringify(rowData));
         const objNhomKhach: SuggestNhomKhachDto = { id: data.id, tenNhomKhach: data.tenNhomKhach };
@@ -125,7 +135,7 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                         sx={{
                             marginLeft: '9px',
                             display: 'flex',
-                            alignItems: 'center', // Căn giữa theo chiều dọc
+                            alignItems: 'center',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             WebkitBoxOrient: 'vertical',
@@ -135,30 +145,83 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                         title={'Sinh Nhật'}>
                         Sinh Nhật
                     </Typography>
-                    <IconButton sx={{ marginLeft: 'auto', color: 'var(--color-main)' }} onClick={handleClickMenu}>
+                    <IconButton
+                        onClick={handleToggle}
+                        sx={{
+                            marginLeft: 'auto',
+                            color: 'var(--color-main)',
+                            transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                            transition: 'transform 0.3s'
+                        }}>
                         <ExpandMoreIcon />
                     </IconButton>
                 </AccordionSummary>
 
-                <AccordionDetails>
-                    <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleCloseMenu}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right'
-                        }}
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right'
+                <AccordionDetails
+                    sx={{
+                        padding: '8px 16px',
+                        backgroundColor: 'var(--color-bg-light)'
+                    }}>
+                    <Typography
+                        variant="body2"
+                        onClick={() => filterByDate('today')}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            color: 'var(--color-text)',
+                            cursor: 'pointer',
+                            marginBottom: '8px',
+                            paddingLeft: '16px',
+                            '&:hover': { color: 'var(--color-main)' },
+                            '&::before': {
+                                content: '"•"',
+                                marginRight: '8px'
+                            },
+                            textDecoration: 'none'
                         }}>
-                        <MenuItem onClick={() => filterByDate('today')}>Sinh nhật ngày hôm nay</MenuItem>
-                        <MenuItem onClick={() => filterByDate('thisWeek')}>Sinh nhật tuần này</MenuItem>
-                        <MenuItem onClick={() => filterByDate('thisMonth')}>Sinh nhật tháng này</MenuItem>
-                    </Menu>
+                        Hôm nay({birthdayCounts.today})
+                    </Typography>
+                    <Typography
+                        variant="body2"
+                        onClick={() => filterByDate('thisWeek')}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            color: 'var(--color-text)',
+                            cursor: 'pointer',
+                            marginBottom: '8px',
+                            paddingLeft: '16px',
+                            '&:hover': { color: 'var(--color-main)' },
+                            '&::before': {
+                                content: '"•"',
+                                marginRight: '8px'
+                            },
+                            textDecoration: 'none'
+                        }}>
+                        Tuần này({birthdayCounts.thisWeek})
+                    </Typography>
+                    <Typography
+                        variant="body2"
+                        onClick={() => filterByDate('thisMonth')}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            color: 'var(--color-text)',
+                            cursor: 'pointer',
+                            marginBottom: '8px',
+                            paddingLeft: '16px',
+                            '&:hover': { color: 'var(--color-main)' },
+                            '&::before': {
+                                content: '"•"',
+                                marginRight: '8px'
+                            },
+                            textDecoration: 'none'
+                        }}>
+                        Tháng này({birthdayCounts.thisMonth})
+                    </Typography>
                 </AccordionDetails>
             </Accordion>
+
             {dataNhomKhachHang?.map((item: any, index: any) => (
                 <Accordion
                     disableGutters
