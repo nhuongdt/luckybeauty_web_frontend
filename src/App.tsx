@@ -25,7 +25,7 @@ const App = () => {
     return (
         <div>
             <BrowserRouter>{Routes}</BrowserRouter>
-            <SnackbarProvider
+            {/* <SnackbarProvider
                 maxSnack={3}
                 anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
                 iconVariant={{
@@ -35,7 +35,7 @@ const App = () => {
                     success: StyledMaterialDesignContent,
                     error: StyledMaterialDesignContent
                 }}
-            />
+            /> */}
         </div>
     );
 };

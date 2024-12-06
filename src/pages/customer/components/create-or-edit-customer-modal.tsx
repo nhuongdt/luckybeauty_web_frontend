@@ -16,7 +16,7 @@ import {
     DialogContent
 } from '@mui/material';
 import closeIcon from '../../../images/close-square.svg';
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { Form, Formik } from 'formik';
 import khachHangService from '../../../services/khach-hang/khachHangService';
 import AppConsts from '../../../lib/appconst';
@@ -36,10 +36,12 @@ import ZaloService from '../../../services/zalo/ZaloService';
 import { IInforUserZOA, IMemberZOA, ZaloAuthorizationDto } from '../../../services/zalo/zalo_dto';
 import AutocompleteWithData from '../../../components/Autocomplete/AutocompleteWithData';
 import { IDataAutocomplete } from '../../../services/dto/IDataAutocomplete';
-// import { MenuItem, FormControl, InputLabel, Select, IconButton, Popover } from '@mui/material';
-// import { SelectChangeEvent } from '@mui/material';
-// import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-// import InputMask from 'react-input-mask';
+import { MenuItem, FormControl, InputLabel, Select, IconButton, Popover } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import InputMask from 'react-input-mask';
+import { format, parse } from 'date-fns';
+import ReactInputMask from 'react-input-mask';
 
 export interface ICreateOrEditCustomerProps {
     visible: boolean;
@@ -57,10 +59,11 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
         fileImage: {} as File,
         ZOA_allUser: [] as IInforUserZOA[],
         ZOA_userChosed: {} as IInforUserZOA,
-        zaloToken: {} as ZaloAuthorizationDto
-        // dateFormat: 'dd/MM', // Giá trị mặc định
-        // dateValue: '',
-        // anchorEl: null // Để mở Popover
+        zaloToken: {} as ZaloAuthorizationDto,
+        dateFormat: 'dd/MM/yyyy', // Giá trị mặc định
+        day: '',
+        month: '',
+        year: ''
     };
     async getSuggest() {
         await suggestStore.getSuggestNguonKhach();
@@ -135,26 +138,26 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
             };
         });
     };
-    // handleDateFormatChange = (event: React.MouseEvent<HTMLElement>, format: string) => {
-    //     this.setState({ dateFormat: format, anchorEl: null, dateValue: '' }); // Reset ngày khi đổi định dạng
-    // };
+    handleDateFormatChange = (value: string) => {
+        this.setState({ dateFormat: value });
+    };
 
-    // handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //     this.setState({ dateValue: event.target.value });
-    // };
+    handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        this.setState({ [name]: value });
+    };
 
-    // openPopover = (event: React.MouseEvent<HTMLElement>) => {
-    //     this.setState({ anchorEl: event.currentTarget });
-    // };
+    openPopover = (event: React.MouseEvent<HTMLElement>) => {
+        this.setState({ anchorEl: event.currentTarget });
+    };
 
-    // closePopover = () => {
-    //     this.setState({ anchorEl: null });
-    // };
+    closePopover = () => {
+        this.setState({ anchorEl: null });
+    };
     render(): ReactNode {
         const { visible, onCancel, title, onOk, formRef } = this.props;
         const initValues: CreateOrEditKhachHangDto = formRef;
-        // const { dateFormat, dateValue, anchorEl } = this.state;
-        // const mask = dateFormat === 'dd/MM' ? '99/99' : '99/99/9999';
+        const { dateFormat, day, month, year } = this.state;
 
         return (
             <Dialog open={visible} onClose={onCancel} maxWidth="sm" fullWidth>
@@ -365,63 +368,71 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 }}
                                             />
                                         </Grid>
-                                        {/* <Grid container spacing={3}>
-                                            <Grid item sm={6} xs={12}>
-                                                <FormControl fullWidth size="small" variant="outlined">
-                                                    <InputLabel shrink>Ngày sinh</InputLabel>
-                                                    <InputMask
-                                                        mask={mask} // Định dạng mask
-                                                        value={dateValue}
-                                                        onChange={this.handleInputChange}
-                                                        placeholder={dateFormat} // Gợi ý định dạng
-                                                    >
-                                                        {(inputProps: any) => (
-                                                            <TextField
-                                                                {...inputProps}
-                                                                fullWidth
-                                                                size="small"
-                                                                variant="outlined"
-                                                                InputProps={{
-                                                                    endAdornment: (
-                                                                        <IconButton
-                                                                            edge="end"
-                                                                            size="small"
-                                                                            onClick={this.openPopover} // Gọi Popover
-                                                                            aria-label="select date format">
-                                                                            <ArrowDropDownIcon />
-                                                                        </IconButton>
-                                                                    )
-                                                                }}
-                                                            />
-                                                        )}
-                                                    </InputMask>
-
-                                                    <Popover
-                                                        open={Boolean(anchorEl)}
-                                                        anchorEl={anchorEl}
-                                                        onClose={this.closePopover}
-                                                        anchorOrigin={{
-                                                            vertical: 'bottom',
-                                                            horizontal: 'left'
-                                                        }}
-                                                        transformOrigin={{
-                                                            vertical: 'top',
-                                                            horizontal: 'left'
-                                                        }}>
-                                                        <MenuItem
-                                                            onClick={(e) => this.handleDateFormatChange(e, 'dd/MM')}>
-                                                            Ngày/Tháng
-                                                        </MenuItem>
-                                                        <MenuItem
-                                                            onClick={(e) =>
-                                                                this.handleDateFormatChange(e, 'dd/MM/yyyy')
-                                                            }>
-                                                            Ngày/Tháng/Năm
-                                                        </MenuItem>
-                                                    </Popover>
-                                                </FormControl>
+                                        <Grid container spacing={3}>
+                                            <Grid item xs={12}>
+                                                <Typography variant="h6">Chọn định dạng ngày tháng</Typography>
+                                                <Button
+                                                    variant={dateFormat === 'dd/MM/yyyy' ? 'contained' : 'outlined'}
+                                                    onClick={(e) => this.handleDateFormatChange('dd/MM/yyyy')}>
+                                                    Ngày/Tháng/Năm
+                                                </Button>
+                                                <Button
+                                                    variant={dateFormat === 'dd/MM' ? 'contained' : 'outlined'}
+                                                    onClick={(e) => this.handleDateFormatChange('dd/MM')}
+                                                    style={{ marginLeft: '8px' }}>
+                                                    Ngày/Tháng
+                                                </Button>
                                             </Grid>
-                                        </Grid> */}
+
+                                            <DialogContent>
+                                                <Grid container spacing={3} style={{ marginTop: '16px' }}>
+                                                    <Grid item xs={4}>
+                                                        <TextField
+                                                            fullWidth
+                                                            label="Ngày"
+                                                            name="day"
+                                                            value={day}
+                                                            onChange={this.handleInputChange}
+                                                            inputProps={{
+                                                                maxLength: 2,
+                                                                style: { textAlign: 'center' }
+                                                            }}
+                                                            variant="outlined"
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={4}>
+                                                        <TextField
+                                                            fullWidth
+                                                            label="Tháng"
+                                                            name="month"
+                                                            value={month}
+                                                            onChange={this.handleInputChange}
+                                                            inputProps={{
+                                                                maxLength: 2,
+                                                                style: { textAlign: 'center' }
+                                                            }}
+                                                            variant="outlined"
+                                                        />
+                                                    </Grid>
+                                                    {dateFormat === 'dd/MM/yyyy' && (
+                                                        <Grid item xs={4}>
+                                                            <TextField
+                                                                fullWidth
+                                                                label="Năm"
+                                                                name="year"
+                                                                value={year}
+                                                                onChange={this.handleInputChange}
+                                                                inputProps={{
+                                                                    maxLength: 4,
+                                                                    style: { textAlign: 'center' }
+                                                                }}
+                                                                variant="outlined"
+                                                            />
+                                                        </Grid>
+                                                    )}
+                                                </Grid>
+                                            </DialogContent>
+                                        </Grid>
                                         <Grid item xs={12}>
                                             <TextField
                                                 type="text"
