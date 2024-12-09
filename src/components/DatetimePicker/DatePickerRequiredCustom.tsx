@@ -13,7 +13,6 @@ export default function DatePickerRequireCustom({ defaultVal, handleChangeDate, 
     const today = new Date();
     const [open, setOpen] = useState<boolean>(false);
     const [value, setValue] = useState<Date | null>(new Date(format(today, 'yyyy-MM-dd')));
-
     const changeDate = (newVal: any) => {
         if (new Date(newVal).toString() === 'Invalid Date') return;
         handleChangeDate(format(new Date(newVal), 'yyyy-MM-dd'));

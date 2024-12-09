@@ -56,7 +56,7 @@ import BangBaoLoiFileImport from '../../components/ImportComponent/BangBaoLoiFil
 import { BangBaoLoiFileimportDto } from '../../services/dto/BangBaoLoiFileimportDto';
 import { ModalChuyenNhom } from '../../components/Dialog/modal_chuyen_nhom';
 import { IList } from '../../services/dto/IList';
-import { format } from 'date-fns';
+import { format, getYear } from 'date-fns';
 import { Guid } from 'guid-typescript';
 import CustomerFilterDrawer from './components/CustomerFilterDrawer';
 import CustomerInfor2 from './components/customer_infor2';
@@ -744,11 +744,20 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 minWidth: 120,
                 flex: 1,
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
-                renderCell: (params) => (
-                    <Typography variant="body2">
-                        {params.value ? format(new Date(params.value), 'dd/MM/yyyy') : ''}
-                    </Typography>
-                )
+                renderCell: (params) => {
+                    if (params.value) {
+                        const date = new Date(params.value);
+                        console.log(getYear(date));
+                        if (getYear(date) === 1000) {
+                            // Nếu năm là 1000, hiển thị theo định dạng dd/MM/xxxx
+                            return <Typography variant="body2">{format(date, 'dd/MM/____')}</Typography>;
+                        } else {
+                            // Nếu không phải năm 1000, hiển thị theo định dạng dd/MM/yyyy
+                            return <Typography variant="body2">{format(date, 'dd/MM/yyyy')}</Typography>;
+                        }
+                    }
+                    return <Typography variant="body2"></Typography>;
+                }
             },
             {
                 field: 'tenNhomKhach',

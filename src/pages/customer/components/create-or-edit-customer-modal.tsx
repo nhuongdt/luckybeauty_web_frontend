@@ -16,7 +16,7 @@ import {
     DialogContent
 } from '@mui/material';
 import closeIcon from '../../../images/close-square.svg';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { Form, Formik } from 'formik';
 import khachHangService from '../../../services/khach-hang/khachHangService';
 import AppConsts from '../../../lib/appconst';
@@ -39,10 +39,11 @@ import { IDataAutocomplete } from '../../../services/dto/IDataAutocomplete';
 import { MenuItem, FormControl, InputLabel, Select, IconButton, Popover } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import InputMask from 'react-input-mask';
+// import InputMask from 'react-input-mask';
 import { format, parse } from 'date-fns';
-import ReactInputMask from 'react-input-mask';
-
+// import ReactInputMask from 'react-input-mask';
+// import { Calendar } from 'primereact/calendar';
+import DateInputWithMask from '../../../components/DatetimePicker/DateInputWithMask';
 export interface ICreateOrEditCustomerProps {
     visible: boolean;
     onCancel: () => void;
@@ -158,6 +159,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
         const { visible, onCancel, title, onOk, formRef } = this.props;
         const initValues: CreateOrEditKhachHangDto = formRef;
         const { dateFormat, day, month, year } = this.state;
+        // const [date, setDate] = useState(null);
 
         return (
             <Dialog open={visible} onClose={onCancel} maxWidth="sm" fullWidth>
@@ -351,7 +353,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 customInput={TextField}
                                             />
                                         </Grid>
-                                        <Grid item sm={6} xs={12}>
+                                        {/* <Grid item sm={6} xs={12}>
                                             <DatePickerRequiredCustom
                                                 props={{
                                                     width: '100%',
@@ -367,8 +369,15 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                     values.ngaySinh = new Date(dt);
                                                 }}
                                             />
-                                        </Grid>
-                                        <Grid container spacing={3}>
+                                        </Grid> */}
+                                        {/* <div className="card flex justify-content-center">
+                                            <Calendar
+                                                value={date}
+                                                onChange={() => setDate(null)}
+                                                dateFormat="dd/mm/yy"
+                                            />
+                                        </div> */}
+                                        {/* <Grid container spacing={3}>
                                             <Grid item xs={12}>
                                                 <Typography variant="h6">Chọn định dạng ngày tháng</Typography>
                                                 <Button
@@ -432,6 +441,23 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                     )}
                                                 </Grid>
                                             </DialogContent>
+                                        </Grid> */}
+                                        <Grid item sm={6} xs={12}>
+                                            <DateInputWithMask
+                                                props={{
+                                                    width: '100%',
+                                                    label: 'Ngày sinh',
+                                                    size: 'small'
+                                                }}
+                                                defaultVal={
+                                                    values.ngaySinh
+                                                        ? formatDate(new Date(values.ngaySinh), 'yyyy-MM-dd')
+                                                        : ''
+                                                }
+                                                handleChangeDate={(dt: string) => {
+                                                    values.ngaySinh = new Date(dt);
+                                                }}
+                                            />
                                         </Grid>
                                         <Grid item xs={12}>
                                             <TextField
