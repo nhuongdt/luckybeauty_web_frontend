@@ -444,21 +444,19 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         </Grid> */}
                                         <Grid item sm={6} xs={12}>
                                             <DateInputWithMask
-                                                props={{
-                                                    width: '100%',
-                                                    label: 'Ngày sinh',
-                                                    size: 'small'
-                                                }}
-                                                defaultVal={
+                                                label="Ngày sinh"
+                                                formatType="dd/MM/yyyy"
+                                                value={
                                                     values.ngaySinh
-                                                        ? formatDate(new Date(values.ngaySinh), 'yyyy-MM-dd')
+                                                        ? formatDate(new Date(values.ngaySinh), 'dd/MM/yyyy')
                                                         : ''
                                                 }
-                                                handleChangeDate={(dt: string) => {
-                                                    values.ngaySinh = new Date(dt);
+                                                onChange={(date) => {
+                                                    values.ngaySinh = new Date(date);
                                                 }}
                                             />
                                         </Grid>
+
                                         <Grid item xs={12}>
                                             <TextField
                                                 type="text"

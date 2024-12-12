@@ -750,7 +750,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         console.log(getYear(date));
                         if (getYear(date) === 1000) {
                             // Nếu năm là 1000, hiển thị theo định dạng dd/MM/xxxx
-                            return <Typography variant="body2">{format(date, 'dd/MM/____')}</Typography>;
+                            return <Typography variant="body2">{format(date, 'dd/MM')}</Typography>;
                         } else {
                             // Nếu không phải năm 1000, hiển thị theo định dạng dd/MM/yyyy
                             return <Typography variant="body2">{format(date, 'dd/MM/yyyy')}</Typography>;
