@@ -351,6 +351,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 sx={{ fontSize: '13px' }}
                                                 onChange={handleChange}
                                                 customInput={TextField}
+                                                allowLeadingZeros
                                             />
                                         </Grid>
                                         {/* <Grid item sm={6} xs={12}>
@@ -518,7 +519,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 fullWidth
                                                 disablePortal
                                                 onChange={(event, value) => {
-                                                    setFieldValue('idNguonKhach', value ? value.id : undefined); // Update the 'idNguonKhach' value in Formik
+                                                    setFieldValue('idNguonKhach', value ? value.id : undefined);
                                                 }}
                                                 renderInput={(params) => (
                                                     <TextField

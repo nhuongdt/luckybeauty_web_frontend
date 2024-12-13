@@ -637,7 +637,8 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             id: item?.id,
             maKhachHang: item?.text, // todo makhachhang
             tenKhachHang: item?.text ?? 'Khách lẻ',
-            soDienThoai: item?.text2 ?? ''
+            soDienThoai: item?.text2 ?? '',
+            conNo: item?.conNo
         });
 
         const idCheckin = await InsertCustomer_toCheckIn(item?.id ?? Guid.EMPTY);
@@ -1320,12 +1321,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 <Grid item lg={5} md={6} xs={12} sm={7}>
                     <Stack marginLeft={2} position={'relative'} height={'100%'}>
                         <Stack>
-                            <Stack
-                                direction={'row'}
-                                paddingBottom={2}
-                                maxHeight={57}
-                                borderBottom={'1px solid #cccc'}
-                                justifyContent={'space-between'}>
+                            <Stack direction={'row'} paddingBottom={2} maxHeight={48} justifyContent={'space-between'}>
                                 <Stack>
                                     <Stack direction={'row'} spacing={0.5} alignItems={'center'}>
                                         <Avatar />
@@ -1371,8 +1367,19 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                                 )}
                                             </Stack>
 
-                                            <Stack direction={'row'} spacing={2} alignItems={'center'}>
-                                                <Typography color={'#ccc'} variant="caption">
+                                            <Stack direction={'row'} alignItems={'center'}>
+                                                <Typography
+                                                    color={'#000000'}
+                                                    variant="caption"
+                                                    sx={{ lineHeight: 1.2 }}>
+                                                    <span style={{ fontWeight: 'bold', color: '#000000' }}>
+                                                        Còn nợ:{' '}
+                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                            customerChosed?.conNo ?? 0
+                                                        )}{' '}
+                                                        đ
+                                                    </span>
+                                                    <br />
                                                     {customerChosed?.soDienThoai}
                                                 </Typography>
                                                 {customerHasGDV && (

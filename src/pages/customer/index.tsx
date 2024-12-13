@@ -642,7 +642,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 thisMonthCount++;
             }
         });
-        console.log('sum', todayCount, thisMonthCount, thisWeekCount);
         return {
             today: todayCount,
             thisWeek: thisWeekCount,
@@ -747,7 +746,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 renderCell: (params) => {
                     if (params.value) {
                         const date = new Date(params.value);
-                        console.log(getYear(date));
                         if (getYear(date) === 1000) {
                             // Nếu năm là 1000, hiển thị theo định dạng dd/MM/xxxx
                             return <Typography variant="body2">{format(date, 'dd/MM')}</Typography>;

@@ -23,7 +23,7 @@ export default interface INhatKySuDungGDVDto {
     soLuongMua: number;
     donGiaSauCK: number;
     thanhTienSauCK: number;
-
+    tenNhanVien: string;
     maHoaDonSD: string;
     ngayLapHoaDonSD: string;
     soLuongSD: number;

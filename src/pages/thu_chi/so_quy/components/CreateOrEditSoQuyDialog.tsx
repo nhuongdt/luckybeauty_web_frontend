@@ -50,12 +50,20 @@ import suggestStore from '../../../../stores/suggestStore';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
 import abpCustom from '../../../../components/abp-custom';
 import DialogButtonClose from '../../../../components/Dialog/ButtonClose';
+import React from 'react';
 
 interface SoQuyDialogProps {
     visiable: boolean;
     onClose: () => void;
     onOk: (dataSave: any, type: number) => void;
     idQuyHD: string | null;
+    initialValues?: any; // Giá trị ban đầu của form
+    customerData?: {
+        // Thông tin người nợ
+        id: string;
+        name: string;
+        debt: number;
+    };
 }
 
 const themeDate = createTheme({
@@ -69,13 +77,30 @@ const themeDate = createTheme({
         }
     }
 });
-const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, onOk }: SoQuyDialogProps) => {
+const CreateOrEditSoQuyDialog = ({
+    visiable = false,
+    idQuyHD = null,
+    onClose,
+    onOk,
+    initialValues = {},
+    customerData
+}: SoQuyDialogProps) => {
     const doiTuongNopTien = [
         { value: 1, text: 'Khách hàng' },
         // { id: 2, text: 'Nhà cung cấp' },
         { value: 3, text: 'Nhân viên' }
     ];
-
+    const [formData, setFormData] = React.useState(initialValues);
+    React.useEffect(() => {
+        if (customerData) {
+            setFormData((prev: any) => ({
+                ...prev,
+                idNguoiNop: customerData.id,
+                tenNguoiNop: customerData.name,
+                soTienNo: customerData.debt
+            }));
+        }
+    }, [customerData]);
     const formRef = useRef();
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
@@ -247,7 +272,7 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
             onOk(quyHoaDon, TypeAction.UPDATE);
         }
     };
-
+    //tets
     useEffect(() => {
         setQuyHoaDon({
             ...quyHoaDon,

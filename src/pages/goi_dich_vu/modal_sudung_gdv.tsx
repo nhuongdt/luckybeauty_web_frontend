@@ -224,6 +224,7 @@ export default function ModalSuDungGDV({ isShowModal, idUpdate, onClose, onOK }:
                                 <Grid item xs={1}>
                                     <Typography variant="body2">Sử dụng</Typography>
                                 </Grid>
+
                                 <Grid item xs={1}>
                                     <Typography variant="body2">Còn lại</Typography>
                                 </Grid>

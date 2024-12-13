@@ -6,4 +6,5 @@ export interface IList {
     color?: string;
     icon?: React.ReactNode;
     children?: IList[];
+    conNo?: number;
 }

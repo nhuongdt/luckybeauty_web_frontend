@@ -35,21 +35,38 @@ const DateInputWithMask: React.FC<DateInputWithMaskProps> = ({
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const rawValue = event.target.value;
-        const parsedDate = parse(rawValue, currentFormat, new Date(), { locale: vi });
+        // console.log('hi', rawValue); // Log ra để kiểm tra
 
-        if (isValid(parsedDate)) {
-            // Nếu định dạng là 'dd/MM', thay đổi năm thành 1000
-            if (currentFormat === 'dd/MM') {
-                const newDateWithYear1000 = new Date(parsedDate);
-                newDateWithYear1000.setFullYear(1000);
-                onChange(format(newDateWithYear1000, 'yyyy-MM-dd'));
-            } else {
-                onChange(format(parsedDate, 'yyyy-MM-dd'));
+        let formattedDate;
+
+        if (currentFormat === 'dd/MM/yyyy' && rawValue.length === 10 && rawValue.endsWith('____')) {
+            const [day, month] = rawValue.split('/').map(Number);
+
+            if (day && month) {
+                const newDateWithYear1000 = new Date(1000, month - 1, day);
+                if (!isNaN(newDateWithYear1000.getTime())) {
+                    formattedDate = format(newDateWithYear1000, 'yyyy-MM-dd');
+                }
             }
-            setInputValue(rawValue);
         } else {
-            setInputValue(rawValue);
+            const parsedDate = parse(rawValue, currentFormat, new Date(), { locale: vi });
+
+            if (isValid(parsedDate)) {
+                if (currentFormat === 'dd/MM') {
+                    const newDateWithYear1000 = new Date(parsedDate);
+                    newDateWithYear1000.setFullYear(1000);
+                    formattedDate = format(newDateWithYear1000, 'yyyy-MM-dd');
+                } else {
+                    formattedDate = format(parsedDate, 'yyyy-MM-dd');
+                }
+            }
         }
+
+        if (formattedDate) {
+            onChange(formattedDate);
+        }
+
+        setInputValue(rawValue);
     };
 
     const mask =

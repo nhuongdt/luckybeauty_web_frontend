@@ -93,6 +93,7 @@ const TabNhatKySuDungGDV: FC<{ idHoaDon?: string; idCustomer: string }> = ({ idH
         { columnId: 'maHangHoa', columnText: 'Mã dịch vụ' },
         { columnId: 'tenHangHoa', columnText: 'Tên dịch vụ' },
         { columnId: 'soLuong', columnText: 'Số lượng', align: 'center' },
+        { columnId: 'tenNhanVien', columnText: 'NVTH', align: 'center' },
         { columnId: 'thanhTienSauCK', columnText: 'Giá trị sử dụng', align: 'right' }
         // { columnId: 'nvThucHiens', columnText: 'Thành tiền', align: 'right' }
     ];
@@ -152,6 +153,7 @@ const TabNhatKySuDungGDV: FC<{ idHoaDon?: string; idCustomer: string }> = ({ idH
                                         <TableCell align="center">
                                             {new Intl.NumberFormat('vi-VN').format(row?.soLuongSD ?? 0)}
                                         </TableCell>
+                                        <TableCell>{row?.tenNhanVien}</TableCell>
                                         <TableCell align="right">
                                             {new Intl.NumberFormat('vi-VN').format(row?.giaTriSuDung ?? 0)}
                                         </TableCell>
