@@ -1381,6 +1381,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                                     </span>
                                                     <br />
                                                     {customerChosed?.soDienThoai}
+                                                    {/* {customerChosed?.id} */}
                                                 </Typography>
                                                 {customerHasGDV && (
                                                     <AutoStoriesOutlinedIcon

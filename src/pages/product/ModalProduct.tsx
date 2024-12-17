@@ -169,6 +169,14 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
             };
         });
     };
+    const editGiaVon = (event: any) => {
+        setProduct((itemOlds) => {
+            return {
+                ...itemOlds,
+                giaVon: utils.formatNumberToFloat(event.target.value)
+            };
+        });
+    };
     const handleChangeNhom = (item: any) => {
         setProduct((itemOlds) => {
             return {
@@ -300,6 +308,7 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
 
         const objNew = { ...product };
         objNew.giaBan = utils.formatNumberToFloat(product.giaBan);
+        objNew.giaVon = utils.formatNumberToFloat(product.giaVon);
         objNew.tenHangHoa_KhongDau = utils.strToEnglish(objNew.tenHangHoa ?? '');
         objNew.tenLoaiHangHoa = objNew.idLoaiHangHoa == 1 ? 'Hàng hóa' : 'Dịch vụ';
         objNew.txtTrangThaiHang = objNew.trangThai == 1 ? 'Đang kinh doanh' : 'Ngừng kinh doanh';
@@ -311,6 +320,7 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
                 tenDonViTinh: '',
                 tyLeChuyenDoi: objNew.tyLeChuyenDoi,
                 giaBan: objNew.giaBan,
+                giaVon: objNew.giaVon,
                 laDonViTinhChuan: objNew.laDonViTinhChuan
             }
         ];
@@ -528,6 +538,16 @@ const ModalHangHoa = ({ handleSave, trigger }: any) => {
                                     decimalSeparator={','}
                                     customInput={TextField}
                                     onChange={(event) => editGiaBan(event)}
+                                />
+                                <NumericFormat
+                                    size="small"
+                                    fullWidth
+                                    label="Giá vốn"
+                                    value={product.giaVon}
+                                    thousandSeparator={'.'}
+                                    decimalSeparator={','}
+                                    customInput={TextField}
+                                    onChange={(event) => editGiaVon(event)}
                                 />
                             </Stack>
                         </Grid>

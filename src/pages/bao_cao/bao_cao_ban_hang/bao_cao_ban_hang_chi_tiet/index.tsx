@@ -83,8 +83,10 @@ export default function BaoCaoBanHangChiTiet({ onChangePage, onChangePageSize }:
         { columnId: 'soLuong', columnText: 'Số lượng', align: 'center' },
         { columnId: 'donGiaTruocCK', columnText: 'Đơn giá', align: 'right' },
         { columnId: 'thanhTienTruocCK', columnText: 'Thành tiền', align: 'right' },
+        { columnId: 'giaVon', columnText: 'Giá Vốn', align: 'right' },
         { columnId: 'tienChietKhau', columnText: 'Chiết khấu', align: 'right' },
-        { columnId: 'thanhTienSauCK', columnText: 'Doanh thu', align: 'right' }
+        { columnId: 'thanhTienSauCK', columnText: 'Doanh thu', align: 'right' },
+        { columnId: 'loiNhuan', columnText: 'Lợi Nhuận', align: 'right' }
     ];
     return (
         <>
@@ -128,6 +130,11 @@ export default function BaoCaoBanHangChiTiet({ onChangePage, onChangePageSize }:
                                             </TableCell>
                                             <TableCell align="right">
                                                 {new Intl.NumberFormat('vi-VN').format(
+                                                    pageDataBaoCaoBanHangChiTiet?.items[0]?.sumGiaVon ?? 0
+                                                )}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {new Intl.NumberFormat('vi-VN').format(
                                                     pageDataBaoCaoBanHangChiTiet?.items[0]?.sumTienChietKhau ?? 0
                                                 )}
                                             </TableCell>
@@ -135,6 +142,11 @@ export default function BaoCaoBanHangChiTiet({ onChangePage, onChangePageSize }:
                                             <TableCell align="right">
                                                 {new Intl.NumberFormat('vi-VN').format(
                                                     pageDataBaoCaoBanHangChiTiet?.items[0]?.sumThanhTienSauCK ?? 0
+                                                )}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {new Intl.NumberFormat('vi-VN').format(
+                                                    pageDataBaoCaoBanHangChiTiet?.items[0]?.sumLoiNhuan ?? 0
                                                 )}
                                             </TableCell>
                                         </TableRow>
@@ -183,10 +195,18 @@ export default function BaoCaoBanHangChiTiet({ onChangePage, onChangePageSize }:
                                                 {new Intl.NumberFormat('vi-VN').format(row?.thanhTienTruocCK ?? 0)}
                                             </TableCell>
                                             <TableCell align="right" className="table-cell-border">
+                                                {new Intl.NumberFormat('vi-VN').format(row?.giaVon ?? 0)}
+                                            </TableCell>
+                                            <TableCell align="right" className="table-cell-border">
                                                 {new Intl.NumberFormat('vi-VN').format(row?.tienChietKhau ?? 0)}
                                             </TableCell>
                                             <TableCell align="right" className="table-cell-border">
                                                 {new Intl.NumberFormat('vi-VN').format(row?.thanhTienSauCK ?? 0)}
+                                            </TableCell>
+                                            <TableCell align="right" className="table-cell-border">
+                                                {new Intl.NumberFormat('vi-VN').format(
+                                                    (row?.thanhTienSauCK ?? 0) - (row?.giaVon ?? 0)
+                                                )}
                                             </TableCell>
                                         </TableRow>
                                     ))}

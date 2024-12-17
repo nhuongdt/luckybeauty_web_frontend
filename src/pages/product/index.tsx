@@ -605,6 +605,18 @@ const PageProduct = () => {
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         },
         {
+            field: 'giaVon',
+            headerName: 'Giá vốn',
+            minWidth: 100,
+            flex: 1,
+            renderCell: (params) => (
+                <Box display="flex" justifyContent="end" width="100%">
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
+                </Box>
+            ),
+            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
+        },
+        {
             field: 'soPhutThucHien',
             headerName: 'Thời gian (phút)',
             minWidth: 128,

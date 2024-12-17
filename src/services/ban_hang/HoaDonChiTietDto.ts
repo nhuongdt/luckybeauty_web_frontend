@@ -16,6 +16,7 @@ export default class HoaDonChiTietDto {
     idDonViQuyDoi? = null;
     soLuong = 1;
     donGiaTruocCK = 0;
+    giaVon = 0;
     ptChietKhau? = 0;
     tienChietKhau? = 0;
     laPTChietKhau = true;
@@ -46,6 +47,7 @@ export default class HoaDonChiTietDto {
         idDonViQuyDoi = null,
         soLuong = 1,
         donGiaTruocCK = 0,
+        giaVon = 0,
         ptChietKhau = 0,
         tienChietKhau = 0,
         laPTChietKhau = true,
@@ -60,6 +62,7 @@ export default class HoaDonChiTietDto {
         this.idDonViQuyDoi = idDonViQuyDoi;
         this.soLuong = soLuong;
         this.donGiaTruocCK = donGiaTruocCK;
+        this.giaVon = giaVon;
         this.ptChietKhau = ptChietKhau;
         this.laPTChietKhau = laPTChietKhau;
         this.tienChietKhau = ptChietKhau > 0 ? (donGiaTruocCK * ptChietKhau) / 100 : tienChietKhau;

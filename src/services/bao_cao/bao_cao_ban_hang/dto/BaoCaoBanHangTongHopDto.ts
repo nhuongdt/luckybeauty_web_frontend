@@ -6,6 +6,8 @@ export interface BaoCaoBanHangTongHopDto extends IBaoCaoBanHang_SumFooterDto {
     tienChietKhau?: number;
     thanhTienTruocCK?: number;
     thanhTienSauCK: number; // sau ck, truoc VAT
+    giaVon: number;
+    loiNhuan: number;
 }
 
 export interface IBaoCaoBanHang_SumFooterDto {
@@ -13,4 +15,6 @@ export interface IBaoCaoBanHang_SumFooterDto {
     sumTienChietKhau?: number;
     sumThanhTienTruocCK?: number;
     sumThanhTienSauCK?: number;
+    sumGiaVon?: number;
+    sumLoiNhuan?: number;
 }
