@@ -184,8 +184,6 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             maxResultCount: 100
         } as PagedNhanSuRequestDto);
         setAllNhanVien([...data.items]);
-
-        // await cassoApiService.TaoWebhook();
     };
 
     const GetAllMauIn_byChiNhanh = async () => {

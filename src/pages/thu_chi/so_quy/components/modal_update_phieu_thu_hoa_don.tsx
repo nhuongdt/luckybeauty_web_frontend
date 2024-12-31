@@ -445,7 +445,7 @@ const ModalUpdatePhieuThuHoaDon: FC<{
 
                         <Grid container justifyContent={'space-between'} paddingTop={1}>
                             <Grid item lg={3} md={3} xs={12} sm={3}>
-                                <Typography>Quyẹt thẻ</Typography>
+                                <Typography>Quẹt thẻ</Typography>
                             </Grid>
                             <Grid item lg={9} md={9} xs={12} sm={9} paddingTop={{ xs: 1, lg: 0, md: 0, sm: 0 }}>
                                 <Grid container spacing={2}>

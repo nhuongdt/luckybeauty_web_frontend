@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Menu, MenuItem, InputAdornment, IconButton } from '@mui/material';
-import MaskedInput from 'react-text-mask';
+// import MaskedInput from 'react-text-mask';
 import { format, parse, isValid } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -126,7 +126,7 @@ const DateInputWithMask: React.FC<DateInputWithMaskProps> = ({
                     }
                 }}
                 InputProps={{
-                    inputComponent: MaskedInput as any,
+                    // inputComponent: MaskedInput as any,
                     inputProps: {
                         mask: mask,
                         placeholder: currentFormat === 'dd/MM/yyyy' ? 'dd/mm/yyyy' : 'dd/mm',

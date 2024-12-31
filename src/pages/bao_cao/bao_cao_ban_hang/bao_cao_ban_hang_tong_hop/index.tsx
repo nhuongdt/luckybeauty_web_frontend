@@ -78,10 +78,10 @@ export default function BaoCaoBanHangTongHop({ onChangePage, onChangePageSize }:
         { columnId: 'tenHangHoa', columnText: 'Tên dịch vụ' },
         { columnId: 'soLuong', columnText: 'Số lượng', align: 'center' },
         { columnId: 'thanhTienTruocCK', columnText: 'Thành tiền (trước CK)', align: 'right' },
-        { columnId: 'giaVon', columnText: 'Giá vốn', align: 'right' },
         { columnId: 'chietKhau', columnText: 'Chiết khấu', align: 'right' },
         { columnId: 'doanhThu', columnText: 'Doanh thu', align: 'right' },
-        { columnId: 'loiNhuan', columnText: 'Lợi Nhuận', align: 'right' }
+        { columnId: 'giaVon', columnText: 'Giá vốn', align: 'right' },
+        { columnId: 'loiNhuan', columnText: 'Lợi nhuận', align: 'right' }
     ];
     return (
         <>
@@ -125,17 +125,17 @@ export default function BaoCaoBanHangTongHop({ onChangePage, onChangePageSize }:
                                             </TableCell>
                                             <TableCell align="right">
                                                 {new Intl.NumberFormat('vi-VN').format(
-                                                    pageDataBaoCaoBanHangTongHop?.items[0]?.sumGiaVon ?? 0
-                                                )}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {new Intl.NumberFormat('vi-VN').format(
                                                     pageDataBaoCaoBanHangTongHop?.items[0]?.sumTienChietKhau ?? 0
                                                 )}
                                             </TableCell>
                                             <TableCell align="right">
                                                 {new Intl.NumberFormat('vi-VN').format(
                                                     pageDataBaoCaoBanHangTongHop?.items[0]?.sumThanhTienSauCK ?? 0
+                                                )}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {new Intl.NumberFormat('vi-VN').format(
+                                                    pageDataBaoCaoBanHangTongHop?.items[0]?.sumGiaVon ?? 0
                                                 )}
                                             </TableCell>
                                             <TableCell align="right">
@@ -171,14 +171,15 @@ export default function BaoCaoBanHangTongHop({ onChangePage, onChangePageSize }:
                                             <TableCell align="right" className="table-cell-border">
                                                 {new Intl.NumberFormat('vi-VN').format(row?.thanhTienTruocCK ?? 0)}
                                             </TableCell>
-                                            <TableCell align="right" className="table-cell-border">
-                                                {new Intl.NumberFormat('vi-VN').format(row?.giaVon ?? 0)}
-                                            </TableCell>
+
                                             <TableCell align="right" className="table-cell-border">
                                                 {new Intl.NumberFormat('vi-VN').format(row?.tienChietKhau ?? 0)}
                                             </TableCell>
                                             <TableCell align="right" className="table-cell-border">
                                                 {new Intl.NumberFormat('vi-VN').format(row?.thanhTienSauCK ?? 0)}
+                                            </TableCell>
+                                            <TableCell align="right" className="table-cell-border">
+                                                {new Intl.NumberFormat('vi-VN').format(row?.giaVon ?? 0)}
                                             </TableCell>
                                             <TableCell align="right" className="table-cell-border">
                                                 {new Intl.NumberFormat('vi-VN').format(

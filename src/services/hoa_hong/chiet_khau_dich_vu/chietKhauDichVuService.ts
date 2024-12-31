@@ -21,6 +21,25 @@ class ChietKhauDichVuService {
         );
         return result.data.result;
     };
+    // AddMultiple_ChietKhauDichVu_toMultipleNhanVienV2 = async (input: ChietKhauDichVuDto_AddMultiple): Promise<number> => {
+    //     const result = await http.post(
+    //         'api/services/app/ChietKhauDichVu/AddMultiple_ChietKhauDichVu_toMultipleNhanVienV2',
+    //         input
+    //     );
+    //     return result.data.result;
+    // };
+    public async CopyCommissions(sourceEmployeeId: string, employeeIds: string[]): Promise<ExecuteResultDto> {
+        try {
+            const response = await http.post('api/services/app/ChietKhauDichVu/CopyCommissions', {
+                sourceEmployeeId, // ID nhân viên sao chép từ
+                employeeIds // Danh sách nhân viên được chọn
+            });
+            return response.data; // Trả về dữ liệu kết quả từ API
+        } catch (error) {
+            console.error('Lỗi khi sao chép hoa hồng:', error);
+            throw new Error('Không thể sao chép hoa hồng. Vui lòng thử lại!');
+        }
+    }
     ApplyAll_SetupHoaHongDV = async (
         input: ChietKhauDichVuDto_AddMultiple,
         idNhanVienChosed: string,

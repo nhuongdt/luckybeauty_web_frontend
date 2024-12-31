@@ -15,7 +15,7 @@ import {
     Popover,
     Checkbox
 } from '@mui/material';
-import { Add, LocalOfferOutlined, Search } from '@mui/icons-material';
+import { Add, Category, DeleteOutline, LocalOfferOutlined, Search } from '@mui/icons-material';
 import { ReactComponent as FilterIcon } from '../../images/icons/i-filter.svg';
 // prop for send data from parent to child
 import { PropModal, PropConfirmOKCancel } from '../../utils/PropParentToChild';
@@ -745,6 +745,47 @@ const PageProduct = () => {
                         onChange={(e) => searchNhomHang(e.target.value)}
                     />
                     <AccordionNhomHangHoa dataNhomHang={treeSearchNhomHangHoa} clickTreeItem={editNhomHangHoa} />
+                </Stack>
+            </Box>
+            <Box
+                sx={{
+                    overflow: 'auto',
+                    maxHeight: '66vh',
+                    // padding: '0px 24px',
+                    '&::-webkit-scrollbar': {
+                        width: '7px'
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                        bgcolor: 'rgba(0,0,0,0.1)',
+                        borderRadius: '4px'
+                    },
+                    '&::-webkit-scrollbar-track': {
+                        bgcolor: 'var(--color-bg)'
+                    }
+                }}>
+                <Stack
+                    direction="row"
+                    alignItems="center"
+                    spacing={1}
+                    onClick={() => {
+                        // Thêm logic xử lý khi bấm vào, nếu cần
+                        console.log('Ngừng kinh doanh được bấm!');
+                    }}
+                    paddingTop={1}
+                    sx={{
+                        backgroundColor: 'var(--color-bg-light)', // Màu nền nhẹ nhàng
+                        padding: 2,
+                        borderRadius: 1, // Góc bo tròn
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                        cursor: 'pointer' // Hiệu ứng đổ bóng
+                    }}>
+                    {/* Icon thùng rác màu đỏ */}
+                    <DeleteOutline sx={{ fontSize: 24, color: 'red' }} />
+
+                    {/* Nội dung văn bản màu đỏ */}
+                    <Typography color="red" fontWeight="bold">
+                        Ngừng kinh doanh
+                    </Typography>
                 </Stack>
             </Box>
         </Box>

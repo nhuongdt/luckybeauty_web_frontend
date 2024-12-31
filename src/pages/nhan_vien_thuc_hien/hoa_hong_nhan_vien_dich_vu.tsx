@@ -9,7 +9,8 @@ import {
     Avatar,
     DialogActions,
     Button,
-    Tab
+    Tab,
+    Checkbox
 } from '@mui/material';
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
 import DialogButtonClose from '../../components/Dialog/ButtonClose';
@@ -45,6 +46,7 @@ export default function HoaHongNhanVienDichVu({
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
     const [lstNVThucHien, setLstNhanVienChosed] = useState<NhanVienThucHienDto[]>([]);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+    const [checkedItems, setCheckedItems] = React.useState<boolean[]>([]);
 
     const GetListNhanVien = async () => {
         const data = await nhanVienService.getAll({
@@ -155,6 +157,39 @@ export default function HoaHongNhanVienDichVu({
             }
         }
         setLstNhanVienChosed([newNV, ...lstNVThucHien]);
+    };
+    const onCheckboxChange = async (nv: NhanVienThucHienDto) => {
+        const updatedNV = await Promise.all(
+            lstNVThucHien.map(async (item) => {
+                if (item.idNhanVien === nv.idNhanVien) {
+                    const ckSetup = await chietKhauDichVuService.GetHoaHongNV_theoDichVu(
+                        nv.idNhanVien as unknown as string,
+                        itemHoaDonChiTiet.idDonViQuyDoi,
+                        idChiNhanh
+                    );
+
+                    const updatedLoaiChietKhau = item.loaiChietKhau === 2 ? 1 : 2;
+                    item.loaiChietKhau = updatedLoaiChietKhau;
+
+                    const ckSetup_byLoai = ckSetup?.filter((x) => x.loaiChietKhau === updatedLoaiChietKhau);
+
+                    if (ckSetup_byLoai != null && ckSetup_byLoai.length > 0) {
+                        item.ptChietKhau = ckSetup_byLoai[0].giaTri ?? 0;
+                        item.tienChietKhau = ckSetup_byLoai[0].laPhanTram
+                            ? (item.ptChietKhau * giaTriTinhHoaHong) / 100
+                            : ckSetup_byLoai[0].giaTri;
+                    } else {
+                        item.ptChietKhau = 0;
+                        item.tienChietKhau = 0;
+                    }
+
+                    return item;
+                }
+                return item;
+            })
+        );
+
+        setLstNhanVienChosed(updatedNV);
     };
 
     const removeNVienChosed = (nv: NhanVienThucHienDto) => {
@@ -389,7 +424,7 @@ export default function HoaHongNhanVienDichVu({
                                         padding: '8px',
                                         background: 'var(--color-header-table)'
                                     }}>
-                                    <Stack flex={1}>STT</Stack>
+                                    <Stack flex={2}>Yêu cầu</Stack>
                                     <Stack flex={5}>Nhân viên</Stack>
                                     <Stack flex={3}>Chiết khấu</Stack>
                                     <Stack flex={1}>%</Stack>
@@ -400,16 +435,28 @@ export default function HoaHongNhanVienDichVu({
                                 </Stack>
                                 {lstNVThucHien?.map((nv: NhanVienThucHienDto, index: number) => (
                                     <Stack direction={'row'} spacing={1} padding={'10px'} key={index}>
-                                        <Stack flex={1} alignItems={'center'} textAlign={'center'}>
-                                            {index + 1}
+                                        <Stack
+                                            flex={1}
+                                            alignItems="center" // Căn giữa theo chiều ngang
+                                            justifyContent="center" // Căn giữa theo chiều dọc
+                                            textAlign="center">
+                                            <Checkbox
+                                                checked={nv.loaiChietKhau === 2} // Kiểm tra nếu loaiChietKhau = 2 thì checkbox được chọn
+                                                onChange={() => onCheckboxChange(nv)} // Gọi onCheckboxChange khi thay đổi trạng thái checkbox
+                                            />
                                         </Stack>
+
                                         <Stack flex={5}>
                                             <Stack>{nv.tenNhanVien}</Stack>
                                             <Stack>
                                                 <Typography variant="caption" color={'var(--color-text-secondary)'}>
-                                                    {nv.loaiChietKhau === LoaiHoaHongDichVu.THUC_HIEN
+                                                    {nv.loaiChietKhau === 1
                                                         ? 'Thực hiện'
-                                                        : 'Tư vấn'}
+                                                        : nv.loaiChietKhau === 2
+                                                        ? 'Yêu cầu thực hiện'
+                                                        : nv.loaiChietKhau === 3
+                                                        ? 'Tư vấn'
+                                                        : ''}
                                                 </Typography>
                                             </Stack>
                                         </Stack>

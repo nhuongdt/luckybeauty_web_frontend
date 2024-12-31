@@ -12,6 +12,7 @@ import { FormNumber } from '../../../enum/FormNumber';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import { format } from 'date-fns';
 import HoaDonService from '../../../services/ban_hang/HoaDonService';
+import { ArrowBack } from '@mui/icons-material';
 interface ChildComponent {
     tongPhaiTra: number;
     onClose: () => void;
@@ -58,6 +59,7 @@ const PaymentsForm: React.FC<ChildComponent> = ({
         const data = await TaiKhoanNganHangServices.GetAllBankAccount();
         setAllBankAccount(data);
     };
+    const [isActiveArrow, setIsActiveArrow] = useState<string | null>(null);
 
     useEffect(() => {
         GetAllTaiKhoanNganHang();
@@ -191,7 +193,54 @@ const PaymentsForm: React.FC<ChildComponent> = ({
         }
         setIsSaving(false);
     };
+    // useEffect(() => {
+    //     if (!tienMat) {
+    //         // Nếu tienMat bị xóa, cập nhật giá trị của tienTheGiaTri
+    //         const syntheticEvent = {
+    //             target: { value: tongPhaiTra.toString(), name: 'tienTheGiaTri' }
+    //         } as React.ChangeEvent<HTMLInputElement>;
+    //         editTienTheGiaTri(syntheticEvent);
+    //     }
+    // }, [tienMat]);
+    const handleArrowClick = (source: string) => {
+        setIsActiveArrow(source);
 
+        if (source === 'thuThe') {
+            setTienTheGiaTri(tongPhaiTra);
+        } else {
+            setTienTheGiaTri(0);
+        }
+
+        if (source === 'tienMat') {
+            setTienMat(tongPhaiTra);
+        } else {
+            setTienMat(0);
+        }
+        if (idTaiKhoanChuyenKhoan && idTaiKhoanChuyenKhoan.trim() !== '') {
+            if (source === 'tienChuyenKhoan') {
+                setTienChuyenKhoan(tongPhaiTra);
+            }
+        } else {
+            setTienChuyenKhoan(0);
+        }
+        if (idTaiKhoanPOS && idTaiKhoanPOS.trim() !== '') {
+            if (source === 'tienQuyeThePos') {
+                setTienQuyeThePos(tongPhaiTra);
+            } else {
+                setTienQuyeThePos(0);
+            }
+        }
+    };
+    const setOtherFieldsZeroTK = () => {
+        setTienTheGiaTri(0);
+        setTienMat(0);
+        setTienQuyeThePos(0);
+    };
+    const setOtherFieldsZeroPos = () => {
+        setTienTheGiaTri(0);
+        setTienMat(0);
+        setTienChuyenKhoan(0);
+    };
     return (
         <Grid
             container
@@ -261,18 +310,18 @@ const PaymentsForm: React.FC<ChildComponent> = ({
                 </Grid>
 
                 {formNumber !== FormNumber.THE_GIA_TRI && soDuTheGiaTri > 0 && (
-                    <Grid container justifyContent={'space-between'}>
+                    <Grid container justifyContent="space-between">
                         <Grid item lg={3} md={3} sm={3} xs={6}>
                             <Typography>Thu từ thẻ</Typography>
                         </Grid>
-                        <Grid item lg={9} md={9} sm={9} xs={6}>
+                        <Grid item lg={8} md={8} sm={8} xs={5}>
                             <Grid container spacing={2}>
-                                <Grid item lg={9} md={8} sm={9} xs={9}>
+                                <Grid item lg={8} md={7} sm={8} xs={8}>
                                     <Typography variant="body2">
                                         Số dư thẻ: {new Intl.NumberFormat('vi-VN').format(soDuTheGiaTri)}
                                     </Typography>
                                 </Grid>
-                                <Grid item lg={3} md={4} sm={3} xs={3}>
+                                <Grid item lg={4} md={5} sm={4} xs={4}>
                                     <NumericFormat
                                         className="input-number"
                                         size="small"
@@ -297,17 +346,40 @@ const PaymentsForm: React.FC<ChildComponent> = ({
                                 </Grid>
                             </Grid>
                         </Grid>
+                        <Grid
+                            item
+                            lg={1}
+                            md={1}
+                            sm={1}
+                            xs={1}
+                            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <ArrowBack
+                                style={{
+                                    cursor: 'pointer',
+                                    fontSize: '16px', // Kích thước icon nhỏ hơn
+                                    marginLeft: '10px', // Cách icon một chút
+                                    color: isActiveArrow === 'thuThe' ? 'black' : 'gray' // Màu sắc thay đổi khi active
+                                }}
+                                onClick={() => {
+                                    setIsActiveArrow('thuThe'); // Cập nhật trạng thái active
+                                    const syntheticEvent = {
+                                        target: { value: tongPhaiTra.toString(), name: 'tienTheGiaTri' }
+                                    } as React.ChangeEvent<HTMLInputElement>;
+                                    handleArrowClick('thuThe'); // Gọi hàm cập nhật giá trị
+                                }}
+                            />
+                        </Grid>
                     </Grid>
                 )}
 
-                <Grid container justifyContent={'space-between'} paddingTop={1}>
+                <Grid container justifyContent="space-between" paddingTop={1}>
                     <Grid item lg={3} md={3} sm={3} xs={6}>
                         <Typography>Tiền mặt</Typography>
                     </Grid>
-                    <Grid item lg={9} md={9} sm={9} xs={6}>
+                    <Grid item lg={8} md={8} sm={8} xs={5}>
                         <Grid container spacing={2}>
-                            <Grid item lg={9} md={8} sm={9}></Grid>
-                            <Grid item lg={3} md={4} sm={3}>
+                            <Grid item lg={8} md={7} sm={8} xs={8}></Grid>
+                            <Grid item lg={4} md={5} sm={4} xs={4}>
                                 <NumericFormat
                                     className="input-number"
                                     size="small"
@@ -329,22 +401,52 @@ const PaymentsForm: React.FC<ChildComponent> = ({
                             </Grid>
                         </Grid>
                     </Grid>
+                    <Grid
+                        item
+                        lg={1}
+                        md={1}
+                        sm={1}
+                        xs={1}
+                        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <ArrowBack
+                            style={{
+                                cursor: 'pointer',
+                                fontSize: '16px',
+                                marginLeft: '10px',
+                                color: isActiveArrow === 'tienMat' ? 'black' : 'gray'
+                            }}
+                            onClick={() => {
+                                setIsActiveArrow('tienMat');
+                                const syntheticEvent = {
+                                    target: { value: tongPhaiTra.toString(), name: 'tienMat' }
+                                } as React.ChangeEvent<HTMLInputElement>;
+                                handleArrowClick('tienMat');
+                            }}
+                        />
+                    </Grid>
                 </Grid>
 
-                <Grid container justifyContent={'space-between'} paddingTop={1}>
-                    <Grid item lg={3} md={3} xs={12} sm={3}>
+                <Grid container justifyContent="space-between" paddingTop={1}>
+                    <Grid item lg={3} md={3} sm={3} xs={6}>
                         <Typography>Chuyển khoản</Typography>
                     </Grid>
-                    <Grid item lg={9} md={9} xs={12} sm={9} paddingTop={{ xs: 1, lg: 0, md: 0, sm: 0 }}>
+                    <Grid item lg={8} md={8} sm={8} xs={5}>
                         <Grid container spacing={2}>
-                            <Grid item lg={9} md={8} sm={9} xs={9}>
+                            <Grid item lg={8} md={7} sm={8} xs={8}>
                                 <AutocompleteAccountBank
-                                    handleChoseItem={changeTaiKhoanChuyenKhoan}
+                                    handleChoseItem={(selectedItem: TaiKhoanNganHangDto) => {
+                                        changeTaiKhoanChuyenKhoan(selectedItem);
+                                        setIsActiveArrow('tienChuyenKhoan');
+                                        handleArrowClick('tienChuyenKhoan');
+                                    }}
                                     idChosed={idTaiKhoanChuyenKhoan}
                                     listOption={allBankAccount}
+                                    setTienChuyenKhoan={setTienChuyenKhoan}
+                                    tongPhaiTra={tongPhaiTra}
+                                    setOtherFieldsZero={setOtherFieldsZeroTK} // Truyền hàm reset các trường về 0
                                 />
                             </Grid>
-                            <Grid item lg={3} md={4} sm={3} xs={3}>
+                            <Grid item lg={4} md={5} sm={4} xs={4}>
                                 <NumericFormat
                                     size="small"
                                     fullWidth
@@ -369,22 +471,54 @@ const PaymentsForm: React.FC<ChildComponent> = ({
                             </Grid>
                         </Grid>
                     </Grid>
+                    <Grid
+                        item
+                        lg={1}
+                        md={1}
+                        sm={1}
+                        xs={1}
+                        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <ArrowBack
+                            style={{
+                                cursor: 'pointer',
+                                fontSize: '16px',
+                                marginLeft: '10px',
+                                color: isActiveArrow === 'tienChuyenKhoan' ? 'black' : 'gray'
+                            }}
+                            onClick={() => {
+                                setIsActiveArrow('tienChuyenKhoan');
+                                setTienChuyenKhoan(utils.formatNumberToFloat(tongPhaiTra.toString()));
+                                handleArrowClick('tienChuyenKhoan');
+                            }}
+                        />
+                    </Grid>
                 </Grid>
 
-                <Grid container justifyContent={'space-between'} paddingTop={1}>
-                    <Grid item lg={3} md={3} xs={12} sm={3}>
-                        <Typography>Quyẹt thẻ</Typography>
+                <Grid container justifyContent="space-between" paddingTop={1}>
+                    <Grid item lg={3} md={3} sm={3} xs={6}>
+                        <Typography>Quẹt thẻ</Typography>
                     </Grid>
-                    <Grid item lg={9} md={9} xs={12} sm={9} paddingTop={{ xs: 1, lg: 0, md: 0, sm: 0 }}>
+                    <Grid item lg={8} md={8} sm={8} xs={5}>
                         <Grid container spacing={2}>
-                            <Grid item lg={9} md={8} sm={9} xs={9}>
-                                <AutocompleteAccountBank
+                            <Grid item lg={8} md={7} sm={8} xs={8}>
+                                {/* <AutocompleteAccountBank
                                     handleChoseItem={changeTaiKhoanPOS}
                                     idChosed={idTaiKhoanPOS}
                                     listOption={allBankAccount}
+                                /> */}
+                                <AutocompleteAccountBank
+                                    handleChoseItem={(selectedItem: TaiKhoanNganHangDto) => {
+                                        setIdTaiKhoanPOS(selectedItem.id); // Cập nhật id của tài khoản POS
+                                        setTienQuyeThePos(tongPhaiTra); // Cập nhật tiền POS
+                                    }}
+                                    idChosed={idTaiKhoanPOS}
+                                    listOption={allBankAccount}
+                                    setTienQuyeThePos={setTienQuyeThePos}
+                                    tongPhaiTra={tongPhaiTra}
+                                    setOtherFieldsZero={setOtherFieldsZeroPos} // Truyền hàm reset các trường về 0
                                 />
                             </Grid>
-                            <Grid item lg={3} md={4} sm={3} xs={3}>
+                            <Grid item lg={4} md={5} sm={4} xs={4}>
                                 <NumericFormat
                                     size="small"
                                     fullWidth
@@ -401,6 +535,27 @@ const PaymentsForm: React.FC<ChildComponent> = ({
                                 />
                             </Grid>
                         </Grid>
+                    </Grid>
+                    <Grid
+                        item
+                        lg={1}
+                        md={1}
+                        sm={1}
+                        xs={1}
+                        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <ArrowBack
+                            style={{
+                                cursor: 'pointer',
+                                fontSize: '16px',
+                                marginLeft: '10px',
+                                color: isActiveArrow === 'tienQuyeThePos' ? 'black' : 'gray'
+                            }}
+                            onClick={() => {
+                                setIsActiveArrow('tienQuyeThePos');
+                                setTienChuyenKhoan(utils.formatNumberToFloat(tongPhaiTra.toString()));
+                                handleArrowClick('tienQuyeThePos');
+                            }}
+                        />
                     </Grid>
                 </Grid>
             </Grid>

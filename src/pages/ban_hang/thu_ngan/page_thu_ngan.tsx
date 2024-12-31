@@ -75,6 +75,12 @@ import uploadFileService from '../../../services/uploadFileService';
 import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
 import PopoverGiamGiaHD from '../../../components/Popover/GiamGiaHD';
 import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
+// import CreateOrEditSoQuyDialog from '../../thu_chi/so_quy/components/CreateOrEditSoQuyDialog';
+import { HINH_THUC_THANH_TOAN, TypeAction, TrangThaiActive } from '../../../lib/appconst';
+import { IPagedResultSoQuyDto } from '../../../services/so_quy/Dto/IPagedResultSoQuyDto';
+import { ParamSearchSoQuyDto } from '../../../services/so_quy/Dto/ParamSearchSoQuyDto';
+import Cookies from 'js-cookie';
+import { lastDayOfMonth } from 'date-fns';
 
 export type IPropsPageThuNgan = {
     txtSearch: string;
@@ -138,7 +144,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             idChiNhanh: idChiNhanhChosed
         })
     );
-
     const [confirmDialog, setConfirmDialog] = useState<PropConfirmOKCancel>({
         show: false,
         title: '',
@@ -702,7 +707,8 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             id: Guid.EMPTY,
             maKhachHang: 'KL', // todo makhachhang
             tenKhachHang: 'Khách lẻ',
-            soDienThoai: ''
+            soDienThoai: '',
+            conNo: 0
         });
         await dbDexie.hoaDon
             .where('id')
@@ -1151,6 +1157,192 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     // if (isLoadingData) {
     //     return <Loading />;
     // }
+    const today = new Date();
+    const [thuTrongKy, setThuTrongKy] = useState(0);
+    const [chiTrongKy, setChiTrongKy] = useState(0);
+    const [quyHDOld, setQuyHDOld] = useState<QuyHoaDonDto>({} as QuyHoaDonDto);
+    const [isShowModal, setisShowModal] = useState(false);
+    const [isShowThanhToanHD, setIsShowThanhToanHD] = useState(false);
+    const [pageDataSoQuy, setPageDataSoQuy] = useState<IPagedResultSoQuyDto<QuyHoaDonDto>>({
+        totalCount: 0,
+        totalPage: 0,
+        items: []
+    });
+    const idChiNhanhCookies = Cookies.get('IdChiNhanh') ?? '';
+
+    const [paramSearch, setParamSearch] = useState<ParamSearchSoQuyDto>({
+        textSearch: '',
+        currentPage: 1,
+        columnSort: 'ngayLapHoaDon',
+        typeSort: 'desc',
+        idChiNhanhs: [idChiNhanhCookies],
+        fromDate: format(today, 'yyyy-MM-01'),
+        toDate: format(lastDayOfMonth(today), 'yyyy-MM-dd'),
+        idLoaiChungTus: [LoaiChungTu.PHIEU_THU, LoaiChungTu.PHIEU_CHI],
+        idLoaiChungTuLienQuan: LoaiChungTu.ALL,
+        trangThais: [TrangThaiActive.ACTIVE]
+    });
+    const [selectedRowId, setSelectedRowId] = useState('');
+
+    const saveSoQuy = async (dataSave: QuyHoaDonDto, type: number) => {
+        setisShowModal(false);
+        setIsShowThanhToanHD(false);
+
+        // get thông tin các hình thức thanh toán để bind lại phần Tổng
+        const quyCT = dataSave?.quyHoaDon_ChiTiet;
+        let tienMat = 0,
+            tienCK = 0,
+            tienPos = 0,
+            tongThu = dataSave?.tongTienThu;
+        if (quyCT != undefined && quyCT.length > 0) {
+            tienMat = quyCT
+                ?.filter((x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.TIEN_MAT)
+                .reduce((currentValue: number, item: QuyChiTietDto) => {
+                    return item.tienThu + currentValue;
+                }, 0);
+            tienCK = quyCT
+                ?.filter((x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN)
+                .reduce((currentValue: number, item: QuyChiTietDto) => {
+                    return item.tienThu + currentValue;
+                }, 0);
+            tienPos = quyCT
+                ?.filter((x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.QUYET_THE)
+                .reduce((currentValue: number, item: QuyChiTietDto) => {
+                    return item.tienThu + currentValue;
+                }, 0);
+        }
+        if (dataSave?.idLoaiChungTu == LoaiChungTu.PHIEU_CHI) {
+            tienMat = tienMat > 0 ? -tienMat : 0;
+            tienCK = tienCK > 0 ? -tienCK : 0;
+            tienPos = tienPos > 0 ? -tienPos : 0;
+            tongThu = tongThu > 0 ? -tongThu : 0;
+
+            if (type === TypeAction.INSEART) {
+                setChiTrongKy(() => chiTrongKy - tongThu);
+            } else {
+                setChiTrongKy(() => chiTrongKy + (quyHDOld?.tongTienThu ?? 0) - tongThu);
+            }
+        } else {
+            if (type === TypeAction.INSEART) {
+                setThuTrongKy(() => thuTrongKy + tongThu);
+            } else {
+                setChiTrongKy(() => thuTrongKy - (quyHDOld?.tongTienThu ?? 0) + tongThu);
+            }
+        }
+
+        dataSave.tienMat = tienMat;
+        dataSave.tienChuyenKhoan = tienCK;
+        dataSave.tienQuyetThe = tienPos;
+        dataSave.tongTienThu = tongThu;
+
+        switch (type) {
+            case TypeAction.INSEART: // insert
+                {
+                    // phải gán lại ngày lập: để chèn dc dòng mới thêm lên trên cùng
+                    // dataSave.ngayLapHoaDon = new Date(dataSave.ngayLapHoaDon);
+                    setPageDataSoQuy({
+                        ...pageDataSoQuy,
+                        items: [dataSave, ...pageDataSoQuy.items],
+                        totalCount: pageDataSoQuy.totalCount + 1,
+                        totalPage: utils.getTotalPage(pageDataSoQuy.totalCount + 1, paramSearch.pageSize),
+                        sumTienMat: (pageDataSoQuy?.sumTienMat ?? 0) + tienMat,
+                        sumTienChuyenKhoan: (pageDataSoQuy?.sumTienChuyenKhoan ?? 0) + tienCK,
+                        sumTienQuyetThe: (pageDataSoQuy?.sumTienQuyetThe ?? 0) + tienPos,
+                        sumTongThuChi: (pageDataSoQuy?.sumTongThuChi ?? 0) + tongThu
+                    });
+                    setObjAlert({
+                        show: true,
+                        type: 1,
+                        mes: 'Thêm ' + dataSave.loaiPhieu + ' thành công'
+                    });
+                }
+                break;
+            case TypeAction.UPDATE:
+                setPageDataSoQuy({
+                    ...pageDataSoQuy,
+                    sumTienMat: (pageDataSoQuy?.sumTienMat ?? 0) + tienMat - (quyHDOld?.tienMat ?? 0),
+                    sumTienChuyenKhoan:
+                        (pageDataSoQuy?.sumTienChuyenKhoan ?? 0) + tienCK - (quyHDOld?.tienChuyenKhoan ?? 0),
+                    sumTienQuyetThe: (pageDataSoQuy?.sumTienQuyetThe ?? 0) + tienPos - (quyHDOld?.tienQuyetThe ?? 0),
+                    sumTongThuChi: (pageDataSoQuy?.sumTongThuChi ?? 0) + tongThu - (quyHDOld?.tongTienThu ?? 0),
+                    items: pageDataSoQuy.items.map((item) => {
+                        if (item.id === selectedRowId) {
+                            return {
+                                ...item,
+                                maHoaDon: dataSave.maHoaDon,
+                                ngayLapHoaDon: dataSave.ngayLapHoaDon,
+                                idLoaiChungTu: dataSave.idLoaiChungTu,
+                                loaiPhieu: dataSave.loaiPhieu,
+                                hinhThucThanhToan: dataSave.hinhThucThanhToan,
+                                sHinhThucThanhToan: dataSave.sHinhThucThanhToan,
+                                tongTienThu: dataSave.tongTienThu,
+                                maNguoiNop: dataSave.maNguoiNop,
+                                tenNguoiNop: dataSave.tenNguoiNop,
+                                idKhoanThuChi: dataSave.idKhoanThuChi,
+                                tenKhoanThuChi: dataSave.tenKhoanThuChi,
+                                txtTrangThai: dataSave.txtTrangThai,
+                                trangThai: dataSave.trangThai,
+                                noiDungThu: dataSave?.noiDungThu ?? '',
+                                tienMat: dataSave.tienMat,
+                                tienChuyenKhoan: dataSave.tienChuyenKhoan,
+                                tienQuyetThe: dataSave.tienQuyetThe
+                            };
+                        } else {
+                            return item;
+                        }
+                    })
+                });
+                setObjAlert({
+                    show: true,
+                    type: 1,
+                    mes: 'Cập nhật ' + dataSave.loaiPhieu + ' thành công'
+                });
+                break;
+            case TypeAction.DELETE:
+                // await deleteSoQuy();
+                break;
+            case TypeAction.RESTORE:
+                {
+                    setPageDataSoQuy({
+                        ...pageDataSoQuy,
+                        sumTienMat: (pageDataSoQuy?.sumTienMat ?? 0) + tienMat,
+                        sumTienChuyenKhoan: (pageDataSoQuy?.sumTienChuyenKhoan ?? 0) + tienCK,
+                        sumTienQuyetThe: (pageDataSoQuy?.sumTienQuyetThe ?? 0) + tienPos,
+                        sumTongThuChi: (pageDataSoQuy?.sumTongThuChi ?? 0) + tongThu,
+                        items: pageDataSoQuy.items.map((item) => {
+                            if (item.id === selectedRowId) {
+                                return {
+                                    ...item,
+                                    txtTrangThai: dataSave.txtTrangThai,
+                                    trangThai: dataSave.trangThai
+                                };
+                            } else {
+                                return item;
+                            }
+                        })
+                    });
+                }
+                break;
+        }
+    };
+
+    const [dialogVisible, setDialogVisible] = useState(false);
+    const [currentId, setCurrentId] = useState<string | null>(null);
+
+    const handleOpenDialog = (id: string | null = null) => {
+        setCurrentId(id);
+        setDialogVisible(true);
+    };
+
+    const handleCloseDialog = () => {
+        setDialogVisible(false);
+    };
+
+    const handleDialogSubmit = (dataSave: any, type: number) => {
+        console.log('Data saved:', dataSave, 'Type:', type);
+        // Thực hiện các xử lý logic khác nếu cần
+        handleCloseDialog();
+    };
 
     return (
         <>
@@ -1202,6 +1394,12 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 onClosePopover={closePopoverGiamGia}
                 onUpdateGiamGia={changeGiamGiaHoaDon}
             />
+            {/* <CreateOrEditSoQuyDialog
+                visiable={dialogVisible}
+                idQuyHD={currentId}
+                onClose={handleCloseDialog}
+                onOk={handleDialogSubmit}
+            /> */}
             <Grid container minHeight={'86vh'} maxHeight={'86vh'}>
                 {!isThanhToanTienMat ? (
                     <Grid item lg={7} md={6} xs={12} zIndex={5}>
@@ -1371,18 +1569,26 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                                 <Typography
                                                     color={'#000000'}
                                                     variant="caption"
+                                                    onClick={() => {
+                                                        setisShowModal(true);
+                                                        setSelectedRowId('');
+                                                    }}
                                                     sx={{ lineHeight: 1.2 }}>
-                                                    <span style={{ fontWeight: 'bold', color: '#000000' }}>
-                                                        Còn nợ:{' '}
-                                                        {new Intl.NumberFormat('vi-VN').format(
-                                                            customerChosed?.conNo ?? 0
-                                                        )}{' '}
-                                                        đ
-                                                    </span>
-                                                    <br />
+                                                    {customerChosed?.conNo != null && customerChosed?.conNo != 0 && (
+                                                        <>
+                                                            <span style={{ fontWeight: 'bold', color: '#000000' }}>
+                                                                Còn nợ:{' '}
+                                                                {new Intl.NumberFormat('vi-VN').format(
+                                                                    customerChosed?.conNo ?? 0
+                                                                )}{' '}
+                                                                đ
+                                                            </span>
+                                                            <br />
+                                                        </>
+                                                    )}
                                                     {customerChosed?.soDienThoai}
-                                                    {/* {customerChosed?.id} */}
                                                 </Typography>
+
                                                 {customerHasGDV && (
                                                     <AutoStoriesOutlinedIcon
                                                         color="secondary"
