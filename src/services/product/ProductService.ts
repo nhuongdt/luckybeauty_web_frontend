@@ -46,7 +46,14 @@ class ProductService {
             });
         return xx;
     };
-
+    Get_DMHangHoaDaXoa = async (input: PagedProductSearchDto): Promise<PagedResultDto<ModelHangHoaDto>> => {
+        const xx = await http
+            .post(`api/services/app/HangHoa/GetDMHangHoaDaXoa`, input)
+            .then((res: { data: { result: any } }) => {
+                return res.data.result;
+            });
+        return xx;
+    };
     ExportToExcel = async (input: PagedProductSearchDto): Promise<IFileDto> => {
         const response = await http.post('api/services/app/HangHoa/ExportToExcel', input);
         return response.data.result;

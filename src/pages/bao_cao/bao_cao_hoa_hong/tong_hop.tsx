@@ -41,9 +41,11 @@ export default function PageBaoCaoHoaHongNhanVienTongHop({ onChangePage, onChang
                 tenNhanVien: '',
                 hoaHongThucHien_TienChietKhau: itFirst?.sumHoaHongThucHien ?? 0,
                 hoaHongTuVan_TienChietKhau: itFirst?.sumHoaHongTuVan ?? 0,
+                hoaHongYeuCauThucHien_TienChietKhau: itFirst?.sumHoaHongYeuCauThucHien ?? 0,
                 tongHoaHong: itFirst?.sumTongHoaHong ?? 0,
                 sumHoaHongThucHien: 0,
                 sumHoaHongTuVan: 0,
+                sumHoaHongYeuCauThucHien: 0,
                 sumTongHoaHong: 0
             } as PageBaoCaoHoaHongTongHop;
 
@@ -89,6 +91,15 @@ export default function PageBaoCaoHoaHongNhanVienTongHop({ onChangePage, onChang
         {
             field: 'hoaHongThucHien_TienChietKhau',
             headerName: 'Thực hiện',
+            flex: 0.8,
+            headerAlign: 'right',
+            align: 'right',
+            renderHeader: (params) => <Box title={params.colDef.headerName}>{params.colDef.headerName}</Box>,
+            renderCell: (params) => <Box>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+        },
+        {
+            field: 'hoaHongYeuCauThucHien_TienChietKhau',
+            headerName: 'Yêu cầu',
             flex: 0.8,
             headerAlign: 'right',
             align: 'right',

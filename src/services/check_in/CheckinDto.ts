@@ -35,7 +35,7 @@ export class PageKhachHangCheckInDto {
     idKhachHang: string | null = null;
     idChiNhanh: string | null = null;
     idCheckIn = Guid.EMPTY;
-    maKhachHang = '';
+    maKhachHang: string | null = null;
     tenKhachHang = '';
     soDienThoai = '';
     avatar? = '';

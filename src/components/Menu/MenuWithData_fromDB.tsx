@@ -32,13 +32,13 @@ export default function MenuWithDataFromDB({ open, typeSearch, anchorEl, handleC
                         } as PagedKhachHangResultRequestDto;
                         const data = await khachHangService.jqAutoCustomer(param);
                         const arrCus = data?.map((x) => {
-                            console.log(x.conNo);
                             return {
                                 id: x.id.toString(),
                                 text: x.tenKhachHang,
                                 text2: x.soDienThoai,
                                 icon: x.avatar,
-                                conNo: x.conNo
+                                conNo: x.conNo,
+                                maKhachHang: x.maKhachHang
                             } as IList;
                         });
                         setLstOption([...arrCus]);

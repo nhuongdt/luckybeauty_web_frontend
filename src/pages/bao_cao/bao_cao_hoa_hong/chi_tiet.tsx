@@ -72,6 +72,7 @@ export default function PageBaoCaoHoaHongNhanVienChiTiet({ onChangePage, onChang
                                         <TableRow>
                                             <TableCell align="center">Mã HĐ</TableCell>
                                             <TableCell align="center">Ngày lập</TableCell>
+                                            <TableCell align="center">Mã KH</TableCell>
                                             <TableCell align="center">Tên khách hàng</TableCell>
                                             <TableCell align="center">Tên dịch vụ</TableCell>
                                             <TableCell align="center">SL</TableCell>
@@ -85,7 +86,7 @@ export default function PageBaoCaoHoaHongNhanVienChiTiet({ onChangePage, onChang
                                                             fontSize: 'var(--font-size-main)'
                                                         }
                                                     }}>
-                                                    <Typography>Hoa hồng thực hiện</Typography>
+                                                    <Typography>Thực hiện</Typography>
                                                     <Stack direction={'row'} justifyContent={'space-evenly'}>
                                                         <Typography>%</Typography>
                                                         <Typography>vnd</Typography>
@@ -100,7 +101,22 @@ export default function PageBaoCaoHoaHongNhanVienChiTiet({ onChangePage, onChang
                                                             fontSize: 'var(--font-size-main)'
                                                         }
                                                     }}>
-                                                    <Typography>Hoa hồng tư vấn</Typography>
+                                                    <Typography>Yêu cầu</Typography>
+                                                    <Stack direction={'row'} justifyContent={'space-evenly'}>
+                                                        <Typography>%</Typography>
+                                                        <Typography>vnd</Typography>
+                                                    </Stack>
+                                                </Stack>
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <Stack
+                                                    sx={{
+                                                        ' & .MuiTypography-root': {
+                                                            fontWeight: 500,
+                                                            fontSize: 'var(--font-size-main)'
+                                                        }
+                                                    }}>
+                                                    <Typography>Tư vấn</Typography>
                                                     <Stack direction={'row'} justifyContent={'space-evenly'}>
                                                         <Typography flex={1}>%</Typography>
                                                         <Typography flex={1}>vnd</Typography>
@@ -118,6 +134,9 @@ export default function PageBaoCaoHoaHongNhanVienChiTiet({ onChangePage, onChang
                                                 </TableCell>
                                                 <TableCell rowSpan={row?.rowSpan + 1} sx={{ maxWidth: 100 }}>
                                                     {format(new Date(row?.ngayLapHoaDon), 'dd/MM/yyyy')}
+                                                </TableCell>
+                                                <TableCell rowSpan={row?.rowSpan + 1} sx={{ maxWidth: 100 }}>
+                                                    {`${row?.maKhachHang}`}
                                                 </TableCell>
                                                 <TableCell
                                                     rowSpan={row?.rowSpan + 1}
@@ -151,8 +170,9 @@ export default function PageBaoCaoHoaHongNhanVienChiTiet({ onChangePage, onChang
                                                         {rowDetail?.tenNhanVien}
                                                     </TableCell>
 
+                                                    {/* Hoa hồng thực hiện */}
                                                     <TableCell align="right" sx={{ maxWidth: 200 }}>
-                                                        <Stack direction={'row'} textAlign={'center'}>
+                                                        <Stack direction={'row'} textAlign={'right'}>
                                                             <Typography variant="body2" flex={1}>
                                                                 {(rowDetail.hoaHongThucHien_TienChietKhau > 0 &&
                                                                     rowDetail?.hoaHongThucHien_PTChietKhau == 0) ||
@@ -170,7 +190,26 @@ export default function PageBaoCaoHoaHongNhanVienChiTiet({ onChangePage, onChang
                                                         </Stack>
                                                     </TableCell>
                                                     <TableCell align="right" sx={{ maxWidth: 200 }}>
-                                                        <Stack direction={'row'} textAlign={'center'}>
+                                                        <Stack direction={'row'} textAlign={'right'}>
+                                                            <Typography variant="body2" flex={1}>
+                                                                {rowDetail.hoaHongYeuCauThucHien_TienChietKhau > 0 &&
+                                                                rowDetail?.hoaHongYeuCauThucHien_PTChietKhau == 0
+                                                                    ? '_'
+                                                                    : rowDetail?.hoaHongYeuCauThucHien_PTChietKhau ||
+                                                                      '_'}
+                                                            </Typography>
+                                                            <Typography variant="body2" flex={1}>
+                                                                {rowDetail?.hoaHongYeuCauThucHien_TienChietKhau > 0
+                                                                    ? new Intl.NumberFormat('vi-VN').format(
+                                                                          rowDetail?.hoaHongYeuCauThucHien_TienChietKhau
+                                                                      )
+                                                                    : '_'}
+                                                            </Typography>
+                                                        </Stack>
+                                                    </TableCell>
+
+                                                    <TableCell align="right" sx={{ maxWidth: 200 }}>
+                                                        <Stack direction={'row'} textAlign={'right'}>
                                                             <Typography variant="body2" flex={1}>
                                                                 {(rowDetail.hoaHongTuVan_TienChietKhau > 0 &&
                                                                     rowDetail?.hoaHongTuVan_PTChietKhau == 0) ||
@@ -187,6 +226,7 @@ export default function PageBaoCaoHoaHongNhanVienChiTiet({ onChangePage, onChang
                                                             </Typography>
                                                         </Stack>
                                                     </TableCell>
+
                                                     <TableCell align="right" sx={{ maxWidth: 150 }}>
                                                         {new Intl.NumberFormat('vi-VN').format(
                                                             rowDetail?.tongHoaHong ?? 0
@@ -213,6 +253,11 @@ export default function PageBaoCaoHoaHongNhanVienChiTiet({ onChangePage, onChang
                                                 <TableCell align="center">
                                                     {new Intl.NumberFormat('vi-VN').format(
                                                         pageDataBaoCaoChiTiet?.items[0]?.sumHoaHongThucHien ?? 0
+                                                    )}
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                        pageDataBaoCaoChiTiet?.items[0]?.sumHoaHongYeuCauThucHien ?? 0
                                                     )}
                                                 </TableCell>
                                                 <TableCell align="center">

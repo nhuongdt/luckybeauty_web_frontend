@@ -54,6 +54,8 @@ import { BangBaoLoiFileimportDto } from '../../services/dto/BangBaoLoiFileimport
 import { FileUpload } from '../../services/dto/FileUpload';
 import ImportExcel from '../../components/ImportComponent/ImportExcel';
 import BangBaoLoiFileImport from '../../components/ImportComponent/BangBaoLoiFileImport';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 export default function PageDanhSachGDV() {
     const appContext = useContext(AppContext);
@@ -89,8 +91,8 @@ export default function PageDanhSachGDV() {
         pageSize: AppConsts.pageOption[0].value,
         columnSort: 'NgayLapHoaDon',
         typeSort: 'DESC',
-        fromDate: format(new Date(), 'yyyy-MM-01'),
-        toDate: format(lastDayOfMonth(new Date()), 'yyyy-MM-dd'),
+        fromDate: null,
+        toDate: null,
         trangThais: [TrangThaiHoaDon.HOAN_THANH]
     });
 
@@ -343,11 +345,14 @@ export default function PageDanhSachGDV() {
     const listColumnHeader: IHeaderTable[] = [
         { columnId: 'maHoaDon', columnText: 'Mã hóa đơn' },
         { columnId: 'ngayLapHoaDon', columnText: 'Ngày lập' },
+        { columnId: 'maKhachHang', columnText: 'Mã khách hàng' },
+        { columnId: 'soDienThoai', columnText: 'Điện thoại' },
         { columnId: 'tenKhachHang', columnText: 'Tên khách hàng' },
         { columnId: 'tongThanhToan', columnText: 'Tổng phải trả', align: 'right' },
         { columnId: 'khachDaTra', columnText: 'Khách đã trả', align: 'right' },
         { columnId: 'conNo', columnText: 'Còn nợ', align: 'right' },
-        { columnId: 'ghiChuHD', columnText: 'Ghi chú' }
+        { columnId: 'ghiChuHD', columnText: 'Ghi chú' },
+        { columnId: 'emty', columnText: '' }
     ];
 
     if (isOpenFormDetail) return <PageDetailGDV itemHD={invoiceChosing} gotoBack={gotoPageList} />;
@@ -547,37 +552,68 @@ export default function PageDanhSachGDV() {
                                                     onChange={(event) => onClickCheckOne(event, row.id)}
                                                 />
                                             </TableCell>
-                                            <TableCell
-                                                sx={{ minWidth: 100, maxWidth: 100 }}
-                                                onClick={() => OpenFormDetail(row)}>
-                                                {row?.maHoaDon}
-                                            </TableCell>
-                                            <TableCell sx={{ maxWidth: 150 }} onClick={() => OpenFormDetail(row)}>
+                                            <TableCell sx={{ minWidth: 100, maxWidth: 100 }}>{row?.maHoaDon}</TableCell>
+                                            <TableCell sx={{ maxWidth: 150 }}>
                                                 {format(new Date(row?.ngayLapHoaDon), 'dd/MM/yyyy')}
+                                            </TableCell>
+                                            <TableCell sx={{ minWidth: 100, maxWidth: 100 }}>
+                                                {row?.maKhachHang}
+                                            </TableCell>
+                                            <TableCell
+                                                className="lableOverflow"
+                                                sx={{ maxWidth: 140 }}
+                                                title={row?.soDienThoai}>
+                                                {row?.soDienThoai}
                                             </TableCell>
                                             <TableCell
                                                 className="lableOverflow"
                                                 sx={{ maxWidth: 200 }}
-                                                title={row?.tenKhachHang}
-                                                onClick={() => OpenFormDetail(row)}>
+                                                title={row?.tenKhachHang}>
                                                 {row?.tenKhachHang}
-                                            </TableCell>
-                                            <TableCell align="right" onClick={() => OpenFormDetail(row)}>
+                                            </TableCell>{' '}
+                                            <TableCell align="right">
                                                 {new Intl.NumberFormat('vi-VN').format(row?.tongThanhToan ?? 0)}
                                             </TableCell>
-                                            <TableCell align="right" onClick={() => OpenFormDetail(row)}>
+                                            <TableCell align="right">
                                                 {new Intl.NumberFormat('vi-VN').format(row?.daThanhToan ?? 0)}
                                             </TableCell>
-                                            <TableCell align="right" onClick={() => OpenFormDetail(row)}>
+                                            <TableCell align="right">
                                                 {new Intl.NumberFormat('vi-VN').format(row?.conNo ?? 0)}
                                             </TableCell>
                                             <TableCell
                                                 className="lableOverflow"
                                                 title={row?.ghiChuHD}
-                                                sx={{ minWidth: 150, maxWidth: 200 }}
-                                                onClick={() => OpenFormDetail(row)}>
+                                                sx={{ minWidth: 150, maxWidth: 200 }}>
                                                 {row?.ghiChuHD}
                                             </TableCell>
+                                            <TableCell align="center">
+                                                <Stack direction="row" spacing={1}>
+                                                    <VisibilityOutlinedIcon
+                                                        style={{ cursor: 'pointer' }}
+                                                        sx={{
+                                                            fontSize: '18px', // Kích thước icon nhỏ hơn
+                                                            color: '#9e9e9e', // Màu xám nhạt
+                                                            '&:hover': {
+                                                                color: '#757575' // Màu đậm hơn khi hover
+                                                            }
+                                                        }}
+                                                        titleAccess="Xem chi tiết"
+                                                        onClick={() => OpenFormDetail(row)}
+                                                    />
+                                                    {/* <DeleteOutlinedIcon
+                                                        style={{ cursor: 'pointer' }}
+                                                        sx={{
+                                                            fontSize: '18px', // Kích thước icon nhỏ hơn
+                                                            color: '#9e9e9e', // Màu xám nhạt
+                                                            '&:hover': {
+                                                                color: '#f44336' // Màu đỏ khi hover
+                                                            }
+                                                        }}
+                                                        titleAccess="Xóa"
+                                                        // onClick={() => handleDelete(params.row)}
+                                                    /> */}
+                                                </Stack>
+                                            </TableCell>{' '}
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -585,7 +621,7 @@ export default function PageDanhSachGDV() {
                                     <TableFooter>
                                         {pageDataHoaDon?.totalCount > 0 ? (
                                             <TableRow>
-                                                <TableCell colSpan={4}>Tổng cộng</TableCell>
+                                                <TableCell colSpan={6}>Tổng cộng</TableCell>
                                                 <TableCell align="right">
                                                     {new Intl.NumberFormat('vi-VN').format(footerTable_TongThanhToan)}
                                                 </TableCell>
@@ -595,6 +631,7 @@ export default function PageDanhSachGDV() {
                                                 <TableCell align="right">
                                                     {new Intl.NumberFormat('vi-VN').format(footerTable_ConNo)}
                                                 </TableCell>
+                                                <TableCell></TableCell>
                                                 <TableCell></TableCell>
                                             </TableRow>
                                         ) : (

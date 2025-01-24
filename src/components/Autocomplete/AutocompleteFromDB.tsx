@@ -33,7 +33,7 @@ export default function AutocompleteFromDB({
             switch (type) {
                 case 'tenant':
                     {
-                        console.log('idChosed');
+                        // console.log('idChosed');
                         if (idChosed !== 0) {
                             const data = await tenantService.get(idChosed);
                             if (data !== null) {

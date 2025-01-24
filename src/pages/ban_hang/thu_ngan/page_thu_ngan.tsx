@@ -81,6 +81,7 @@ import { IPagedResultSoQuyDto } from '../../../services/so_quy/Dto/IPagedResultS
 import { ParamSearchSoQuyDto } from '../../../services/so_quy/Dto/ParamSearchSoQuyDto';
 import Cookies from 'js-cookie';
 import { lastDayOfMonth } from 'date-fns';
+import customer from '../../customer';
 
 export type IPropsPageThuNgan = {
     txtSearch: string;
@@ -226,7 +227,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     };
 
     const InitData_forHoaDon = async () => {
-        console.log('into ');
         const idCheckInNew = idCheckIn ?? Guid.EMPTY;
         const hdCache = await dbDexie.hoaDon
             .where('idCheckIn')
@@ -640,12 +640,11 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         setCustomerChosed({
             ...customerChosed,
             id: item?.id,
-            maKhachHang: item?.text, // todo makhachhang
+            maKhachHang: item?.maKhachHang ?? '',
             tenKhachHang: item?.text ?? 'Khách lẻ',
             soDienThoai: item?.text2 ?? '',
             conNo: item?.conNo
         });
-
         const idCheckin = await InsertCustomer_toCheckIn(item?.id ?? Guid.EMPTY);
         setHoaDon({ ...hoadon, idKhachHang: item?.id, idCheckIn: idCheckin });
 
@@ -1299,7 +1298,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 });
                 break;
             case TypeAction.DELETE:
-                // await deleteSoQuy();
                 break;
             case TypeAction.RESTORE:
                 {
@@ -1339,8 +1337,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     };
 
     const handleDialogSubmit = (dataSave: any, type: number) => {
-        console.log('Data saved:', dataSave, 'Type:', type);
-        // Thực hiện các xử lý logic khác nếu cần
         handleCloseDialog();
     };
 
@@ -1367,6 +1363,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             <ModalSuDungGDV
                 isShowModal={isShowModalSuDungGDV}
                 idUpdate={customerChosed?.id}
+                maKhachHang={customerChosed?.maKhachHang}
                 onClose={() => setIsShowModalSuDungGDV(false)}
                 onOK={AgreeSuDungGDV}
             />
@@ -1589,9 +1586,10 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                                     {customerChosed?.soDienThoai}
                                                 </Typography>
 
-                                                {customerHasGDV && (
+                                                {customerChosed?.id && (
                                                     <AutoStoriesOutlinedIcon
                                                         color="secondary"
+                                                        sx={{ marginLeft: 1 }}
                                                         onClick={(event) => {
                                                             event.stopPropagation();
                                                             showModalSuDungGDV();
@@ -1631,7 +1629,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                             <Stack overflow={'auto'} maxHeight={'calc(84vh - 280px)!important'} zIndex={3}>
                                 {hoaDonChiTiet
                                     ?.sort((x, y) => {
-                                        // sap xep STT giamdan
                                         const a = x.stt;
                                         const b = y.stt;
                                         return a > b ? -1 : a < b ? 1 : 0;

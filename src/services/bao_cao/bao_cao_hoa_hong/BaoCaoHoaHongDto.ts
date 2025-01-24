@@ -8,9 +8,11 @@ export interface PageBaoCaoHoaHongTongHop {
     tenNhanVien: string;
     hoaHongThucHien_TienChietKhau: number;
     hoaHongTuVan_TienChietKhau: number;
+    hoaHongYeuCauThucHien_TienChietKhau: number;
     tongHoaHong: number;
 
     sumHoaHongTuVan?: number;
+    sumHoaHongYeuCauThucHien?: number;
     sumHoaHongThucHien?: number;
     sumTongHoaHong?: number;
 }
@@ -19,8 +21,10 @@ export interface IHoaHongChiTiet_ListDetail {
     tenNhanVien: string;
     hoaHongThucHien_PTChietKhau: number;
     hoaHongTuVan_PTChietKhau: number;
+    hoaHongYeuCauThucHien_PTChietKhau: number;
     hoaHongThucHien_TienChietKhau: number;
     hoaHongTuVan_TienChietKhau: number;
+    hoaHongYeuCauThucHien_TienChietKhau: number;
     tongHoaHong: number;
 }
 export interface PageBaoCaoHoaHongChiTiet extends IHangHoaInfor_UseForBaoCao, IHoaDonChiTiet_UseForBaoCao {
@@ -35,6 +39,7 @@ export interface PageBaoCaoHoaHongChiTiet extends IHangHoaInfor_UseForBaoCao, IH
     sumThanhTienSauCK?: number;
     sumHoaHongTuVan?: number;
     sumHoaHongThucHien?: number;
+    sumHoaHongYeuCauThucHien?: number;
     sumTongHoaHong?: number;
     lstDetail: IHoaHongChiTiet_ListDetail[];
 }

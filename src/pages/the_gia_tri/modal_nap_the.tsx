@@ -229,6 +229,7 @@ const ModalNapTheGiaTri = ({ isShowModal, isNew, idUpdate, onClose, onOK }: IPro
                 noiDungThu: inforPayment.noiDungThu,
                 idLoaiChungTu: LoaiChungTu.PHIEU_THU,
                 idChiNhanh: chinhanh.id,
+                ngayLapHoaDon: dataHD?.ngayLapHoaDon ?? new Date().toISOString(), // Thêm ngày lập hóa đơn
                 hoadon: {
                     id: (dataHD?.id ?? null) as unknown as null,
                     idKhachHang: (newTGT?.idKhachHang ?? null) as unknown as null,

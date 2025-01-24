@@ -71,7 +71,8 @@ export function PopperSetupHoaHongDV_byGroup({
     lblGroupPopoverV2,
     rowChosed = {} as ChietKhauDichVuItemDto_TachRiengCot,
     onClose,
-    onApply
+    onApply,
+    loaiChietKhauActive
 }: any) {
     const inputEl = useRef<HTMLInputElement>(null);
     const [lblLoaiHoaHong, setLblLoaiHoaHong] = useState('');
@@ -96,6 +97,7 @@ export function PopperSetupHoaHongDV_byGroup({
     }, [loaiChietKhau]);
 
     useEffect(() => {
+        gettest(loaiChietKhauActive);
         switch (loaiChietKhau) {
             case LoaiHoaHongDichVu.THUC_HIEN:
                 {
@@ -148,8 +150,12 @@ export function PopperSetupHoaHongDV_byGroup({
         setGiaTriCK(utils.formatNumberToFloat(gtri));
     };
 
+    const gettest = (loaiChietKhauActive: number) => {
+        console.log(loaiChietKhauActive);
+    };
+
     const onClickApply = () => {
-        onApply(gtriCK, laPhanTram, isCheck, loaiChietKhau, loaiApply);
+        onApply(gtriCK, laPhanTram, isCheck, loaiChietKhauActive, loaiApply);
         onClose();
     };
 
@@ -166,9 +172,25 @@ export function PopperSetupHoaHongDV_byGroup({
                 }}>
                 <Stack padding={2} spacing={1}>
                     <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
-                        <Typography variant="body2">Loại chiết khấu:</Typography>
+                        <Typography variant="body2">
+                            Loại chiết khấu:{' '}
+                            <span style={{ fontWeight: 'bold' }}>
+                                {(() => {
+                                    switch (loaiChietKhauActive) {
+                                        case LoaiHoaHongDichVu.THUC_HIEN:
+                                            return 'Hoa hồng thực hiện';
+                                        case LoaiHoaHongDichVu.YEU_CAU_THUC_HIEN:
+                                            return 'Hoa hồng yêu cầu thực hiện';
+                                        case LoaiHoaHongDichVu.TU_VAN:
+                                            return 'Hoa hồng tư vấn';
+                                        default:
+                                            return 'Không xác định';
+                                    }
+                                })()}
+                            </span>
+                        </Typography>
 
-                        <ButtonGroup>
+                        {/* <ButtonGroup>
                             <Button
                                 size="small"
                                 variant={loaiChietKhau === LoaiHoaHongDichVu.THUC_HIEN ? 'contained' : 'outlined'}
@@ -189,7 +211,7 @@ export function PopperSetupHoaHongDV_byGroup({
                                 onClick={() => setLoaiChietKhau(LoaiHoaHongDichVu.TU_VAN)}>
                                 Tư vấn
                             </Button>
-                        </ButtonGroup>
+                        </ButtonGroup> */}
                     </Stack>
 
                     <Stack direction={'row'} spacing={1} alignItems={'center'}>
@@ -214,7 +236,7 @@ export function PopperSetupHoaHongDV_byGroup({
                                 onFocus={handleFocus}
                                 isAllowed={(values) => {
                                     const floatValue = values.floatValue;
-                                    if (laPhanTram) return (floatValue ?? 0) <= 100; // neu %: khong cho phep nhap qua 100%
+                                    if (laPhanTram) return (floatValue ?? 0) <= 100;
                                     return true;
                                 }}
                             />
@@ -234,16 +256,15 @@ export function PopperSetupHoaHongDV_byGroup({
                             </ButtonGroup>
                         </Stack>
                     </Stack>
-                    <Stack direction={'row'} paddingTop={2} spacing={1} alignItems={'center'}>
+                    <Stack direction={'row'} spacing={1} alignItems={'center'}>
                         <Checkbox
                             value={isCheck}
                             onChange={(e) => {
                                 setIsCheck(e.currentTarget.checked);
-                                setLoaiApply(3); // Gọi setLoaiApply khi trạng thái của checkbox thay đổi
+                                setLoaiApply(3);
                             }}
                         />
-
-                        <Stack direction={'row'} spacing={0.5}>
+                        <Stack direction={'row'} spacing={0.1}>
                             <Typography variant="body2"> Áp dụng cho tất cả dịch vụ</Typography>
                             <Typography variant="body2" fontWeight={500}>
                                 {' '}
@@ -251,15 +272,15 @@ export function PopperSetupHoaHongDV_byGroup({
                             </Typography>
                         </Stack>
                     </Stack>
-                    <Stack direction={'row'} paddingTop={0.1} spacing={0.5} alignItems={'center'}>
+                    <Stack direction={'row'} spacing={1} alignItems={'center'}>
                         <Checkbox
                             value={isCheck}
                             onChange={(e) => {
                                 setIsCheck(e.currentTarget.checked);
                                 setLoaiApply(1);
                             }}
-                        />{' '}
-                        <Stack direction={'row'} spacing={0.5}>
+                        />
+                        <Stack direction={'row'} spacing={0.1}>
                             <Typography variant="body2"> Áp dụng cho tất cả dịch vụ</Typography>
                             <Typography variant="body2" fontWeight={500}>
                                 {' '}
@@ -267,6 +288,7 @@ export function PopperSetupHoaHongDV_byGroup({
                             </Typography>
                         </Stack>
                     </Stack>
+
                     <Stack direction={'row'}>
                         <Stack flex={3}></Stack>
                         <Stack flex={1} justifyContent={'end'}>
@@ -306,6 +328,7 @@ export default function PageSetupHoaHongDichVu() {
     const [typePopover, setTypePopover] = useState(0);
     const openPopover = Boolean(anchorPopover);
     const [isDialogOpen, setDialogOpen] = useState(false);
+    const [loaiChietKhauActive, setloaiChietKhauActive] = useState(0);
 
     const [pageResultChietKhauDV, setPageResultChietKhauDV] = useState<
         PagedResultDto<ChietKhauDichVuItemDto_TachRiengCot>
@@ -423,6 +446,7 @@ export default function PageSetupHoaHongDichVu() {
         setAnchorPopover(event.currentTarget);
         setTypePopover(type);
         setRowChosedPopover(itemRow.row);
+        setloaiChietKhauActive(loaiChietKhauActive);
 
         switch (type) {
             case TypeGroupPopover.NHAN_VIEN:
@@ -890,8 +914,10 @@ export default function PageSetupHoaHongDichVu() {
             renderCell: (params) => (
                 <Stack direction={'row'} spacing={1}>
                     <Stack
-                        onClick={(e) => showPopOver(e, TypeGroupPopover.NHOM_DICH_VU, params)} // Thêm sự kiện onClick
-                    >
+                        onClick={(e) => {
+                            showPopOver(e, TypeGroupPopover.NHOM_DICH_VU, params);
+                            setloaiChietKhauActive(LoaiHoaHongDichVu.THUC_HIEN);
+                        }}>
                         <NumericFormat
                             fullWidth
                             size="small"
@@ -967,8 +993,10 @@ export default function PageSetupHoaHongDichVu() {
             renderCell: (params) => (
                 <Stack direction={'row'} spacing={1}>
                     <Stack
-                        onClick={(e) => showPopOver(e, TypeGroupPopover.NHOM_DICH_VU, params)} // Thêm sự kiện onClick
-                    >
+                        onClick={(e) => {
+                            showPopOver(e, TypeGroupPopover.NHOM_DICH_VU, params);
+                            setloaiChietKhauActive(LoaiHoaHongDichVu.YEU_CAU_THUC_HIEN);
+                        }}>
                         <NumericFormat
                             fullWidth
                             size="small"
@@ -1049,7 +1077,12 @@ export default function PageSetupHoaHongDichVu() {
             flex: 0.5,
             renderCell: (params) => (
                 <Stack direction={'row'} spacing={1}>
-                    <Stack onClick={(e) => showPopOver(e, TypeGroupPopover.NHOM_DICH_VU, params)}>
+                    <Stack
+                        onClick={(e) => {
+                            showPopOver(e, TypeGroupPopover.NHOM_DICH_VU, params);
+                            setloaiChietKhauActive(LoaiHoaHongDichVu.TU_VAN);
+                        }}>
+                        {' '}
                         <NumericFormat
                             fullWidth
                             size="small"
@@ -1176,6 +1209,7 @@ export default function PageSetupHoaHongDichVu() {
                 rowChosed={rowChosedPopover}
                 onClose={closePopOver}
                 onApply={applyPopover}
+                loaiChietKhauActive={loaiChietKhauActive}
             />
             <CommissionCopyDialog
                 open={isDialogOpen}

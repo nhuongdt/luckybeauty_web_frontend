@@ -1,4 +1,16 @@
-import { Grid, Stack, Avatar, Typography, Button, Tab } from '@mui/material';
+import {
+    Grid,
+    Stack,
+    Avatar,
+    Typography,
+    Button,
+    Tab,
+    Checkbox,
+    TextField,
+    FormControlLabel,
+    Radio,
+    RadioGroup
+} from '@mui/material';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import TabContext from '@mui/lab/TabContext';
@@ -20,6 +32,14 @@ import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import uploadFileService from '../../../services/uploadFileService';
 import TabAnhLieuTrinh from './TabAnhLieuTrinh';
+import TabNhatKySuDungGDV from '../../goi_dich_vu/tab_nhat_ky_su_dung_gdv';
+import PageBCNhatKySuDungTGTTGT from '../../bao_cao/the_gia_tri/nhat_ky_su_dung';
+import { RdoTrangThaiFilter } from '../../../enum/TrangThaiFilter';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+
+import ParamSearchChiTietSuDungGDVDto from '../../../services/ban_hang/ParamSearchChiTietSuDungGDVDto';
+import ChiTietSuDungGDVDto, { GroupChiTietSuDungGDVDto } from '../../../services/ban_hang/ChiTietSuDungGDVDto';
+import HoaDonService from '../../../services/ban_hang/HoaDonService';
 
 export interface IScreenCustomerInfor {
     khachHangId?: string;
@@ -41,6 +61,12 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
     useEffect(() => {
         getNhatKyHoatDong();
         getKhachHangInfo();
+        if (khachHangId) {
+            setParamSearch((prev) => ({
+                ...prev,
+                idCustomer: khachHangId
+            }));
+        }
     }, [khachHangId]);
 
     const getNhatKyHoatDong = async () => {
@@ -73,7 +99,6 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
     };
 
     const gotoBack = () => {
-        // window.location.replace('/khach-hangs');
         onClose();
     };
 
@@ -88,6 +113,84 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
         await getKhachHangInfo();
         setIsShowEditKhachHang(false);
     };
+    const [paramSearch, setParamSearch] = useState<ParamSearchChiTietSuDungGDVDto>({
+        idCustomer: khachHangId ?? '',
+        idChiNhanhs: [],
+        trangThais: [RdoTrangThaiFilter.CO]
+    });
+    const arrTrangThai = [
+        { text: 'Tất cả', value: RdoTrangThaiFilter.TAT_CA },
+        { text: 'Còn buổi', value: RdoTrangThaiFilter.CO },
+        { text: 'Hết buổi', value: RdoTrangThaiFilter.KHONG }
+    ];
+
+    const handlePageChange = async (currentPage: number) => {
+        console.log('test ', cusEdit.maKhachHang);
+        setParamSearch({
+            ...paramSearch,
+            currentPage: currentPage,
+            textSearch: cusEdit.maKhachHang
+        });
+    };
+    const changePageSize = async (pageSizeNew: number) => {
+        setParamSearch({
+            ...paramSearch,
+            currentPage: 1,
+            pageSize: pageSizeNew
+        });
+    };
+    const [balance, setBalance] = useState<number>(0);
+
+    const handleUpdateBalance = (newBalance: number) => {
+        setBalance(newBalance);
+    };
+    useEffect(() => {
+        if (khachHangId) {
+            GetChiTiet_SuDungGDV_ofCustomer(paramSearch?.textSearch ?? '');
+        }
+    }, [paramSearch?.trangThais]);
+    const [ctChosed, setCTChosed] = useState<ChiTietSuDungGDVDto[]>([]);
+    const [lstChiTietGDV, setLstChiTietGDV] = useState<GroupChiTietSuDungGDVDto[]>();
+    const GetChiTiet_SuDungGDV_ofCustomer = async (txtSearch: string | null) => {
+        const param = { ...paramSearch };
+        // param.idCustomer = cusEdit.id ?? '';
+        param.textSearch = txtSearch ?? '';
+
+        const data = await HoaDonService.GetChiTiet_SuDungGDV_ofCustomer(param);
+        setLstChiTietGDV([...data]);
+    };
+    const changeCheckAll = (isCheck: boolean) => {
+        let arrIdSearch = lstChiTietGDV?.flatMap((x) => x?.chitiets?.map((o) => o?.idChiTietHoaDon));
+        arrIdSearch = arrIdSearch ?? [];
+
+        const arrConLai = ctChosed?.filter((x) => !arrIdSearch?.includes(x?.idChiTietHoaDon ?? ''));
+        if (isCheck) {
+            const arrChosed = lstChiTietGDV?.flatMap((x) => x?.chitiets?.map((o) => o));
+            setCTChosed([...arrConLai, ...(arrChosed ?? [])]);
+        } else {
+            setCTChosed([...arrConLai]);
+        }
+    };
+    const choseItem = (isCheck: boolean, itemChosed: ChiTietSuDungGDVDto) => {
+        if (itemChosed?.soLuongConLai === 0) {
+            setObjAlert({
+                ...objAlert,
+                show: true,
+                mes: `Dịch vụ ${itemChosed?.tenHangHoa} đã hết số buổi dùng`,
+                type: 2
+            });
+            return;
+        }
+        const lstOld = ctChosed?.filter((x) => x?.idChiTietHoaDon !== itemChosed?.idChiTietHoaDon);
+        if (isCheck) {
+            setCTChosed([itemChosed, ...(lstOld ?? [])]);
+        } else {
+            setCTChosed([...(lstOld ?? [])]);
+        }
+    };
+    const arrIdChiTietChosed = ctChosed?.map((x) => {
+        return x?.idChiTietHoaDon;
+    });
 
     return (
         <>
@@ -315,20 +418,77 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
                     <Stack padding={2} className="page-full" sx={{ border: '1px solid #cccc', borderRadius: '4px' }}>
                         <TabContext value={tabActive}>
                             <Grid container alignItems={'center'}>
-                                <Grid item lg={6}>
-                                    <TabList onChange={handleChangeTab}>
-                                        <Tab label="Cuộc hẹn" value="1" />
-                                        <Tab label="Mua hàng" value="2" />
-                                        <Tab label="Ảnh liệu trình" value="3" />
+                                <Grid item lg={8} xs={12}>
+                                    <TabList
+                                        onChange={handleChangeTab}
+                                        sx={{
+                                            display: 'flex',
+                                            flexWrap: 'wrap',
+                                            gap: 1
+                                        }}>
+                                        <Tab
+                                            label="Gói dịch vụ"
+                                            value="1"
+                                            sx={{
+                                                padding: '4px 8px',
+                                                fontSize: { xs: '10px', sm: '12px' },
+                                                minWidth: '80px'
+                                            }}
+                                        />
+                                        <Tab
+                                            label="Nhật ký gói"
+                                            value="2"
+                                            sx={{
+                                                padding: '4px 8px',
+                                                fontSize: { xs: '10px', sm: '12px' },
+                                                minWidth: '80px'
+                                            }}
+                                        />
+                                        <Tab
+                                            label="Nhật ký thẻ giá trị"
+                                            value="3"
+                                            sx={{
+                                                padding: '4px 8px',
+                                                fontSize: { xs: '10px', sm: '12px' },
+                                                minWidth: '80px'
+                                            }}
+                                        />
+                                        <Tab
+                                            label="Cuộc hẹn"
+                                            value="4"
+                                            sx={{
+                                                padding: '4px 8px',
+                                                fontSize: { xs: '10px', sm: '12px' },
+                                                minWidth: '80px'
+                                            }}
+                                        />
+                                        <Tab
+                                            label="Mua hàng"
+                                            value="5"
+                                            sx={{
+                                                padding: '4px 8px',
+                                                fontSize: { xs: '10px', sm: '12px' },
+                                                minWidth: '80px'
+                                            }}
+                                        />
+                                        <Tab
+                                            label="Ảnh liệu trình"
+                                            value="6"
+                                            sx={{
+                                                padding: '4px 8px',
+                                                fontSize: { xs: '10px', sm: '12px' },
+                                                minWidth: '80px'
+                                            }}
+                                        />
                                     </TabList>
                                 </Grid>
-                                <Grid item lg={6}>
+                                <Grid item lg={4}>
                                     <Stack direction={'row'} spacing={1} justifyContent={'end'}>
                                         <Button
                                             variant="outlined"
                                             startIcon={<ArrowBackOutlinedIcon />}
                                             onClick={gotoBack}>
-                                            Quay trở lại
+                                            Quay lại
                                         </Button>
                                         <Button variant="outlined" startIcon={<FileUploadOutlinedIcon />}>
                                             Xuất excel
@@ -337,12 +497,170 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
                                 </Grid>
                             </Grid>
                             <TabPanel value="1" sx={{ padding: 0 }}>
-                                <TabCuocHen khachHangId={khachHangId} />
+                                <Grid container>
+                                    <Grid item xs={12}>
+                                        <RadioGroup
+                                            row
+                                            value={paramSearch?.trangThais?.[0]}
+                                            onChange={(e) =>
+                                                setParamSearch({
+                                                    ...paramSearch,
+                                                    trangThais: [parseInt(e.target.value)]
+                                                })
+                                            }>
+                                            {arrTrangThai?.map((x, index) => (
+                                                <FormControlLabel
+                                                    key={index}
+                                                    label={x.text}
+                                                    value={x.value}
+                                                    control={<Radio />}></FormControlLabel>
+                                            ))}
+                                        </RadioGroup>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            size="small"
+                                            variant="outlined"
+                                            placeholder="Tìm kiếm mã gói dịch vụ, tên dịch vụ"
+                                            fullWidth
+                                            InputProps={{ startAdornment: <SearchOutlinedIcon /> }}
+                                            onChange={(e) =>
+                                                setParamSearch({ ...paramSearch, textSearch: e.target.value })
+                                            }
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        container
+                                        sx={{
+                                            backgroundColor: ' var(--color-header-table)'
+                                        }}
+                                        className="grid-table grid-table-header">
+                                        <Grid item xs={1.5}>
+                                            <Typography variant="body2">Mã DV</Typography>
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <Typography variant="body2">Tên dịch vụ</Typography>
+                                        </Grid>
+                                        <Grid item xs={1}>
+                                            <Typography variant="body2">Số lượng</Typography>
+                                        </Grid>
+                                        <Grid item xs={1}>
+                                            <Typography variant="body2">Đơn giá</Typography>
+                                        </Grid>
+                                        <Grid item xs={2}>
+                                            <Typography variant="body2">Thành tiền</Typography>
+                                        </Grid>
+                                        <Grid item xs={1}>
+                                            <Typography variant="body2">Sử dụng</Typography>
+                                        </Grid>
+
+                                        <Grid item xs={1}>
+                                            <Typography variant="body2">Còn lại</Typography>
+                                        </Grid>
+                                        <Grid item xs={0.5}>
+                                            <Checkbox onChange={(e) => changeCheckAll(e.target.checked)} />
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container style={{ overflow: 'auto', maxHeight: '60vh' }}>
+                                        {lstChiTietGDV?.map((x, index) => (
+                                            <Grid item xs={12} key={index}>
+                                                <Grid container sx={{ backgroundColor: 'var(--color-bg)' }}>
+                                                    <Grid item xs={12} padding={1}>
+                                                        <Stack
+                                                            spacing={2}
+                                                            direction="row"
+                                                            alignItems="center"
+                                                            justifyContent={'center'}>
+                                                            <Typography> {x?.maHoaDon}</Typography>
+                                                            <Typography>
+                                                                {' - '}
+                                                                {format(new Date(x?.ngayLapHoaDon), 'dd/MM/yyyy')}
+                                                            </Typography>
+                                                        </Stack>
+                                                    </Grid>
+                                                </Grid>
+                                                {x?.chitiets?.map((ct, index) => (
+                                                    <div key={index}>
+                                                        <Grid container className="grid-table grid-content">
+                                                            <Grid item xs={1.5} textAlign={'center'}>
+                                                                <Typography variant="body2">
+                                                                    {' '}
+                                                                    {ct?.maHangHoa}
+                                                                </Typography>
+                                                            </Grid>
+                                                            <Grid item xs={4}>
+                                                                <Typography variant="body2">
+                                                                    {' '}
+                                                                    {ct?.tenHangHoa}
+                                                                </Typography>
+                                                            </Grid>
+                                                            <Grid item xs={1} textAlign={'center'}>
+                                                                <Typography variant="body2">
+                                                                    {' '}
+                                                                    {ct?.soLuongMua}
+                                                                </Typography>
+                                                            </Grid>
+                                                            <Grid item xs={1} textAlign={'center'}>
+                                                                <Typography variant="body2">
+                                                                    {' '}
+                                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                                        ct?.donGiaSauCK ?? 0
+                                                                    )}
+                                                                </Typography>
+                                                            </Grid>
+                                                            <Grid item xs={2} textAlign={'center'}>
+                                                                <Typography variant="body2">
+                                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                                        ct?.thanhTienSauCK ?? 0
+                                                                    )}
+                                                                </Typography>
+                                                            </Grid>
+                                                            <Grid item xs={1} textAlign={'center'}>
+                                                                <Typography variant="body2">
+                                                                    {' '}
+                                                                    {ct?.soLuongDung}
+                                                                </Typography>
+                                                            </Grid>
+                                                            <Grid item xs={1} textAlign={'center'}>
+                                                                <Typography variant="body2">
+                                                                    {' '}
+                                                                    {ct?.soLuongConLai}
+                                                                </Typography>
+                                                            </Grid>
+                                                            <Grid item xs={0.5} textAlign={'center'}>
+                                                                <Checkbox
+                                                                    onChange={(e) => choseItem(e.target.checked, ct)}
+                                                                    checked={arrIdChiTietChosed?.includes(
+                                                                        ct?.idChiTietHoaDon
+                                                                    )}
+                                                                />
+                                                            </Grid>
+                                                        </Grid>
+                                                    </div>
+                                                ))}
+                                            </Grid>
+                                        ))}
+                                    </Grid>
+                                </Grid>{' '}
                             </TabPanel>
                             <TabPanel value="2" sx={{ padding: 0 }}>
-                                <TabMuaHang khachHangId={khachHangId} />
+                                <TabNhatKySuDungGDV idCustomer={khachHangId ?? ''} />
                             </TabPanel>
                             <TabPanel value="3" sx={{ padding: 0 }}>
+                                <PageBCNhatKySuDungTGTTGT
+                                    onChangePage={handlePageChange}
+                                    onChangePageSize={changePageSize}
+                                    maKhachHang={cusEdit.maKhachHang}
+                                    onUpdateBalance={handleUpdateBalance}
+                                />{' '}
+                            </TabPanel>
+                            <TabPanel value="4" sx={{ padding: 0 }}>
+                                <TabCuocHen khachHangId={khachHangId} />
+                            </TabPanel>
+                            <TabPanel value="5" sx={{ padding: 0 }}>
+                                <TabMuaHang khachHangId={khachHangId} />
+                            </TabPanel>
+                            <TabPanel value="6" sx={{ padding: 0 }}>
                                 <TabAnhLieuTrinh khachHangId={khachHangId ?? ''} />
                             </TabPanel>
                         </TabContext>
@@ -352,5 +670,4 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
         </>
     );
 };
-// export default observer(CustomerInfor2);
 export default CustomerInfor2;

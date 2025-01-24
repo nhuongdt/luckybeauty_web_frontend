@@ -47,6 +47,7 @@ export default function HoaHongNhanVienDichVu({
     const [lstNVThucHien, setLstNhanVienChosed] = useState<NhanVienThucHienDto[]>([]);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [checkedItems, setCheckedItems] = React.useState<boolean[]>([]);
+    const [lstNhanVienFiltered, setLstNhanVienFiltered] = useState<NhanVienThucHienDto[]>([]);
 
     const GetListNhanVien = async () => {
         const data = await nhanVienService.getAll({
@@ -77,7 +78,6 @@ export default function HoaHongNhanVienDichVu({
 
     useEffect(() => {
         setTabActive(LoaiHoaHongDichVu.THUC_HIEN.toString());
-        // get hoahongHD from db
         if (isNew) {
             // page thungan
             setLstNhanVienChosed([...(itemHoaDonChiTiet?.nhanVienThucHien ?? [])]);
@@ -113,19 +113,17 @@ export default function HoaHongNhanVienDichVu({
     const giaTriTinhHoaHong = itemHoaDonChiTiet.soLuong * (itemHoaDonChiTiet?.donGiaSauCK ?? 0);
 
     const ChoseNhanVien = async (item: NhanSuItemDto) => {
-        const nvEX = lstNVThucHien.filter((x) => x.idNhanVien === item.id);
+        const loaiCKActive = parseInt(tabActive);
+        const nvEX = lstNVThucHien.filter((x) => x.idNhanVien === item.id && x.loaiChietKhau === loaiCKActive);
+
+        // Nếu nhân viên với loại chiết khấu đã tồn tại
         if (nvEX.length > 0) {
-            // nếu có 2 modal lồng nhau: ObjAlert bị nằm bên dưới
-            // tạm thời dùng cái này
-            enqueueSnackbar(`Nhân viên ${item.tenNhanVien} đã được chọn`, {
+            enqueueSnackbar(`Nhân viên ${item.tenNhanVien} với loại chiết khấu này đã được chọn`, {
                 variant: 'error',
                 autoHideDuration: 3000
             });
-            // setObjAlert({ ...objAlert, show: true, mes: `Nhân viên ${item.tenNhanVien} đã được chọn` });
             return;
         }
-        // check tab active
-        const loaiCKActive = parseInt(tabActive);
         const newNV = new NhanVienThucHienDto({
             idNhanVien: item.id,
             maNhanVien: item.maNhanVien,
@@ -156,6 +154,7 @@ export default function HoaHongNhanVienDichVu({
                 newNV.laPhanTram = false;
             }
         }
+        handleChange({} as React.SyntheticEvent, tabActive);
         setLstNhanVienChosed([newNV, ...lstNVThucHien]);
     };
     const onCheckboxChange = async (nv: NhanVienThucHienDto) => {
@@ -287,7 +286,30 @@ export default function HoaHongNhanVienDichVu({
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setTabActive(newValue);
+
+        // Lọc danh sách nhân viên theo loại hoa hồng của tab
+        const filteredNhanVien = lstNVThucHien?.filter((nv) => {
+            if (newValue === `${LoaiHoaHongDichVu.THUC_HIEN}`) {
+                return nv.loaiChietKhau === 1 || nv.loaiChietKhau === 2; // Loại hoa hồng "Thực hiện" hoặc "Loại khác"
+            } else if (newValue === `${LoaiHoaHongDichVu.TU_VAN}`) {
+                return nv.loaiChietKhau === 3; // Loại hoa hồng "Tư vấn"
+            }
+            return false;
+        });
+
+        setLstNhanVienFiltered(filteredNhanVien); // Cập nhật danh sách nhân viên hiển thị
     };
+
+    useEffect(() => {
+        handleChange({} as React.SyntheticEvent, tabActive);
+    }, [lstNVThucHien, tabActive]);
+
+    // Effect hook để lọc lại nhân viên khi thay đổi tab
+    useEffect(() => {
+        if (tabActive) {
+            handleChange({} as React.SyntheticEvent, tabActive);
+        }
+    }, [tabActive]);
 
     const saveHoaHongDV = async () => {
         if (!isNew) {
@@ -297,7 +319,18 @@ export default function HoaHongNhanVienDichVu({
 
         onSaveOK(lstNVThucHien);
     };
-
+    const getLoaiChietKhauLabel = (loaiChietKhau: number) => {
+        switch (loaiChietKhau) {
+            case 1:
+                return 'Thực hiện';
+            case 2:
+                return 'Yêu cầu';
+            case 3:
+                return 'Tư vấn';
+            default:
+                return 'Chưa xác định'; // Giá trị mặc định nếu không có loại chiết khấu hợp lệ
+        }
+    };
     return (
         <>
             <SnackbarAlert
@@ -433,117 +466,190 @@ export default function HoaHongNhanVienDichVu({
                                         <ClearOutlinedIcon sx={{ color: 'red' }} onClick={removeAllNVienChosed} />
                                     </Stack>
                                 </Stack>
-                                {lstNVThucHien?.map((nv: NhanVienThucHienDto, index: number) => (
-                                    <Stack direction={'row'} spacing={1} padding={'10px'} key={index}>
-                                        <Stack
-                                            flex={1}
-                                            alignItems="center" // Căn giữa theo chiều ngang
-                                            justifyContent="center" // Căn giữa theo chiều dọc
-                                            textAlign="center">
-                                            <Checkbox
-                                                checked={nv.loaiChietKhau === 2} // Kiểm tra nếu loaiChietKhau = 2 thì checkbox được chọn
-                                                onChange={() => onCheckboxChange(nv)} // Gọi onCheckboxChange khi thay đổi trạng thái checkbox
-                                            />
-                                        </Stack>
 
-                                        <Stack flex={5}>
-                                            <Stack>{nv.tenNhanVien}</Stack>
-                                            <Stack>
-                                                <Typography variant="caption" color={'var(--color-text-secondary)'}>
-                                                    {nv.loaiChietKhau === 1
-                                                        ? 'Thực hiện'
-                                                        : nv.loaiChietKhau === 2
-                                                        ? 'Yêu cầu thực hiện'
-                                                        : nv.loaiChietKhau === 3
-                                                        ? 'Tư vấn'
-                                                        : ''}
-                                                </Typography>
+                                {/* Bảng có chiều cao cố định và cuộn nội dung */}
+                                <Stack
+                                    sx={{
+                                        minHeight: '350px', // Chiều cao cố định cho phần danh sách nhân viên
+                                        overflowY: 'auto', // Cho phép cuộn khi nội dung quá dài
+                                        padding: '10px'
+                                    }}>
+                                    {lstNhanVienFiltered?.map((nv: NhanVienThucHienDto, index: number) => (
+                                        <Stack direction={'row'} spacing={1} padding={'10px'} key={index}>
+                                            {/* Checkbox */}
+                                            <Stack
+                                                flex={1}
+                                                alignItems="center"
+                                                justifyContent="center"
+                                                textAlign="center">
+                                                <Checkbox
+                                                    checked={nv.loaiChietKhau === 2} // Kiểm tra nếu loaiChietKhau = 2 thì checkbox được chọn
+                                                    onChange={() => onCheckboxChange(nv)} // Gọi onCheckboxChange khi thay đổi trạng thái checkbox
+                                                />
                                             </Stack>
-                                        </Stack>
-                                        <Stack flex={3} alignItems={'center'} sx={{ cursor: 'pointer' }}>
-                                            <Stack sx={{ color: 'var(--color-main)' }}>
+
+                                            {/* Tên nhân viên */}
+                                            <Stack flex={5}>
+                                                <Stack>{nv.tenNhanVien}</Stack>
+                                                <Stack>
+                                                    <Typography variant="caption" color={'var(--color-text-secondary)'}>
+                                                        {nv.loaiChietKhau === 1
+                                                            ? 'Thực hiện'
+                                                            : nv.loaiChietKhau === 2
+                                                            ? 'Yêu cầu thực hiện'
+                                                            : nv.loaiChietKhau === 3
+                                                            ? 'Tư vấn'
+                                                            : ''}
+                                                    </Typography>
+                                                </Stack>
+                                            </Stack>
+
+                                            {/* Chiết khấu */}
+                                            <Stack flex={3} alignItems={'center'} sx={{ cursor: 'pointer' }}>
+                                                <Stack sx={{ color: 'var(--color-main)' }}>
+                                                    <NumericFormat
+                                                        fullWidth
+                                                        size="small"
+                                                        variant="standard"
+                                                        thousandSeparator={'.'}
+                                                        decimalSeparator={','}
+                                                        value={nv.laPhanTram ? nv.ptChietKhau : nv.tienChietKhau}
+                                                        customInput={TextField}
+                                                        InputProps={{
+                                                            inputProps: {
+                                                                style: { textAlign: 'right' }
+                                                            }
+                                                        }}
+                                                        inputRef={(el: any) => (refInputCK.current[index] = el)}
+                                                        onChange={(e) => changeGtriChietKhau(e.target.value, nv)}
+                                                        onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) =>
+                                                            gotoNextInputCK(
+                                                                e,
+                                                                refInputCK.current[
+                                                                    index === lstNhanVienFiltered.length - 1
+                                                                        ? 0
+                                                                        : index + 1
+                                                                ]
+                                                            )
+                                                        }
+                                                    />
+                                                </Stack>
+                                            </Stack>
+
+                                            {/* Avatar cho phần trăm hoặc tiền */}
+                                            <Stack direction={'row'} flex={1}>
+                                                {nv?.laPhanTram ? (
+                                                    <Avatar
+                                                        style={{
+                                                            width: 25,
+                                                            height: 25,
+                                                            fontSize: '12px',
+                                                            backgroundColor: 'var(--color-main)'
+                                                        }}
+                                                        onClick={() => onClickPtramVND(true, nv)}>
+                                                        %
+                                                    </Avatar>
+                                                ) : (
+                                                    <Avatar
+                                                        style={{ width: 25, height: 25, fontSize: '12px' }}
+                                                        onClick={() => onClickPtramVND(false, nv)}>
+                                                        đ
+                                                    </Avatar>
+                                                )}
+                                            </Stack>
+
+                                            {/* Tiền được nhận */}
+                                            <Stack flex={3} alignItems={'end'}>
                                                 <NumericFormat
                                                     fullWidth
                                                     size="small"
                                                     variant="standard"
                                                     thousandSeparator={'.'}
                                                     decimalSeparator={','}
-                                                    value={nv.laPhanTram ? nv.ptChietKhau : nv.tienChietKhau}
+                                                    value={nv.tienChietKhau}
                                                     customInput={TextField}
                                                     InputProps={{
                                                         inputProps: {
                                                             style: { textAlign: 'right' }
                                                         }
                                                     }}
-                                                    inputRef={(el: any) => (refInputCK.current[index] = el)}
-                                                    onChange={(e) => changeGtriChietKhau(e.target.value, nv)}
+                                                    onChange={(e) => {
+                                                        changeTienChietKhau(e.target.value, nv);
+                                                    }}
+                                                    inputRef={(el: any) => (refTienChietKhau.current[index] = el)}
                                                     onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) =>
-                                                        gotoNextInputCK(
+                                                        gotoNextTienChietKhau(
                                                             e,
-                                                            refInputCK.current[
-                                                                index === lstNVThucHien.length - 1 ? 0 : index + 1
+                                                            refTienChietKhau.current[
+                                                                index === lstNhanVienFiltered.length - 1 ? 0 : index + 1
                                                             ]
                                                         )
                                                     }
                                                 />
                                             </Stack>
+
+                                            {/* Xóa nhân viên */}
+                                            <Stack flex={1} alignItems={'end'}>
+                                                <ClearOutlinedIcon
+                                                    sx={{ color: 'red' }}
+                                                    onClick={() => removeNVienChosed(nv)}
+                                                />
+                                            </Stack>
                                         </Stack>
-                                        <Stack direction={'row'} flex={1}>
-                                            {nv?.laPhanTram ? (
-                                                <Avatar
-                                                    style={{
-                                                        width: 25,
-                                                        height: 25,
-                                                        fontSize: '12px',
-                                                        backgroundColor: 'var(--color-main)'
-                                                    }}
-                                                    onClick={() => onClickPtramVND(true, nv)}>
-                                                    %
-                                                </Avatar>
-                                            ) : (
-                                                <Avatar
-                                                    style={{ width: 25, height: 25, fontSize: '12px' }}
-                                                    onClick={() => onClickPtramVND(false, nv)}>
-                                                    đ
-                                                </Avatar>
-                                            )}
-                                        </Stack>
-                                        <Stack flex={3} alignItems={'end'}>
-                                            <NumericFormat
-                                                fullWidth
-                                                size="small"
-                                                variant="standard"
-                                                thousandSeparator={'.'}
-                                                decimalSeparator={','}
-                                                value={nv.tienChietKhau}
-                                                customInput={TextField}
-                                                InputProps={{
-                                                    inputProps: {
-                                                        style: { textAlign: 'right' }
-                                                    }
-                                                }}
-                                                onChange={(e) => {
-                                                    changeTienChietKhau(e.target.value, nv);
-                                                }}
-                                                inputRef={(el: any) => (refTienChietKhau.current[index] = el)}
-                                                onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) =>
-                                                    gotoNextTienChietKhau(
-                                                        e,
-                                                        refTienChietKhau.current[
-                                                            index === lstNVThucHien.length - 1 ? 0 : index + 1
-                                                        ]
-                                                    )
-                                                }
-                                            />
-                                        </Stack>
-                                        <Stack flex={1} alignItems={'end'}>
-                                            <ClearOutlinedIcon
-                                                sx={{ color: 'red' }}
-                                                onClick={() => removeNVienChosed(nv)}
-                                            />
-                                        </Stack>
+                                    ))}
+                                </Stack>
+                                <Stack
+                                    sx={{
+                                        paddingInlineEnd: '20px',
+                                        marginTop: '10px'
+                                    }}>
+                                    <Stack direction="row" spacing={2} sx={{ flexWrap: 'wrap' }}>
+                                        {lstNVThucHien
+                                            .filter(
+                                                (nv) =>
+                                                    nv.loaiChietKhau === 1 ||
+                                                    nv.loaiChietKhau === 3 ||
+                                                    nv.loaiChietKhau === 2
+                                            )
+                                            .map((nv, index) => (
+                                                <Stack
+                                                    key={index}
+                                                    direction="row"
+                                                    alignItems="center" // Căn giữa Avatar với các chữ
+                                                    spacing={1}
+                                                    sx={{
+                                                        marginBottom: '8px', // Khoảng cách giữa các mục
+                                                        paddingBottom: '4px'
+                                                    }}>
+                                                    <Avatar
+                                                        sx={{
+                                                            width: 25,
+                                                            height: 25,
+                                                            backgroundColor: 'var(--color-main)',
+                                                            fontSize: '14px'
+                                                        }}>
+                                                        {nv.tenNhanVien.charAt(0)}{' '}
+                                                        {/* Hiển thị chữ cái đầu tiên của tên */}
+                                                    </Avatar>
+                                                    <Stack direction="column" alignItems="flex-start" spacing={0.2}>
+                                                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                                                            {nv.tenNhanVien}
+                                                        </Typography>
+                                                        <Typography
+                                                            variant="body2"
+                                                            sx={{
+                                                                fontSize: '12px', // chữ nhỏ hơn
+                                                                color: 'rgba(0, 0, 0, 0.6)', // màu mờ hơn
+                                                                marginTop: '0px' // Đảm bảo không có khoảng cách thừa trên
+                                                            }}>
+                                                            {getLoaiChietKhauLabel(nv.loaiChietKhau)}{' '}
+                                                            {/* Hiển thị loại chiết khấu */}
+                                                        </Typography>
+                                                    </Stack>
+                                                </Stack>
+                                            ))}
                                     </Stack>
-                                ))}
+                                </Stack>
                             </Stack>
                         </Grid>
                     </Grid>

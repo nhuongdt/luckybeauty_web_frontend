@@ -13,7 +13,9 @@ export default function AutocompleteAccountBank({
     setTienChuyenKhoan,
     setTienQuyeThePos,
     tongPhaiTra,
-    setOtherFieldsZero // Hàm reset các trường về 0
+    setOtherFieldsZero = () => {
+        // Hàm mặc định thực hiện một thao tác nhỏ thay vì để trống
+    }
 }: any) {
     const [itemChosed, setItemChosed] = useState<TaiKhoanNganHangDto | null>(null);
 
@@ -50,7 +52,6 @@ export default function AutocompleteAccountBank({
                     setItemChosed(null); // Xóa tài khoản đã chọn
                     choseItem(null); // Reset các trường liên quan
                 } else {
-                    // Nếu chọn tài khoản, xử lý như bình thường
                     setItemChosed(newValue);
                     choseItem(newValue);
                 }

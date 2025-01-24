@@ -34,8 +34,8 @@ export default function MainpageBaoCaoTheGiaTri() {
             textSearch: '',
             currentPage: 1,
             pageSize: AppConsts.pageOption[0].value,
-            fromDate: format(startOfMonth(new Date()), 'yyyy-MM-01') as unknown as undefined,
-            toDate: format(lastDayOfMonth(new Date()), 'yyyy-MM-dd') as unknown as undefined,
+            fromDate: format(new Date('2000-01-01'), 'yyyy-MM-dd') as unknown as undefined,
+            toDate: format(new Date(), 'yyyy-MM-dd') as unknown as undefined,
             idChiNhanhs: [idChiNhanh],
             idLoaiChungTus: [
                 LoaiChungTu.HOA_DON_BAN_LE,

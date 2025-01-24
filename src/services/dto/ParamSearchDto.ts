@@ -42,7 +42,7 @@ export class RequestFromToDto extends ParamSearchDto {
         typeSort = 'DESC',
         fromDate = null,
         toDate = null,
-        dateType = DateType.THANG_NAY
+        dateType = DateType.TAT_CA
     }) {
         super({
             idChiNhanhs: idChiNhanhs,

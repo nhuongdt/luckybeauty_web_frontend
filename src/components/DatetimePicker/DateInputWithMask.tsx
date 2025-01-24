@@ -28,39 +28,34 @@ const DateInputWithMask: React.FC<DateInputWithMaskProps> = ({
 
     useEffect(() => {
         if (value) {
-            // Kiểm tra định dạng của value để đảm bảo nó hợp lệ (dd/MM/yyyy)
             const isValidFormat = /^\d{2}\/\d{2}\/\d{4}$/.test(value);
             if (!isValidFormat) {
-                console.error('Giá trị không đúng định dạng dd/MM/yyyy:', value);
-                setInputValue(value); // Giữ nguyên giá trị nếu không hợp lệ
+                // console.error('Giá trị không đúng định dạng dd/MM/yyyy:', value);
+                setInputValue(value);
                 return;
             }
 
             const parsedDate = parse(value, 'dd/MM/yyyy', new Date(), { locale: vi });
 
             if (isValid(parsedDate)) {
-                // Nếu năm là 1000, chỉ hiển thị ngày và tháng
                 if (parsedDate.getFullYear() === 1000) {
                     setInputValue(format(parsedDate, 'dd/MM'));
                     setCurrentFormat('dd/MM'); // Đổi format để ẩn phần năm
                 } else {
-                    // Nếu không phải năm 1000, hiển thị đầy đủ ngày/tháng/năm
                     setInputValue(format(parsedDate, 'dd/MM/yyyy'));
                     setCurrentFormat('dd/MM/yyyy');
                 }
             } else {
-                console.error('Không thể parse giá trị ngày:', value);
-                setInputValue(''); // Đặt giá trị rỗng nếu không hợp lệ
+                setInputValue('');
             }
         } else {
             console.log('Giá trị value ban đầu là null hoặc rỗng.');
-            setInputValue(''); // Đặt giá trị mặc định nếu value rỗng
+            setInputValue('');
         }
     }, [value]);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const rawValue = event.target.value;
-        // console.log('hi', rawValue); // Log ra để kiểm tra
 
         let formattedDate;
 

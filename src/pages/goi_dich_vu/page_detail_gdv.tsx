@@ -17,16 +17,30 @@ enum DetailGDV_tabList {
 const PageDetailGDV: FC<{ itemHD: PageHoaDonDto | null; gotoBack: () => void }> = ({ itemHD, gotoBack }) => {
     const [tabActive, setTabActive] = useState(DetailGDV_tabList.CHI_TIET_HOA_DON);
     const [sumCTHD_ThanhtienSauVAT, setSumCTHD_ThanhtienSauVAT] = useState(0);
+    const [tabKey, setTabKey] = useState(Date.now());
+    const [tabKeyHD, setTabKeyHD] = useState(Date.now()); // key cho TabNhatKyThanhToan để trigger render lại
 
+    console.log(itemHD);
     const onUpdateHD_ifChangeCTHD = (sumThanhTienSauVAT: number) => {
         setSumCTHD_ThanhtienSauVAT(sumThanhTienSauVAT);
+    };
+    const updateTabKey = () => {
+        setTabKey(Date.now());
+    };
+    const updateHD = () => {
+        setTabKeyHD(Date.now());
     };
     return (
         <Grid container paddingTop={2}>
             <Grid item lg={12} xs={12}>
                 <Grid container spacing={2}>
                     <Grid item lg={4} md={6} sm={6} xs={12}>
-                        <TabThongTinHoaDon itemHD={itemHD} tongThanhToanNew={sumCTHD_ThanhtienSauVAT} />
+                        <TabThongTinHoaDon
+                            itemHD={itemHD}
+                            updateTabKey={updateTabKey}
+                            tongThanhToanNew={sumCTHD_ThanhtienSauVAT}
+                            key={tabKeyHD}
+                        />
                     </Grid>
                     <Grid item lg={8} md={6} sm={6} xs={12}>
                         <Stack
@@ -69,7 +83,7 @@ const PageDetailGDV: FC<{ itemHD: PageHoaDonDto | null; gotoBack: () => void }> 
                                 value={DetailGDV_tabList.NHAT_KY_THANH_TOAN}
                                 index={tabActive}
                                 style={{ paddingLeft: '8px', paddingRight: '8px' }}>
-                                <TabNhatKyThanhToan idHoaDon={itemHD?.id ?? ''} />
+                                <TabNhatKyThanhToan updateHD={updateHD} idHoaDon={itemHD?.id ?? ''} />
                             </TabPanel>
                             <TabPanel
                                 value={DetailGDV_tabList.NHAT_KY_SU_DUNG}

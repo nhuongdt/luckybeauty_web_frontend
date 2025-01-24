@@ -125,7 +125,7 @@ export default function TabKhachHangChecking2(props: IPropsTabKhachHangCheckIn) 
         const cusChecking: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
             idKhachHang: dataCheckIn?.idKhachHang ?? '',
             idCheckIn: dataCheckIn?.idCheckIn,
-            maKhachHang: dataCheckIn?.maKhachHang,
+            maKhachHang: dataCheckIn?.maKhachHang ?? '',
             tenKhachHang: dataCheckIn?.tenKhachHang,
             soDienThoai: dataCheckIn?.soDienThoai,
             tongTichDiem: dataCheckIn?.tongTichDiem,

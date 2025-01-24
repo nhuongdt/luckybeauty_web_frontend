@@ -7,4 +7,5 @@ export interface IList {
     icon?: React.ReactNode;
     children?: IList[];
     conNo?: number;
+    maKhachHang?: string;
 }

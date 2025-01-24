@@ -65,10 +65,7 @@ import { TypeAction } from '../../lib/appconst';
 import ZaloService from '../../services/zalo/ZaloService';
 import ModalGuiTinNhanZalo from '../zalo/modal_gui_tin_zalo';
 import { TypeErrorImport } from '../../enum/TypeErrorImport';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel } from '@mui/material';
-import { useState } from 'react';
-import { Console, log } from 'console';
 import VisibilityIcon from '@mui/icons-material/Visibility'; // Import icon con mắt
 
 interface CustomerScreenState {
@@ -578,7 +575,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         const filteredData = this.state.originalData.filter((item) => {
             const birthDate = new Date(item.ngaySinh);
             if (isNaN(birthDate.getTime())) {
-                console.error('Invalid birthDate:', item.ngaySinh);
                 return false;
             }
 
@@ -628,7 +624,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         this.state.originalData.forEach((item) => {
             const birthDate = new Date(item.ngaySinh);
             if (isNaN(birthDate.getTime())) {
-                console.error('Invalid birthDate:', item.ngaySinh);
                 return;
             }
             birthDate.setFullYear(today.getFullYear());
@@ -703,6 +698,13 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             },
             {
+                field: 'soDienThoai',
+                headerName: 'Điện thoại',
+                minWidth: 120,
+                flex: 1,
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
+            },
+            {
                 field: 'tenKhachHang',
                 headerName: 'Tên khách hàng',
                 minWidth: 170,
@@ -728,13 +730,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         </Typography>
                     </Box>
                 ),
-                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-            },
-            {
-                field: 'soDienThoai',
-                headerName: 'Số điện thoại',
-                minWidth: 120,
-                flex: 1,
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             },
             {

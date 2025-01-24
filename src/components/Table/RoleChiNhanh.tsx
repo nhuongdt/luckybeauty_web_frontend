@@ -9,9 +9,7 @@ export default function TableRoleChiNhanh({ allRoles, chiNhanhRoles, userId, pas
         if (userId === 0) {
             setLstChosed([]);
         } else {
-            // get listRole by user
             GetRolebyChiNhanh_ofUser();
-            console.log(31);
         }
     }, []);
 

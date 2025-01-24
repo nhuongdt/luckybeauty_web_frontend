@@ -152,6 +152,7 @@ class HoaDonService {
     GetChiTiet_SuDungGDV_ofCustomer = async (
         param: ParamSearchChiTietSuDungGDVDto
     ): Promise<GroupChiTietSuDungGDVDto[]> => {
+        console.log('param', param);
         const result = await http.post('api/services/app/HoaDon/GetChiTiet_SuDungGDV_ofCustomer', param);
         return result.data.result;
     };

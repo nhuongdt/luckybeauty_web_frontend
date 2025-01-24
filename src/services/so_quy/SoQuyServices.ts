@@ -26,7 +26,7 @@ class SoQuyServices {
         const result = await http.post('api/services/app/QuyHoaDon/UpdateQuyHD_RemoveCT_andAddAgain', input);
         return result.data.result;
     };
-    DeleteSoQuy = async (id: string) => {
+    DeleteSoQuy = async (id?: string) => {
         const result = await http.get('api/services/app/QuyHoaDon/Delete?id=' + id);
         return result.data.result;
     };
@@ -124,6 +124,7 @@ class SoQuyServices {
         noiDungThu = '',
         hachToanKinhDoanh = true,
         ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd'),
+        trangThai = 0,
         hoadon = {
             id: null,
             idKhachHang: null,
@@ -131,6 +132,24 @@ class SoQuyServices {
             tenKhachHang: ''
         }
     }): Promise<QuyHoaDonDto | null> => {
+        // console.log('Input Parameters:');
+        // console.log('phaiTT:', phaiTT);
+        // console.log('tienDiem:', tienDiem);
+        // console.log('tienmat hjhj:', tienmat);
+        // console.log('tienPOS:', tienPOS);
+        // console.log('tienCK:', tienCK);
+        // console.log('thegiatri:', thegiatri);
+        // console.log('tiencoc:', tiencoc);
+        // console.log('maPhieuThu:', maPhieuThu);
+        // console.log('idQuyHDhjj:', idQuyHD);
+        // console.log('idChiNhanh:', idChiNhanh);
+        // console.log('idLoaiChungTu:', idLoaiChungTu);
+        // console.log('idTaiKhoanChuyenKhoan:', idTaiKhoanChuyenKhoan);
+        // console.log('idTaiKhoanPOS:', idTaiKhoanPOS);
+        // console.log('noiDungThu:', noiDungThu);
+        // console.log('hachToanKinhDoanh:', hachToanKinhDoanh);
+        // console.log('ngayLapHoaDon:', ngayLapHoaDon);
+        // console.log('hoadon:', hoadon);
         const lstQuyCT_After: QuyChiTietDto[] = [];
         const shareMoney = this.ShareMoney_QuyHD({
             phaiTT: phaiTT,
@@ -141,6 +160,7 @@ class SoQuyServices {
             thegiatri: thegiatri,
             tiencoc: tiencoc
         });
+        // console.log('Result from ShareMoney_QuyHD:', shareMoney);
         const tienMatNew = shareMoney.TienMat,
             tienPosNew = shareMoney.TienPOS,
             tienCKNew = shareMoney.TienChuyenKhoan,
@@ -210,19 +230,17 @@ class SoQuyServices {
             });
             quyHD.quyHoaDon_ChiTiet = lstQuyCT_After;
             if (utils.checkNull_OrEmpty(idQuyHD)) {
-                // insert
                 const dataPT = await this.CreateQuyHoaDon(quyHD);
                 if (dataPT) {
                     quyHD.maHoaDon = dataPT?.maHoaDon;
                     quyHD.tenNguoiNop = hoadon?.tenKhachHang;
                     await this.saveDiarySoQuy(hoadon?.maHoaDon, quyHD);
                     dataPT.tenNguoiNop = hoadon?.tenKhachHang;
-                    dataPT.quyHoaDon_ChiTiet = lstQuyCT_After; // used to print qrCode
+                    dataPT.quyHoaDon_ChiTiet = lstQuyCT_After;
                     return dataPT;
                 }
             } else {
                 quyHD.id = idQuyHD;
-                // update (remove & add again)
                 const dataPT = await this.UpdateQuyHD_RemoveCT_andAddAgain(quyHD);
                 return dataPT;
             }
@@ -274,7 +292,22 @@ class SoQuyServices {
             tiencoc = 0 // 1
         }
     ) => {
-        // thutu uutien: 1.coc, 2.diem, 3.thegiatri, 4.mat, 5.pos, 6.chuyenkhoan
+        console.log('phaiThanhToanphaiThanhToan', phaiTT);
+        console.log('tienmat', tienmat);
+        // console.log('tienDiem', tienDiem);
+        // console.log('tienPostienPos', tienPOS);
+        // console.log('chuyenkhanchuyenkhan', chuyenkhoan);
+        // console.log('thegiatri', thegiatri);
+        if (phaiTT == 0 || phaiTT == null || phaiTT <= 0) {
+            return {
+                TienCoc: tiencoc,
+                TTBangDiem: tienDiem,
+                TienMat: tienmat,
+                TienPOS: tienPOS,
+                TienChuyenKhoan: chuyenkhoan,
+                TienTheGiaTri: thegiatri
+            };
+        }
         if (tiencoc >= phaiTT) {
             return {
                 TienCoc: phaiTT,
