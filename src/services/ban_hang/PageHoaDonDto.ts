@@ -9,6 +9,7 @@ export default class PageHoaDonDto extends HoaDonDto {
     maKhachHang = '';
     tenKhachHang = '';
     soDienThoai!: string;
+    nhomKhach!: string;
     tongTichDiem = 0;
     avatar = '';
 

@@ -68,10 +68,9 @@ const PageBCNhatKySuDungTGTTGT: FC<{
     ]);
 
     const GetNhatKySuDungTGT = async () => {
-        // Cập nhật textSearch với maKhachHang nếu tồn tại
         const updatedFilter = {
             ...dataFilterContext.filter,
-            textSearch: maKhachHang || dataFilterContext.filter.textSearch // Nếu có maKhachHang, ưu tiên dùng nó
+            textSearch: maKhachHang || dataFilterContext.filter.textSearch
         };
 
         const data = await BaoCaoTGTService.GetNhatKySuDungTGT(updatedFilter);
@@ -80,8 +79,8 @@ const PageBCNhatKySuDungTGTTGT: FC<{
             setPageDataBCNhatKySuDungTGT({
                 ...pageDataBCNhatKySuDungTGT,
                 items: data.items,
-                totalCount: data.items.length,
-                totalPage: Math.ceil(data.items.length / (updatedFilter.pageSize ?? 10))
+                totalCount: data.totalCount,
+                totalPage: Math.ceil(data.totalCount / (updatedFilter.pageSize ?? 10))
             });
         } else {
             setPageDataBCNhatKySuDungTGT({

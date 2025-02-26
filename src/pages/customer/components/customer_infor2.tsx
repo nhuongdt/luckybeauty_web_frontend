@@ -9,7 +9,14 @@ import {
     TextField,
     FormControlLabel,
     Radio,
-    RadioGroup
+    RadioGroup,
+    TableContainer,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    TableFooter
 } from '@mui/material';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
@@ -40,6 +47,14 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ParamSearchChiTietSuDungGDVDto from '../../../services/ban_hang/ParamSearchChiTietSuDungGDVDto';
 import ChiTietSuDungGDVDto, { GroupChiTietSuDungGDVDto } from '../../../services/ban_hang/ChiTietSuDungGDVDto';
 import HoaDonService from '../../../services/ban_hang/HoaDonService';
+import { IHeaderTable, MyHeaderTable } from '../../../components/Table/MyHeaderTable';
+import { PagedResultDto } from '../../../services/dto/pagedResultDto';
+import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
+import { HoaDonRequestDto } from '../../../services/dto/ParamSearchDto';
+import { useRef, useContext } from 'react';
+import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
+import AppConsts, { DateType, LoaiChungTu } from '../../../lib/appconst';
+import { TrangThaiHoaDon } from '../../../services/ban_hang/HoaDonConst';
 
 export interface IScreenCustomerInfor {
     khachHangId?: string;
@@ -53,6 +68,7 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
     const [nkyHoatDong, setNKyHoatDong] = useState<HoatDongKhachHang[]>([]);
     const [objAlert, setObjAlert] = useState({ show: false, mes: '', type: 1 });
     const [objDelete, setObjDelete] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
+    const [soDuTheGiaTri, setSoDuTheGiaTri] = useState(0);
 
     const handleChangeTab = (event: React.SyntheticEvent, newValue: string) => {
         setTabActive(newValue);
@@ -171,6 +187,7 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
             setCTChosed([...arrConLai]);
         }
     };
+
     const choseItem = (isCheck: boolean, itemChosed: ChiTietSuDungGDVDto) => {
         if (itemChosed?.soLuongConLai === 0) {
             setObjAlert({
@@ -191,7 +208,77 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
     const arrIdChiTietChosed = ctChosed?.map((x) => {
         return x?.idChiTietHoaDon;
     });
+    const listColumnHeader: IHeaderTable[] = [
+        { columnId: 'maHoaDon', columnText: 'Mã thẻ' },
+        { columnId: 'ngayLapHoaDon', columnText: 'Ngày lập' },
+        { columnId: 'maKhachHang', columnText: 'Mã khách hàng' },
+        { columnId: 'soDienThoai', columnText: 'Điện thoại' },
+        { columnId: 'tenKhachHang', columnText: 'Tên khách hàng' },
+        { columnId: 'tongTienHang', columnText: 'Tổng tiền nạp', align: 'right' },
+        { columnId: 'tongGiamGiaHD', columnText: 'Giảm giá', align: 'right' },
+        { columnId: 'tongThanhToan', columnText: 'Phải thanh toán', align: 'right' },
+        { columnId: 'khachDaTra', columnText: 'Đã thanh toán', align: 'right' },
+        { columnId: 'conNo', columnText: 'Còn nợ', align: 'right' },
+        { columnId: 'ghiChuHD', columnText: 'Ghi chú' }
+    ];
+    const [pageDataHoaDon, setPageDataHoaDon] = useState<PagedResultDto<PageHoaDonDto>>({
+        totalCount: 0,
+        totalPage: 0,
+        items: []
+    });
+    const appContext = useContext(AppContext);
+    const chinhanh = appContext.chinhanhCurrent;
+    const [paramSearchTGT, setParamSearchTGT] = useState<HoaDonRequestDto>({
+        textSearch: '',
+        idChiNhanhs: [chinhanh?.id],
+        idLoaiChungTus: [LoaiChungTu.THE_GIA_TRI],
+        currentPage: 1,
+        pageSize: 1000,
+        columnSort: 'NgayLapHoaDon',
+        typeSort: 'DESC',
+        fromDate: null,
+        toDate: null,
+        dateType: DateType.TAT_CA,
+        trangThais: [TrangThaiHoaDon.HOAN_THANH]
+    });
+    const GetListTheGiaTri = async () => {
+        const param = { ...paramSearchTGT };
+        console.log('maKhachHang', cusEdit.maKhachHang);
+        const data = await HoaDonService.GetListHoaDon(param);
+        if (data?.items?.length > 0) {
+            const filteredItems = data.items.filter((item) => item.maKhachHang == cusEdit.maKhachHang);
 
+            setPageDataHoaDon({
+                ...pageDataHoaDon,
+                items: filteredItems,
+                totalCount: filteredItems.length,
+                totalPage: utils.getTotalPage(filteredItems.length, paramSearch?.pageSize)
+            });
+
+            const firstRow = filteredItems[0];
+        } else {
+            setPageDataHoaDon({
+                ...pageDataHoaDon,
+                items: [],
+                totalCount: 0,
+                totalPage: 0
+            });
+        }
+    };
+    useEffect(() => {
+        if (cusEdit.maKhachHang) {
+            GetListTheGiaTri();
+        }
+    }, [cusEdit.maKhachHang]);
+
+    useEffect(() => {
+        GetSoDuTheGiaTri_ofKhachHang(cusEdit?.id ?? '');
+    }, [cusEdit?.id]);
+
+    const GetSoDuTheGiaTri_ofKhachHang = async (idKhachHang: string) => {
+        const data = await HoaDonService.GetSoDuTheGiaTri_ofKhachHang(idKhachHang);
+        setSoDuTheGiaTri(data);
+    };
     return (
         <>
             <SnackbarAlert
@@ -318,6 +405,16 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
                                 <Grid item xs={7} lg={8}>
                                     <Typography variant="body2">{cusEdit?.tenNhomKhach}</Typography>
                                 </Grid>
+                                <Grid item xs={5} lg={4}>
+                                    <Typography variant="body2" fontWeight={600}>
+                                        Số dư thẻ giá trị
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={7} lg={8}>
+                                    <Typography variant="body2">
+                                        {new Intl.NumberFormat('vi-VN').format(soDuTheGiaTri)} đ
+                                    </Typography>{' '}
+                                </Grid>
                                 <Grid item xs={12}>
                                     <Stack spacing={1} direction={'row'} justifyContent={'center'}>
                                         <Button
@@ -396,8 +493,6 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
                                 </Typography>
                                 <Stack
                                     spacing={1.5}
-                                    // 70vh - 335px: 335 là chiều cao các phần (thông tin khách + thông tin cuộc hẹn)
-                                    // 70vh là chiều cao max của phần bên trái
                                     sx={{ overflow: 'auto', maxHeight: 'calc(70vh - 335px)', paddingBottom: '16px' }}>
                                     {nkyHoatDong?.map((item, index) => (
                                         <Stack key={index} spacing={0.5}>
@@ -431,8 +526,9 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
                                             value="1"
                                             sx={{
                                                 padding: '4px 8px',
-                                                fontSize: { xs: '10px', sm: '12px' },
-                                                minWidth: '80px'
+                                                fontSize: { xs: '12px', sm: '13px' },
+                                                minWidth: '70px',
+                                                textTransform: 'none'
                                             }}
                                         />
                                         <Tab
@@ -440,8 +536,19 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
                                             value="2"
                                             sx={{
                                                 padding: '4px 8px',
-                                                fontSize: { xs: '10px', sm: '12px' },
-                                                minWidth: '80px'
+                                                fontSize: { xs: '9px', sm: '13px' },
+                                                minWidth: '70px',
+                                                textTransform: 'none'
+                                            }}
+                                        />
+                                        <Tab
+                                            label="Thẻ giá trị"
+                                            value="7"
+                                            sx={{
+                                                padding: '4px 8px',
+                                                fontSize: { xs: '9px', sm: '13px' },
+                                                minWidth: '70px',
+                                                textTransform: 'none'
                                             }}
                                         />
                                         <Tab
@@ -449,8 +556,9 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
                                             value="3"
                                             sx={{
                                                 padding: '4px 8px',
-                                                fontSize: { xs: '10px', sm: '12px' },
-                                                minWidth: '80px'
+                                                fontSize: { xs: '9px', sm: '13px' },
+                                                minWidth: '80px',
+                                                textTransform: 'none'
                                             }}
                                         />
                                         <Tab
@@ -458,8 +566,9 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
                                             value="4"
                                             sx={{
                                                 padding: '4px 8px',
-                                                fontSize: { xs: '10px', sm: '12px' },
-                                                minWidth: '80px'
+                                                fontSize: { xs: '9px', sm: '13px' },
+                                                minWidth: '80px',
+                                                textTransform: 'none'
                                             }}
                                         />
                                         <Tab
@@ -467,8 +576,9 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
                                             value="5"
                                             sx={{
                                                 padding: '4px 8px',
-                                                fontSize: { xs: '10px', sm: '12px' },
-                                                minWidth: '80px'
+                                                fontSize: { xs: '9px', sm: '13px' },
+                                                minWidth: '80px',
+                                                textTransform: 'none'
                                             }}
                                         />
                                         <Tab
@@ -476,8 +586,9 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
                                             value="6"
                                             sx={{
                                                 padding: '4px 8px',
-                                                fontSize: { xs: '10px', sm: '12px' },
-                                                minWidth: '80px'
+                                                fontSize: { xs: '9px', sm: '13px' },
+                                                minWidth: '80px',
+                                                textTransform: 'none'
                                             }}
                                         />
                                     </TabList>
@@ -662,6 +773,136 @@ const CustomerInfor2 = ({ khachHangId, onClose }: IScreenCustomerInfor) => {
                             </TabPanel>
                             <TabPanel value="6" sx={{ padding: 0 }}>
                                 <TabAnhLieuTrinh khachHangId={khachHangId ?? ''} />
+                            </TabPanel>
+                            <TabPanel value="7">
+                                <Grid item lg={12} md={12} sm={12} width="100%">
+                                    <Stack className="page-box-right">
+                                        <TableContainer>
+                                            <Table>
+                                                <TableHead>
+                                                    <TableRow>
+                                                        {listColumnHeader.map((header) => (
+                                                            <TableCell
+                                                                key={header.columnId}
+                                                                align={header.align || 'left'}
+                                                                sx={{ whiteSpace: 'nowrap' }} // Ngăn chữ xuống dòng
+                                                            >
+                                                                {header.columnText}
+                                                            </TableCell>
+                                                        ))}
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {pageDataHoaDon.items.length > 0 ? (
+                                                        pageDataHoaDon.items.map((row, index) => (
+                                                            <TableRow key={index}>
+                                                                <TableCell>{row.maHoaDon}</TableCell>
+                                                                <TableCell>
+                                                                    {format(new Date(row.ngayLapHoaDon), 'dd/MM/yyyy')}
+                                                                </TableCell>
+                                                                <TableCell>{row.maKhachHang}</TableCell>
+                                                                <TableCell>{row.soDienThoai}</TableCell>
+                                                                <TableCell>{row.tenKhachHang}</TableCell>
+                                                                <TableCell align="right">
+                                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                                        row.tongTienHang || 0
+                                                                    )}
+                                                                </TableCell>
+                                                                <TableCell align="right">
+                                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                                        row.tongGiamGiaHD || 0
+                                                                    )}
+                                                                </TableCell>
+                                                                <TableCell align="right">
+                                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                                        row.tongThanhToan || 0
+                                                                    )}
+                                                                </TableCell>
+                                                                <TableCell align="right">
+                                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                                        row.daThanhToan || 0
+                                                                    )}
+                                                                </TableCell>
+                                                                <TableCell align="right">
+                                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                                        row.conNo || 0
+                                                                    )}
+                                                                </TableCell>
+                                                                <TableCell>{row.ghiChuHD}</TableCell>
+                                                            </TableRow>
+                                                        ))
+                                                    ) : (
+                                                        <TableRow>
+                                                            <TableCell colSpan={listColumnHeader.length} align="center">
+                                                                Không có dữ liệu
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )}
+                                                </TableBody>
+                                                {pageDataHoaDon.totalCount > 0 && (
+                                                    <TableFooter>
+                                                        {(() => {
+                                                            const totals = pageDataHoaDon.items.reduce(
+                                                                (acc, curr) => {
+                                                                    acc.tongTienHang += curr.tongTienHang || 0;
+                                                                    acc.tongGiamGiaHD += curr.tongGiamGiaHD || 0;
+                                                                    acc.tongThanhToan += curr.tongThanhToan || 0;
+                                                                    acc.daThanhToan += curr.daThanhToan || 0;
+                                                                    acc.conNo += curr.conNo || 0;
+                                                                    return acc;
+                                                                },
+                                                                {
+                                                                    tongTienHang: 0,
+                                                                    tongGiamGiaHD: 0,
+                                                                    tongThanhToan: 0,
+                                                                    daThanhToan: 0,
+                                                                    conNo: 0
+                                                                }
+                                                            );
+
+                                                            return (
+                                                                <TableRow>
+                                                                    <TableCell
+                                                                        colSpan={5}
+                                                                        align="right"
+                                                                        style={{ fontWeight: 'bold' }}>
+                                                                        Tổng:
+                                                                    </TableCell>
+                                                                    <TableCell align="right">
+                                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                                            totals.tongTienHang
+                                                                        )}
+                                                                    </TableCell>
+                                                                    <TableCell align="right">
+                                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                                            totals.tongGiamGiaHD
+                                                                        )}
+                                                                    </TableCell>
+                                                                    <TableCell align="right">
+                                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                                            totals.tongThanhToan
+                                                                        )}
+                                                                    </TableCell>
+                                                                    <TableCell align="right">
+                                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                                            totals.daThanhToan
+                                                                        )}
+                                                                    </TableCell>
+                                                                    <TableCell align="right">
+                                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                                            totals.conNo
+                                                                        )}
+                                                                    </TableCell>
+                                                                    <TableCell align="right"></TableCell>
+                                                                </TableRow>
+                                                            );
+                                                        })()}
+                                                    </TableFooter>
+                                                )}
+                                            </Table>
+                                        </TableContainer>
+                                    </Stack>
+                                </Grid>
                             </TabPanel>
                         </TabContext>
                     </Stack>

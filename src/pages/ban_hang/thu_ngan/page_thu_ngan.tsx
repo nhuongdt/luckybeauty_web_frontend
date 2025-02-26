@@ -194,6 +194,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     }, [arrIdNhomHangFilter]);
 
     const GetInforCustomer_byId = async (cusId: string) => {
+        console.log('test');
         const customer = await khachHangService.getKhachHang(cusId);
         setCustomerChosed(customer);
     };
@@ -643,7 +644,9 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             maKhachHang: item?.maKhachHang ?? '',
             tenKhachHang: item?.text ?? 'Khách lẻ',
             soDienThoai: item?.text2 ?? '',
-            conNo: item?.conNo
+            conNo: item?.conNo,
+            tenNhomKhach: item.nhomKhach,
+            isShow: true
         });
         const idCheckin = await InsertCustomer_toCheckIn(item?.id ?? Guid.EMPTY);
         setHoaDon({ ...hoadon, idKhachHang: item?.id, idCheckIn: idCheckin });
@@ -707,7 +710,9 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             maKhachHang: 'KL', // todo makhachhang
             tenKhachHang: 'Khách lẻ',
             soDienThoai: '',
-            conNo: 0
+            conNo: 0,
+            tenNhomKhach: '',
+            isShow: false
         });
         await dbDexie.hoaDon
             .where('id')
@@ -1527,77 +1532,90 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                             }}>
                                             <Stack
                                                 direction={'row'}
+                                                spacing={3}
                                                 alignItems={'center'}
-                                                spacing={1}
                                                 title="Thay đổi khách hàng"
                                                 sx={{ cursor: 'pointer' }}>
-                                                <Typography
-                                                    variant="body2"
-                                                    fontWeight={500}
-                                                    className="lableOverflow"
-                                                    maxWidth={350}>
-                                                    {customerChosed?.tenKhachHang}
-                                                </Typography>
-                                                {!utils.checkNull_OrEmpty(customerChosed?.id ?? '') ? (
-                                                    <CloseOutlinedIcon
-                                                        color="error"
-                                                        titleAccess="Bỏ chọn khách hàng"
-                                                        sx={{ width: 20, cursor: 'pointer' }}
-                                                        onClick={(event) => {
-                                                            event.stopPropagation();
-                                                            RemoveCustomer();
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    <IconButton
-                                                        aria-label="add-customer"
-                                                        color="primary"
-                                                        title="Thêm khách hàng mới"
-                                                        onClick={(event) => {
-                                                            event.stopPropagation();
-                                                            showModalAddCustomer();
-                                                        }}>
-                                                        <AddOutlinedIcon color="info" sx={{ width: 20 }} />
-                                                    </IconButton>
-                                                )}
-                                            </Stack>
+                                                {/* Cột 1: Tên khách hàng, Nhóm khách hàng & Icon */}
+                                                <Stack direction="row" alignItems="center" spacing={1} maxWidth={250}>
+                                                    <Stack direction="column">
+                                                        <Typography
+                                                            variant="body2"
+                                                            fontWeight={500}
+                                                            className="lableOverflow">
+                                                            {customerChosed?.tenKhachHang ?? 'Chưa chọn khách hàng'}
+                                                        </Typography>
+                                                        {customerChosed?.isShow && ( // Chỉ hiển thị nhóm khách hàng nếu isShow = true
+                                                            <Typography
+                                                                variant="body2"
+                                                                fontWeight={300}
+                                                                className="lableOverflow"
+                                                                sx={{ textTransform: 'none', color: '#555' }}>
+                                                                Nhóm: {customerChosed?.tenNhomKhach}
+                                                            </Typography>
+                                                        )}
+                                                    </Stack>
 
-                                            <Stack direction={'row'} alignItems={'center'}>
-                                                <Typography
-                                                    color={'#000000'}
-                                                    variant="caption"
-                                                    onClick={() => {
-                                                        setisShowModal(true);
-                                                        setSelectedRowId('');
-                                                    }}
-                                                    sx={{ lineHeight: 1.2 }}>
-                                                    {customerChosed?.conNo != null && customerChosed?.conNo != 0 && (
-                                                        <>
-                                                            <span style={{ fontWeight: 'bold', color: '#000000' }}>
-                                                                Còn nợ:{' '}
-                                                                {new Intl.NumberFormat('vi-VN').format(
-                                                                    customerChosed?.conNo ?? 0
-                                                                )}{' '}
-                                                                đ
-                                                            </span>
-                                                            <br />
-                                                        </>
+                                                    {/* Icon Xóa hoặc Thêm khách hàng (chỉ hiển thị 1 trong 2) */}
+                                                    {customerChosed?.isShow ? (
+                                                        <CloseOutlinedIcon
+                                                            color="error"
+                                                            titleAccess="Bỏ chọn khách hàng"
+                                                            sx={{ width: 20, cursor: 'pointer' }}
+                                                            onClick={(event) => {
+                                                                event.stopPropagation();
+                                                                RemoveCustomer();
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <IconButton
+                                                            aria-label="add-customer"
+                                                            color="primary"
+                                                            title="Thêm khách hàng mới"
+                                                            onClick={(event) => {
+                                                                event.stopPropagation();
+                                                                showModalAddCustomer();
+                                                            }}>
+                                                            <AddOutlinedIcon color="info" sx={{ width: 20 }} />
+                                                        </IconButton>
                                                     )}
-                                                    {customerChosed?.soDienThoai}
-                                                </Typography>
+                                                </Stack>
 
-                                                {customerChosed?.id && (
-                                                    <AutoStoriesOutlinedIcon
-                                                        color="secondary"
-                                                        sx={{ marginLeft: 1 }}
-                                                        onClick={(event) => {
-                                                            event.stopPropagation();
-                                                            showModalSuDungGDV();
-                                                        }}
-                                                    />
+                                                {/* Cột 2: Còn nợ & Số điện thoại (chỉ hiển thị nếu isShow = true) */}
+                                                {customerChosed?.isShow && (
+                                                    <Stack direction="column" maxWidth={250}>
+                                                        {customerChosed?.conNo != null &&
+                                                            customerChosed?.conNo != 0 && (
+                                                                <Typography
+                                                                    color={'#000000'}
+                                                                    variant="caption"
+                                                                    sx={{ fontWeight: 'bold' }}>
+                                                                    Còn nợ:{' '}
+                                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                                        customerChosed?.conNo ?? 0
+                                                                    )}{' '}
+                                                                    đ
+                                                                </Typography>
+                                                            )}
+                                                        <Typography color={'#000000'} variant="caption">
+                                                            Điện thoại: {customerChosed?.soDienThoai}
+                                                        </Typography>
+                                                    </Stack>
                                                 )}
                                             </Stack>
                                         </Stack>
+
+                                        {/* Icon mở modal Sử dụng dịch vụ (Chỉ hiển thị nếu isShow = true) */}
+                                        {customerChosed?.isShow && (
+                                            <AutoStoriesOutlinedIcon
+                                                color="secondary"
+                                                sx={{ marginLeft: 1, cursor: 'pointer' }}
+                                                onClick={(event) => {
+                                                    event.stopPropagation();
+                                                    showModalSuDungGDV();
+                                                }}
+                                            />
+                                        )}
                                     </Stack>
 
                                     <MenuWithDataFromDB

@@ -742,10 +742,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     if (params.value) {
                         const date = new Date(params.value);
                         if (getYear(date) === 1000) {
-                            // Nếu năm là 1000, hiển thị theo định dạng dd/MM/xxxx
                             return <Typography variant="body2">{format(date, 'dd/MM')}</Typography>;
                         } else {
-                            // Nếu không phải năm 1000, hiển thị theo định dạng dd/MM/yyyy
                             return <Typography variant="body2">{format(date, 'dd/MM/yyyy')}</Typography>;
                         }
                     }
@@ -763,6 +761,20 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 field: 'tongChiTieu',
                 minWidth: 150,
                 headerName: 'Tổng mua',
+                headerAlign: 'right',
+                align: 'right',
+                flex: 1,
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
+                renderCell: (params) => (
+                    <Box title={params.value} fontSize={'var(--font-size-main)'} textAlign="right" width="100%">
+                        {new Intl.NumberFormat('vi-VN').format(params.value)}
+                    </Box>
+                )
+            },
+            {
+                field: 'theGiaTri',
+                minWidth: 150,
+                headerName: 'Thẻ giá trị',
                 headerAlign: 'right',
                 align: 'right',
                 flex: 1,
@@ -898,17 +910,16 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                             variant="outlined"
                                             onClick={this.handleClickOpen}
                                             sx={{
-                                                textTransform: 'none', // Bỏ chữ viết hoa
+                                                textTransform: 'none',
                                                 fontWeight: '400',
                                                 color: '#666466',
                                                 bgcolor: '#fff!important',
                                                 display: abpCustom.isGrandPermission('Pages.KhachHang.Import')
                                                     ? ''
                                                     : 'none',
-                                                padding: '6px 12px' // Cân chỉnh khoảng cách nếu cần
+                                                padding: '6px 12px'
                                             }}
-                                            startIcon={<VisibilityIcon />} // Thêm icon con mắt
-                                        >
+                                            startIcon={<VisibilityIcon />}>
                                             Hiển thị
                                         </Button>
                                         <Dialog open={this.state.openDialog} onClose={this.handleClose}>
