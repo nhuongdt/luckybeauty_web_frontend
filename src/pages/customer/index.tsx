@@ -645,7 +645,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     };
 
     render(): React.ReactNode {
-        // const apiRef = useGridApiRef();
         const columns: GridColDef[] = [
             {
                 field: 'checkBox',
@@ -653,7 +652,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 filterable: false,
                 disableColumnMenu: true,
                 flex: 0.2,
-                //hide: !this.state.selectedColumns['checkBox'],
                 renderHeader: (params) => {
                     return <Checkbox onClick={this.handleSelectAllGridRowClick} checked={this.state.checkAllRow} />;
                 },

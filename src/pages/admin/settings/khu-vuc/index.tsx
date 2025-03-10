@@ -15,87 +15,101 @@ import {
     Popover,
     Checkbox
 } from '@mui/material';
-import { Add, Category, DeleteOutline, LocalOfferOutlined, Search } from '@mui/icons-material';
-import { ReactComponent as FilterIcon } from '../../images/icons/i-filter.svg';
+import { Add, Category, DeleteOutline, Edit, LocalOfferOutlined, Search } from '@mui/icons-material';
+// import { ReactComponent as FilterIcon } from '../../../images/icons/i-filter.svg';
 // prop for send data from parent to child
-import { PropModal, PropConfirmOKCancel } from '../../utils/PropParentToChild';
-import { TextTranslate } from '../../components/TableLanguage';
+import { PropModal, PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
+import { TextTranslate } from '../../../../components/TableLanguage';
 /* custom component */
-import AccordionNhomHangHoa from '../../components/Accordion/NhomHangHoa';
-import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
-import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
-import { OptionPage } from '../../components/Pagination/OptionPage';
-import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
-import ModalNhomHangHoa from './ModalGroupProduct';
-import ModalHangHoa from './ModalProduct';
-import { PagedResultDto } from '../../services/dto/pagedResultDto';
-import ProductService from '../../services/product/ProductService';
-import GroupProductService from '../../services/product/GroupProductService';
-import { ModelNhomHangHoa, ModelHangHoaDto, PagedProductSearchDto } from '../../services/product/dto';
-import { ReactComponent as UploadIcon } from '../../images/upload.svg';
-import { ReactComponent as DownIcon } from '../../images/download.svg';
-import Utils from '../../utils/utils'; // func common
-import AppConsts, { LoaiNhatKyThaoTac, TypeAction } from '../../lib/appconst';
-import './style.css';
-import fileDowloadService from '../../services/file-dowload.service';
-import uploadFileService from '../../services/uploadFileService';
-import { FileUpload } from '../../services/dto/FileUpload';
-import ImportExcel from '../../components/ImportComponent/ImportExcel';
-import utils from '../../utils/utils';
-import BangBaoLoiFileImport from '../../components/ImportComponent/BangBaoLoiFileImport';
-import { BangBaoLoiFileimportDto } from '../../services/dto/BangBaoLoiFileimportDto';
-import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
-import { IList } from '../../services/dto/IList';
-import { ModalChuyenNhom } from '../../components/Dialog/modal_chuyen_nhom';
-import abpCustom from '../../components/abp-custom';
-import ActionRow2Button from '../../components/DataGrid/ActionRow2Button';
-import nhomHangHoaStore from '../../stores/nhomHangHoaStore';
-import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
-import { CreateNhatKyThaoTacDto } from '../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
-import nhatKyHoatDongService from '../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
+import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
+import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
+import { OptionPage } from '../../../../components/Pagination/OptionPage';
+import { LabelDisplayedRows } from '../../../../components/Pagination/LabelDisplayedRows';
+import ModalKhuVuc from './ModalKhuVuc';
+// import ModalHangHoa from './ModalProduct';
+import { PagedResultDto } from '../../../../services/dto/pagedResultDto';
+import ProductService from '../../../../services/product/ProductService';
+import GroupProductService from '../../../../services/product/GroupProductService';
+import { ModelNhomHangHoa, ModelHangHoaDto, PagedProductSearchDto } from '../../../../services/product/dto';
+// import { ReactComponent as UploadIcon } from '../../images/upload.svg';
+// import { ReactComponent as DownIcon } from '../../images/download.svg';
+import Utils from '../../../../utils/utils'; // func common
+import AppConsts, { LoaiNhatKyThaoTac, TypeAction } from '../../../../lib/appconst';
+// import './style.css';
+import fileDowloadService from '../../../../services/file-dowload.service';
+import uploadFileService from '../../../../services/uploadFileService';
+import { FileUpload } from '../../../../services/dto/FileUpload';
+import ImportExcel from '../../../../components/ImportComponent/ImportExcel';
+import utils from '../../../../utils/utils';
+import BangBaoLoiFileImport from '../../../../components/ImportComponent/BangBaoLoiFileImport';
+import { BangBaoLoiFileimportDto } from '../../../../services/dto/BangBaoLoiFileimportDto';
+import ActionRowSelect from '../../../../components/DataGrid/ActionRowSelect';
+import { IList } from '../../../../services/dto/IList';
+import { ModalChuyenNhom } from '../../../../components/Dialog/modal_chuyen_nhom';
+import abpCustom from '../../../../components/abp-custom';
+import ActionRow2Button from '../../../../components/DataGrid/ActionRow2Button';
+import nhomHangHoaStore from '../../../../stores/nhomHangHoaStore';
+import KhuVucStore from '../../../../stores/KhuVucStore';
+import { AppContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
+import { CreateNhatKyThaoTacDto } from '../../../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
+import nhatKyHoatDongService from '../../../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
 import Cookies from 'js-cookie';
+import ModalViTri from './ModalViTri';
+import KhuVucService from '../../../../services/khu_vuc/KhuVucService';
+import { KhuVucDto, PagedKhuVucSearchDto, PagedViTriSearchDto, ViTriDto } from '../../../../services/khu_vuc/dto';
+import TreeItem from '@mui/lab/TreeItem';
+import TreeView from '@mui/lab/TreeView';
+import KhuVucList from './ListKhuVuc';
+import khuyenMaiStore from '../../../../stores/khuyenMaiStore';
 
 const PageProduct = () => {
     const appContext = useContext(AppContext);
     const chiNhanhCurrent = appContext.chinhanhCurrent;
     const [checkAllRow, setCheckAllRow] = useState(false);
     const idChiNhanh = utils.checkNull(chiNhanhCurrent?.id) ? Cookies.get('IdChiNhanh') : chiNhanhCurrent?.id;
-    const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
-    const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
+    const [rowHover, setRowHover] = useState<ViTriDto>();
+    const [inforDeleteViTri, setInforDeleteViTri] = useState<PropConfirmOKCancel>(
         new PropConfirmOKCancel({ show: false })
     );
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
-    const [triggerModalProduct, setTriggerModalProduct] = useState<PropModal>(new PropModal({ isShow: false }));
-    const [triggerModalNhomHang, setTriggerModalNhomHang] = useState<PropModal>(new PropModal({ isShow: false }));
+    const [triggerModalKhuVuc, setTriggerModalKhuVuc] = useState<PropModal>(new PropModal({ isShow: false }));
+    const [triggerModalViTri, setTriggerModalViTri] = useState<PropModal>(new PropModal({ isShow: false }));
     const [isShowImport, setShowImport] = useState<boolean>(false);
     const [isImporting, setIsImporting] = useState<boolean>(false);
-    const [treeNhomHangHoa, setTreeNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
-    const [treeSearchNhomHangHoa, setTreeSearchNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
+    const [treeSearchKhuVuc, setTreeSearchKhuVuc] = useState<KhuVucDto[]>([]);
+    const [searchText, setSearchText] = useState(''); // Thêm state tìm kiếm
     const [lstErrImport, setLstErrImport] = useState<BangBaoLoiFileimportDto[]>([]);
     const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
     const [isShowModalChuyenNhom, setIsShowModalChuyenNhom] = useState(false);
     const [anchorElFilter, setAnchorElFilter] = useState<any>(null);
-    const [pageDataProduct, setPageDataProduct] = useState<PagedResultDto<ModelHangHoaDto>>({
+    const [pageDataViTri, setPageDataViTri] = useState<PagedResultDto<ViTriDto>>({
         totalCount: 0,
         totalPage: 0,
         items: []
     });
 
-    const [filterPageProduct, setFilterPageProduct] = useState<PagedProductSearchDto>({
-        idNhomHangHoas: [],
+    const [filterPageViTri, setFilterPageViTri] = useState<PagedViTriSearchDto>({
+        idKhuVuc: '',
         textSearch: '',
         currentPage: 1,
         pageSize: AppConsts.pageOption[0].value,
         columnSort: '',
         typeSort: ''
     });
-
-    const GetListHangHoa = async () => {
-        const list = await ProductService.Get_DMHangHoa(filterPageProduct);
-        setPageDataProduct({
+    const [filterPageKhuVuc, setFilterPagekhuVuc] = useState<PagedKhuVucSearchDto>({
+        idKhuVucs: [],
+        textSearch: '',
+        currentPage: 1,
+        pageSize: AppConsts.pageOption[0].value,
+        columnSort: '',
+        typeSort: ''
+    });
+    const GetListViTri = async () => {
+        const list = await KhuVucService.Get_DMViTri(filterPageViTri);
+        setPageDataViTri({
             totalCount: list.totalCount,
-            totalPage: Utils.getTotalPage(list.totalCount, filterPageProduct.pageSize),
+            totalPage: Utils.getTotalPage(list.totalCount, filterPageViTri.pageSize),
             items: list.items
         });
 
@@ -105,59 +119,64 @@ const PageProduct = () => {
         const arrExists = rowSelectionModel?.filter((x) => arrIdThisPage.includes(x as string));
         setCheckAllRow(arrExists?.length == arrIdThisPage?.length && rowSelectionModel?.length !== 0);
     };
-    const GetListHangHoaDaXoa = async () => {
-        const list = await ProductService.Get_DMHangHoaDaXoa(filterPageProduct);
-        setPageDataProduct({
-            totalCount: list.totalCount,
-            totalPage: Utils.getTotalPage(list.totalCount, filterPageProduct.pageSize),
-            items: list.items
-        });
 
-        const arrIdThisPage = list.items?.map((x) => {
-            return x.id ?? '';
-        });
-        const arrExists = rowSelectionModel?.filter((x) => arrIdThisPage.includes(x as string));
-        setCheckAllRow(arrExists?.length == arrIdThisPage?.length && rowSelectionModel?.length !== 0);
-    };
-    const GetListNhomHangHoa = async () => {
-        await nhomHangHoaStore.getAllNhomHang();
+    const GetListKhuVucs = async () => {
+        await KhuVucStore.getAllKhuVuc();
     };
 
-    const GetTreeNhomHangHoa = async () => {
-        // used to tree at menu left
-        const list = await GroupProductService.GetTreeNhomHangHoa();
-        const obj = new ModelNhomHangHoa({
-            id: '',
-            tenNhomHang: 'Tất cả',
-            color: 'var(--color-main)'
-        });
-        setTreeNhomHangHoa([obj, ...list.items]);
-        setTreeSearchNhomHangHoa([obj, ...list.items]);
+    const GetTreeKhuVuc = async () => {
+        try {
+            const list = await KhuVucService.GetDM_TreeKhuVuc();
+            const items: KhuVucDto[] = list?.items ?? [];
+
+            const obj: Partial<KhuVucDto> = {
+                id: '',
+                tenKhuVuc: 'Tất cả',
+                maKhuVuc: '',
+                tenKhuVuc_KhongDau: '',
+                moTa: '',
+                isDeleted: false,
+                children: []
+            };
+
+            setTreeSearchKhuVuc([obj as KhuVucDto, ...items]);
+        } catch (error) {
+            console.error('Lỗi khi lấy dữ liệu khu vực:', error);
+        }
+    };
+    const filterTree = (data: KhuVucDto[], keyword: string): KhuVucDto[] => {
+        if (!keyword) return data;
+        return data
+            .map((item) => ({
+                ...item,
+                children: item.children ? filterTree(item.children, keyword) : []
+            }))
+            .filter((item) => item.tenKhuVuc.toLowerCase().includes(keyword.toLowerCase()) || item.children.length > 0);
     };
 
     const PageLoad = () => {
-        GetListNhomHangHoa();
-        GetTreeNhomHangHoa();
+        GetListKhuVucs();
     };
 
     useEffect(() => {
         PageLoad();
+        GetTreeKhuVuc();
     }, []);
 
     useEffect(() => {
-        GetListHangHoa();
-    }, [filterPageProduct.currentPage, filterPageProduct.pageSize, filterPageProduct.idNhomHangHoas]);
+        GetListViTri();
+    }, [filterPageViTri.currentPage, filterPageViTri.pageSize, filterPageViTri]);
 
-    function showModalAddNhomHang(id = '') {
-        setTriggerModalNhomHang({
+    function showModalAddKhuVuc(id = '') {
+        setTriggerModalKhuVuc({
             isShow: true,
             isNew: Utils.checkNull(id),
             id: id
         });
     }
 
-    function showModalAddProduct(action?: number, id = '') {
-        setTriggerModalProduct((old) => {
+    function showModalAddViTRi(action?: number, id = '') {
+        setTriggerModalViTri((old) => {
             return {
                 ...old,
                 isShow: true,
@@ -167,17 +186,17 @@ const PageProduct = () => {
         });
     }
 
-    const editNhomHangHoa = (isEdit: any, item: ModelNhomHangHoa) => {
+    const editKhuVuc = (isEdit: any, item: KhuVucDto) => {
         if (isEdit) {
-            setTriggerModalNhomHang({
+            setTriggerModalKhuVuc({
                 isShow: true,
                 isNew: Utils.checkNull(item.id),
                 id: item.id,
                 item: item
             });
         } else {
-            setFilterPageProduct({ ...filterPageProduct, idNhomHangHoas: [item?.id ?? ''] });
-            setTriggerModalProduct((old) => {
+            setFilterPagekhuVuc({ ...filterPageKhuVuc, idKhuVucs: [item?.id ?? ''] });
+            setTriggerModalKhuVuc((old) => {
                 return {
                     ...old,
                     isShow: false,
@@ -186,75 +205,55 @@ const PageProduct = () => {
             });
         }
     };
-    const searchNhomHang = (textSearch: string) => {
-        let txt = textSearch;
-        let txtUnsign = '';
-        if (!utils.checkNull(txt)) {
-            txt = txt.trim();
-            txtUnsign = utils.strToEnglish(txt);
-        }
-        const arr = treeNhomHangHoa.filter(
-            (x: ModelNhomHangHoa) =>
-                (x.tenNhomHang ?? '').indexOf(txt) > -1 ||
-                utils.strToEnglish(x.tenNhomHang ?? '').indexOf(txtUnsign) > -1
-        );
-        const obj = new ModelNhomHangHoa({
-            id: '',
-            tenNhomHang: 'Tất cả',
-            color: 'var(--color-main)'
-        });
-        arr.unshift(obj);
-        setTreeSearchNhomHangHoa(arr);
-    };
 
-    function saveNhomHang(objNew: ModelNhomHangHoa, isDelete = false) {
+    function saveKhuVuc(objNew: KhuVucDto, isDelete = false) {
         if (isDelete) {
             setObjAlert({
                 show: true,
                 type: 1,
-                mes: 'Xóa ' + objNew.sLoaiNhomHang + ' thành công'
+                mes: 'Xóa thành công'
             });
         } else {
-            if (triggerModalNhomHang.isNew) {
+            if (triggerModalKhuVuc.isNew) {
                 setObjAlert({
                     show: true,
                     type: 1,
-                    mes: 'Thêm ' + objNew.sLoaiNhomHang + ' thành công'
+                    mes: 'Thêm thành công'
                 });
             } else {
                 setObjAlert({
                     show: true,
                     type: 1,
-                    mes: 'Cập nhật ' + objNew.sLoaiNhomHang + ' thành công'
+                    mes: 'Cập nhật thành công'
                 });
             }
         }
-        setTriggerModalNhomHang({ ...triggerModalNhomHang, isShow: false });
+        setTriggerModalKhuVuc({ ...triggerModalKhuVuc, isShow: false });
 
-        GetTreeNhomHangHoa();
+        GetTreeKhuVuc();
     }
 
-    function saveProduct(objNew: ModelHangHoaDto, type = 1) {
+    function saveProduct(objNew: ViTriDto, type = 1) {
         // 1.insert, 2.update, 3.delete, 4.khoiphuc
-        const sLoai = objNew.tenLoaiHangHoa?.toLocaleLowerCase();
+        const sLoai = objNew.tenViTri?.toLocaleLowerCase();
         switch (type) {
             case 1:
-                setPageDataProduct((olds) => {
+                setPageDataViTri((olds) => {
                     return {
                         ...olds,
                         totalCount: olds.totalCount + 1,
-                        totalPage: Utils.getTotalPage(olds.totalCount + 1, filterPageProduct.pageSize),
+                        totalPage: Utils.getTotalPage(olds.totalCount + 1, filterPageViTri.pageSize),
                         items: [objNew, ...olds.items]
                     };
                 });
                 setObjAlert({ show: true, type: 1, mes: 'Thêm ' + sLoai + ' thành công' });
                 break;
             case 2:
-                GetListHangHoa();
+                GetListViTri();
                 setObjAlert({ show: true, type: 1, mes: 'Sửa ' + sLoai + ' thành công' });
                 break;
             case 3:
-                deleteProduct();
+                deleteViTri();
                 break;
             case 4:
                 restoreProduct();
@@ -264,14 +263,14 @@ const PageProduct = () => {
     }
 
     const handleChangePage = (event: any, value: number) => {
-        setFilterPageProduct({
-            ...filterPageProduct,
+        setFilterPageViTri({
+            ...filterPageViTri,
             currentPage: value
         });
     };
     const changeNumberOfpage = (sizePage: number) => {
-        setFilterPageProduct({
-            ...filterPageProduct,
+        setFilterPageViTri({
+            ...filterPageViTri,
             pageSize: sizePage
         });
     };
@@ -283,14 +282,21 @@ const PageProduct = () => {
     };
 
     const hanClickIconSearch = () => {
-        if (filterPageProduct.currentPage !== 1) {
-            setFilterPageProduct({
-                ...filterPageProduct,
+        if (filterPageViTri.currentPage !== 1) {
+            setFilterPageViTri({
+                ...filterPageViTri,
                 currentPage: 1
             });
         } else {
-            GetListHangHoa();
+            GetListViTri();
         }
+    };
+    const handleSelectKhuVuc = (idKhuVuc: string) => {
+        setFilterPageViTri((prev) => ({
+            ...prev,
+            idKhuVuc: idKhuVuc,
+            currentPage: 1
+        }));
     };
 
     const doActionRow = (type: number, rowItem: any) => {
@@ -317,37 +323,33 @@ const PageProduct = () => {
         }
 
         if (type < 3) {
-            showModalAddProduct(type, rowItem?.idDonViQuyDoi);
+            showModalAddViTRi(type, rowItem?.id);
         } else {
-            setInforDeleteProduct(
+            setInforDeleteViTri(
                 new PropConfirmOKCancel({
                     show: true,
                     title: 'Xác nhận xóa',
-                    mes: `Bạn có chắc chắn muốn xóa ${rowItem.tenLoaiHangHoa.toLocaleLowerCase()}  ${
-                        rowItem?.maHangHoa ?? ' '
-                    } không?`
+                    mes: `Bạn có chắc chắn muốn xóa ${rowItem.tenViTri.toLocaleLowerCase()}  không?`
                 })
             );
         }
     };
-    const deleteProduct = async () => {
-        if (!Utils.checkNull(rowHover?.idDonViQuyDoi)) {
-            await ProductService.DeleteProduct_byIDHangHoa(rowHover?.id ?? '');
+    const deleteViTri = async () => {
+        if (!Utils.checkNull(rowHover?.id)) {
+            await KhuVucService.XoaViTri(rowHover?.id ?? '');
             setObjAlert({
                 show: true,
                 type: 1,
-                mes: 'Xóa ' + rowHover?.tenLoaiHangHoa?.toLocaleLowerCase() + ' thành công'
+                mes: 'Xóa ' + rowHover?.tenViTri?.toLocaleLowerCase() + ' thành công'
             });
-            GetListHangHoa();
-            setInforDeleteProduct({ ...inforDeleteProduct, show: false });
-            setPageDataProduct((olds) => {
+            GetListViTri();
+            setInforDeleteViTri({ ...inforDeleteViTri, show: false });
+            setPageDataViTri((olds) => {
                 return {
                     ...olds,
-                    // neu sau nay khong can lay hang ngung kinhdoanh --> bo comment doan nay
-                    // totalCount: olds.totalCount - 1,
-                    // totalPage: Utils.getTotalPage(olds.totalCount - 1, filterPageProduct.pageSize),
+
                     items: olds.items.map((x: any) => {
-                        if (x.idDonViQuyDoi === rowHover?.idDonViQuyDoi) {
+                        if (x.id === rowHover?.id) {
                             return { ...x, trangThai: 0, txtTrangThaiHang: 'Ngừng kinh doanh' };
                         } else {
                             return x;
@@ -360,8 +362,8 @@ const PageProduct = () => {
             const diary = {
                 idChiNhanh: idChiNhanh,
                 chucNang: `Danh mục dịch vụ`,
-                noiDung: `Xóa dịch vụ ${rowHover?.tenHangHoa} (${rowHover?.maHangHoa})`,
-                noiDungChiTiet: `Xóa dịch vụ ${rowHover?.tenHangHoa} (${rowHover?.maHangHoa})`,
+                noiDung: `Xóa dịch vụ ${rowHover?.tenViTri} (${rowHover?.tenKhuVuc})`,
+                noiDungChiTiet: `Xóa dịch vụ ${rowHover?.tenViTri} (${rowHover?.moTa})`,
                 loaiNhatKy: LoaiNhatKyThaoTac.DELETE
             } as CreateNhatKyThaoTacDto;
             await nhatKyHoatDongService.createNhatKyThaoTac(diary);
@@ -384,10 +386,10 @@ const PageProduct = () => {
                     });
                 }
 
-                setInforDeleteProduct({ ...inforDeleteProduct, show: false });
-                setPageDataProduct({
-                    ...pageDataProduct,
-                    items: pageDataProduct.items.map((item: ModelHangHoaDto) => {
+                setInforDeleteViTri({ ...inforDeleteViTri, show: false });
+                setPageDataViTri({
+                    ...pageDataViTri,
+                    items: pageDataViTri.items.map((item: ViTriDto) => {
                         if (rowSelectionModel.toString().indexOf(item.id ?? '') > -1) {
                             return { ...item, trangThai: 0, txtTrangThaiHang: 'Ngừng kinh doanh' };
                         } else {
@@ -418,21 +420,21 @@ const PageProduct = () => {
 
     const restoreProduct = async () => {
         await ProductService.RestoreProduct_byIdHangHoa(rowHover?.id ?? '');
-        setRowHover({} as ModelHangHoaDto);
+        setRowHover({} as ViTriDto);
         setObjAlert({
             show: true,
             type: 1,
-            mes: 'Khôi phục ' + rowHover?.tenLoaiHangHoa?.toLocaleLowerCase() + ' thành công'
+            mes: 'Khôi phục ' + rowHover?.tenViTri?.toLocaleLowerCase() + ' thành công'
         });
-        setInforDeleteProduct({ ...inforDeleteProduct, show: false });
-        setPageDataProduct((olds) => {
+        setInforDeleteViTri({ ...inforDeleteViTri, show: false });
+        setPageDataViTri((olds) => {
             return {
                 ...olds,
                 // neu sau nay khong can lay hang ngung kinhdoanh --> bo comment doan nay
                 // totalCount: olds.totalCount - 1,
                 // totalPage: Utils.getTotalPage(olds.totalCount - 1, filterPageProduct.pageSize),
                 items: olds.items.map((x: any) => {
-                    if (x.idDonViQuyDoi === rowHover?.idDonViQuyDoi) {
+                    if (x.idDonViQuyDoi === rowHover?.idKhuVuc) {
                         return { ...x, trangThai: 1, txtTrangThaiHang: 'Đang kinh doanh' };
                     } else {
                         return x;
@@ -444,19 +446,13 @@ const PageProduct = () => {
         const diary = {
             idChiNhanh: idChiNhanh,
             chucNang: `Danh mục hàng hóa`,
-            noiDung: `Khôi phục hàng hóa ${rowHover?.tenHangHoa}`,
-            noiDungChiTiet: `Khôi phục hàng hóa ${rowHover?.tenHangHoa} (${rowHover?.maHangHoa})`,
+            noiDung: `Khôi phục hàng hóa ${rowHover?.tenViTri}`,
+            noiDungChiTiet: `Khôi phục hàng hóa ${rowHover?.tenViTri} (${rowHover?.tenKhuVuc})`,
             loaiNhatKy: LoaiNhatKyThaoTac.RESTORE
         } as CreateNhatKyThaoTacDto;
         await nhatKyHoatDongService.createNhatKyThaoTac(diary);
     };
-    const exportToExcel = async () => {
-        const param = { ...filterPageProduct };
-        param.currentPage = 1;
-        param.pageSize = pageDataProduct.totalCount;
-        const result = await ProductService.ExportToExcel(filterPageProduct);
-        fileDowloadService.downloadExportFile(result);
-    };
+
     const onImportShow = () => {
         setShowImport(!isShowImport);
         setIsImporting(false);
@@ -471,6 +467,7 @@ const PageProduct = () => {
         } else {
             const errImport = data.filter((x: BangBaoLoiFileimportDto) => x.loaiErr === 2).length;
             if (errImport > 0) {
+                // import 1 số thành côg, 1 số thất bại
                 setObjAlert({
                     ...objAlert,
                     show: true,
@@ -480,8 +477,7 @@ const PageProduct = () => {
         }
         setShowImport(false);
         setIsImporting(false);
-        GetListHangHoa();
-        GetTreeNhomHangHoa();
+        GetListViTri();
     };
     const downloadImportTemplate = async () => {
         const result = await uploadFileService.downloadImportTemplate('HangHoa_DichVu_ImportTemplate.xlsx');
@@ -495,8 +491,8 @@ const PageProduct = () => {
                 break;
             case 2:
                 {
-                    setInforDeleteProduct({
-                        ...inforDeleteProduct,
+                    setInforDeleteViTri({
+                        ...inforDeleteViTri,
                         show: true,
                         mes: `Bạn có chắc chắn muốn xóa ${rowSelectionModel.length} dịch vụ này không?`
                     });
@@ -507,12 +503,12 @@ const PageProduct = () => {
 
     const chuyenNhomHang = async (item: IList) => {
         setIsShowModalChuyenNhom(false);
-        const result = await ProductService.ChuyenNhomHang(rowSelectionModel, item.id);
-        if (result) {
-            setObjAlert({ ...objAlert, show: true, mes: 'Chuyển nhóm dịch vụ thành công' });
-        }
+        // const result = await ProductService.ChuyenNhomHang(rowSelectionModel, item.id);
+        // if (result) {
+        //     setObjAlert({ ...objAlert, show: true, mes: 'Chuyển nhóm dịch vụ thành công' });
+        // }
         setRowSelectionModel([]);
-        GetListHangHoa();
+        GetListViTri();
 
         const arrIDHangHoa = rowSelectionModel as string[];
 
@@ -526,7 +522,7 @@ const PageProduct = () => {
 
         const diary = {
             idChiNhanh: idChiNhanh,
-            chucNang: `Danh mục dịch vụ`,
+            chucNang: `Danh mục Khu vực`,
             noiDung: `Chuyển ${rowSelectionModel?.length} dịch vụ sang nhóm ${item?.text}`,
             noiDungChiTiet: `Danh sách dịch vụ chuyển gồm: <br /> ${sTenHangHoa} `,
             loaiNhatKy: LoaiNhatKyThaoTac.UPDATE
@@ -540,7 +536,7 @@ const PageProduct = () => {
             setRowSelectionModel([...arrNew]);
 
             // check all: if allId this page exists in rowSelectionModel
-            const arrIdThisPage = pageDataProduct.items?.map((x) => {
+            const arrIdThisPage = pageDataViTri.items?.map((x) => {
                 return x.id ?? '';
             });
             const arrExists = arrNew?.filter((x) => arrIdThisPage.includes(x as string));
@@ -551,7 +547,7 @@ const PageProduct = () => {
         }
     };
     const dataGrid_clickCheckAll = (isCheck: boolean) => {
-        const arrIdThisPage = pageDataProduct.items?.map((x) => {
+        const arrIdThisPage = pageDataViTri.items?.map((x) => {
             return x.id ?? '';
         });
 
@@ -565,80 +561,53 @@ const PageProduct = () => {
     };
 
     const columns: GridColDef[] = [
+        // {
+        //     field: 'checkBox',
+        //     flex: 0.3,
+        //     sortable: false,
+        //     filterable: false,
+        //     disableColumnMenu: true,
+        //     renderHeader: () => {
+        //         return <Checkbox onChange={(e) => dataGrid_clickCheckAll(e.target.checked)} checked={checkAllRow} />;
+        //     },
+        //     renderCell: (params) => (
+        //         <Checkbox
+        //             onChange={(e) => dataGrid_clickCheckOne(params.row.id, e.target.checked)}
+        //             checked={rowSelectionModel.includes(params.row.id)}
+        //         />
+        //     )
+        // },
         {
-            field: 'checkBox',
-            flex: 0.3,
-            sortable: false,
-            filterable: false,
-            disableColumnMenu: true,
-            renderHeader: () => {
-                return <Checkbox onChange={(e) => dataGrid_clickCheckAll(e.target.checked)} checked={checkAllRow} />;
-            },
-            renderCell: (params) => (
-                <Checkbox
-                    onChange={(e) => dataGrid_clickCheckOne(params.row.id, e.target.checked)}
-                    checked={rowSelectionModel.includes(params.row.id)}
-                />
-            )
-        },
-        {
-            field: 'maHangHoa',
-            headerName: 'Mã dịch vụ',
-
-            minWidth: 100,
-            flex: 1,
-            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
-        },
-        {
-            field: 'tenHangHoa',
-            headerName: 'Tên dịch vụ',
+            field: 'tenViTri',
+            headerName: 'Tên vị trí',
             minWidth: 250,
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         },
         {
-            field: 'tenNhomHang',
-            headerName: 'Nhóm dịch vụ',
+            field: 'tenKhuVuc',
+            headerName: 'Tên khu vực',
             minWidth: 176,
             flex: 1,
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         },
         {
-            field: 'giaBan',
-            headerName: 'Giá bán',
-            minWidth: 100,
+            field: 'donGia',
+            headerName: 'Đơn giá',
+            minWidth: 76,
             flex: 1,
             renderCell: (params) => (
-                <Box display="flex" justifyContent="end" width="100%">
+                <Box display="flex" justifyContent="end" width="80%">
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             ),
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         },
         {
-            field: 'giaVon',
-            headerName: 'Giá vốn',
-            minWidth: 100,
+            field: 'moTa',
+            headerName: 'Mô tả',
+            minWidth: 176,
             flex: 1,
-            renderCell: (params) => (
-                <Box display="flex" justifyContent="end" width="100%">
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
-            ),
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
-        },
-        {
-            field: 'soPhutThucHien',
-            headerName: 'Thời gian (phút)',
-            minWidth: 128,
-            flex: 1,
-            renderCell: (params) => (
-                <Box display="flex" width="100%" justifyContent="end">
-                    <Typography variant="body2" color="#333233" marginLeft="9px" fontSize="12px">
-                        {params.value}
-                    </Typography>
-                </Box>
-            ),
-            renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
         },
         {
             field: 'txtTrangThaiHang',
@@ -670,39 +639,12 @@ const PageProduct = () => {
                 <ActionRow2Button handleClickAction={(type: number) => doActionRow(type, params.row)} />
             ),
 
-            // renderCell: (params) => (
-            //     <ActionViewEditDelete
-            //         lstOption={
-            //             [
-            //                 {
-            //                     id: '0',
-            //                     color: '#009EF7',
-            //                     icon: <Info sx={{ color: '#009EF7' }} />,
-            //                     text: 'Xem',
-            //                     isShow: true
-            //                 },
-            //                 {
-            //                     id: '1',
-            //                     text: 'Sửa',
-            //                     color: '#009EF7',
-            //                     icon: <Edit sx={{ color: '#009EF7' }} />,
-            //                     isShow: abpCustom.isGrandPermission('Pages.DM_HangHoa.Edit')
-            //                 },
-            //                 {
-            //                     id: '2',
-            //                     text: 'Xóa',
-            //                     color: '#F1416C',
-            //                     icon: <DeleteForever sx={{ color: '#F1416C' }} />,
-            //                     isShow: abpCustom.isGrandPermission('Pages.DM_HangHoa.Delete')
-            //                 }
-            //             ] as IList[]
-            //         }
-            //         handleAction={(action: any) => doActionRow(action, params.row)}
-            //     />
-            // ),
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         }
     ];
+    const filteredKhuVuc = treeSearchKhuVuc.filter((kv) =>
+        kv.tenKhuVuc.toLowerCase().includes(searchText.toLowerCase())
+    );
     const filterContent = (
         <Box
             className="page-box-left"
@@ -713,10 +655,10 @@ const PageProduct = () => {
                     justifyContent="space-between"
                     borderBottom="1px solid #E6E1E6"
                     padding="12px"
-                    borderRadius={'4px'}
+                    borderRadius="4px"
                     sx={{ backgroundColor: 'var(--color-header-table)' }}>
                     <Typography fontSize="14px" fontWeight="700">
-                        Nhóm dịch vụ
+                        Khu vực
                     </Typography>
 
                     <Add
@@ -730,69 +672,44 @@ const PageProduct = () => {
                             border: '1px solid #cccc',
                             display: abpCustom.isGrandPermission('Pages.DM_NhomHangHoa.Create') ? '' : 'none'
                         }}
-                        onClick={() => showModalAddNhomHang()}
+                        onClick={() => showModalAddKhuVuc()}
                     />
                 </Box>
+
+                {/* Ô tìm kiếm */}
+                <Stack spacing={1} paddingTop={1}>
+                    <TextField
+                        variant="standard"
+                        fullWidth
+                        placeholder="Tìm kiếm khu vực"
+                        InputProps={{ startAdornment: <Search /> }}
+                        onChange={(e) => setSearchText(e.target.value)}
+                    />
+                </Stack>
                 <Box
                     sx={{
                         overflow: 'auto',
                         maxHeight: '66vh',
-                        '&::-webkit-scrollbar': {
-                            width: '7px'
-                        },
-                        '&::-webkit-scrollbar-thumb': {
-                            bgcolor: 'rgba(0,0,0,0.1)',
-                            borderRadius: '4px'
-                        },
-                        '&::-webkit-scrollbar-track': {
-                            bgcolor: 'var(--color-bg)'
-                        }
+                        '&::-webkit-scrollbar': { width: '7px' },
+                        '&::-webkit-scrollbar-thumb': { bgcolor: 'rgba(0,0,0,0.1)', borderRadius: '4px' },
+                        '&::-webkit-scrollbar-track': { bgcolor: 'var(--color-bg)' }
                     }}>
-                    <Stack spacing={1} paddingTop={1}>
-                        <TextField
-                            variant="standard"
-                            fullWidth
-                            placeholder="Tìm kiếm nhóm"
-                            InputProps={{ startAdornment: <Search /> }}
-                            onChange={(e) => searchNhomHang(e.target.value)}
-                        />
-                        <AccordionNhomHangHoa dataNhomHang={treeSearchNhomHangHoa} clickTreeItem={editNhomHangHoa} />
-                    </Stack>
+                    <KhuVucList data={filteredKhuVuc} onEdit={editKhuVuc} onSelectKhuVuc={handleSelectKhuVuc} />
                 </Box>
-            </Box>
-
-            <Box
-                sx={{
-                    backgroundColor: 'var(--color-bg-light)',
-                    padding: 2,
-                    borderRadius: 1,
-                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-                    cursor: 'pointer',
-                    marginTop: 'auto' // Đẩy xuống cuối
-                }}
-                onClick={() => {
-                    GetListHangHoaDaXoa();
-                }}>
-                <Stack direction="row" alignItems="center" spacing={1}>
-                    <DeleteOutline sx={{ fontSize: 24, color: 'red' }} />
-                    <Typography color="red" fontWeight="bold">
-                        Ngừng kinh doanh
-                    </Typography>
-                </Stack>
             </Box>
         </Box>
     );
 
     return (
         <>
-            <ModalNhomHangHoa trigger={triggerModalNhomHang} handleSave={saveNhomHang}></ModalNhomHangHoa>
-            <ModalHangHoa trigger={triggerModalProduct} handleSave={saveProduct}></ModalHangHoa>
+            <ModalKhuVuc trigger={triggerModalKhuVuc} handleSave={saveKhuVuc}></ModalKhuVuc>
+            <ModalViTri trigger={triggerModalViTri} handleSave={saveProduct}></ModalViTri>
             <ConfirmDelete
-                isShow={inforDeleteProduct.show}
-                title={inforDeleteProduct.title}
-                mes={inforDeleteProduct.mes}
-                onOk={deleteProduct}
-                onCancel={() => setInforDeleteProduct({ ...inforDeleteProduct, show: false })}></ConfirmDelete>
+                isShow={inforDeleteViTri.show}
+                title={inforDeleteViTri.title}
+                mes={inforDeleteViTri.mes}
+                onOk={deleteViTri}
+                onCancel={() => setInforDeleteViTri({ ...inforDeleteViTri, show: false })}></ConfirmDelete>
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
@@ -813,13 +730,13 @@ const PageProduct = () => {
                 clickImport={() => console.log(lstErrImport)}
             />
             <ModalChuyenNhom
-                title="Chuyển nhóm dịch vụ"
+                title="Chuyển khu vực vị trí"
                 icon={<LocalOfferOutlined />}
                 isOpen={isShowModalChuyenNhom}
-                lstData={treeNhomHangHoa
+                lstData={treeSearchKhuVuc
                     .filter((x) => !utils.checkNull(x.id))
                     .map((item: any) => {
-                        return { id: item.id, text: item.tenNhomHang, color: item?.color };
+                        return { id: item.id, text: item.tenKhuVuc, color: item?.color };
                     })}
                 onClose={() => setIsShowModalChuyenNhom(false)}
                 agreeChuyenNhom={chuyenNhomHang}
@@ -829,7 +746,7 @@ const PageProduct = () => {
                     <Grid container item xs={12} spacing={1} md={6} lg={6} alignItems="center">
                         <Grid container spacing={1} item alignItems="center">
                             <Grid item xs={6} sm={6} lg={4} md={4}>
-                                <span className="page-title"> Danh mục dịch vụ</span>
+                                <span className="page-title"> Danh mục khu vực</span>
                             </Grid>
                             <Grid item xs={6} sm={6} lg={6} md={6}>
                                 <TextField
@@ -848,7 +765,7 @@ const PageProduct = () => {
                                         )
                                     }}
                                     onChange={(event) =>
-                                        setFilterPageProduct((itemOlds: any) => {
+                                        setFilterPageViTri((itemOlds: any) => {
                                             return {
                                                 ...itemOlds,
                                                 textSearch: event.target.value
@@ -879,36 +796,9 @@ const PageProduct = () => {
                                 }}
                                 onClick={(e) => {
                                     setAnchorElFilter(e.currentTarget);
-                                }}>
-                                <FilterIcon />
-                            </Button>
+                                }}></Button>
                         ) : null}
-                        <Button
-                            size="small"
-                            onClick={onImportShow}
-                            variant="outlined"
-                            startIcon={<DownIcon />}
-                            className="btnNhapXuat btn-outline-hover"
-                            sx={{
-                                bgcolor: '#fff!important',
-                                color: '#666466',
-                                display: abpCustom.isGrandPermission('Pages.DM_HangHoa.Import') ? '' : 'none'
-                            }}>
-                            Nhập
-                        </Button>
-                        <Button
-                            size="small"
-                            onClick={exportToExcel}
-                            variant="outlined"
-                            startIcon={<UploadIcon />}
-                            className="btnNhapXuat btn-outline-hover"
-                            sx={{
-                                bgcolor: '#fff!important',
-                                color: '#666466',
-                                display: abpCustom.isGrandPermission('Pages.DM_HangHoa.Export') ? '' : 'none'
-                            }}>
-                            Xuất
-                        </Button>
+
                         <Button
                             size="small"
                             variant="contained"
@@ -919,8 +809,8 @@ const PageProduct = () => {
                                 display: abpCustom.isGrandPermission('Pages.DM_HangHoa.Create') ? '' : 'none'
                             }}
                             startIcon={<Add />}
-                            onClick={() => showModalAddProduct()}>
-                            Thêm dịch vụ
+                            onClick={() => showModalAddViTRi()}>
+                            Thêm vị trí
                         </Button>
                     </Grid>
                 </Grid>
@@ -929,37 +819,37 @@ const PageProduct = () => {
                         {filterContent}
                     </Grid>
                     <Grid item lg={10} md={10} sm={9} xs={13}>
-                        {rowSelectionModel.length > 0 && (
+                        {/* {rowSelectionModel.length > 0 && (
                             <ActionRowSelect
                                 lstOption={[
                                     {
                                         id: '1',
-                                        text: 'Chuyển nhóm',
+                                        text: 'Chuyển khu vực',
                                         isShow: abpCustom.isGrandPermission('Pages.DM_HangHoa.Edit')
                                     },
                                     {
                                         id: '2',
-                                        text: 'Xóa dịch vụ',
+                                        text: 'Xóa Khu vực',
                                         isShow: abpCustom.isGrandPermission('Pages.DM_HangHoa.Delete')
                                     }
                                 ]}
                                 countRowSelected={rowSelectionModel.length}
-                                title="dịch vụ"
+                                title="Vị trí"
                                 choseAction={DataGrid_handleAction}
                                 removeItemChosed={() => {
                                     setRowSelectionModel([]);
                                     setCheckAllRow(false);
                                 }}
                             />
-                        )}
+                        )} */}
 
                         <Box className="page-box-right" marginTop={rowSelectionModel.length > 0 ? 1 : 0}>
                             <DataGrid
                                 className={rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'}
-                                autoHeight={pageDataProduct.items.length === 0}
+                                autoHeight={pageDataViTri.items.length === 0}
                                 disableRowSelectionOnClick
                                 rowHeight={42}
-                                rows={pageDataProduct.items}
+                                rows={pageDataViTri.items}
                                 columns={columns}
                                 hideFooter
                                 checkboxSelection={false}
@@ -970,28 +860,28 @@ const PageProduct = () => {
                                 item
                                 container
                                 style={{
-                                    display: pageDataProduct.totalCount > 0 ? 'flex' : 'none',
+                                    display: pageDataViTri.totalCount > 0 ? 'flex' : 'none',
                                     paddingLeft: '16px',
                                     bottom: '16px'
                                 }}>
                                 <Grid item xs={4} md={4} lg={4} sm={4}>
                                     <OptionPage
                                         changeNumberOfpage={changeNumberOfpage}
-                                        totalRow={pageDataProduct.totalCount}
+                                        totalRow={pageDataViTri.totalCount}
                                     />
                                 </Grid>
                                 <Grid item xs={8} md={8} lg={8} sm={8}>
                                     <Stack direction="row" style={{ float: 'right' }}>
                                         <LabelDisplayedRows
-                                            currentPage={filterPageProduct.currentPage}
-                                            pageSize={filterPageProduct.pageSize}
-                                            totalCount={pageDataProduct.totalCount}
+                                            currentPage={filterPageViTri.currentPage}
+                                            pageSize={filterPageViTri.pageSize}
+                                            totalCount={pageDataViTri.totalCount}
                                         />
                                         <Pagination
                                             shape="rounded"
-                                            count={pageDataProduct.totalPage}
-                                            page={filterPageProduct.currentPage}
-                                            defaultPage={filterPageProduct.currentPage}
+                                            count={pageDataViTri.totalPage}
+                                            page={filterPageViTri.currentPage}
+                                            defaultPage={filterPageViTri.currentPage}
                                             onChange={handleChangePage}
                                         />
                                     </Stack>
