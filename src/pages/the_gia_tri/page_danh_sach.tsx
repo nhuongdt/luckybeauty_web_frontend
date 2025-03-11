@@ -340,6 +340,7 @@ export default function PageDanhSachTGT() {
                     {
                         setPageDataHoaDon({
                             ...pageDataHoaDon,
+                            totalCount: (pageDataHoaDon?.totalCount ?? 0) + 1,
                             items: [dataSave, ...(pageDataHoaDon?.items ?? [])]
                         });
                     }
@@ -363,6 +364,7 @@ export default function PageDanhSachTGT() {
                     {
                         setPageDataHoaDon({
                             ...pageDataHoaDon,
+                            totalCount: (pageDataHoaDon?.totalCount ?? 0) + 1,
                             items: [dataSave, ...(pageDataHoaDon?.items ?? [])]
                         });
                     }
