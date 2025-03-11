@@ -39,9 +39,19 @@ class HoaDonService {
         const result = await http.post('api/services/app/HoaDon/CreateHoaDon', input);
         return result.data.result;
     };
-    CreateHoaDon2 = async (input: { hoadon: PageHoaDonDto; hoadonChiTiet: PageHoaDonChiTietDto[] }) => {
-        const result = await http.post('api/services/app/HoaDon/CreateHoaDon2', input);
+    InsertHoaDon = async (input: HoaDonDto): Promise<HoaDonDto | null> => {
+        if (utils.checkNull_OrEmpty(input.idKhachHang)) {
+            input.idKhachHang = null;
+        }
 
+        if (utils.checkNull_OrEmpty(input.idChiNhanh)) {
+            input.idChiNhanh = null;
+        }
+        const result = await http.post(`api/services/app/HoaDon/InsertBH_HoaDon`, input);
+        return result.data.result;
+    };
+    InsertHoaDonChiTiet = async (idHoaDon: string, input: HoaDonChiTietDto[]): Promise<boolean> => {
+        const result = await http.post(`api/services/app/HoaDon/InsertHoaDonChiTiet?idHoaDon=${idHoaDon}`, input);
         return result.data.result;
     };
     UpdateHoaDon = async (input: any) => {
