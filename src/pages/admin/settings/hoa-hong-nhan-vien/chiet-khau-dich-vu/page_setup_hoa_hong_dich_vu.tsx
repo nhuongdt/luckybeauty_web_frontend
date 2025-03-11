@@ -14,9 +14,11 @@ import {
     Avatar,
     Popover,
     ButtonGroup,
-    Checkbox
+    Checkbox,
+    Menu,
+    MenuItem
 } from '@mui/material';
-import { Add, Search } from '@mui/icons-material';
+import { Add, CopyAll, Search } from '@mui/icons-material';
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import { PropConfirmOKCancel } from '../../../../../utils/PropParentToChild';
@@ -32,6 +34,7 @@ import { ChietKhauDichVuItemDto_TachRiengCot } from '../../../../../services/hoa
 import nhanVienService from '../../../../../services/nhan-vien/nhanVienService';
 import { PagedNhanSuRequestDto } from '../../../../../services/nhan-vien/dto/PagedNhanSuRequestDto';
 import NhanSuItemDto from '../../../../../services/nhan-vien/dto/nhanSuItemDto';
+import { ModelNhomHangHoa } from '../../../../../services/product/dto';
 import { PagedRequestDto } from '../../../../../services/dto/pagedRequestDto';
 import chietKhauDichVuService from '../../../../../services/hoa_hong/chiet_khau_dich_vu/chietKhauDichVuService';
 import Cookies from 'js-cookie';
@@ -46,6 +49,13 @@ import {
 import { LoaiHoaHongDichVu } from '../../../../../lib/appconst';
 import abpCustom from '../../../../../components/abp-custom';
 import { ButtonNavigate } from '../../../../../components/Button/ButtonNavigate';
+import { Person } from '@mui/icons-material'; // Import icon user
+import { Category } from '@mui/icons-material'; // Import icon dịch vụ
+import GroupProductService from '../../../../../services/product/GroupProductService';
+import CommissionCopyDialog from './CommissionCopyDialog';
+import SettingsIcon from '@mui/icons-material/Settings';
+import CopyIcon from '@mui/icons-material/FileCopy';
+import MenuIcon from '@mui/icons-material/Menu';
 
 const TypeGroupPopover = {
     NHAN_VIEN: 1,
@@ -58,21 +68,27 @@ export function PopperSetupHoaHongDV_byGroup({
     open,
     anchorEl,
     lblGroupPopover,
-    loaiChietKhau = LoaiHoaHongDichVu.THUC_HIEN,
+    lblGroupPopoverV2,
     rowChosed = {} as ChietKhauDichVuItemDto_TachRiengCot,
     onClose,
-    onApply
+    onApply,
+    loaiChietKhauActive
 }: any) {
     const inputEl = useRef<HTMLInputElement>(null);
     const [lblLoaiHoaHong, setLblLoaiHoaHong] = useState('');
     const [isCheck, setIsCheck] = useState(false);
     const [gtriCK, setGiaTriCK] = useState(0);
     const [laPhanTram, setLaPhanTram] = useState(true);
+    const [loaiChietKhau, setLoaiChietKhau] = useState(LoaiHoaHongDichVu.THUC_HIEN);
+    const [loaiApply, setLoaiApply] = useState(0);
 
     useEffect(() => {
         switch (loaiChietKhau) {
             case LoaiHoaHongDichVu.THUC_HIEN:
                 setLblLoaiHoaHong('Hoa hồng thực hiện');
+                break;
+            case LoaiHoaHongDichVu.YEU_CAU_THUC_HIEN:
+                setLblLoaiHoaHong('Hoa hồng yêu cầu thực hiện');
                 break;
             case LoaiHoaHongDichVu.TU_VAN:
                 setLblLoaiHoaHong('Hoa hồng tư vấn');
@@ -81,11 +97,18 @@ export function PopperSetupHoaHongDV_byGroup({
     }, [loaiChietKhau]);
 
     useEffect(() => {
+        gettest(loaiChietKhauActive);
         switch (loaiChietKhau) {
             case LoaiHoaHongDichVu.THUC_HIEN:
                 {
                     setGiaTriCK(rowChosed?.hoaHongThucHien);
                     setLaPhanTram(rowChosed?.laPhanTram_HoaHongThucHien);
+                }
+                break;
+            case LoaiHoaHongDichVu.YEU_CAU_THUC_HIEN:
+                {
+                    setGiaTriCK(rowChosed?.hoaHongYeuCau);
+                    setLaPhanTram(rowChosed?.laPhanTram_HoaHongYeuCauThucHien);
                 }
                 break;
             case LoaiHoaHongDichVu.TU_VAN:
@@ -127,8 +150,12 @@ export function PopperSetupHoaHongDV_byGroup({
         setGiaTriCK(utils.formatNumberToFloat(gtri));
     };
 
+    const gettest = (loaiChietKhauActive: number) => {
+        console.log(loaiChietKhauActive);
+    };
+
     const onClickApply = () => {
-        onApply(gtriCK, laPhanTram, isCheck);
+        onApply(gtriCK, laPhanTram, isCheck, loaiChietKhauActive, loaiApply);
         onClose();
     };
 
@@ -143,7 +170,50 @@ export function PopperSetupHoaHongDV_byGroup({
                     vertical: 'bottom',
                     horizontal: 'left'
                 }}>
-                <Stack padding={2}>
+                <Stack padding={2} spacing={1}>
+                    <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
+                        <Typography variant="body2">
+                            Loại chiết khấu:{' '}
+                            <span style={{ fontWeight: 'bold' }}>
+                                {(() => {
+                                    switch (loaiChietKhauActive) {
+                                        case LoaiHoaHongDichVu.THUC_HIEN:
+                                            return 'Hoa hồng thực hiện';
+                                        case LoaiHoaHongDichVu.YEU_CAU_THUC_HIEN:
+                                            return 'Hoa hồng yêu cầu thực hiện';
+                                        case LoaiHoaHongDichVu.TU_VAN:
+                                            return 'Hoa hồng tư vấn';
+                                        default:
+                                            return 'Không xác định';
+                                    }
+                                })()}
+                            </span>
+                        </Typography>
+
+                        {/* <ButtonGroup>
+                            <Button
+                                size="small"
+                                variant={loaiChietKhau === LoaiHoaHongDichVu.THUC_HIEN ? 'contained' : 'outlined'}
+                                onClick={() => setLoaiChietKhau(LoaiHoaHongDichVu.THUC_HIEN)}>
+                                Thực hiện
+                            </Button>{' '}
+                            <Button
+                                size="small"
+                                variant={
+                                    loaiChietKhau === LoaiHoaHongDichVu.YEU_CAU_THUC_HIEN ? 'contained' : 'outlined'
+                                }
+                                onClick={() => setLoaiChietKhau(LoaiHoaHongDichVu.YEU_CAU_THUC_HIEN)}>
+                                Yêu cầu
+                            </Button>
+                            <Button
+                                size="small"
+                                variant={loaiChietKhau === LoaiHoaHongDichVu.TU_VAN ? 'contained' : 'outlined'}
+                                onClick={() => setLoaiChietKhau(LoaiHoaHongDichVu.TU_VAN)}>
+                                Tư vấn
+                            </Button>
+                        </ButtonGroup> */}
+                    </Stack>
+
                     <Stack direction={'row'} spacing={1} alignItems={'center'}>
                         <Typography variant="body2">{`${lblLoaiHoaHong} = `}</Typography>
                         <Stack direction={'row'} spacing={1}>
@@ -166,7 +236,7 @@ export function PopperSetupHoaHongDV_byGroup({
                                 onFocus={handleFocus}
                                 isAllowed={(values) => {
                                     const floatValue = values.floatValue;
-                                    if (laPhanTram) return (floatValue ?? 0) <= 100; // neu %: khong cho phep nhap qua 100%
+                                    if (laPhanTram) return (floatValue ?? 0) <= 100;
                                     return true;
                                 }}
                             />
@@ -186,16 +256,39 @@ export function PopperSetupHoaHongDV_byGroup({
                             </ButtonGroup>
                         </Stack>
                     </Stack>
-                    <Stack direction={'row'} paddingTop={2} spacing={1} alignItems={'center'}>
-                        <Checkbox value={isCheck} onChange={(e) => setIsCheck(e.currentTarget.checked)} />
-                        <Stack direction={'row'} spacing={0.5}>
-                            <Typography variant="body2"> Áp dụng cho tất cả dịch vụ </Typography>
+                    <Stack direction={'row'} spacing={1} alignItems={'center'}>
+                        <Checkbox
+                            value={isCheck}
+                            onChange={(e) => {
+                                setIsCheck(e.currentTarget.checked);
+                                setLoaiApply(3);
+                            }}
+                        />
+                        <Stack direction={'row'} spacing={0.1}>
+                            <Typography variant="body2"> Áp dụng cho tất cả dịch vụ</Typography>
                             <Typography variant="body2" fontWeight={500}>
                                 {' '}
                                 {lblGroupPopover}
                             </Typography>
                         </Stack>
                     </Stack>
+                    <Stack direction={'row'} spacing={1} alignItems={'center'}>
+                        <Checkbox
+                            value={isCheck}
+                            onChange={(e) => {
+                                setIsCheck(e.currentTarget.checked);
+                                setLoaiApply(1);
+                            }}
+                        />
+                        <Stack direction={'row'} spacing={0.1}>
+                            <Typography variant="body2"> Áp dụng cho tất cả dịch vụ</Typography>
+                            <Typography variant="body2" fontWeight={500}>
+                                {' '}
+                                {lblGroupPopoverV2}
+                            </Typography>
+                        </Stack>
+                    </Stack>
+
                     <Stack direction={'row'}>
                         <Stack flex={3}></Stack>
                         <Stack flex={1} justifyContent={'end'}>
@@ -218,17 +311,24 @@ export default function PageSetupHoaHongDichVu() {
     const [isShowModalSetup, setIsShowModalSetup] = useState(false);
     const [txtSearchNV, setTxtSearchNV] = useState('');
     const [idNhanVienChosed, setIdNhanVienChosed] = useState<string>(Guid.EMPTY);
+    const [allData, setAllData] = useState<any[]>([]); // Dữ liệu gốc từ API
+    const [filteredData, setFilteredData] = useState<any[]>([]); // Dữ liệu đã lọc
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
+    const [allNhomDichVuNhomDichVu, setAllNhomDichVu] = useState<ModelNhomHangHoa[]>([]);
     const [nhanVienChosed, setNhanVienChosed] = useState<NhanSuItemDto | null>();
     const [rowChosed, setRowChosed] = useState<ChietKhauDichVuItemDto_TachRiengCot | null>(null);
     const idChiNhanh = Cookies.get('IdChiNhanh') ?? Guid.EMPTY;
     const [anchorPopover, setAnchorPopover] = React.useState<HTMLDivElement | null>(null);
     const [lblGroupPopover, setLblGroupPopover] = useState('');
+    const [lblGroupPopoverV2, setLblGroupPopoverV2] = useState('');
+    const [idPopoverV2, setIdPopoverV2] = useState<GridRowId | null>('');
     const [idPopover, setIdPopover] = useState<GridRowId | null>('');
     const [rowChosedPopover, setRowChosedPopover] = useState<ChietKhauDichVuItemDto_TachRiengCot | null>(null);
     const [typePopover, setTypePopover] = useState(0);
     const openPopover = Boolean(anchorPopover);
+    const [isDialogOpen, setDialogOpen] = useState(false);
+    const [loaiChietKhauActive, setloaiChietKhauActive] = useState(0);
 
     const [pageResultChietKhauDV, setPageResultChietKhauDV] = useState<
         PagedResultDto<ChietKhauDichVuItemDto_TachRiengCot>
@@ -255,19 +355,60 @@ export default function PageSetupHoaHongDichVu() {
         setLstNhanVien([...data.items]);
     };
 
+    const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
+
+    const handleOpenDialog = (id: string) => {
+        setSelectedEmployeeId(id); // Set ID nhân viên cần hiển thị
+        setDialogOpen(true); // Mở dialog
+    };
+    useEffect(() => {
+        getListSetupHoaHongDV();
+    }, []);
+
+    useEffect(() => {
+        setFilteredData(allData);
+    }, [allData]);
+
+    const GetAllNhomHangHoa = async () => {
+        const data = await GroupProductService.GetDM_NhomHangHoa();
+
+        // Kiểm tra xem data có trả về kết quả không
+        if (data && data.items) {
+            setAllNhomDichVu(data.items); // Cập nhật state với dữ liệu nhóm dịch vụ
+        } else {
+            console.error('Không có dữ liệu nhóm dịch vụ');
+        }
+    };
+
     const getListSetupHoaHongDV = async () => {
         const data = await chietKhauDichVuService.GetAllSetup_HoaHongDichVu(paramSearch, idNhanVienChosed, idChiNhanh);
-
+        setAllData(data.items); // Lưu toàn bộ dữ liệu vào `allData`
+        setFilteredData(data.items); // Hiển thị dữ liệu ban đầu
         setPageResultChietKhauDV({
             items: data.items,
             totalCount: data.totalCount,
             totalPage: Math.ceil(data.totalCount / paramSearch.maxResultCount)
         });
     };
+    const getAllDataSetupHoaHongDV = async () => {
+        // Tạo một bản sao paramSearch và đặt maxResultCount rất lớn
+        const fullParamSearch = { ...paramSearch, maxResultCount: 1000, skipCount: 0 };
+
+        // Gọi API để lấy tất cả dữ liệu
+        const data = await chietKhauDichVuService.GetAllSetup_HoaHongDichVu(
+            fullParamSearch,
+            idNhanVienChosed,
+            idChiNhanh
+        );
+
+        // Trả về dữ liệu (toàn bộ items)
+        return data.items;
+    };
 
     const PageLoad = async () => {
         await GetAllNhanVien();
         await getListSetupHoaHongDV();
+        await GetAllNhomHangHoa();
     };
 
     useEffect(() => {
@@ -305,6 +446,7 @@ export default function PageSetupHoaHongDichVu() {
         setAnchorPopover(event.currentTarget);
         setTypePopover(type);
         setRowChosedPopover(itemRow.row);
+        setloaiChietKhauActive(loaiChietKhauActive);
 
         switch (type) {
             case TypeGroupPopover.NHAN_VIEN:
@@ -323,6 +465,8 @@ export default function PageSetupHoaHongDichVu() {
                 {
                     setLblGroupPopover(`thuộc nhóm ${itemRow.row?.tenNhomDichVu}`);
                     setIdPopover('nhomdichvu_' + itemRow?.id);
+                    setLblGroupPopoverV2('của nhân viên ' + itemRow.row?.tenNhanVien);
+                    setIdPopoverV2('nhanvien_' + itemRow?.id);
                 }
                 break;
         }
@@ -333,54 +477,58 @@ export default function PageSetupHoaHongDichVu() {
         setRowChosedPopover(null);
     };
 
-    const applyPopover = async (gtriCK: number, laPhanTram: boolean, isCheckAll: boolean) => {
+    const applyPopover = async (
+        gtriCK: number,
+        laPhanTram: boolean,
+        isCheckAll: boolean,
+        loaiChietKhau: (typeof LoaiHoaHongDichVu)[keyof typeof LoaiHoaHongDichVu],
+        loaiApply: number
+    ) => {
+        const param: any = {
+            idChiNhanh: idChiNhanh,
+            giaTri: gtriCK,
+            laPhanTram: laPhanTram,
+            loaiChietKhau
+        };
         if (isCheckAll) {
-            const param = {
-                idChiNhanh: idChiNhanh,
-                idNhanViens: [],
-                idDonViQuyDois: [],
-                loaiChietKhau: LoaiHoaHongDichVu.THUC_HIEN,
-                giaTri: gtriCK,
-                laPhanTram: laPhanTram
-            } as ChietKhauDichVuDto_AddMultiple;
-            switch (typePopover) {
-                case TypeGroupPopover.NHAN_VIEN:
-                    {
-                        param.idNhanViens = [rowChosedPopover?.idNhanVien as string];
-                    }
-                    break;
-                case TypeGroupPopover.DICH_VU:
-                    {
-                        param.idDonViQuyDois = [rowChosedPopover?.idDonViQuiDoi as unknown as string];
-                    }
-                    break;
-                case TypeGroupPopover.NHOM_DICH_VU:
-                    {
-                        param.idNhomHang = rowChosedPopover?.idNhomHangHoa;
-                    }
-                    break;
+            // switch (typePopover) {
+            //     case TypeGroupPopover.NHAN_VIEN:
+            //         param.idNhanViens = [rowChosedPopover?.idNhanVien as string];
+            //         break;
+            //     case TypeGroupPopover.DICH_VU:
+            //         param.idDonViQuyDois = [rowChosedPopover?.idDonViQuiDoi as string];
+            //         break;
+            //     case TypeGroupPopover.NHOM_DICH_VU:
+            //         param.idNhomHang = rowChosedPopover?.idNhomHangHoa;
+            //         break;
+            // }
+            if (loaiApply === 1) {
+                param.idNhanViens = [rowChosedPopover?.idNhanVien as string];
             }
-
-            const xx = await chietKhauDichVuService.ApplyAll_SetupHoaHongDV(param, idNhanVienChosed, typePopover);
-            if (xx > 0) {
+            if (loaiApply === 3) {
+                param.idNhomHang = rowChosedPopover?.idNhomHangHoa;
+                setTypePopover(loaiApply);
+            }
+            if (loaiApply === 2) {
+                param.idDonViQuyDois = [rowChosedPopover?.idDonViQuiDoi as string];
+                setTypePopover(loaiApply);
+            }
+            const result = await chietKhauDichVuService.ApplyAll_SetupHoaHongDV(param, idNhanVienChosed, loaiApply);
+            if (result > 0) {
                 setObjAlert({ ...objAlert, show: true, mes: 'Áp dụng cài đặt thành công' });
             }
         } else {
-            const param = {
-                idChiNhanh: idChiNhanh,
-                idNhanViens: [rowChosedPopover?.idNhanVien],
-                idDonViQuiDoi: rowChosedPopover?.idDonViQuiDoi,
-                loaiChietKhau: LoaiHoaHongDichVu.THUC_HIEN,
-                giaTri: gtriCK,
-                laPhanTram: laPhanTram
-            } as CreateOrEditChietKhauDichVuDto;
-            const xx = await chietKhauDichVuService.UpdateSetup_HoaHongDichVu_ofNhanVien(param);
-            if (xx) {
+            param.idNhanViens = [rowChosedPopover?.idNhanVien];
+            param.idDonViQuiDoi = rowChosedPopover?.idDonViQuiDoi;
+            const result = await chietKhauDichVuService.UpdateSetup_HoaHongDichVu_ofNhanVien(param);
+            if (result) {
                 setObjAlert({ ...objAlert, show: true, mes: 'Áp dụng cài đặt thành công' });
             }
         }
+
         await getListSetupHoaHongDV();
     };
+
     // end popover
 
     function showModalSetup(action?: number, id = '') {
@@ -446,29 +594,43 @@ export default function PageSetupHoaHongDichVu() {
     };
 
     const deleteRow = async () => {
-        let arrIdNhanVienDelete: string[] = [],
-            arrIdQuyDoiDelete: string[] = [];
+        let arrIdNhanVienDelete: string[] = [];
+        let arrIdQuyDoiDelete: string[] = [];
         let totalRowDelete = 1;
+
         if (rowChosed === null) {
-            // delete all: get all idNhanVien, idQuyDoi of list
-            arrIdNhanVienDelete = pageResultChietKhauDV.items.map((x) => {
-                return x.idNhanVien;
-            });
-            arrIdQuyDoiDelete = pageResultChietKhauDV.items.map((x) => {
-                return x.idDonViQuiDoi;
-            });
-            totalRowDelete = pageResultChietKhauDV.totalCount;
+            // Lấy tất cả dữ liệu từ cơ sở dữ liệu (dùng hàm getAllDataSetupHoaHongDV)
+            const allData = await getAllDataSetupHoaHongDV();
+            arrIdNhanVienDelete = allData.map((x) => x.idNhanVien);
+            arrIdQuyDoiDelete = allData.map((x) => x.idDonViQuiDoi);
+            totalRowDelete = allData.length;
         } else {
             arrIdNhanVienDelete = [rowChosed?.idNhanVien as string];
             arrIdQuyDoiDelete = [rowChosed?.idDonViQuiDoi as string];
         }
-        const deleteOK = await chietKhauDichVuService.DeleteSetup_DichVu_ofNhanVien(
-            arrIdNhanVienDelete,
-            arrIdQuyDoiDelete
-        );
-        if (deleteOK) {
-            setObjAlert({ ...objAlert, show: true, mes: 'Xóa thành công', type: 1 });
+
+        // Chia thành các nhóm 15 phần tử
+        const chunkSize = 15;
+        const chunkedArrIdNhanVienDelete = chunkArray(arrIdNhanVienDelete, chunkSize);
+        const chunkedArrIdQuyDoiDelete = chunkArray(arrIdQuyDoiDelete, chunkSize);
+
+        // Lặp qua các nhóm và xóa từng nhóm
+        for (let i = 0; i < chunkedArrIdNhanVienDelete.length; i++) {
+            const deleteOK = await chietKhauDichVuService.DeleteSetup_DichVu_ofNhanVien(
+                chunkedArrIdNhanVienDelete[i],
+                chunkedArrIdQuyDoiDelete[i]
+            );
+
+            if (!deleteOK) {
+                setObjAlert({ ...objAlert, show: true, mes: 'Xóa thất bại', type: 2 });
+                return;
+            }
         }
+
+        setObjAlert({ ...objAlert, show: true, mes: 'Xóa thành công', type: 1 });
+        await getListSetupHoaHongDV();
+
+        // Cập nhật lại danh sách trên client
         setPageResultChietKhauDV({
             items: pageResultChietKhauDV.items.filter(
                 (x) =>
@@ -481,12 +643,21 @@ export default function PageSetupHoaHongDichVu() {
             totalPage: Math.ceil((pageResultChietKhauDV.totalCount - totalRowDelete) / paramSearch.maxResultCount)
         });
 
+        // Đóng modal và reset trạng thái
         setInforDeleteProduct({
             ...inforDeleteProduct,
             show: false
         });
-        // reset rowChosed
         setRowChosed(null);
+    };
+
+    // Hàm hỗ trợ chia mảng thành các nhóm
+    const chunkArray = (arr: string[], chunkSize: number): string[][] => {
+        const result: string[][] = [];
+        for (let i = 0; i < arr.length; i += chunkSize) {
+            result.push(arr.slice(i, i + chunkSize));
+        }
+        return result;
     };
 
     const onClickDeleteRow = async (rowItem: ChietKhauDichVuItemDto_TachRiengCot) => {
@@ -504,7 +675,7 @@ export default function PageSetupHoaHongDichVu() {
             ...inforDeleteProduct,
             show: true,
             title: 'Thông báo xóa',
-            mes: `Bạn có chắc chắn muốn xóa tất cả cài đặt này không?`
+            mes: `Bạn có chắc chắn muốn xóa tất cả cài đặt này khỏi hệ thống không?`
         });
     };
 
@@ -671,7 +842,18 @@ export default function PageSetupHoaHongDichVu() {
         await getListSetupHoaHongDV();
         setIsShowModalSetup(false);
     };
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [currentNhanVien, setCurrentNhanVien] = useState<null | NhanSuItemDto>(null);
 
+    const handleMenuClick = (event: React.MouseEvent<HTMLElement>, nvien: NhanSuItemDto) => {
+        setAnchorEl(event.currentTarget);
+        setCurrentNhanVien(nvien);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+        setCurrentNhanVien(null);
+    };
     const columns: GridColDef[] = [
         {
             field: 'tenNhanVien',
@@ -695,7 +877,7 @@ export default function PageSetupHoaHongDichVu() {
             renderCell: (params) => (
                 <Stack
                     onClick={(e) => {
-                        if (idNhanVienChosed == null) showPopOver(e, TypeGroupPopover.DICH_VU, params);
+                        if (idNhanVienChosed == null) showPopOver(e, TypeGroupPopover.NHOM_DICH_VU, params);
                     }}>
                     {params.value}
                 </Stack>
@@ -731,45 +913,52 @@ export default function PageSetupHoaHongDichVu() {
             flex: 0.5,
             renderCell: (params) => (
                 <Stack direction={'row'} spacing={1}>
-                    <NumericFormat
-                        fullWidth
-                        size="small"
-                        variant="standard"
-                        thousandSeparator={'.'}
-                        decimalSeparator={','}
-                        value={params.value}
-                        customInput={TextField}
-                        InputProps={{
-                            inputProps: {
-                                style: { textAlign: 'right' }
-                            }
-                        }}
-                        onChange={(e) => changeGtriChietKhau(e.target.value, params.row, LoaiHoaHongDichVu.THUC_HIEN)}
-                        inputRef={(el: any) =>
-                            (refInputThucHien.current[params.row.idNhanVien + '_' + params.row.idDonViQuiDoi] = el)
-                        }
-                        onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) => {
-                            // find id of row next
-                            const indexCurrent = pageResultChietKhauDV.items.findIndex(
-                                (x) =>
-                                    x.idNhanVien + '_' + x.idDonViQuiDoi ===
-                                    params.row.idNhanVien + '_' + params.row.idDonViQuiDoi
-                            );
-                            let indexNext = indexCurrent + 1;
-                            if (indexNext > pageResultChietKhauDV.items.length - 1) {
-                                indexNext = 0;
-                            }
-                            const rowNext = pageResultChietKhauDV.items.filter(
-                                (x: ChietKhauDichVuItemDto_TachRiengCot, index: number) => {
-                                    return index === indexNext;
+                    <Stack
+                        onClick={(e) => {
+                            showPopOver(e, TypeGroupPopover.NHOM_DICH_VU, params);
+                            setloaiChietKhauActive(LoaiHoaHongDichVu.THUC_HIEN);
+                        }}>
+                        <NumericFormat
+                            fullWidth
+                            size="small"
+                            variant="standard"
+                            thousandSeparator={'.'}
+                            decimalSeparator={','}
+                            value={params.value}
+                            customInput={TextField}
+                            InputProps={{
+                                inputProps: {
+                                    style: { textAlign: 'right' }
                                 }
-                            );
-                            gotoNextInputThucHien(
-                                e,
-                                refInputThucHien.current[rowNext[0].idNhanVien + '_' + rowNext[0].idDonViQuiDoi]
-                            );
-                        }}
-                    />
+                            }}
+                            onChange={(e) =>
+                                changeGtriChietKhau(e.target.value, params.row, LoaiHoaHongDichVu.THUC_HIEN)
+                            }
+                            inputRef={(el: any) =>
+                                (refInputThucHien.current[params.row.idNhanVien + '_' + params.row.idDonViQuiDoi] = el)
+                            }
+                            onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) => {
+                                const indexCurrent = pageResultChietKhauDV.items.findIndex(
+                                    (x) =>
+                                        x.idNhanVien + '_' + x.idDonViQuiDoi ===
+                                        params.row.idNhanVien + '_' + params.row.idDonViQuiDoi
+                                );
+                                let indexNext = indexCurrent + 1;
+                                if (indexNext > pageResultChietKhauDV.items.length - 1) {
+                                    indexNext = 0;
+                                }
+                                const rowNext = pageResultChietKhauDV.items.filter(
+                                    (x: ChietKhauDichVuItemDto_TachRiengCot, index: number) => {
+                                        return index === indexNext;
+                                    }
+                                );
+                                gotoNextInputThucHien(
+                                    e,
+                                    refInputThucHien.current[rowNext[0].idNhanVien + '_' + rowNext[0].idDonViQuiDoi]
+                                );
+                            }}
+                        />
+                    </Stack>
                     <Stack>
                         {params?.row?.laPhanTram_HoaHongThucHien ? (
                             <Avatar
@@ -794,6 +983,91 @@ export default function PageSetupHoaHongDichVu() {
             ),
             renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
         },
+
+        {
+            field: 'hoaHongYeuCauThucHien',
+            headerName: 'Yêu cầu',
+            headerAlign: 'right',
+            align: 'right',
+            flex: 0.5,
+            renderCell: (params) => (
+                <Stack direction={'row'} spacing={1}>
+                    <Stack
+                        onClick={(e) => {
+                            showPopOver(e, TypeGroupPopover.NHOM_DICH_VU, params);
+                            setloaiChietKhauActive(LoaiHoaHongDichVu.YEU_CAU_THUC_HIEN);
+                        }}>
+                        <NumericFormat
+                            fullWidth
+                            size="small"
+                            variant="standard"
+                            thousandSeparator={'.'}
+                            decimalSeparator={','}
+                            value={params.value}
+                            customInput={TextField}
+                            InputProps={{
+                                inputProps: {
+                                    style: { textAlign: 'right' }
+                                }
+                            }}
+                            onChange={(e) =>
+                                changeGtriChietKhau(e.target.value, params.row, LoaiHoaHongDichVu.YEU_CAU_THUC_HIEN)
+                            }
+                            inputRef={(el: any) =>
+                                (refInputThucHien.current[params.row.idNhanVien + '_' + params.row.idDonViQuiDoi] = el)
+                            }
+                            onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) => {
+                                const indexCurrent = pageResultChietKhauDV.items.findIndex(
+                                    (x) =>
+                                        x.idNhanVien + '_' + x.idDonViQuiDoi ===
+                                        params.row.idNhanVien + '_' + params.row.idDonViQuiDoi
+                                );
+                                let indexNext = indexCurrent + 1;
+                                if (indexNext > pageResultChietKhauDV.items.length - 1) {
+                                    indexNext = 0;
+                                }
+                                const rowNext = pageResultChietKhauDV.items.filter(
+                                    (x: ChietKhauDichVuItemDto_TachRiengCot, index: number) => {
+                                        return index === indexNext;
+                                    }
+                                );
+                                gotoNextInputThucHien(
+                                    e,
+                                    refInputThucHien.current[rowNext[0].idNhanVien + '_' + rowNext[0].idDonViQuiDoi]
+                                );
+                            }}
+                        />
+                    </Stack>
+                    <Stack>
+                        {params?.row?.laPhanTram_HoaHongYeuCauThucHien ? (
+                            <Avatar
+                                style={{
+                                    width: 25,
+                                    height: 25,
+                                    fontSize: '12px',
+                                    backgroundColor: 'var(--color-main)'
+                                }}
+                                onClick={() => onClickPtramVND(params.row, false, LoaiHoaHongDichVu.YEU_CAU_THUC_HIEN)}>
+                                %
+                            </Avatar>
+                        ) : (
+                            <Avatar
+                                style={{ width: 25, height: 25, fontSize: '12px' }}
+                                onClick={() => onClickPtramVND(params.row, true, LoaiHoaHongDichVu.YEU_CAU_THUC_HIEN)}>
+                                đ
+                            </Avatar>
+                        )}
+                    </Stack>
+                </Stack>
+            ),
+            renderHeader: (params) => (
+                <Box sx={{ textAlign: 'center', fontWeight: 700, lineHeight: 1 }}>
+                    <Box>Thực hiện</Box>
+                    <Box sx={{ fontWeight: '400', fontSize: '12px', color: 'gray', marginTop: '1px' }}>(Yêu cầu)</Box>
+                </Box>
+            )
+        },
+
         // hoahong tuvan
         {
             field: 'hoaHongTuVan',
@@ -803,45 +1077,52 @@ export default function PageSetupHoaHongDichVu() {
             flex: 0.5,
             renderCell: (params) => (
                 <Stack direction={'row'} spacing={1}>
-                    <NumericFormat
-                        fullWidth
-                        size="small"
-                        variant="standard"
-                        thousandSeparator={'.'}
-                        decimalSeparator={','}
-                        value={params.value}
-                        customInput={TextField}
-                        InputProps={{
-                            inputProps: {
-                                style: { textAlign: 'right' }
-                            }
-                        }}
-                        onChange={(e) => changeGtriChietKhau(e.target.value, params.row, LoaiHoaHongDichVu.TU_VAN)}
-                        inputRef={(el: any) =>
-                            (refInputTuVan.current[params.row.idNhanVien + '_' + params.row.idDonViQuiDoi] = el)
-                        }
-                        onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) => {
-                            // find id of row next
-                            const indexCurrent = pageResultChietKhauDV.items.findIndex(
-                                (x) =>
-                                    x.idNhanVien + '_' + x.idDonViQuiDoi ===
-                                    params.row.idNhanVien + '_' + params.row.idDonViQuiDoi
-                            );
-                            let indexNext = indexCurrent + 1;
-                            if (indexNext > pageResultChietKhauDV.items.length - 1) {
-                                indexNext = 0;
-                            }
-                            const rowNext = pageResultChietKhauDV.items.filter(
-                                (x: ChietKhauDichVuItemDto_TachRiengCot, index: number) => {
-                                    return index === indexNext;
+                    <Stack
+                        onClick={(e) => {
+                            showPopOver(e, TypeGroupPopover.NHOM_DICH_VU, params);
+                            setloaiChietKhauActive(LoaiHoaHongDichVu.TU_VAN);
+                        }}>
+                        {' '}
+                        <NumericFormat
+                            fullWidth
+                            size="small"
+                            variant="standard"
+                            thousandSeparator={'.'}
+                            decimalSeparator={','}
+                            value={params.value}
+                            customInput={TextField}
+                            InputProps={{
+                                inputProps: {
+                                    style: { textAlign: 'right' }
                                 }
-                            );
-                            gotoNextInputTuVan(
-                                e,
-                                refInputTuVan.current[rowNext[0].idNhanVien + '_' + rowNext[0].idDonViQuiDoi]
-                            );
-                        }}
-                    />
+                            }}
+                            onChange={(e) => changeGtriChietKhau(e.target.value, params.row, LoaiHoaHongDichVu.TU_VAN)}
+                            inputRef={(el: any) =>
+                                (refInputTuVan.current[params.row.idNhanVien + '_' + params.row.idDonViQuiDoi] = el)
+                            }
+                            onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) => {
+                                // find id of row next
+                                const indexCurrent = pageResultChietKhauDV.items.findIndex(
+                                    (x) =>
+                                        x.idNhanVien + '_' + x.idDonViQuiDoi ===
+                                        params.row.idNhanVien + '_' + params.row.idDonViQuiDoi
+                                );
+                                let indexNext = indexCurrent + 1;
+                                if (indexNext > pageResultChietKhauDV.items.length - 1) {
+                                    indexNext = 0;
+                                }
+                                const rowNext = pageResultChietKhauDV.items.filter(
+                                    (x: ChietKhauDichVuItemDto_TachRiengCot, index: number) => {
+                                        return index === indexNext;
+                                    }
+                                );
+                                gotoNextInputTuVan(
+                                    e,
+                                    refInputTuVan.current[rowNext[0].idNhanVien + '_' + rowNext[0].idDonViQuiDoi]
+                                );
+                            }}
+                        />
+                    </Stack>
                     <Stack>
                         {params?.row?.laPhanTram_HoaHongTuVan ? (
                             <Avatar
@@ -866,6 +1147,7 @@ export default function PageSetupHoaHongDichVu() {
             ),
             renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
         },
+
         {
             field: '#',
             headerName: '#',
@@ -922,12 +1204,18 @@ export default function PageSetupHoaHongDichVu() {
                 open={openPopover}
                 anchorEl={anchorPopover}
                 lblGroupPopover={lblGroupPopover}
+                lblGroupPopoverV2={lblGroupPopoverV2}
                 loaiChietKhau={LoaiHoaHongDichVu.THUC_HIEN}
                 rowChosed={rowChosedPopover}
                 onClose={closePopOver}
                 onApply={applyPopover}
+                loaiChietKhauActive={loaiChietKhauActive}
             />
-
+            <CommissionCopyDialog
+                open={isDialogOpen}
+                onClose={() => setDialogOpen(false)}
+                employeeId={selectedEmployeeId} // Truyền vào ID nhân viên cần hiển thị
+            />
             <Grid container className="dich-vu-page" gap={4} paddingTop={2}>
                 <Grid item container alignItems="center" spacing={1} justifyContent="space-between">
                     <Grid container item xs={12} md={6} spacing={1} lg={6} alignItems="center">
@@ -965,6 +1253,17 @@ export default function PageSetupHoaHongDichVu() {
                         </Grid>
                     </Grid>
                     <Grid item xs={12} md={6} lg={6} display="flex" gap="8px" justifyContent="end">
+                        {/* <Button
+                            size="small"
+                            variant="outlined"
+                            startIcon={<CopyAll />}
+                            onClick={() => setDialogOpen(true)}
+                            sx={{
+                                bgcolor: '#fff!important',
+                                color: '#666466'
+                            }}>
+                            Sao chép
+                        </Button> */}
                         <ButtonNavigate navigateTo="/settings" btnText="Trở về cài đặt" />
 
                         <Button
@@ -1041,8 +1340,9 @@ export default function PageSetupHoaHongDichVu() {
                                             setIdNhanVienChosed(Guid.EMPTY);
                                             setNhanVienChosed(null);
                                         }}>
-                                        <Typography variant="body2" fontWeight={600}>
-                                            Tất cả
+                                        <Typography variant="body2" fontWeight={600} display="flex" alignItems="center">
+                                            <Person sx={{ marginRight: 1 }} /> {/* Icon User */}
+                                            Tất cả Nhân Viên
                                         </Typography>
                                     </Stack>
                                     <Stack sx={{ overflow: 'auto', maxHeight: 400 }}>
@@ -1054,7 +1354,8 @@ export default function PageSetupHoaHongDichVu() {
                                                 sx={{
                                                     borderBottom: '1px dashed #cccc',
                                                     padding: '8px',
-                                                    backgroundColor: idNhanVienChosed == nvien.id ? 'antiquewhite' : '',
+                                                    backgroundColor:
+                                                        idNhanVienChosed === nvien.id ? 'antiquewhite' : '',
                                                     '&:hover': {
                                                         bgcolor: 'var(--color-bg)'
                                                     }
@@ -1075,14 +1376,55 @@ export default function PageSetupHoaHongDichVu() {
                                                         {utils.getFirstLetter(nvien?.tenNhanVien ?? '')}
                                                     </Avatar>
                                                 </Stack>
-                                                <Stack justifyContent={'center'} spacing={1}>
+                                                <Stack justifyContent={'center'} spacing={1} sx={{ flex: 1 }}>
                                                     <Stack sx={{ fontSize: '14px' }}>{nvien?.tenNhanVien}</Stack>
                                                     <Stack sx={{ fontSize: '12px', color: '#839bb1' }}>
                                                         {nvien?.tenChucVu}
                                                     </Stack>
                                                 </Stack>
+                                                <Stack>
+                                                    <IconButton
+                                                        sx={{
+                                                            fontSize: '18px',
+                                                            color: 'rgba(0, 0, 0, 0.5)'
+                                                        }}
+                                                        onClick={(e) => handleMenuClick(e, nvien)}>
+                                                        <MenuIcon />
+                                                    </IconButton>
+                                                </Stack>
                                             </Stack>
                                         ))}
+                                        <Menu
+                                            anchorEl={anchorEl}
+                                            open={Boolean(anchorEl)}
+                                            onClose={handleMenuClose}
+                                            anchorOrigin={{
+                                                vertical: 'bottom',
+                                                horizontal: 'right'
+                                            }}
+                                            transformOrigin={{
+                                                vertical: 'top',
+                                                horizontal: 'right'
+                                            }}>
+                                            <MenuItem
+                                                onClick={() => {
+                                                    showModalSetup();
+                                                    handleMenuClose();
+                                                }}>
+                                                <SettingsIcon
+                                                    sx={{ marginRight: '8px', color: 'rgba(0, 0, 0, 0.3)' }}
+                                                />
+                                                Cài đặt
+                                            </MenuItem>
+                                            <MenuItem
+                                                onClick={() => {
+                                                    if (currentNhanVien) handleOpenDialog(currentNhanVien.id);
+                                                    handleMenuClose();
+                                                }}>
+                                                <CopyIcon sx={{ marginRight: '8px', color: 'rgba(0, 0, 0, 0.3)' }} />{' '}
+                                                Sao chép
+                                            </MenuItem>
+                                        </Menu>
                                     </Stack>
                                 </Stack>
                             </Box>
@@ -1095,7 +1437,7 @@ export default function PageSetupHoaHongDichVu() {
                                 rowHeight={46}
                                 autoHeight={pageResultChietKhauDV.totalCount === 0}
                                 className={'data-grid-row'}
-                                rows={pageResultChietKhauDV.items}
+                                rows={filteredData}
                                 columns={columns}
                                 hideFooter
                                 localeText={TextTranslate}

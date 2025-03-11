@@ -19,17 +19,38 @@ import { IHeaderTable, MyHeaderTable } from '../../../components/Table/MyHeaderT
 import BaoCaoTGTService from '../../../services/bao_cao/bao_cao_the_gia_tri/BaoCaoTGTService';
 import { IBaocaoNhatKySuDungTGT } from '../../../services/bao_cao/bao_cao_the_gia_tri/BaoCaoTGTDto';
 import { BaoCaoTGT_DataContextFilter } from '../../../services/bao_cao/bao_cao_the_gia_tri/BaoCaoTGT_DataContextFilter';
-
+import { useMemo } from 'react'; // Import thêm useMemo
 const PageBCNhatKySuDungTGTTGT: FC<{
     onChangePage: (currentPage: number) => void;
     onChangePageSize: (pageSize: number) => void;
-}> = ({ onChangePage, onChangePageSize }) => {
+    maKhachHang?: string;
+    onUpdateBalance?: (balance: number) => void;
+}> = ({ onChangePage, onChangePageSize, maKhachHang, onUpdateBalance }) => {
     const dataFilterContext = useContext(BaoCaoTGT_DataContextFilter);
     const [pageDataBCNhatKySuDungTGT, setPageDataBCNhatKySuDungTGT] = useState<PagedResultDto<IBaocaoNhatKySuDungTGT>>({
         items: [],
         totalCount: 0,
         totalPage: 0
     });
+
+    const totals = useMemo(() => {
+        const initialTotals = { giaTriDieuChinh: 0, phatSinhTang: 0, phatSinhGiam: 0 };
+        const calculatedTotals = pageDataBCNhatKySuDungTGT.items.reduce((acc, item) => {
+            acc.giaTriDieuChinh += item.gtriDieuChinh ?? 0;
+            acc.phatSinhTang += item.phatSinhTang ?? 0;
+            acc.phatSinhGiam += item.phatSinhGiam ?? 0;
+            return acc;
+        }, initialTotals);
+        return {
+            ...calculatedTotals,
+            soDu: calculatedTotals.phatSinhTang - calculatedTotals.phatSinhGiam // Tính số dư
+        };
+    }, [pageDataBCNhatKySuDungTGT.items]);
+    useEffect(() => {
+        if (onUpdateBalance) {
+            onUpdateBalance(totals.soDu);
+        }
+    }, [totals.soDu, onUpdateBalance]);
 
     useEffect(() => {
         if (dataFilterContext.loaiBaoCao === parseInt(LoaiBaoCao.CHI_TIET)) {
@@ -42,17 +63,24 @@ const PageBCNhatKySuDungTGTTGT: FC<{
         dataFilterContext?.filter?.fromDate,
         dataFilterContext?.filter?.toDate,
         dataFilterContext?.filter?.idChiNhanhs,
-        dataFilterContext?.filter?.idLoaiChungTus
+        dataFilterContext?.filter?.idLoaiChungTus,
+        dataFilterContext?.filter?.textSearch
     ]);
 
     const GetNhatKySuDungTGT = async () => {
-        const data = await BaoCaoTGTService.GetNhatKySuDungTGT(dataFilterContext.filter);
+        const updatedFilter = {
+            ...dataFilterContext.filter,
+            textSearch: maKhachHang || dataFilterContext.filter.textSearch
+        };
+
+        const data = await BaoCaoTGTService.GetNhatKySuDungTGT(updatedFilter);
+
         if (data !== null) {
             setPageDataBCNhatKySuDungTGT({
                 ...pageDataBCNhatKySuDungTGT,
-                items: data?.items,
-                totalCount: data?.totalCount ?? 0,
-                totalPage: Math.ceil((data?.totalCount ?? 0) / (dataFilterContext?.filter?.pageSize ?? 10))
+                items: data.items,
+                totalCount: data.totalCount,
+                totalPage: Math.ceil(data.totalCount / (updatedFilter.pageSize ?? 10))
             });
         } else {
             setPageDataBCNhatKySuDungTGT({
@@ -135,15 +163,29 @@ const PageBCNhatKySuDungTGTTGT: FC<{
                                             </TableRow>
                                         </TableBody>
                                     ))}
-                                    {pageDataBCNhatKySuDungTGT?.totalCount === 0 && (
-                                        <TableFooter>
+                                    <TableFooter>
+                                        <TableRow>
+                                            <TableCell colSpan={6} align="left" style={{ fontWeight: 700 }}>
+                                                Tổng cộng:
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {new Intl.NumberFormat('vi-VN').format(totals.giaTriDieuChinh)}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {new Intl.NumberFormat('vi-VN').format(totals.phatSinhTang)}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {new Intl.NumberFormat('vi-VN').format(totals.phatSinhGiam)}
+                                            </TableCell>
+                                        </TableRow>
+                                        {pageDataBCNhatKySuDungTGT?.totalCount === 0 && (
                                             <TableRow className="table-empty">
                                                 <TableCell colSpan={20} align="center">
                                                     Báo cáo không có dữ liệu
                                                 </TableCell>
                                             </TableRow>
-                                        </TableFooter>
-                                    )}
+                                        )}
+                                    </TableFooter>
                                 </Table>
                             </TableContainer>
                         </Box>
@@ -161,4 +203,5 @@ const PageBCNhatKySuDungTGTTGT: FC<{
         </>
     );
 };
+
 export default PageBCNhatKySuDungTGTTGT;

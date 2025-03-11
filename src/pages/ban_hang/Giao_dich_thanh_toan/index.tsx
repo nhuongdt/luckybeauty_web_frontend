@@ -41,7 +41,8 @@ import { TrangThaiHoaDon } from '../../../services/ban_hang/HoaDonConst';
 import suggestStore from '../../../stores/suggestStore';
 import uploadFileService from '../../../services/uploadFileService';
 import ButtonOnlyIcon from '../../../components/Button/ButtonOnlyIcon';
-
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
     const firstLoad = useRef(true);
@@ -65,8 +66,8 @@ const GiaoDichThanhToan: React.FC = () => {
         pageSize: AppConsts.pageOption[0].value,
         columnSort: 'NgayLapHoaDon',
         typeSort: 'DESC',
-        fromDate: format(today, 'yyyy-MM-01'),
-        toDate: format(lastDayOfMonth(today), 'yyyy-MM-dd'),
+        fromDate: null,
+        toDate: null,
         trangThais: [TrangThaiHoaDon.HOAN_THANH]
     });
 
@@ -356,6 +357,30 @@ const GiaoDichThanhToan: React.FC = () => {
             )
         },
         {
+            field: 'maKhachHang',
+            headerName: 'Mã khách hàng',
+            minWidth: 100,
+            flex: 0.8,
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+            renderCell: (params: any) => (
+                <Box component="span" title={params.value}>
+                    {params.value}
+                </Box>
+            )
+        },
+        {
+            field: 'soDienThoai',
+            headerName: 'Điện thoại',
+            minWidth: 80,
+            flex: 1.5,
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+            renderCell: (params: any) => (
+                <Box title={params.value} component="span" textOverflow={'ellipsis'}>
+                    {params.value}
+                </Box>
+            )
+        },
+        {
             field: 'tenKhachHang',
             headerName: 'Tên khách hàng',
             minWidth: 140,
@@ -456,6 +481,45 @@ const GiaoDichThanhToan: React.FC = () => {
                     {params.value}
                 </Box>
             )
+        },
+        {
+            field: 'actions',
+            headerAlign: 'center',
+            align: 'center',
+            headerName: '',
+            minWidth: 150,
+            flex: 1,
+            renderCell: (params: any) => {
+                return (
+                    <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
+                        <VisibilityOutlinedIcon
+                            style={{ cursor: 'pointer' }}
+                            sx={{
+                                fontSize: '18px',
+                                color: '#9e9e9e',
+                                '&:hover': {
+                                    color: '#757575'
+                                }
+                            }}
+                            onClick={() => choseRow(params)} // Gọi hàm khi click
+                            titleAccess="Xem chi tiết"
+                        />
+
+                        {/* <DeleteOutlinedIcon
+                            style={{ cursor: 'pointer' }}
+                            sx={{
+                                fontSize: '18px',
+                                color: '#9e9e9e',
+                                '&:hover': {
+                                    color: '#f44336'
+                                }
+                            }}
+                            titleAccess="Xóa"
+                            // onClick={() => handleDelete(params.row)} // Thay bằng hàm xử lý của bạn
+                        /> */}
+                    </Stack>
+                );
+            }
         }
     ];
 
@@ -628,7 +692,7 @@ const GiaoDichThanhToan: React.FC = () => {
                         rows={pageDataHoaDon.items}
                         hideFooter
                         checkboxSelection
-                        onRowClick={(item) => choseRow(item)}
+                        // onRowClick={(item) => choseRow(item)}
                         localeText={TextTranslate}
                         onRowSelectionModelChange={(newRowSelectionModel) => {
                             setRowSelectionModel(newRowSelectionModel);

@@ -16,7 +16,7 @@ import {
     DialogContent
 } from '@mui/material';
 import closeIcon from '../../../images/close-square.svg';
-import React from 'react';
+import React, { forwardRef, useState } from 'react';
 import { Form, Formik } from 'formik';
 import khachHangService from '../../../services/khach-hang/khachHangService';
 import AppConsts from '../../../lib/appconst';
@@ -36,8 +36,14 @@ import ZaloService from '../../../services/zalo/ZaloService';
 import { IInforUserZOA, IMemberZOA, ZaloAuthorizationDto } from '../../../services/zalo/zalo_dto';
 import AutocompleteWithData from '../../../components/Autocomplete/AutocompleteWithData';
 import { IDataAutocomplete } from '../../../services/dto/IDataAutocomplete';
-import { KhachHangDto } from '../../../services/khach-hang/dto/KhachHangDto';
-
+import { MenuItem, FormControl, InputLabel, Select, IconButton, Popover } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+// import InputMask from 'react-input-mask';
+import { format, parse } from 'date-fns';
+// import ReactInputMask from 'react-input-mask';
+// import { Calendar } from 'primereact/calendar';
+import DateInputWithMask from '../../../components/DatetimePicker/DateInputWithMask';
 export interface ICreateOrEditCustomerProps {
     visible: boolean;
     onCancel: () => void;
@@ -54,7 +60,11 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
         fileImage: {} as File,
         ZOA_allUser: [] as IInforUserZOA[],
         ZOA_userChosed: {} as IInforUserZOA,
-        zaloToken: {} as ZaloAuthorizationDto
+        zaloToken: {} as ZaloAuthorizationDto,
+        dateFormat: 'dd/MM/yyyy', // Giá trị mặc định
+        day: '',
+        month: '',
+        year: ''
     };
     async getSuggest() {
         await suggestStore.getSuggestNguonKhach();
@@ -129,10 +139,28 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
             };
         });
     };
+    handleDateFormatChange = (value: string) => {
+        this.setState({ dateFormat: value });
+    };
 
+    handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        this.setState({ [name]: value });
+    };
+
+    openPopover = (event: React.MouseEvent<HTMLElement>) => {
+        this.setState({ anchorEl: event.currentTarget });
+    };
+
+    closePopover = () => {
+        this.setState({ anchorEl: null });
+    };
     render(): ReactNode {
         const { visible, onCancel, title, onOk, formRef } = this.props;
         const initValues: CreateOrEditKhachHangDto = formRef;
+        const { dateFormat, day, month, year } = this.state;
+        // const [date, setDate] = useState(null);
+
         return (
             <Dialog open={visible} onClose={onCancel} maxWidth="sm" fullWidth>
                 <DialogTitle className="modal-title">{title}</DialogTitle>
@@ -323,13 +351,14 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 sx={{ fontSize: '13px' }}
                                                 onChange={handleChange}
                                                 customInput={TextField}
+                                                allowLeadingZeros
                                             />
                                         </Grid>
-                                        <Grid item sm={6} xs={12}>
+                                        {/* <Grid item sm={6} xs={12}>
                                             <DatePickerRequiredCustom
                                                 props={{
                                                     width: '100%',
-                                                    label: 'Ngày sinh',
+                                                    label: 'Ngày sinhs',
                                                     size: 'small'
                                                 }}
                                                 defaultVal={
@@ -341,7 +370,94 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                     values.ngaySinh = new Date(dt);
                                                 }}
                                             />
+                                        </Grid> */}
+                                        {/* <div className="card flex justify-content-center">
+                                            <Calendar
+                                                value={date}
+                                                onChange={() => setDate(null)}
+                                                dateFormat="dd/mm/yy"
+                                            />
+                                        </div> */}
+                                        {/* <Grid container spacing={3}>
+                                            <Grid item xs={12}>
+                                                <Typography variant="h6">Chọn định dạng ngày tháng</Typography>
+                                                <Button
+                                                    variant={dateFormat === 'dd/MM/yyyy' ? 'contained' : 'outlined'}
+                                                    onClick={(e) => this.handleDateFormatChange('dd/MM/yyyy')}>
+                                                    Ngày/Tháng/Năm
+                                                </Button>
+                                                <Button
+                                                    variant={dateFormat === 'dd/MM' ? 'contained' : 'outlined'}
+                                                    onClick={(e) => this.handleDateFormatChange('dd/MM')}
+                                                    style={{ marginLeft: '8px' }}>
+                                                    Ngày/Tháng
+                                                </Button>
+                                            </Grid>
+
+                                            <DialogContent>
+                                                <Grid container spacing={3} style={{ marginTop: '16px' }}>
+                                                    <Grid item xs={4}>
+                                                        <TextField
+                                                            fullWidth
+                                                            label="Ngày"
+                                                            name="day"
+                                                            value={day}
+                                                            onChange={this.handleInputChange}
+                                                            inputProps={{
+                                                                maxLength: 2,
+                                                                style: { textAlign: 'center' }
+                                                            }}
+                                                            variant="outlined"
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={4}>
+                                                        <TextField
+                                                            fullWidth
+                                                            label="Tháng"
+                                                            name="month"
+                                                            value={month}
+                                                            onChange={this.handleInputChange}
+                                                            inputProps={{
+                                                                maxLength: 2,
+                                                                style: { textAlign: 'center' }
+                                                            }}
+                                                            variant="outlined"
+                                                        />
+                                                    </Grid>
+                                                    {dateFormat === 'dd/MM/yyyy' && (
+                                                        <Grid item xs={4}>
+                                                            <TextField
+                                                                fullWidth
+                                                                label="Năm"
+                                                                name="year"
+                                                                value={year}
+                                                                onChange={this.handleInputChange}
+                                                                inputProps={{
+                                                                    maxLength: 4,
+                                                                    style: { textAlign: 'center' }
+                                                                }}
+                                                                variant="outlined"
+                                                            />
+                                                        </Grid>
+                                                    )}
+                                                </Grid>
+                                            </DialogContent>
+                                        </Grid> */}
+                                        <Grid item sm={6} xs={12}>
+                                            <DateInputWithMask
+                                                label="Ngày sinh"
+                                                formatType="dd/MM/yyyy"
+                                                value={
+                                                    values.ngaySinh
+                                                        ? formatDate(new Date(values.ngaySinh), 'dd/MM/yyyy')
+                                                        : ''
+                                                }
+                                                onChange={(date) => {
+                                                    values.ngaySinh = new Date(date);
+                                                }}
+                                            />
                                         </Grid>
+
                                         <Grid item xs={12}>
                                             <TextField
                                                 type="text"
@@ -403,7 +519,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 fullWidth
                                                 disablePortal
                                                 onChange={(event, value) => {
-                                                    setFieldValue('idNguonKhach', value ? value.id : undefined); // Update the 'idNguonKhach' value in Formik
+                                                    setFieldValue('idNguonKhach', value ? value.id : undefined);
                                                 }}
                                                 renderInput={(params) => (
                                                     <TextField

@@ -23,6 +23,8 @@
         "@typescript-eslint/no-unused-vars": "warn", // Warn for unused variables instead of error
         "no-unused-vars": "off", //
         "no-undef": "off",
-        "@typescript-eslint/no-var-requires": "off"
+        "@typescript-eslint/no-var-requires": "off",
+        "react/prop-types": "off" // Vô hiệu hóa kiểm tra prop-types
+
     }
 }

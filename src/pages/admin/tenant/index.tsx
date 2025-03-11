@@ -367,6 +367,77 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                 renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
             },
             {
+                field: 'inactiveDays',
+                headerName: 'Chưa hoạt động',
+                headerAlign: 'center',
+                align: 'center',
+                minWidth: 112,
+                flex: 0.8,
+                renderCell: (params) => {
+                    const lastActivityDate = params.row.lastActivityTime;
+                    if (lastActivityDate != null) {
+                        const lastActivity = new Date(lastActivityDate);
+                        const currentDate = new Date();
+                        if (!isNaN(lastActivity.getTime())) {
+                            const currentDateOnly = new Date(
+                                currentDate.getFullYear(),
+                                currentDate.getMonth(),
+                                currentDate.getDate()
+                            );
+                            const lastActivityDateOnly = new Date(
+                                lastActivity.getFullYear(),
+                                lastActivity.getMonth(),
+                                lastActivity.getDate()
+                            );
+                            const diffDays = Math.ceil(
+                                (currentDateOnly.getTime() - lastActivityDateOnly.getTime()) / (1000 * 60 * 60 * 24)
+                            );
+                            return (
+                                <Box
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        width: '100%'
+                                    }}>
+                                    <Typography variant="body2" fontSize="var(--font-size-main)">
+                                        {diffDays} ngày
+                                    </Typography>
+                                </Box>
+                            );
+                        } else {
+                            return (
+                                <Box
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        width: '100%'
+                                    }}>
+                                    <Typography variant="body2" fontSize="var(--font-size-main)">
+                                        Ngày hoạt động không hợp lệ
+                                    </Typography>
+                                </Box>
+                            );
+                        }
+                    }
+                    return (
+                        <Box
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '100%'
+                            }}>
+                            <Typography variant="body2" fontSize="var(--font-size-main)">
+                                Không có dữ liệu
+                            </Typography>
+                        </Box>
+                    ); // Nếu không có ngày hoạt động gần nhất
+                },
+                renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+            },
+            {
                 field: 'action',
                 headerName: 'Hành động',
                 maxWidth: 60,

@@ -10,12 +10,7 @@ const HotServicesNew: React.FC = () => {
     };
 
     const CustomTooltip = ({ payload, label }: any) => {
-        // Hàm định dạng số với dấu chấm
-        console.log('payload ', payload);
-
-        if (!payload || payload.length === 0) return null; // Tránh hiển thị khi không có dữ liệu
-
-        // Lấy giá trị từ payload và định dạng nó
+        if (!payload || payload.length === 0) return null;
         const value = payload[0].value;
         const color = payload[0].color;
 

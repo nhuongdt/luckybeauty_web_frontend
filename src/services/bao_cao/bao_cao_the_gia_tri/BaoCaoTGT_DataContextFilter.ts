@@ -15,7 +15,7 @@ export const BaoCaoTGT_DataContextFilter = createContext<IBaoCaoTGT_DataContextF
         textSearch: '',
         currentPage: 0,
         pageSize: 10,
-        fromDate: format(startOfMonth(new Date()), 'yyyy-MM-01'),
-        toDate: format(lastDayOfMonth(new Date()), 'yyyy-MM-dd')
+        fromDate: format(new Date('2000-01-01'), 'yyyy-MM-dd') as unknown as undefined,
+        toDate: format(new Date(), 'yyyy-MM-dd') as unknown as undefined
     } as ParamSearchBaoCaoTGT
 });

@@ -137,16 +137,8 @@ const TinNhanPage = () => {
             renderCell: (params) => <CellDate date={params?.value} dateType="dd/MM/yyyy HH:mm" />
         },
         {
-            field: 'tenKhachHang',
-            headerName: 'Khách hàng',
-            minWidth: 118,
-            flex: 1,
-            renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
-            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
-        },
-        {
             field: 'soDienThoai',
-            headerName: 'Số điện thoại',
+            headerName: 'Điện thoại',
             headerAlign: 'center',
             minWidth: 118,
             flex: 0.5,
@@ -156,6 +148,14 @@ const TinNhanPage = () => {
                     {params.value}
                 </Box>
             )
+        },
+        {
+            field: 'tenKhachHang',
+            headerName: 'Khách hàng',
+            minWidth: 118,
+            flex: 1,
+            renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
+            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
         {
             field: 'loaiTin',
@@ -610,15 +610,8 @@ const TinNhanPage = () => {
             case ConstTabActive.GIAO_DICH:
                 arr = [
                     {
-                        field: 'tenKhachHang',
-                        headerName: 'Khách hàng',
-                        flex: 1.5,
-                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
-                        renderCell: (params) => <Box title={params.value}>{params.value}</Box>
-                    },
-                    {
                         field: 'soDienThoai',
-                        headerName: 'Số điện thoại',
+                        headerName: 'Điện thoại',
                         headerAlign: 'center',
                         flex: 1,
                         renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
@@ -627,6 +620,13 @@ const TinNhanPage = () => {
                                 {params.value}
                             </Box>
                         )
+                    },
+                    {
+                        field: 'tenKhachHang',
+                        headerName: 'Khách hàng',
+                        flex: 1.5,
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
+                        renderCell: (params) => <Box title={params.value}>{params.value}</Box>
                     },
                     {
                         field: 'maHoaDon',
@@ -670,15 +670,8 @@ const TinNhanPage = () => {
             case ConstTabActive.LICH_HEN:
                 arr = [
                     {
-                        field: 'tenKhachHang',
-                        headerName: 'Khách hàng',
-                        flex: 1.2,
-                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
-                        renderCell: (params) => <Box title={params.value}>{params.value}</Box>
-                    },
-                    {
                         field: 'soDienThoai',
-                        headerName: 'Số điện thoại',
+                        headerName: 'Điện thoại',
                         headerAlign: 'center',
                         flex: 0.8,
                         renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
@@ -687,6 +680,13 @@ const TinNhanPage = () => {
                                 {params.value}
                             </Box>
                         )
+                    },
+                    {
+                        field: 'tenKhachHang',
+                        headerName: 'Khách hàng',
+                        flex: 1.2,
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
+                        renderCell: (params) => <Box title={params.value}>{params.value}</Box>
                     },
 
                     {
@@ -742,15 +742,8 @@ const TinNhanPage = () => {
             case ConstTabActive.SINH_NHAT:
                 arr = [
                     {
-                        field: 'tenKhachHang',
-                        headerName: 'Khách hàng',
-                        flex: 2,
-                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
-                        renderCell: (params) => <Box title={params.value}>{params.value}</Box>
-                    },
-                    {
                         field: 'soDienThoai',
-                        headerName: 'Số điện thoại',
+                        headerName: 'Điện thoại',
                         headerAlign: 'center',
                         flex: 1,
                         renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
@@ -759,6 +752,13 @@ const TinNhanPage = () => {
                                 {params.value}
                             </Box>
                         )
+                    },
+                    {
+                        field: 'tenKhachHang',
+                        headerName: 'Khách hàng',
+                        flex: 2,
+                        renderHeader: (params) => <Box>{params?.colDef?.headerName}</Box>,
+                        renderCell: (params) => <Box title={params.value}>{params.value}</Box>
                     },
 
                     {

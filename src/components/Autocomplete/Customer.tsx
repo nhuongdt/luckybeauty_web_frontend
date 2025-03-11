@@ -44,6 +44,7 @@ export default function AutocompleteCustomer(props: IPropAutoComplete) {
                 avatar: data?.avatar ?? '',
                 diaChi: data?.diaChi ?? '',
                 tongTichDiem: data?.tongTichDiem ?? 0,
+                ngaySinh: new Date(),
                 cuocHenGanNhat: new Date()
             };
             setCusChosed(cusItem);

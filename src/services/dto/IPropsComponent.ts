@@ -24,6 +24,7 @@ export interface IPropModal<T> {
     isNew?: boolean;
     idUpdate?: string;
     isShowModal: boolean;
+    maKhachHang?: string;
     lstData?: T[];
     objUpDate?: T;
     onClose: () => void;

@@ -12,14 +12,7 @@ import { FontBackgroundColor, FontColor, FontFamily, FontSize } from '@ckeditor/
 import { Heading } from '@ckeditor/ckeditor5-heading';
 import { HorizontalLine } from '@ckeditor/ckeditor5-horizontal-line';
 import { GeneralHtmlSupport } from '@ckeditor/ckeditor5-html-support';
-import {
-    AutoImage,
-    ImageInline,
-    ImageInsert,
-    ImageStyle,
-    ImageToolbar,
-    ImageUpload
-} from '@ckeditor/ckeditor5-image';
+import { AutoImage, ImageInline, ImageInsert, ImageStyle, ImageToolbar, ImageUpload } from '@ckeditor/ckeditor5-image';
 import { Link } from '@ckeditor/ckeditor5-link';
 import { List, ListProperties, TodoList } from '@ckeditor/ckeditor5-list';
 import { PageBreak } from '@ckeditor/ckeditor5-page-break';
@@ -131,21 +124,10 @@ class Editor extends ClassicEditor {
         },
         language: 'en',
         image: {
-            toolbar: [
-                'imageStyle:inline',
-                'imageStyle:block',
-                'imageStyle:side',
-                'imageTextAlternative'
-            ]
+            toolbar: ['imageStyle:inline', 'imageStyle:block', 'imageStyle:side', 'imageTextAlternative']
         },
         table: {
-            contentToolbar: [
-                'tableColumn',
-                'tableRow',
-                'mergeTableCells',
-                'tableCellProperties',
-                'tableProperties'
-            ]
+            contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableCellProperties', 'tableProperties']
         }
     };
 }

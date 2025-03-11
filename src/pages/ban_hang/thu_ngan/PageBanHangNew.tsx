@@ -184,8 +184,6 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             maxResultCount: 100
         } as PagedNhanSuRequestDto);
         setAllNhanVien([...data.items]);
-
-        // await cassoApiService.TaoWebhook();
     };
 
     const GetAllMauIn_byChiNhanh = async () => {
@@ -295,7 +293,6 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             isFirstRender.current = false;
         }
         PageLoad();
-        console.log('pagebanHang ');
     }, []);
 
     useEffect(() => {
@@ -803,7 +800,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
             ...hoadon,
             idCheckIn: cusChecking?.idCheckIn,
             idKhachHang: cusChecking?.idKhachHang as unknown as null,
-            maKhachHang: cusChecking?.maKhachHang,
+            maKhachHang: cusChecking?.maKhachHang ?? '',
             tenKhachHang: cusChecking?.tenKhachHang,
             soDienThoai: cusChecking?.soDienThoai
         });
@@ -849,7 +846,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                         idChiNhanh: idChiNhanh,
                         idCheckIn: dataCheckIn?.idCheckIn,
                         idKhachHang: dataCheckIn?.idKhachHang,
-                        maKhachHang: dataCheckIn?.maKhachHang,
+                        maKhachHang: dataCheckIn?.maKhachHang ?? '',
                         tenKhachHang: dataCheckIn?.tenKhachHang ?? 'Khách lẻ',
                         soDienThoai: dataCheckIn?.soDienThoai,
                         hoaDonChiTiet: []
@@ -875,7 +872,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                             idChiNhanh: idChiNhanh,
                             idCheckIn: dataCheckIn?.idCheckIn,
                             idKhachHang: dataCheckIn?.idKhachHang,
-                            maKhachHang: dataCheckIn?.maKhachHang,
+                            maKhachHang: dataCheckIn?.maKhachHang ?? '',
                             tenKhachHang: dataCheckIn?.tenKhachHang ?? 'Khách lẻ',
                             soDienThoai: dataCheckIn?.soDienThoai
                         };
@@ -917,7 +914,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                         id: data[0].id, // vì sau khi booking, đã gán lại id mới cho hóa đơn
                         idKhachHang: dataCheckIn?.idKhachHang,
                         idCheckIn: dataCheckIn?.idCheckIn,
-                        maKhachHang: dataCheckIn?.maKhachHang,
+                        maKhachHang: dataCheckIn?.maKhachHang ?? '',
                         soDienThoai: dataCheckIn?.soDienThoai,
                         tenKhachHang: dataCheckIn?.tenKhachHang,
                         tongTienHang: data[0].tongTienHang,
@@ -932,7 +929,7 @@ const PageBanHang = ({ customerChosed, horizontalLayout }: any) => {
                         id: Guid.create().toString(), // create new hd
                         idKhachHang: dataCheckIn?.idKhachHang,
                         idCheckIn: dataCheckIn?.idCheckIn,
-                        maKhachHang: dataCheckIn?.maKhachHang,
+                        maKhachHang: dataCheckIn?.maKhachHang ?? '',
                         soDienThoai: dataCheckIn?.soDienThoai,
                         tenKhachHang: dataCheckIn?.tenKhachHang,
                         tongTienHang: 0,

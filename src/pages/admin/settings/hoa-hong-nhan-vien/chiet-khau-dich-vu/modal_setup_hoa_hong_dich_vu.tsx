@@ -10,7 +10,8 @@ import {
     DialogTitle,
     Button,
     DialogActions,
-    Pagination
+    Pagination,
+    Typography
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import utils from '../../../../../utils/utils';
@@ -28,6 +29,7 @@ import Cookies from 'js-cookie';
 import { Guid } from 'guid-typescript';
 import AppConsts, { LoaiHoaHongDichVu } from '../../../../../lib/appconst';
 import { LabelDisplayedRows } from '../../../../../components/Pagination/LabelDisplayedRows';
+import GroupProductService from '../../../../../services/product/GroupProductService';
 
 export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNhanVien, onClose, onSaveOK }: any) {
     const [txtSearchNV, setTxtSearchNV] = useState('');
@@ -35,6 +37,7 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
     const [totalPage, setTotalPage] = useState(1);
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
     const [listProduct, setListProduct] = useState<ModelHangHoaDto[]>([]);
+    const [listProductAll, setListProductAll] = useState<ModelHangHoaDto[]>([]);
     const [arrIdQuyDoiChosed, setArrIdQuyDoiChosed] = useState<string[]>([]);
     const [arrIdNhanVienChosed, setArrIdNhanVienChosed] = useState<string[]>([]);
 
@@ -115,10 +118,28 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
     const GetDanhMucHangHoa = async (input = '') => {
         const param = { ...paramSearch };
         param.textSearch = input;
+
         const data = await ProductService.Get_DMHangHoa(param);
-        setListProduct(data.items);
+        setListProduct(data.items); // Dữ liệu phân trang
+        const allData = await fetchAllProducts();
+        setListProductAll(allData); // Dữ liệu phân trang
         setTotalCount(data?.totalCount);
-        setTotalPage(Math.ceil(data?.totalCount / (paramSearch?.pageSize ?? 10)));
+        setTotalPage(Math.ceil(data?.totalCount / (paramSearch?.pageSize ?? 10))); // Cung cấp giá trị mặc định cho pageSize nếu undefined
+    };
+
+    const fetchAllProducts = async (): Promise<ModelHangHoaDto[]> => {
+        const param = { ...paramSearch, pageSize: 10000 }; // Đặt pageSize lớn để lấy tất cả dữ liệu trong một lần
+        const data = await ProductService.Get_DMHangHoa(param);
+
+        return data.items; // Trả về tất cả các items trong lần gọi này
+    };
+    const [data, setData] = useState<any[]>([]); // State để lưu danh sách nhóm hàng
+    const GetNhomDichVu = async () => {
+        const response = await GroupProductService.GetDM_NhomHangHoa();
+        // console.log('Dữ liệu nhóm hàng:', response);
+        if (response && response.items) {
+            setData(response.items); // Cập nhật dữ liệu nhóm hàng vào state
+        }
     };
 
     useEffect(() => {
@@ -127,6 +148,7 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
 
     useEffect(() => {
         GetDanhMucHangHoa();
+        GetNhomDichVu();
     }, [paramSearch?.currentPage]);
 
     const NVien_changeCheckAll = () => {
@@ -176,8 +198,7 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
     const Product_changeCheckAll = () => {
         const gtriNew = !checkAllProdcuct;
         setCheckAllProdcuct(!checkAllProdcuct);
-
-        const arrIdQuyDoiNew = listProduct.map((x) => {
+        const arrIdQuyDoiNew = listProductAll.map((x) => {
             return x.idDonViQuyDoi as string;
         });
         if (gtriNew) {
@@ -187,6 +208,27 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
             setArrIdQuyDoiChosed(arrIdQuyDoiChosed.filter((x) => !arrIdQuyDoiNew.includes(x)));
         }
     };
+    const Product_changeCheckByGroup = (groupId: string) => {
+        console.log('id chuyền vào', groupId);
+
+        // Lọc các sản phẩm trong nhóm được chọn
+        const productsInGroup = listProductAll.filter((product) => product.idNhomHangHoa === groupId);
+        const arrIdQuyDoiInGroup = productsInGroup.map((x) => x.idDonViQuyDoi as string);
+
+        console.log('mảng dữ liệu', arrIdQuyDoiInGroup);
+
+        const gtriNew = !arrIdQuyDoiChosed.some((id) => arrIdQuyDoiInGroup.includes(id)); // Kiểm tra trạng thái chọn nhóm
+
+        if (gtriNew) {
+            // Thêm các id sản phẩm của nhóm vào danh sách đã chọn
+            const arrAddIdUnique = Array.from(new Set([...arrIdQuyDoiChosed, ...arrIdQuyDoiInGroup]));
+            setArrIdQuyDoiChosed(arrAddIdUnique);
+        } else {
+            // Nếu bỏ chọn nhóm, loại bỏ các sản phẩm trong nhóm khỏi danh sách đã chọn
+            setArrIdQuyDoiChosed(arrIdQuyDoiChosed.filter((x) => !arrIdQuyDoiInGroup.includes(x)));
+        }
+    };
+
     const Product_changeCheckOne = (product: ModelHangHoaDto) => {
         const idQuyDoi = product.idDonViQuyDoi as string;
         // check exist  in list chosed
@@ -211,20 +253,11 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
     };
 
     const saveSetup = async () => {
-        // if (arrIdNhanVienChosed.length === 0) {
-        //     setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng chọn nhân viên áp dụng' });
-        //     return;
-        // }
-        // form này chỉ chọn dịch vụ
         if (arrIdQuyDoiChosed.length === 0) {
             setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng chọn dịch vụ áp dụng', type: 2 });
             return;
         }
-        // if (objHoaHongThucHien.giaTri === 0) {
-        //     setObjAlert({ ...objAlert, show: true, mes: 'Vui lòng nhập giá trị hoa hồng', type: 2 });
-        //     return;
-        // }
-        // todo check NVien has setup dichvu (check DB)
+
         if (isSaving) return;
         setIsSaving(true);
 
@@ -238,17 +271,7 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
             laPhanTram: objHoaHongThucHien.laPhanTram
         } as ChietKhauDichVuDto_AddMultiple;
         const dataTH = await chietKhauDichVuService.AddMultiple_ChietKhauDichVu_toMultipleNhanVien(paramThucHien);
-
-        // chỉ cài NV thực hiện
-        // const paramTuVan = {
-        //     idChiNhanh: idChiNhanh,
-        //     idNhanViens: arrIdNhanVienChosed,
-        //     idDonViQuyDois: arrIdQuyDoiChosed,
-        //     loaiChietKhau: objHoaHongTuVan.loaiChietKhau,
-        //     giaTri: objHoaHongTuVan.giaTri,
-        //     laPhanTram: objHoaHongTuVan.laPhanTram
-        // } as ChietKhauDichVuDto_AddMultiple;
-        // await chietKhauDichVuService.AddMultiple_ChietKhauDichVu_toMultipleNhanVien(paramTuVan);
+        // const dataTHV2 = await chietKhauDichVuService.AddMultiple_ChietKhauDichVu_toMultipleNhanVienV2(paramThucHien);
 
         setIsSaving(false);
         if (dataTH === 0) {
@@ -280,21 +303,21 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
                 </DialogTitle>
                 <DialogContent sx={{ paddingTop: '16px!important' }}>
                     <Grid container spacing={2}>
-                        {/* bỏ: phần chọn NV: chọn theo từng NV ở bên ngoài */}
-                        <Grid item xs={12} md={3} lg={3} style={{ display: 'none' }}>
+                        {/* Cột 1: Checkbox để chọn nhóm */}
+                        <Grid item xs={12} md={3} lg={3}>
                             <Stack>
-                                <TextField
-                                    size="small"
-                                    fullWidth
-                                    label="Tìm nhân viên"
-                                    value={txtSearchNV}
-                                    onChange={(event) => {
-                                        setTxtSearchNV(event.target.value);
-                                    }}
-                                    InputProps={{
-                                        startAdornment: <Search />
-                                    }}
-                                />
+                                {/* Tiêu đề */}
+                                <Typography
+                                    variant="h6"
+                                    sx={{
+                                        fontWeight: 'bold',
+                                        marginBottom: 1,
+                                        textAlign: 'center',
+                                        backgroundColor: 'var(--color-bg-header)',
+                                        padding: '4px 0'
+                                    }}>
+                                    Chọn nhóm dịch vụ
+                                </Typography>
                                 <Stack
                                     justifyContent={'space-between'}
                                     direction={'row'}
@@ -302,44 +325,45 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
                                     alignItems={'center'}
                                     paddingRight={1}
                                     sx={{ backgroundColor: 'var(--color-bg)' }}>
-                                    <Stack direction={'row'} alignItems={'center'} onClick={NVien_changeCheckAll}>
-                                        <Checkbox value={checkAllNVien} checked={checkAllNVien} />
-                                        <span style={{ cursor: 'pointer' }}> Chọn tất cả</span>
-                                    </Stack>
-                                    <Stack style={{ cursor: 'pointer' }} onClick={NVien_clickBoChon}>
-                                        Bỏ chọn
+                                    <Stack direction={'row'} alignItems={'center'} onClick={Product_changeCheckAll}>
+                                        <Checkbox value={checkAllProdcuct} checked={checkAllProdcuct} />
+                                        <span style={{ cursor: 'pointer', fontWeight: 'bold' }}> Chọn tất cả nhóm</span>
                                     </Stack>
                                 </Stack>
-                                <Stack sx={{ overflow: 'auto', maxHeight: 400 }}>
-                                    {lstNhanVien?.map((nvien: NhanSuItemDto, index: number) => (
+
+                                {/* Danh sách nhóm dịch vụ */}
+                                <Stack sx={{ overflow: 'auto', maxHeight: 400, marginTop: 1 }}>
+                                    {data.map((item: any, index: number) => (
                                         <Stack
-                                            direction={'row'}
-                                            key={index}
+                                            direction="row"
+                                            alignItems="center"
+                                            key={item.id}
                                             sx={{
-                                                borderBottom: `1px dashed ${
-                                                    arrIdNhanVienChosed.includes(nvien.id) ? '#ff7171' : '#cccc'
-                                                }`,
+                                                borderBottom: '1px dashed #cccc',
                                                 padding: '6px',
-                                                backgroundColor: arrIdNhanVienChosed.includes(nvien.id)
-                                                    ? 'antiquewhite'
-                                                    : ''
+                                                marginBottom: '2px',
+                                                cursor: 'pointer',
+                                                fontWeight: 'bold'
                                             }}
-                                            onClick={() => NVien_changeCheckOne(nvien)}>
-                                            <Checkbox checked={arrIdNhanVienChosed.includes(nvien.id)} />
-                                            <Stack direction={'row'} spacing={1}>
-                                                <Stack justifyContent={'center'} spacing={1}>
-                                                    <Stack sx={{ fontSize: '14px' }}>{nvien?.tenNhanVien}</Stack>
-                                                    <Stack sx={{ fontSize: '12px', color: '#839bb1' }}>
-                                                        {nvien?.tenChucVu}
-                                                    </Stack>
-                                                </Stack>
-                                            </Stack>
+                                            onClick={() => Product_changeCheckByGroup(item.id)}>
+                                            <Checkbox
+                                                checked={arrIdQuyDoiChosed.some((id) =>
+                                                    listProductAll.some(
+                                                        (product) =>
+                                                            product.idNhomHangHoa === item.id &&
+                                                            product.idDonViQuyDoi === id
+                                                    )
+                                                )}
+                                            />
+                                            <span style={{ fontSize: '14px' }}>{item.tenNhomHang}</span>
                                         </Stack>
                                     ))}
                                 </Stack>
                             </Stack>
                         </Grid>
-                        <Grid item xs={12} md={12} lg={12}>
+
+                        {/* Cột 2: Tìm kiếm và danh sách dịch vụ */}
+                        <Grid item xs={12} md={9} lg={9}>
                             <Stack>
                                 <TextField
                                     size="small"
@@ -353,207 +377,49 @@ export default function ModalSetupHoaHongDichVu({ isShow, nhanVienChosed, allNha
                                         startAdornment: <Search />
                                     }}
                                 />
-
-                                <Stack
-                                    justifyContent={'space-between'}
-                                    direction={'row'}
-                                    fontSize={'13px'}
-                                    alignItems={'center'}
-                                    paddingRight={1}
-                                    sx={{ backgroundColor: 'var(--color-bg)' }}>
-                                    <Stack direction={'row'} alignItems={'center'} onClick={Product_changeCheckAll}>
-                                        <Checkbox value={checkAllProdcuct} checked={checkAllProdcuct} />
-                                        <span style={{ cursor: 'pointer' }}> Chọn tất cả</span>
-                                    </Stack>
-                                    <Stack style={{ cursor: 'pointer' }} onClick={Product_clickBoChon}>
-                                        <span>Bỏ chọn</span>
-                                    </Stack>
-                                </Stack>
-                            </Stack>
-
-                            <Stack sx={{ overflow: 'auto', maxHeight: 400 }}>
-                                {listProduct?.map((item: ModelHangHoaDto, index: number) => (
-                                    <Stack
-                                        direction={'row'}
-                                        justifyContent={'space-between'}
-                                        key={index}
-                                        padding={'8px 16px'}
-                                        // borderBottom={'1px dashed #cccc'}
-                                        alignItems={'center'}
-                                        sx={{
-                                            borderBottom: `1px dashed ${
-                                                arrIdQuyDoiChosed.includes(item?.idDonViQuyDoi as string)
-                                                    ? '#ff7171'
-                                                    : '#cccc'
-                                            }`,
-                                            padding: '6px',
-                                            backgroundColor: arrIdQuyDoiChosed.includes(item?.idDonViQuyDoi as string)
-                                                ? 'antiquewhite'
-                                                : ''
-                                        }}
-                                        onClick={() => Product_changeCheckOne(item)}>
-                                        <Stack direction={'row'}>
-                                            <Checkbox
-                                                checked={arrIdQuyDoiChosed.includes(item?.idDonViQuyDoi as string)}
-                                            />
-                                            <Stack spacing={1}>
-                                                <Stack sx={{ fontSize: '14px' }}>{item?.tenHangHoa}</Stack>
-                                                <Stack sx={{ fontStyle: 'italic', fontSize: '12px' }}>
-                                                    {item?.tenNhomHang}
+                                <Stack sx={{ overflow: 'auto', maxHeight: 400, marginTop: 2 }}>
+                                    {listProduct?.map((item: ModelHangHoaDto, index: number) => (
+                                        <Stack
+                                            direction="row"
+                                            justifyContent="space-between"
+                                            key={index}
+                                            sx={{
+                                                borderBottom: `1px dashed ${
+                                                    arrIdQuyDoiChosed.includes(item?.idDonViQuyDoi as string)
+                                                        ? '#ff7171'
+                                                        : '#cccc'
+                                                }`,
+                                                padding: '6px',
+                                                backgroundColor: arrIdQuyDoiChosed.includes(
+                                                    item?.idDonViQuyDoi as string
+                                                )
+                                                    ? 'antiquewhite'
+                                                    : ''
+                                            }}
+                                            onClick={() => Product_changeCheckOne(item)}>
+                                            <Stack direction="row">
+                                                <Checkbox
+                                                    checked={arrIdQuyDoiChosed.includes(item?.idDonViQuyDoi as string)}
+                                                />
+                                                <Stack spacing={1}>
+                                                    <Stack sx={{ fontSize: '14px' }}>{item?.tenHangHoa}</Stack>
+                                                    <Stack sx={{ fontStyle: 'italic', fontSize: '12px' }}>
+                                                        {item?.tenNhomHang}
+                                                    </Stack>
                                                 </Stack>
                                             </Stack>
-                                        </Stack>
 
-                                        <Stack sx={{ fontSize: '14px' }}>
-                                            {new Intl.NumberFormat('vi-VN').format(item?.giaBan as number)}
+                                            <Stack sx={{ fontSize: '14px' }}>
+                                                {new Intl.NumberFormat('vi-VN').format(item?.giaBan as number)}
+                                            </Stack>
                                         </Stack>
-                                    </Stack>
-                                ))}
+                                    ))}
+                                </Stack>
                             </Stack>
-                        </Grid>
-                        {/* bỏ cài đạt giá trị: nhập bên ngoài (sau khi thêm) */}
-                        <Grid
-                            item
-                            xs={12}
-                            md={3}
-                            lg={3}
-                            marginTop={'10%'}
-                            fontSize={'14px'}
-                            style={{ display: 'none' }}>
-                            <Grid container spacing={2} alignItems={'end'}>
-                                <Grid item xs={4}>
-                                    Thực hiện
-                                </Grid>
-                                <Grid item xs={8}>
-                                    <Stack direction={'row'} spacing={2}>
-                                        <NumericFormat
-                                            fullWidth
-                                            size="small"
-                                            variant="standard"
-                                            thousandSeparator={'.'}
-                                            decimalSeparator={','}
-                                            customInput={TextField}
-                                            InputProps={{
-                                                inputProps: {
-                                                    style: { textAlign: 'right' }
-                                                }
-                                            }}
-                                            isAllowed={(values) => {
-                                                const floatValue = values.floatValue;
-                                                if (objHoaHongThucHien.laPhanTram) return (floatValue ?? 0) <= 100; // neu %: khong cho phep nhap qua 100%
-                                                return true;
-                                            }}
-                                            onChange={(e) =>
-                                                setObjHoaHongThucHien({
-                                                    ...objHoaHongThucHien,
-                                                    giaTri: utils.formatNumberToFloat(e.target.value)
-                                                })
-                                            }
-                                            value={objHoaHongThucHien.giaTri}
-                                        />
-                                        {objHoaHongThucHien.laPhanTram ? (
-                                            <Avatar
-                                                style={{
-                                                    width: 25,
-                                                    height: 25,
-                                                    fontSize: '12px',
-                                                    backgroundColor: 'var(--color-main)'
-                                                }}
-                                                onClick={() =>
-                                                    setObjHoaHongThucHien({
-                                                        ...objHoaHongThucHien,
-                                                        laPhanTram: !objHoaHongThucHien.laPhanTram
-                                                    })
-                                                }>
-                                                %
-                                            </Avatar>
-                                        ) : (
-                                            <Avatar
-                                                style={{
-                                                    width: 25,
-                                                    height: 25,
-                                                    fontSize: '12px'
-                                                }}
-                                                onClick={() =>
-                                                    setObjHoaHongThucHien({
-                                                        ...objHoaHongThucHien,
-                                                        laPhanTram: !objHoaHongThucHien.laPhanTram
-                                                    })
-                                                }>
-                                                đ
-                                            </Avatar>
-                                        )}
-                                    </Stack>
-                                </Grid>
-                                <Grid item xs={4}>
-                                    Tư vấn
-                                </Grid>
-                                <Grid item xs={8}>
-                                    <Stack direction={'row'} spacing={1}>
-                                        <NumericFormat
-                                            fullWidth
-                                            size="small"
-                                            variant="standard"
-                                            thousandSeparator={'.'}
-                                            decimalSeparator={','}
-                                            customInput={TextField}
-                                            autoComplete="off"
-                                            InputProps={{
-                                                inputProps: {
-                                                    style: { textAlign: 'right' }
-                                                }
-                                            }}
-                                            isAllowed={(values) => {
-                                                const floatValue = values.floatValue;
-                                                if (objHoaHongTuVan.laPhanTram) return (floatValue ?? 0) <= 100; // neu %: khong cho phep nhap qua 100%
-                                                return true;
-                                            }}
-                                            onChange={(e) =>
-                                                setObjHoaHongTuVan({
-                                                    ...objHoaHongTuVan,
-                                                    giaTri: utils.formatNumberToFloat(e.target.value)
-                                                })
-                                            }
-                                            value={objHoaHongTuVan.giaTri}
-                                        />
-                                        {objHoaHongTuVan.laPhanTram ? (
-                                            <Avatar
-                                                style={{
-                                                    width: 25,
-                                                    height: 25,
-                                                    fontSize: '12px',
-                                                    backgroundColor: 'var(--color-main)'
-                                                }}
-                                                onClick={() =>
-                                                    setObjHoaHongTuVan({
-                                                        ...objHoaHongTuVan,
-                                                        laPhanTram: !objHoaHongTuVan.laPhanTram
-                                                    })
-                                                }>
-                                                %
-                                            </Avatar>
-                                        ) : (
-                                            <Avatar
-                                                style={{
-                                                    width: 25,
-                                                    height: 25,
-                                                    fontSize: '12px'
-                                                }}
-                                                onClick={() =>
-                                                    setObjHoaHongTuVan({
-                                                        ...objHoaHongTuVan,
-                                                        laPhanTram: !objHoaHongTuVan.laPhanTram
-                                                    })
-                                                }>
-                                                đ
-                                            </Avatar>
-                                        )}
-                                    </Stack>
-                                </Grid>
-                            </Grid>
                         </Grid>
                     </Grid>
                 </DialogContent>
+
                 <DialogActions sx={{ paddingBottom: '16px!important' }}>
                     <Grid container sx={{ paddingRight: '16px', paddingLeft: '24px' }}>
                         <Grid item xs={8}>

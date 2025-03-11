@@ -14,7 +14,6 @@ import { PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import HoaDonService from '../../services/ban_hang/HoaDonService';
 import SoQuyServices from '../../services/so_quy/SoQuyServices';
 import { Guid } from 'guid-typescript';
-import { LoaiChungTu, LoaiNhatKyThaoTac } from '../../lib/appconst';
 import { CreateNhatKyThaoTacDto } from '../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
 import nhatKyHoatDongService from '../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
 import { format } from 'date-fns';
@@ -33,10 +32,15 @@ import uploadFileService from '../../services/uploadFileService';
 import PaymentsForm from '../ban_hang/thu_ngan/PaymentsForm';
 import { FormNumber } from '../../enum/FormNumber';
 import abpCustom from '../../components/abp-custom';
+import ModalUpdatePhieuThuHoaDon from '../thu_chi/so_quy/components/modal_update_phieu_thu_hoa_don';
+import QuyHoaDonDto from '../../services/so_quy/QuyHoaDonDto';
+import { HoaDonRequestDto } from '../../services/dto/ParamSearchDto';
+import AppConsts, { DateType, LoaiChungTu, LoaiHoaHongHoaDon, LoaiNhatKyThaoTac, TypeAction } from '../../lib/appconst';
 
-const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: number }> = ({
+const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: number; updateTabKey: () => void }> = ({
     itemHD,
-    tongThanhToanNew
+    tongThanhToanNew,
+    updateTabKey // Nhận phương thức từ props
 }) => {
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
@@ -50,6 +54,8 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
     const [conNo, setConNo] = useState(0);
     const [isShowModalChangeCus, setIsShowModalChangeCus] = useState<boolean>(false);
     const [isShowModalThanhToan, setIsShowModalThanhToan] = useState<boolean>(false);
+    const [isShowModalThanhToan2, setIsShowModalThanhToan2] = useState(false);
+
     const [trangThaiHD, setTrangThaiHD] = useState<{
         trangThai: number;
         txtTrangThai: string;
@@ -65,8 +71,21 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
     const [confirmDialog, setConfirmDialog] = useState<PropConfirmOKCancel>({
         show: false,
         title: '',
-        type: 1, // 1.remove customer, 2.change tabhoadon
+        type: 1,
         mes: ''
+    });
+    const [paramSearch, setParamSearch] = useState<HoaDonRequestDto>({
+        textSearch: '',
+        idChiNhanhs: [chinhanh?.id],
+        idLoaiChungTus: [],
+        currentPage: 1,
+        pageSize: AppConsts.pageOption[0].value,
+        columnSort: 'NgayLapHoaDon',
+        typeSort: 'DESC',
+        fromDate: null,
+        toDate: null,
+        dateType: DateType.THANG_NAY,
+        trangThais: [TrangThaiHoaDon.HOAN_THANH]
     });
 
     const getLoaiHoaDon = (value: number): string => {
@@ -120,24 +139,56 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
     }, [itemHD?.idLoaiChungTu ?? 0]);
 
     useEffect(() => {
-        setNgayLapHoaDon(itemHD?.ngayLapHoaDon ?? '');
-        setMaHoaDon(itemHD?.maHoaDon ?? '');
-        setGhiChuHD(itemHD?.ghiChuHD ?? '');
-        setTongThanhToan(itemHD?.tongThanhToan ?? 0);
-        setDaThanhToan(itemHD?.daThanhToan ?? 0);
-        setConNo(itemHD?.conNo ?? 0);
-        setTrangThaiHD({
-            ...trangThaiHD,
-            trangThai: itemHD?.trangThai ?? TrangThaiHoaDon.HOAN_THANH,
-            txtTrangThai: itemHD?.txtTrangThaiHD ?? ''
-        });
-        setCustomer({
-            ...customer,
-            id: itemHD?.idKhachHang ?? Guid.EMPTY,
-            maKhachHang: itemHD?.maKhachHang ?? '',
-            tenKhachHang: itemHD?.tenKhachHang ?? '',
-            soDienThoai: itemHD?.soDienThoai ?? ''
-        });
+        const param = {
+            ...paramSearch,
+            pageSize: 10000
+        };
+        const fetchHoaDon = async () => {
+            try {
+                if (!itemHD?.id) {
+                    console.warn('Hóa đơn không có ID hợp lệ.');
+                    return;
+                }
+                console.log('param', param);
+                const hoadonactive = await HoaDonService.GetListHoaDon(param);
+                console.log('Danh sách hóa đơn hoadonactive:', hoadonactive);
+                if (!hoadonactive || !hoadonactive.items || hoadonactive.items.length === 0) {
+                    console.warn('Không tìm thấy dữ liệu hóa đơn.');
+                    return;
+                }
+
+                const matchingHoaDon = hoadonactive.items.find((hoadon) => hoadon.id === itemHD.id);
+                console.log('Danh sách hóa đơn:', matchingHoaDon);
+
+                if (!matchingHoaDon) {
+                    console.warn('Không tìm thấy hóa đơn với ID:', itemHD.id);
+                    return;
+                }
+
+                setNgayLapHoaDon(matchingHoaDon.ngayLapHoaDon ?? '');
+                setMaHoaDon(matchingHoaDon.maHoaDon ?? '');
+                setGhiChuHD(matchingHoaDon.ghiChuHD ?? '');
+                setTongThanhToan(matchingHoaDon.tongThanhToan ?? 0);
+                setDaThanhToan(matchingHoaDon.daThanhToan ?? 0);
+                setConNo(matchingHoaDon.conNo ?? 0);
+                setTrangThaiHD({
+                    ...trangThaiHD,
+                    trangThai: matchingHoaDon.trangThai ?? TrangThaiHoaDon.HOAN_THANH,
+                    txtTrangThai: matchingHoaDon.txtTrangThaiHD ?? ''
+                });
+                setCustomer({
+                    ...customer,
+                    id: matchingHoaDon.idKhachHang ?? Guid.EMPTY,
+                    maKhachHang: matchingHoaDon.maKhachHang ?? '',
+                    tenKhachHang: matchingHoaDon.tenKhachHang ?? '',
+                    soDienThoai: matchingHoaDon.soDienThoai ?? ''
+                });
+            } catch (error) {
+                console.error('Lỗi khi lấy thông tin hóa đơn:', error);
+            }
+        };
+
+        fetchHoaDon();
     }, [itemHD?.id]);
 
     useEffect(() => {
@@ -270,7 +321,9 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
         });
         setConfirmDialog({ ...confirmDialog, show: false });
         setObjAlert({ ...objAlert, show: true, mes: `Hủy ${sLoaiHoaDon} thành công` });
-
+        setTimeout(() => {
+            window.location.reload();
+        }, 300);
         const diary = {
             idChiNhanh: itemHD?.idChiNhanh,
             chucNang: `Danh mục ${sLoaiHoaDon}`,
@@ -347,14 +400,25 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
         setObjAlert({ ...objAlert, show: true, mes: `Cập nhật ${sLoaiHoaDon} thành công` });
     };
 
-    const savePhieuThuOK = (tongTienThu: number) => {
-        setDaThanhToan(daThanhToan + tongTienThu);
-        setConNo(tongThanhToan - daThanhToan - tongTienThu);
-        setIsShowModalThanhToan(false);
+    const savePhieuThuOK = (tongTienThu: number, data: QuyHoaDonDto) => {
+        setDaThanhToan(daThanhToan + data.tongTienThu);
+        setConNo(tongThanhToan - daThanhToan - data.tongTienThu);
+        // setIsShowModalThanhToan(false);
+        setIsShowModalThanhToan2(false);
         setObjAlert({ ...objAlert, show: true, mes: `Thanh toán hóa đơn thành công` });
+        updateTabKey();
     };
     return (
         <>
+            <ModalUpdatePhieuThuHoaDon
+                isShowModal={isShowModalThanhToan2}
+                // idQuyHD={quyHDChosing?.id ?? ''}
+                idHoaDonLienQuan={itemHD?.id}
+                loaiPhieu={2} // cập nhật
+                conNo={conNo}
+                onClose={() => setIsShowModalThanhToan2(false)}
+                onSaveOK={savePhieuThuOK}
+            />
             <ModalAddCustomerCheckIn
                 typeForm={0}
                 isNew={false}
@@ -373,7 +437,7 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
-
+            {/* 
             <Dialog open={isShowModalThanhToan} onClose={() => setIsShowModalThanhToan(false)} maxWidth="md">
                 <PaymentsForm
                     formNumber={FormNumber.OTHER}
@@ -388,7 +452,7 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                     onClose={() => setIsShowModalThanhToan(false)}
                     onSaveOKQuyHD={savePhieuThuOK}
                 />
-            </Dialog>
+            </Dialog> */}
 
             <Stack
                 className="page-full"
@@ -554,7 +618,7 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                                 sx={{ flex: 2 }}
                                 fullWidth
                                 startIcon={<AttachMoneyIcon />}
-                                onClick={() => setIsShowModalThanhToan(true)}>
+                                onClick={() => setIsShowModalThanhToan2(true)}>
                                 Thanh toán
                             </Button>
                         )}

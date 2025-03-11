@@ -7,7 +7,8 @@ import {
     Stack,
     Typography,
     TextField,
-    Button
+    Button,
+    IconButton
 } from '@mui/material';
 import PercentIcon from '@mui/icons-material/Percent';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
@@ -34,6 +35,13 @@ import nhatKyHoatDongService from '../../services/nhat_ky_hoat_dong/nhatKyHoatDo
 import PaymentsForm from '../ban_hang/thu_ngan/PaymentsForm';
 import { FormNumber } from '../../enum/FormNumber';
 import DialogButtonClose from '../../components/Dialog/ButtonClose';
+import { PersonAdd } from '@mui/icons-material';
+import CreateOrEditCustomerDialog from '../customer/components/create-or-edit-customer-modal';
+import { KhachHangDto } from '../../services/khach-hang/dto/KhachHangDto';
+import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
+import { KHCheckInDto } from '../../services/check_in/CheckinDto';
+import CheckinService from '../../services/check_in/CheckinService';
+import { Guid } from 'guid-typescript';
 
 const ModalNapTheGiaTri = ({ isShowModal, isNew, idUpdate, onClose, onOK }: IPropModal<PageHoaDonDto>) => {
     const appContext = useContext(AppContext);
@@ -59,6 +67,8 @@ const ModalNapTheGiaTri = ({ isShowModal, isNew, idUpdate, onClose, onOK }: IPro
         mes: ''
     });
     const tienKhachThieu = (newTGT?.tongThanhToan ?? 0) - tienKhachDua;
+    const [isShowModalAddCus, setIsShowModalAddCus] = useState(false); // Trạng thái modal thêm khách hàng
+    const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>({} as CreateOrEditKhachHangDto);
 
     useEffect(() => {
         if (isNew) {
@@ -219,6 +229,7 @@ const ModalNapTheGiaTri = ({ isShowModal, isNew, idUpdate, onClose, onOK }: IPro
                 noiDungThu: inforPayment.noiDungThu,
                 idLoaiChungTu: LoaiChungTu.PHIEU_THU,
                 idChiNhanh: chinhanh.id,
+                ngayLapHoaDon: dataHD?.ngayLapHoaDon ?? new Date().toISOString(), // Thêm ngày lập hóa đơn
                 hoadon: {
                     id: (dataHD?.id ?? null) as unknown as null,
                     idKhachHang: (newTGT?.idKhachHang ?? null) as unknown as null,
@@ -257,7 +268,56 @@ const ModalNapTheGiaTri = ({ isShowModal, isNew, idUpdate, onClose, onOK }: IPro
             noiDungThu: noiDungThu
         });
     };
+    const handleAddCustomer = (customer: KhachHangDto) => {
+        if (customer) {
+            setNewTGT((prev) => ({
+                ...prev,
+                idKhachHang: customer.id.toString(),
+                tenKhachHang: customer.tenKhachHang,
+                soDienThoai: customer.soDienThoai
+            }));
+            setSoDuTheGiaTri(customer.tongTichDiem || 0); // Dùng `tongTichDiem` làm số dư thẻ (hoặc trường khác phù hợp)
+        }
+        setIsShowModalAddCus(false); // Đóng modal
+    };
 
+    // const [customerChosed, setCustomerChosed] = useState<CreateOrEditKhachHangDto>({} as CreateOrEditKhachHangDto);
+
+    // const changeCustomer_fromModalAdd = async (customer?: KhachHangDto) => {
+    //     setIsShowModalAddCus(false);
+    //     if (customer) {
+    //         setCustomerChosed({
+    //             ...customerChosed,
+    //             id: customer?.id?.toString(),
+    //             maKhachHang: customer?.maKhachHang,
+    //             tenKhachHang: customer?.tenKhachHang ?? 'Khách lẻ',
+    //             soDienThoai: customer?.soDienThoai ?? ''
+    //         });
+
+    //         const idCheckin = await InsertCustomer_toCheckIn(customer?.id?.toString());
+    //         await AddHD_toCache_IfNotExists();
+    //         await dbDexie.hoaDon.update(hoadon?.id, {
+    //             idCheckIn: idCheckin,
+    //             idKhachHang: customer?.id?.toString(),
+    //             tenKhachHang: customer?.tenKhachHang,
+    //             maKhachHang: customer?.maKhachHang,
+    //             soDienThoai: customer?.soDienThoai
+    //         });
+    //         setCustomerHasGDV(false);
+    //     }
+    // };
+    // const InsertCustomer_toCheckIn = async (customerId: string): Promise<string> => {
+    //     const objCheckInNew: KHCheckInDto = {
+    //         id: Guid.EMPTY,
+    //         idKhachHang: customerId,
+    //         dateTimeCheckIn: hoadon?.ngayLapHoaDon,
+    //         idChiNhanh: idChiNhanhChosed,
+    //         trangThai: TrangThaiCheckin.DOING,
+    //         ghiChu: ''
+    //     };
+    //     const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckInNew);
+    //     return dataCheckIn.id;
+    // };
     return (
         <>
             <ConfirmDelete
@@ -281,6 +341,13 @@ const ModalNapTheGiaTri = ({ isShowModal, isNew, idUpdate, onClose, onOK }: IPro
                     onSaveHoaDon={onAgreeThanhToan}
                 />
             </Dialog>
+            <CreateOrEditCustomerDialog
+                visible={isShowModalAddCus}
+                onCancel={() => setIsShowModalAddCus(false)}
+                onOk={handleAddCustomer}
+                title="Thêm mới khách hàng"
+                formRef={newCus}
+            />
             <Dialog open={isShowModal} maxWidth="md" fullWidth onClose={onClose}>
                 <DialogButtonClose onClose={onClose} />
                 <DialogTitle>
@@ -329,10 +396,24 @@ const ModalNapTheGiaTri = ({ isShowModal, isNew, idUpdate, onClose, onOK }: IPro
                                         </Typography>
                                     </Grid>
                                     <Grid item lg={8} md={8} sm={7} xs={12}>
-                                        <AutocompleteCustomer
-                                            idChosed={newTGT?.idKhachHang ?? ''}
-                                            handleChoseItem={changeCustomer}
-                                        />
+                                        <Stack direction="row" alignItems="center" spacing={1}>
+                                            <AutocompleteCustomer
+                                                idChosed={newTGT?.idKhachHang ?? ''}
+                                                handleChoseItem={changeCustomer}
+                                            />
+                                            <IconButton
+                                                sx={{
+                                                    backgroundColor: 'var(--color-bg)',
+                                                    color: 'var(--color-main)',
+                                                    '&:hover': {
+                                                        backgroundColor: 'var(--color-main-light)'
+                                                    }
+                                                }}
+                                                onClick={() => setIsShowModalAddCus(true)} // Hiển thị modal khi nhấn
+                                            >
+                                                <PersonAdd />
+                                            </IconButton>
+                                        </Stack>
                                     </Grid>
                                 </Grid>
                                 <Grid container alignItems={'center'} paddingTop={1}>

@@ -1,3 +1,4 @@
+import { number } from 'yup';
 import Utils from '../../utils/utils';
 import { ParamSearchDto } from '../dto/ParamSearchDto';
 
@@ -25,6 +26,7 @@ export class ModelHangHoaDto {
     tenDonViTinh?: string = '';
     maHangHoa?: string = '';
     giaBan?: number = 0;
+    giaVon?: number = 0;
     tyLeChuyenDoi?: number = 1;
     laDonViTinhChuan?: number = 1;
     idHangHoa?: string;
@@ -39,6 +41,7 @@ export class ModelHangHoaDto {
               tenDonViTinh: string;
               tyLeChuyenDoi: number;
               giaBan: string | number;
+              giaVon: string | number;
               laDonViTinhChuan: number;
           }[];
 

@@ -36,7 +36,10 @@ export default function MenuWithDataFromDB({ open, typeSearch, anchorEl, handleC
                                 id: x.id.toString(),
                                 text: x.tenKhachHang,
                                 text2: x.soDienThoai,
-                                icon: x.avatar
+                                nhomKhach: x.tenNhomKhach,
+                                icon: x.avatar,
+                                conNo: x.conNo,
+                                maKhachHang: x.maKhachHang
                             } as IList;
                         });
                         setLstOption([...arrCus]);
@@ -89,8 +92,11 @@ export default function MenuWithDataFromDB({ open, typeSearch, anchorEl, handleC
                     style={{
                         borderBottom: index == (lstOption?.length ?? 0) - 1 ? 'none' : '1px solid #ccc'
                     }}>
-                    <Stack spacing={1}>
+                    <Stack spacing={0.1}>
                         <Typography> {x.text}</Typography>
+                        {x.nhomKhach && (
+                            <Typography sx={{ color: '#acaca5', fontSize: '12px' }}>Nhóm: {x.nhomKhach}</Typography>
+                        )}{' '}
                         <Typography sx={{ color: '#acaca5', fontSize: '12px' }}> {x.text2}</Typography>
                     </Stack>
                 </MenuItem>

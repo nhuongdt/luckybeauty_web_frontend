@@ -214,7 +214,6 @@ const NapTienBrandname = ({ visiable = false, idQuyHD = null, onClose, onOk }: a
                     noiDungChuyen_Nhan: quyHoaDon.noiDungThu
                 } as unknown as ILichSuNap_ChuyenTienDto;
                 const naptien = LichSuNap_ChuyenTienService.ThemMoi_CapNhatPhieuNapTien(tenant.tenantId, objNapTien);
-                console.log('naptien ', naptien);
             }
         }
     };

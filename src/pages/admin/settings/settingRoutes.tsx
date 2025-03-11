@@ -41,6 +41,18 @@ const SettingRoutes: RouteProps[] = [
         component: LoadableComponent(() => import('../../../pages/admin/settings/chi-nhanh'))
     },
     {
+        path: '/settings/khu-vuc',
+        permission: 'Pages.CongTy',
+        title: 'Chi nhánh',
+        name: 'caidat',
+        icon: <SettingIcon width="20px" />,
+        iconActive: <SetingActive width="20px" />,
+        showInMenu: false,
+        isLayout: false,
+        children: [],
+        component: LoadableComponent(() => import('../../../pages/admin/settings/khu-vuc'))
+    },
+    {
         path: '/settings/dat-lich',
         permission: 'Pages.CongTy',
         title: 'Đặt lịch',

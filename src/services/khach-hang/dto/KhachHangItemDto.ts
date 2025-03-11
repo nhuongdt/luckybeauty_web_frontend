@@ -4,6 +4,7 @@ export interface KhachHangItemDto {
     id: Guid;
     maKhachHang: string;
     tenKhachHang: string;
+    ngaySinh: Date;
     avatar: string;
     soDienThoai: string;
     diaChi: string;
@@ -11,6 +12,7 @@ export interface KhachHangItemDto {
     gioiTinh?: string;
     tongChiTieu?: number;
     conNo?: number;
+    theGiaTri?: number;
     cuocHenGanNhat: Date;
     tongTichDiem: number;
     soLanCheckIn?: number;

@@ -125,6 +125,25 @@ class SettingPages extends Component {
                                             Kết nối zalo- email
                                         </ListItemText>
                                     </ListItem>
+                                    <Divider />
+                                    <ListItem
+                                        component={Link as React.ElementType}
+                                        to={'/settings/khu-vuc'}
+                                        secondaryAction={
+                                            <IconButton>
+                                                <ArrowRightIcon />
+                                            </IconButton>
+                                        }>
+                                        <ListItemText
+                                            sx={{
+                                                color: 'black',
+                                                fontSize: '14px',
+                                                fontWeight: '400',
+                                                fontFamily: 'Roboto'
+                                            }}>
+                                            Cài đặt khu vực-vị trí{' '}
+                                        </ListItemText>
+                                    </ListItem>
                                 </List>
                             </Box>
                         </Grid>

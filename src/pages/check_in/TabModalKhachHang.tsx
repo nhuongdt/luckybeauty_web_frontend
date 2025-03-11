@@ -96,6 +96,7 @@ const TabKhachHang = ({ handleChoseCus, isShowKhachLe = false }: any) => {
             soDienThoai: cusNew?.soDienThoai,
             diaChi: cusNew?.diaChi,
             tongTichDiem: 0,
+            ngaySinh: new Date(),
             cuocHenGanNhat: new Date()
         };
 

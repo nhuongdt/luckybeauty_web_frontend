@@ -5,6 +5,7 @@ export default class PageHoaDonChiTietDto extends HoaDonChiTietDto {
     maHangHoa = '';
     tenHangHoa = '';
     giaBan = 0;
+    giaVon = 0;
     giaNhap? = 0;
     idNhomHangHoa = null;
     idHangHoa? = null;
@@ -17,6 +18,7 @@ export default class PageHoaDonChiTietDto extends HoaDonChiTietDto {
         maHangHoa = '',
         tenHangHoa = '',
         giaBan = 0,
+        giaVon = 0,
         giaNhap = 0,
         idNhomHangHoa = null,
         idHangHoa = null,
@@ -30,11 +32,13 @@ export default class PageHoaDonChiTietDto extends HoaDonChiTietDto {
             idDonViQuyDoi: idDonViQuyDoi,
             soLuong: soLuong,
             donGiaTruocCK: giaBan,
+            giaVon: giaVon,
             trangThai: trangThai
         });
         this.maHangHoa = maHangHoa;
         this.tenHangHoa = tenHangHoa;
         this.giaBan = giaBan;
+        this.giaVon = giaVon;
         this.giaNhap = giaNhap;
         this.idNhomHangHoa = idNhomHangHoa;
         this.idHangHoa = idHangHoa;

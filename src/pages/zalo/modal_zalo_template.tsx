@@ -114,7 +114,6 @@ export default function ModalZaloTemplate(props: IPropModal<IZaloTemplate>) {
                 setIdMauTinChosed(lstData[0]?.id);
             }
         }
-        console.log('mautinzalo');
     }, [isShowModal]);
 
     const [expandAction, setExpandAction] = useState(false);

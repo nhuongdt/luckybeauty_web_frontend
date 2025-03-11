@@ -20,28 +20,36 @@ import Cookies from 'js-cookie';
 import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import abpCustom from '../../../../components/abp-custom';
+import { count } from 'console';
+import { date } from 'yup';
+import { ArrowBack } from '@mui/icons-material';
 
 const ModalUpdatePhieuThuHoaDon: FC<{
     isShowModal: boolean;
-    idQuyHD: string;
-    idHoaDonLienQuan: string;
+    idQuyHD?: string;
+    idHoaDonLienQuan?: string;
+    loaiPhieu: number; // 1 là cập nhật, 2 là thêm mới
+    conNo?: number;
     onClose: () => void;
     onSaveOK: (typeAction: number, quyHD: QuyHoaDonDto) => void;
-}> = ({ isShowModal, idQuyHD, idHoaDonLienQuan, onClose, onSaveOK }) => {
+}> = ({ isShowModal, idQuyHD, idHoaDonLienQuan, loaiPhieu, conNo, onClose, onSaveOK }) => {
     const [isSaving, setIsSaving] = useState(false);
     const [objQuyHD, setObjQuyHD] = useState<IQuyHoaDonDto>({} as IQuyHoaDonDto);
     const [quyHDOld, setQuyHDOld] = useState<QuyHoaDonDto>({} as QuyHoaDonDto);
     const [allBankAccount, setAllBankAccount] = useState<TaiKhoanNganHangDto[]>([]);
-    const [tienMat, setTienMat] = useState(0);
-    const [tienChuyenKhoan, setTienChuyenKhoan] = useState(0);
-    const [tienQuyeThePos, setTienQuyeThePos] = useState(0);
+    const [tienMat, setTienMat] = useState<number>(0);
+    const [tienChuyenKhoan, setTienChuyenKhoan] = useState<number>(0);
+    const [tienQuyeThePos, setTienQuyeThePos] = useState<number>(0);
     const [idTaiKhoanChuyenKhoan, setIdTaiKhoanChuyenKhoan] = useState<string | null>('');
     const [idTaiKhoanPOS, setIdTaiKhoanPOS] = useState<string | null>('');
+    const [isSubmitting, setIsSubmitting] = useState(false); // State để kiểm tra trạng thái submit
+
     const [inforHD, setInforHD] = useState({
         idKhachHang: '',
         maHoaDon: '',
         maKhachHang: '',
         tenKhachHang: '',
+        ngayLapHoaDon: '',
         conNo: 0
     });
     const [confirmDialog, setConfirmDialog] = useState<PropConfirmOKCancel>({
@@ -60,7 +68,6 @@ const ModalUpdatePhieuThuHoaDon: FC<{
 
     const GetInforQuyHD_byId = async () => {
         const data = await SoQuyServices.GetInforQuyHoaDon_byId(idQuyHD ?? '');
-        console.log('idQuyHD ', idQuyHD, data);
 
         if (data !== null) {
             const quyCT = data.quyHoaDon_ChiTiet;
@@ -134,7 +141,8 @@ const ModalUpdatePhieuThuHoaDon: FC<{
                 maHoaDon: dataHoaDon[0]?.maHoaDon,
                 maKhachHang: dataHoaDon[0]?.maKhachHang,
                 tenKhachHang: dataHoaDon[0]?.tenKhachHang,
-                conNo: dataHoaDon[0]?.conNo ?? 0
+                conNo: dataHoaDon[0]?.conNo ?? 0,
+                ngayLapHoaDon: dataHoaDon[0]?.ngayLapHoaDon
             });
         }
     };
@@ -147,11 +155,13 @@ const ModalUpdatePhieuThuHoaDon: FC<{
         if (isShowModal) {
             GetInforQuyHD_byId();
             GetInforHD_byId();
+            setTienMat(conNo ?? 0);
         }
     }, [isShowModal]);
 
     const tienKhachDua = tienMat + tienChuyenKhoan + tienQuyeThePos;
-    const tienKhachThieu = (inforHD?.conNo ?? 0) + objQuyHD.tongTienThu - tienKhachDua;
+    const tienKhachThieu =
+        conNo && conNo > 0 ? conNo - tienKhachDua : (inforHD?.conNo ?? 0) + objQuyHD.tongTienThu - tienKhachDua;
 
     const changeTaiKhoanChuyenKhoan = (item: TaiKhoanNganHangDto) => {
         setIdTaiKhoanChuyenKhoan(item?.id);
@@ -169,35 +179,81 @@ const ModalUpdatePhieuThuHoaDon: FC<{
     };
 
     const saveSoQuy = async () => {
-        const data = await SoQuyServices.savePhieuThu_forHoaDon({
-            idQuyHD: idQuyHD,
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
-            maPhieuThu: objQuyHD?.maHoaDon ?? '',
-            phaiTT: inforHD.conNo + objQuyHD.tongTienThu,
-            tienmat: tienMat,
-            tienCK: tienChuyenKhoan,
-            tienPOS: tienQuyeThePos,
-            idLoaiChungTu: LoaiChungTu.PHIEU_THU,
-            noiDungThu: objQuyHD?.noiDungThu ?? '',
-            idTaiKhoanChuyenKhoan: idTaiKhoanChuyenKhoan as null,
-            idTaiKhoanPOS: idTaiKhoanPOS as null,
-            ngayLapHoaDon: objQuyHD.ngayLapHoaDon,
-            hoadon: {
-                id: idHoaDonLienQuan as unknown as null,
-                idKhachHang: (inforHD?.idKhachHang ?? '') as unknown as null,
-                tenKhachHang: inforHD?.tenKhachHang ?? '',
-                maHoaDon: inforHD?.maHoaDon ?? ''
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
+
+        setTimeout(async () => {
+            const requestData = {
+                idQuyHD: idQuyHD,
+                idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
+                maPhieuThu: objQuyHD?.maHoaDon ?? '',
+                phaiTT: inforHD.conNo + objQuyHD.tongTienThu,
+                tienmat: tienMat,
+                tienCK: tienChuyenKhoan,
+                tienPOS: tienQuyeThePos,
+                idLoaiChungTu: LoaiChungTu.PHIEU_THU,
+                noiDungThu: objQuyHD?.noiDungThu ?? '',
+                idTaiKhoanChuyenKhoan: idTaiKhoanChuyenKhoan as null,
+                idTaiKhoanPOS: idTaiKhoanPOS as null,
+                ngayLapHoaDon: objQuyHD.ngayLapHoaDon,
+                hoadon: {
+                    id: idHoaDonLienQuan as unknown as null,
+                    idKhachHang: (inforHD?.idKhachHang ?? '') as unknown as null,
+                    tenKhachHang: inforHD?.tenKhachHang ?? '',
+                    maHoaDon: inforHD?.maHoaDon ?? ''
+                }
+            };
+            try {
+                const data = await SoQuyServices.savePhieuThu_forHoaDon(requestData);
+                console.log('Response data:', data);
+
+                if (data) {
+                    onSaveOK(TypeAction.UPDATE, data);
+                }
+            } catch (error) {
+                console.error('Error while saving SoQuy:', error);
+            } finally {
+                setIsSubmitting(false);
+                console.log('Hoàn tất xử lý.');
             }
-        });
-        if (data) {
-            onSaveOK(TypeAction.UPDATE, data);
-        }
+        }, 500);
     };
 
     const onDeleteQuyHD = async () => {
         setConfirmDialog({ ...confirmDialog, show: false });
         const data = await SoQuyServices.DeleteSoQuy(idQuyHD);
         onSaveOK(TypeAction.DELETE, data);
+    };
+    const [activeArrow, setActiveArrow] = useState<'tienMat' | 'chuyenKhoan' | 'quetThe'>('tienMat'); // Mặc định active là 'tienMat'
+
+    const handleArrowClick = (type: 'tienMat' | 'chuyenKhoan' | 'quetThe') => {
+        setActiveArrow(type);
+
+        const isInputDisabled1 = utils.checkNull_OrEmpty(idTaiKhoanChuyenKhoan);
+        const isInputDisabled = utils.checkNull_OrEmpty(idTaiKhoanPOS);
+
+        const tien = typeof conNo === 'number' ? conNo : 0;
+
+        if (type === 'tienMat') {
+            setTienMat(tien);
+            setTienChuyenKhoan(0);
+            setTienQuyeThePos(0);
+        } else if (type === 'chuyenKhoan') {
+            // Chỉ thay đổi giá trị nếu ô nhập liệu Chuyển khoản không bị disabled
+            if (!isInputDisabled1) {
+                setTienChuyenKhoan(tien);
+                setTienMat(0);
+                setTienQuyeThePos(0);
+            }
+        } else if (type === 'quetThe') {
+            // Chỉ thay đổi giá trị nếu ô nhập liệu Quẹt thẻ không bị disabled
+            if (!isInputDisabled) {
+                setTienQuyeThePos(tien);
+                setTienMat(0);
+                setTienChuyenKhoan(0);
+            }
+        }
     };
 
     return (
@@ -219,8 +275,9 @@ const ModalUpdatePhieuThuHoaDon: FC<{
                     }}>
                     <Grid item xs={12} position={'relative'}>
                         <Typography fontSize="24px" fontWeight="700">
-                            Cập nhật phiếu thu
+                            {loaiPhieu === 1 ? 'Cập nhật phiếu thu' : 'Thêm mới phiếu thu'}
                         </Typography>
+
                         <CloseOutlinedIcon
                             sx={{ position: 'absolute', right: 0, top: 0, width: 36, height: 36 }}
                             onClick={onClose}
@@ -235,7 +292,9 @@ const ModalUpdatePhieuThuHoaDon: FC<{
                             </Grid>
                             <Grid item xs={6} lg={5} md={5} sm={6}>
                                 <Typography textAlign={'right'} fontSize={20} fontWeight={500}>
-                                    {new Intl.NumberFormat('vi-VN').format(objQuyHD.tongTienThu)}
+                                    {conNo
+                                        ? new Intl.NumberFormat('vi-VN').format(conNo)
+                                        : new Intl.NumberFormat('vi-VN').format(objQuyHD.tongTienThu)}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -269,7 +328,7 @@ const ModalUpdatePhieuThuHoaDon: FC<{
                                         <Stack sx={{ flex: 2 }}>
                                             <DatePickerCustom
                                                 variant="standard"
-                                                defaultVal={objQuyHD.ngayLapHoaDon}
+                                                defaultVal={inforHD.ngayLapHoaDon}
                                                 handleChangeDate={(dt) =>
                                                     setObjQuyHD({ ...objQuyHD, ngayLapHoaDon: dt })
                                                 }
@@ -386,14 +445,17 @@ const ModalUpdatePhieuThuHoaDon: FC<{
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid container justifyContent={'space-between'}>
+                        <Grid container justifyContent={'space-between'} alignItems="center">
+                            {/* Dòng Tiền mặt */}
                             <Grid item lg={3} md={3} sm={3} xs={6}>
                                 <Typography>Tiền mặt</Typography>
                             </Grid>
-                            <Grid item lg={9} md={9} sm={9} xs={6}>
+                            <Grid item lg={8} md={8} sm={8} xs={9}>
                                 <Grid container spacing={2}>
-                                    <Grid item lg={9} md={8} sm={9}></Grid>
-                                    <Grid item lg={3} md={4} sm={3}>
+                                    {/* Cột trống để đồng bộ với AutocompleteAccountBank */}
+                                    <Grid item lg={8} md={8} sm={8} xs={8}></Grid>
+                                    {/* Cột nhập số */}
+                                    <Grid item lg={4} md={4} sm={4} xs={4}>
                                         <NumericFormat
                                             className="input-number"
                                             size="small"
@@ -409,22 +471,33 @@ const ModalUpdatePhieuThuHoaDon: FC<{
                                     </Grid>
                                 </Grid>
                             </Grid>
+                            <Grid item lg={1} md={1} sm={1} xs={1} style={{ maxWidth: '32px', textAlign: 'center' }}>
+                                <ArrowBack
+                                    style={{
+                                        cursor: 'pointer',
+                                        fontSize: '16px',
+                                        color: activeArrow === 'tienMat' ? 'blue' : 'gray' // Active màu xanh
+                                    }}
+                                    onClick={() => handleArrowClick('tienMat')} // Đặt trạng thái active
+                                />
+                            </Grid>
                         </Grid>
 
-                        <Grid container justifyContent={'space-between'} paddingTop={1}>
+                        <Grid container justifyContent={'space-between'} paddingTop={1} alignItems="center">
+                            {/* Dòng Chuyển khoản */}
                             <Grid item lg={3} md={3} xs={12} sm={3}>
                                 <Typography>Chuyển khoản</Typography>
                             </Grid>
-                            <Grid item lg={9} md={9} xs={12} sm={9} paddingTop={{ xs: 1, lg: 0, md: 0, sm: 0 }}>
+                            <Grid item lg={8} md={8} xs={9} sm={8}>
                                 <Grid container spacing={2}>
-                                    <Grid item lg={9} md={8} sm={9} xs={9}>
+                                    <Grid item lg={8} md={8} sm={8} xs={8}>
                                         <AutocompleteAccountBank
                                             handleChoseItem={changeTaiKhoanChuyenKhoan}
                                             idChosed={idTaiKhoanChuyenKhoan}
                                             listOption={allBankAccount}
                                         />
                                     </Grid>
-                                    <Grid item lg={3} md={4} sm={3} xs={3}>
+                                    <Grid item lg={4} md={4} sm={4} xs={4}>
                                         <NumericFormat
                                             size="small"
                                             fullWidth
@@ -441,22 +514,33 @@ const ModalUpdatePhieuThuHoaDon: FC<{
                                     </Grid>
                                 </Grid>
                             </Grid>
+                            <Grid item lg={1} md={1} sm={1} xs={1} style={{ maxWidth: '32px', textAlign: 'center' }}>
+                                <ArrowBack
+                                    style={{
+                                        cursor: 'pointer',
+                                        fontSize: '16px',
+                                        color: activeArrow === 'chuyenKhoan' ? 'blue' : 'gray' // Active màu xanh
+                                    }}
+                                    onClick={() => handleArrowClick('chuyenKhoan')} // Đặt trạng thái active
+                                />
+                            </Grid>
                         </Grid>
 
-                        <Grid container justifyContent={'space-between'} paddingTop={1}>
+                        <Grid container justifyContent={'space-between'} paddingTop={1} alignItems="center">
+                            {/* Dòng Quẹt thẻ */}
                             <Grid item lg={3} md={3} xs={12} sm={3}>
-                                <Typography>Quyẹt thẻ</Typography>
+                                <Typography>Quẹt thẻ</Typography>
                             </Grid>
-                            <Grid item lg={9} md={9} xs={12} sm={9} paddingTop={{ xs: 1, lg: 0, md: 0, sm: 0 }}>
+                            <Grid item lg={8} md={8} xs={9} sm={8}>
                                 <Grid container spacing={2}>
-                                    <Grid item lg={9} md={8} sm={9} xs={9}>
+                                    <Grid item lg={8} md={8} sm={8} xs={8}>
                                         <AutocompleteAccountBank
                                             handleChoseItem={changeTaiKhoanPOS}
                                             idChosed={idTaiKhoanPOS}
                                             listOption={allBankAccount}
                                         />
                                     </Grid>
-                                    <Grid item lg={3} md={4} sm={3} xs={3}>
+                                    <Grid item lg={4} md={4} sm={4} xs={4}>
                                         <NumericFormat
                                             size="small"
                                             fullWidth
@@ -472,6 +556,16 @@ const ModalUpdatePhieuThuHoaDon: FC<{
                                         />
                                     </Grid>
                                 </Grid>
+                            </Grid>
+                            <Grid item lg={1} md={1} sm={1} xs={1} style={{ maxWidth: '32px', textAlign: 'center' }}>
+                                <ArrowBack
+                                    style={{
+                                        cursor: 'pointer',
+                                        fontSize: '16px',
+                                        color: activeArrow === 'quetThe' ? 'blue' : 'gray' // Active màu xanh
+                                    }}
+                                    onClick={() => handleArrowClick('quetThe')} // Đặt trạng thái active
+                                />
                             </Grid>
                         </Grid>
                     </Grid>

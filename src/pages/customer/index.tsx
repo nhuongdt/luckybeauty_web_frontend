@@ -22,6 +22,7 @@ import {
     SelectChangeEvent,
     Checkbox
 } from '@mui/material';
+import { Component } from 'react';
 import { Add } from '@mui/icons-material';
 import './customerPage.css';
 import DownloadIcon from '../../images/download.svg';
@@ -55,7 +56,7 @@ import BangBaoLoiFileImport from '../../components/ImportComponent/BangBaoLoiFil
 import { BangBaoLoiFileimportDto } from '../../services/dto/BangBaoLoiFileimportDto';
 import { ModalChuyenNhom } from '../../components/Dialog/modal_chuyen_nhom';
 import { IList } from '../../services/dto/IList';
-import { format } from 'date-fns';
+import { format, getYear } from 'date-fns';
 import { Guid } from 'guid-typescript';
 import CustomerFilterDrawer from './components/CustomerFilterDrawer';
 import CustomerInfor2 from './components/customer_infor2';
@@ -64,7 +65,13 @@ import { TypeAction } from '../../lib/appconst';
 import ZaloService from '../../services/zalo/ZaloService';
 import ModalGuiTinNhanZalo from '../zalo/modal_gui_tin_zalo';
 import { TypeErrorImport } from '../../enum/TypeErrorImport';
+import { Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel } from '@mui/material';
+import VisibilityIcon from '@mui/icons-material/Visibility'; // Import icon con mắt
+
 interface CustomerScreenState {
+    selectedColumns: Record<string, boolean>;
+    originalData: KhachHangItemDto[];
+    openDialog: boolean;
     rowTable: KhachHangItemDto[];
     toggle: boolean;
     idkhachHang: string;
@@ -78,6 +85,7 @@ interface CustomerScreenState {
     tongChiTieuTu?: number;
     tongChiTieuDen?: number;
     gioiTinh?: boolean;
+    creationTime?: Date;
     totalItems: number;
     totalPage: number;
     isShowConfirmDelete: boolean;
@@ -85,7 +93,7 @@ interface CustomerScreenState {
     moreOpen: boolean;
     anchorEl: any;
     selectedRowId: any;
-    visibilityColumn: any;
+    visibilityColumn: Record<string, boolean>;
     information: boolean;
     idNhomKhach: string;
     isShowNhomKhachModal: boolean;
@@ -105,6 +113,18 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         super(props);
 
         this.state = {
+            selectedColumns: {
+                maKhachHang: true,
+                tenKhachHang: true,
+                soDienThoai: true,
+                ngaySinh: true,
+                tenNhomKhach: true,
+                tongChiTieu: true,
+                conNo: true,
+                creationTime: false
+            },
+            originalData: [],
+            openDialog: false,
             rowTable: [],
             toggle: false,
             idkhachHang: '',
@@ -118,6 +138,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             tongChiTieuDen: undefined,
             tongChiTieuTu: undefined,
             gioiTinh: undefined,
+            creationTime: undefined,
             importShow: false,
             totalItems: 0,
             totalPage: 0,
@@ -141,6 +162,31 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             isShowModalGuiTinZalo: false
         };
     }
+    handleCheckboxChange = (column: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newSelectedColumns = {
+            ...this.state.selectedColumns,
+            [column]: event.target.checked
+        };
+
+        this.setState({
+            selectedColumns: newSelectedColumns,
+            visibilityColumn: Object.keys(newSelectedColumns).reduce((result, col) => {
+                result[col] = newSelectedColumns[col];
+                return result;
+            }, {} as Record<string, boolean>) // Khai báo kiểu rõ ràng cho visibilityColumn
+        });
+    };
+
+    handleApply = () => {
+        this.handleClose(); // Đóng dialog
+    };
+    handleClickOpen = () => {
+        this.setState({ openDialog: true });
+    };
+
+    handleClose = () => {
+        this.setState({ openDialog: false });
+    };
     componentDidMount(): void {
         this.getData();
         const visibilityColumn = localStorage.getItem('visibilityColumn') ?? {};
@@ -164,6 +210,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             sortType: this.state.sortType,
             timeFrom: this.state.timeFrom,
             timeTo: this.state.timeTo,
+            creationTime: this.state.creationTime,
             gioiTinh: this.state.gioiTinh,
             tongChiTieuDen: this.state.tongChiTieuDen,
             tongChiTieuTu: this.state.tongChiTieuTu,
@@ -173,9 +220,9 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         await this.setState({
             rowTable: khachHangs.items,
             totalItems: khachHangs.totalCount,
-            totalPage: Math.ceil(khachHangs.totalCount / this.state.rowPerPage)
+            totalPage: Math.ceil(khachHangs.totalCount / this.state.rowPerPage),
+            originalData: [...khachHangs.items] // Dữ liệu gốc
         });
-
         this.setState((prev) => {
             return {
                 ...prev,
@@ -522,8 +569,82 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         }
         this.setState({ checkAllRow: !this.state.checkAllRow });
     };
+    filterByDate = (filterType: 'today' | 'thisWeek' | 'thisMonth') => {
+        this.countBirthdays();
+        const today = new Date();
+        const filteredData = this.state.originalData.filter((item) => {
+            const birthDate = new Date(item.ngaySinh);
+            if (isNaN(birthDate.getTime())) {
+                return false;
+            }
+
+            birthDate.setFullYear(today.getFullYear());
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - today.getDay());
+            startOfWeek.setFullYear(today.getFullYear());
+
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+            endOfWeek.setFullYear(today.getFullYear());
+
+            switch (filterType) {
+                case 'today': {
+                    return birthDate.getDate() === today.getDate() && birthDate.getMonth() === today.getMonth();
+                }
+
+                case 'thisWeek': {
+                    return birthDate >= startOfWeek && birthDate <= endOfWeek;
+                }
+
+                case 'thisMonth': {
+                    return birthDate.getMonth() === today.getMonth();
+                }
+
+                default:
+                    return true;
+            }
+        });
+
+        this.setState({ rowTable: filteredData });
+    };
+
+    resetFilter = () => {
+        this.setState({ rowTable: this.state.originalData });
+    };
+
+    countBirthdays = () => {
+        const today = new Date();
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - today.getDay());
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        let todayCount = 0;
+        let thisWeekCount = 0;
+        let thisMonthCount = 0;
+        this.state.originalData.forEach((item) => {
+            const birthDate = new Date(item.ngaySinh);
+            if (isNaN(birthDate.getTime())) {
+                return;
+            }
+            birthDate.setFullYear(today.getFullYear());
+            if (birthDate.getDate() === today.getDate() && birthDate.getMonth() === today.getMonth()) {
+                todayCount++;
+            }
+            if (birthDate >= startOfWeek && birthDate <= endOfWeek) {
+                thisWeekCount++;
+            }
+            if (birthDate.getMonth() === today.getMonth()) {
+                thisMonthCount++;
+            }
+        });
+        return {
+            today: todayCount,
+            thisWeek: thisWeekCount,
+            thisMonth: thisMonthCount
+        };
+    };
+
     render(): React.ReactNode {
-        // const apiRef = useGridApiRef();
         const columns: GridColDef[] = [
             {
                 field: 'checkBox',
@@ -575,6 +696,13 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             },
             {
+                field: 'soDienThoai',
+                headerName: 'Điện thoại',
+                minWidth: 120,
+                flex: 1,
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
+            },
+            {
                 field: 'tenKhachHang',
                 headerName: 'Tên khách hàng',
                 minWidth: 170,
@@ -603,23 +731,22 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             },
             {
-                field: 'soDienThoai',
-                headerName: 'Số điện thoại',
-                minWidth: 120,
-                flex: 1,
-                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-            },
-            {
                 field: 'ngaySinh',
                 headerName: 'Ngày sinh',
                 minWidth: 120,
                 flex: 1,
                 renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
-                renderCell: (params) => (
-                    <Typography variant="body2">
-                        {params.value ? format(new Date(params.value), 'dd/MM/yyyy') : ''}
-                    </Typography>
-                )
+                renderCell: (params) => {
+                    if (params.value) {
+                        const date = new Date(params.value);
+                        if (getYear(date) === 1000) {
+                            return <Typography variant="body2">{format(date, 'dd/MM')}</Typography>;
+                        } else {
+                            return <Typography variant="body2">{format(date, 'dd/MM/yyyy')}</Typography>;
+                        }
+                    }
+                    return <Typography variant="body2"></Typography>;
+                }
             },
             {
                 field: 'tenNhomKhach',
@@ -632,6 +759,20 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 field: 'tongChiTieu',
                 minWidth: 150,
                 headerName: 'Tổng mua',
+                headerAlign: 'right',
+                align: 'right',
+                flex: 1,
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
+                renderCell: (params) => (
+                    <Box title={params.value} fontSize={'var(--font-size-main)'} textAlign="right" width="100%">
+                        {new Intl.NumberFormat('vi-VN').format(params.value)}
+                    </Box>
+                )
+            },
+            {
+                field: 'theGiaTri',
+                minWidth: 150,
+                headerName: 'Thẻ giá trị',
                 headerAlign: 'right',
                 align: 'right',
                 flex: 1,
@@ -656,7 +797,18 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     </Box>
                 )
             },
-
+            {
+                field: 'creationTime',
+                headerName: 'Ngày Tạo',
+                minWidth: 120,
+                flex: 1,
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
+                renderCell: (params) => (
+                    <Typography variant="body2">
+                        {params.value ? format(new Date(params.value), 'dd/MM/yyyy') : ''}
+                    </Typography>
+                )
+            },
             {
                 field: 'action',
                 headerName: '#',
@@ -671,6 +823,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
             }
         ];
+        // const visibleColumns = GridColDef.filter((column) => this.state.selectedColumns[column.field]);
 
         return (
             <>
@@ -744,11 +897,86 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid xs={12} md={6} lg={6} item display="flex" gap="8px" justifyContent="end">
+                            <Grid xs={12} md={6} lg={6} item display="flex" gap="3px" justifyContent="end">
                                 <ButtonGroup
                                     variant="contained"
-                                    sx={{ gap: '8px' }}
+                                    sx={{ gap: '3px' }}
                                     className="rounded-4px resize-height">
+                                    <div>
+                                        <Button
+                                            className="border-color btn-outline-hover"
+                                            variant="outlined"
+                                            onClick={this.handleClickOpen}
+                                            sx={{
+                                                textTransform: 'none',
+                                                fontWeight: '400',
+                                                color: '#666466',
+                                                bgcolor: '#fff!important',
+                                                display: abpCustom.isGrandPermission('Pages.KhachHang.Import')
+                                                    ? ''
+                                                    : 'none',
+                                                padding: '6px 12px'
+                                            }}
+                                            startIcon={<VisibilityIcon />}>
+                                            Hiển thị
+                                        </Button>
+                                        <Dialog open={this.state.openDialog} onClose={this.handleClose}>
+                                            <DialogTitle>Chọn các cột hiển thị</DialogTitle>
+                                            <DialogContent>
+                                                <Grid container spacing={2}>
+                                                    {[
+                                                        'maKhachHang',
+                                                        'tenKhachHang',
+                                                        'soDienThoai',
+                                                        'ngaySinh',
+                                                        'tenNhomKhach',
+                                                        'tongChiTieu',
+                                                        'conNo',
+                                                        'creationTime'
+                                                    ].map((column) => (
+                                                        <Grid item xs={6} sm={4} key={column}>
+                                                            <FormControlLabel
+                                                                control={
+                                                                    <Checkbox
+                                                                        checked={this.state.selectedColumns[column]}
+                                                                        onChange={this.handleCheckboxChange(column)}
+                                                                    />
+                                                                }
+                                                                label={
+                                                                    {
+                                                                        maKhachHang: 'Mã khách hàng',
+                                                                        tenKhachHang: 'Tên khách hàng',
+                                                                        soDienThoai: 'Số điện thoại',
+                                                                        ngaySinh: 'Ngày sinh',
+                                                                        tenNhomKhach: 'Nhóm khách hàng',
+                                                                        tongChiTieu: 'Tổng chi tiêu',
+                                                                        conNo: 'Còn nợ',
+                                                                        creationTime: 'Ngày tạo'
+                                                                    }[column]
+                                                                }
+                                                            />
+                                                        </Grid>
+                                                    ))}
+                                                </Grid>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <button
+                                                    onClick={this.handleClose}
+                                                    className="button-close"
+                                                    style={{
+                                                        backgroundColor: '#dc3546',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        padding: '10px 20px',
+                                                        cursor: 'pointer',
+                                                        borderRadius: '4px',
+                                                        fontSize: '14px'
+                                                    }}>
+                                                    Đóng
+                                                </button>
+                                            </DialogActions>
+                                        </Dialog>
+                                    </div>
                                     <Button
                                         className="border-color btn-outline-hover"
                                         variant="outlined"
@@ -838,7 +1066,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
 
                                         <Add
                                             sx={{
-                                                // color: '#fff',
                                                 transition: '.4s',
                                                 height: '32px',
                                                 cursor: 'pointer',
@@ -876,6 +1103,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                             <AccordionNhomKhachHang
                                                 dataNhomKhachHang={this.state.listNhomKhachSearch}
                                                 clickTreeItem={this.onEditNhomKhach}
+                                                filterByDate={this.filterByDate}
+                                                birthdayCounts={this.countBirthdays()}
                                             />
                                         </Stack>
                                     </Box>
@@ -939,7 +1168,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         onCellClick={this.handleCellClick}
                                         hideFooter
                                         onColumnVisibilityModelChange={this.toggleColumnVisibility}
-                                        columnVisibilityModel={this.state.visibilityColumn}
+                                        columnVisibilityModel={this.state.selectedColumns}
                                         checkboxSelection={false}
                                         localeText={TextTranslate}
                                         sortingOrder={['desc', 'asc']}
@@ -964,18 +1193,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         }}
                                         rowSelectionModel={this.state.rowSelectionModel}
                                     />
-                                    {/* <ActionMenuTable
-                                        selectedRowId={this.state.selectedRowId}
-                                        anchorEl={this.state.anchorEl}
-                                        closeMenu={this.handleCloseMenu}
-                                        handleView={this.handleOpenInfor}
-                                        permissionView=""
-                                        handleEdit={this.handleEdit}
-                                        permissionEdit="Pages.KhachHang.Edit"
-                                        handleDelete={this.showConfirmDelete}
-                                        permissionDelete="Pages.KhachHang.Delete"
-                                    /> */}
-
                                     <CustomTablePagination
                                         currentPage={this.state.currentPage}
                                         rowPerPage={this.state.rowPerPage}

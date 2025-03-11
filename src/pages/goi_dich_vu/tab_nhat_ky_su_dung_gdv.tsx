@@ -89,10 +89,14 @@ const TabNhatKySuDungGDV: FC<{ idHoaDon?: string; idCustomer: string }> = ({ idH
 
     const listColumnHeader: IHeaderTable[] = [
         { columnId: 'ngayLapHoaDon', columnText: 'Ngày sử dụng' },
+        { columnId: 'soDienThoai', columnText: 'Điện thoại' },
+        { columnId: 'tenKhachHang', columnText: 'Tên khách' },
+        { columnId: 'maKhachHang', columnText: 'Mã khách' },
         { columnId: 'maHoaDon', columnText: 'Mã hóa đơn' },
         { columnId: 'maHangHoa', columnText: 'Mã dịch vụ' },
         { columnId: 'tenHangHoa', columnText: 'Tên dịch vụ' },
         { columnId: 'soLuong', columnText: 'Số lượng', align: 'center' },
+        { columnId: 'tenNhanVien', columnText: 'NVTH', align: 'center' },
         { columnId: 'thanhTienSauCK', columnText: 'Giá trị sử dụng', align: 'right' }
         // { columnId: 'nvThucHiens', columnText: 'Thành tiền', align: 'right' }
     ];
@@ -146,12 +150,16 @@ const TabNhatKySuDungGDV: FC<{ idHoaDon?: string; idCustomer: string }> = ({ idH
                                         <TableCell>
                                             {format(new Date(row?.ngayLapHoaDonSD), 'dd/MM/yyyy HH:mm')}
                                         </TableCell>
+                                        <TableCell>{row?.soDienThoai}</TableCell>
+                                        <TableCell>{row?.tenKhachHang}</TableCell>
+                                        <TableCell>{row?.maKhachHang}</TableCell>
                                         <TableCell>{row?.maHoaDonSD}</TableCell>
                                         <TableCell>{row?.maHangHoa}</TableCell>
                                         <TableCell>{row?.tenHangHoa}</TableCell>
                                         <TableCell align="center">
                                             {new Intl.NumberFormat('vi-VN').format(row?.soLuongSD ?? 0)}
                                         </TableCell>
+                                        <TableCell>{row?.tenNhanVien}</TableCell>
                                         <TableCell align="right">
                                             {new Intl.NumberFormat('vi-VN').format(row?.giaTriSuDung ?? 0)}
                                         </TableCell>

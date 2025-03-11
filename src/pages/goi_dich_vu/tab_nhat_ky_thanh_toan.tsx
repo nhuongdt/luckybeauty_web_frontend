@@ -9,8 +9,6 @@ import {
     TableRow,
     Typography
 } from '@mui/material';
-import ClearIcon from '@mui/icons-material/Clear';
-import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
 import { FC, useEffect, useState } from 'react';
 import SoQuyServices from '../../services/so_quy/SoQuyServices';
 import utils from '../../utils/utils';
@@ -22,7 +20,7 @@ import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRo
 import { LoaiChungTu, TypeAction } from '../../lib/appconst';
 import ModalUpdatePhieuThuHoaDon from '../thu_chi/so_quy/components/modal_update_phieu_thu_hoa_don';
 
-const TabNhatKyThanhToan: FC<{ idHoaDon: string }> = ({ idHoaDon }) => {
+const TabNhatKyThanhToan: FC<{ idHoaDon: string; updateHD: () => void }> = ({ idHoaDon, updateHD }) => {
     const [isShowModalThanhToan, setIsShowModalThanhToan] = useState(false);
     const [lstPhieuThuChi, setLstPhieuThuChi] = useState<QuyHoaDonDto[]>([]);
     const [quyHDChosing, setQuyHDChosing] = useState<QuyHoaDonDto | null>(null);
@@ -36,7 +34,8 @@ const TabNhatKyThanhToan: FC<{ idHoaDon: string }> = ({ idHoaDon }) => {
 
     const GetNhatKyThanhToan = async () => {
         const data = await SoQuyServices.GetNhatKyThanhToan_ofHoaDon(idHoaDon);
-        setLstPhieuThuChi(data);
+        const filteredData = data.filter((item) => item.trangThai !== 0); // Lọc trạng thái khác 0
+        setLstPhieuThuChi(filteredData); // Cập nhật danh sách đã lọc
     };
 
     useEffect(() => {
@@ -93,8 +92,9 @@ const TabNhatKyThanhToan: FC<{ idHoaDon: string }> = ({ idHoaDon }) => {
             );
             setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật phiếu thu thành công' });
         }
+        updateHD();
     };
-
+    //
     const listColumnHeader: IHeaderTable[] = [
         { columnId: 'maHoaDon', columnText: 'Mã phiếu' },
         { columnId: 'ngayLapHoaDon', columnText: 'Ngày lập phiếu', align: 'center' },
@@ -110,6 +110,8 @@ const TabNhatKyThanhToan: FC<{ idHoaDon: string }> = ({ idHoaDon }) => {
                 isShowModal={isShowModalThanhToan}
                 idQuyHD={quyHDChosing?.id ?? ''}
                 idHoaDonLienQuan={idHoaDon}
+                loaiPhieu={1} // cập nhật
+                // conNo={}
                 onClose={() => setIsShowModalThanhToan(false)}
                 onSaveOK={saveSoQuyOK}
             />

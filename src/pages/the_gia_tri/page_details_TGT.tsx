@@ -13,13 +13,31 @@ enum DetailGDV_tabList {
 const PageDetailsTGT: FC<{ itemHD: PageHoaDonDto | null; gotoBack: () => void }> = ({ itemHD, gotoBack }) => {
     const [tabActive, setTabActive] = useState(DetailGDV_tabList.NHAT_KY_THANH_TOAN);
     const [sumCTHD_ThanhtienSauVAT, setSumCTHD_ThanhtienSauVAT] = useState(0);
+    const [sharedData, setSharedData] = useState({
+        totalAmount: 0, // Tổng tiền sau VAT
+        paymentHistoryUpdated: false // Cờ kiểm tra thay đổi lịch sử thanh toán
+    });
+    const [tabKey, setTabKey] = useState(Date.now()); // key cho TabNhatKyThanhToan để trigger render lại
+    const [tabKeyHD, setTabKeyHD] = useState(Date.now()); // key cho TabNhatKyThanhToan để trigger render lại
 
+    // Hàm để cập nhật key, trigger render lại TabNhatKyThanhToan
+    const updateTabKey = () => {
+        setTabKey(Date.now());
+    };
+    const updateHD = () => {
+        setTabKeyHD(Date.now());
+    };
     return (
         <Grid container paddingTop={2}>
             <Grid item lg={12} xs={12}>
                 <Grid container spacing={2}>
                     <Grid item lg={4} md={6} sm={6} xs={12}>
-                        <TabThongTinHoaDon itemHD={itemHD} tongThanhToanNew={sumCTHD_ThanhtienSauVAT} />
+                        <TabThongTinHoaDon
+                            itemHD={itemHD}
+                            tongThanhToanNew={sharedData.totalAmount}
+                            updateTabKey={updateTabKey}
+                            key={tabKeyHD}
+                        />
                     </Grid>
                     <Grid item lg={8} md={6} sm={6} xs={12}>
                         <Stack
@@ -39,7 +57,9 @@ const PageDetailsTGT: FC<{ itemHD: PageHoaDonDto | null; gotoBack: () => void }>
                                     <Button
                                         variant="outlined"
                                         startIcon={<KeyboardDoubleArrowLeftIcon />}
-                                        onClick={gotoBack}>
+                                        onClick={() => {
+                                            gotoBack();
+                                        }}>
                                         Quay trở lại
                                     </Button>
                                 </Stack>
@@ -49,7 +69,7 @@ const PageDetailsTGT: FC<{ itemHD: PageHoaDonDto | null; gotoBack: () => void }>
                                 value={DetailGDV_tabList.NHAT_KY_THANH_TOAN}
                                 index={tabActive}
                                 style={{ paddingLeft: '8px', paddingRight: '8px' }}>
-                                <TabNhatKyThanhToan idHoaDon={itemHD?.id ?? ''} />
+                                <TabNhatKyThanhToan key={tabKey} updateHD={updateHD} idHoaDon={itemHD?.id ?? ''} />
                             </TabPanel>
                         </Stack>
                     </Grid>
@@ -58,4 +78,5 @@ const PageDetailsTGT: FC<{ itemHD: PageHoaDonDto | null; gotoBack: () => void }>
         </Grid>
     );
 };
+
 export default PageDetailsTGT;

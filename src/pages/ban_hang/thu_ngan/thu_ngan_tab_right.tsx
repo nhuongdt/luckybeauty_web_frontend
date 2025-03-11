@@ -188,6 +188,7 @@ const ThuNganTabRight: FC<{
             maHangHoa: item?.maHangHoa,
             tenHangHoa: item?.tenHangHoa,
             giaBan: item?.giaBan as undefined,
+            giaVon: item?.giaVon as undefined,
             idNhomHangHoa: item?.idNhomHangHoa as undefined,
             idHangHoa: item?.id as undefined,
             soLuong: 1,
@@ -201,6 +202,7 @@ const ThuNganTabRight: FC<{
             newCT.id = itemCTHD[0].id;
             newCT.soLuong = slNew;
             newCT.giaBan = itemCTHD[0]?.giaBan ?? 0;
+            newCT.giaVon = itemCTHD[0]?.giaVon ?? 0;
             newCT.ptChietKhau = itemCTHD[0]?.ptChietKhau ?? 0;
             newCT.ptThue = itemCTHD[0]?.ptThue ?? 0;
             if (newCT.ptChietKhau > 0) {
@@ -455,6 +457,7 @@ const ThuNganTabRight: FC<{
                             ptChietKhau: ctUpdate.ptChietKhau,
                             tienChietKhau: ctUpdate.tienChietKhau,
                             donGiaSauCK: ctUpdate.donGiaSauCK,
+                            giaVon: ctUpdate.giaVon,
                             donGiaSauVAT: ctUpdate.donGiaSauVAT,
                             thanhTienTruocCK: isSuDungDV ? 0 : ctUpdate.thanhTienTruocCK,
                             thanhTienSauCK: isSuDungDV ? 0 : ctUpdate.thanhTienSauCK,
@@ -493,6 +496,7 @@ const ThuNganTabRight: FC<{
                         ptChietKhau: ctUpdate.ptChietKhau,
                         tienChietKhau: ctUpdate.tienChietKhau,
                         donGiaSauCK: ctUpdate.donGiaSauCK,
+                        giaVon: ctUpdate.giaVon,
                         donGiaSauVAT: ctUpdate.donGiaSauVAT,
                         thanhTienTruocCK: isSuDungDV ? 0 : ctUpdate.thanhTienTruocCK,
                         thanhTienSauCK: isSuDungDV ? 0 : ctUpdate.thanhTienSauCK,
@@ -976,6 +980,11 @@ const ThuNganTabRight: FC<{
                                                                 {Intl.NumberFormat('vi-VN').format(
                                                                     cthd?.donGiaTruocCK ?? 0
                                                                 )}
+                                                            </Typography>
+                                                        </Stack>
+                                                        <Stack flex={3}>
+                                                            <Typography className="text-cursor" textAlign={'left'}>
+                                                                {Intl.NumberFormat('vi-VN').format(cthd?.giaVon ?? 0)}
                                                             </Typography>
                                                         </Stack>
                                                     </Stack>

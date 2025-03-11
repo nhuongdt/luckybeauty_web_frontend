@@ -15,6 +15,7 @@ class nhomHangHoaStore {
     getAllNhomHang = async () => {
         const data = await GroupProductService.GetDM_NhomHangHoa();
         this.listAllNhomHang = data?.items;
+        console.log(data);
     };
 
     changeListNhomHang = (objNhom: ModelNhomHangHoa, typeAction = TypeAction.INSEART) => {

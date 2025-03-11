@@ -75,6 +75,13 @@ import uploadFileService from '../../../services/uploadFileService';
 import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
 import PopoverGiamGiaHD from '../../../components/Popover/GiamGiaHD';
 import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
+// import CreateOrEditSoQuyDialog from '../../thu_chi/so_quy/components/CreateOrEditSoQuyDialog';
+import { HINH_THUC_THANH_TOAN, TypeAction, TrangThaiActive } from '../../../lib/appconst';
+import { IPagedResultSoQuyDto } from '../../../services/so_quy/Dto/IPagedResultSoQuyDto';
+import { ParamSearchSoQuyDto } from '../../../services/so_quy/Dto/ParamSearchSoQuyDto';
+import Cookies from 'js-cookie';
+import { lastDayOfMonth } from 'date-fns';
+import customer from '../../customer';
 
 export type IPropsPageThuNgan = {
     txtSearch: string;
@@ -138,7 +145,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             idChiNhanh: idChiNhanhChosed
         })
     );
-
     const [confirmDialog, setConfirmDialog] = useState<PropConfirmOKCancel>({
         show: false,
         title: '',
@@ -188,6 +194,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     }, [arrIdNhomHangFilter]);
 
     const GetInforCustomer_byId = async (cusId: string) => {
+        console.log('test');
         const customer = await khachHangService.getKhachHang(cusId);
         setCustomerChosed(customer);
     };
@@ -221,7 +228,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     };
 
     const InitData_forHoaDon = async () => {
-        console.log('into ');
         const idCheckInNew = idCheckIn ?? Guid.EMPTY;
         const hdCache = await dbDexie.hoaDon
             .where('idCheckIn')
@@ -635,11 +641,13 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         setCustomerChosed({
             ...customerChosed,
             id: item?.id,
-            maKhachHang: item?.text, // todo makhachhang
+            maKhachHang: item?.maKhachHang ?? '',
             tenKhachHang: item?.text ?? 'Khách lẻ',
-            soDienThoai: item?.text2 ?? ''
+            soDienThoai: item?.text2 ?? '',
+            conNo: item?.conNo,
+            tenNhomKhach: item.nhomKhach,
+            isShow: true
         });
-
         const idCheckin = await InsertCustomer_toCheckIn(item?.id ?? Guid.EMPTY);
         setHoaDon({ ...hoadon, idKhachHang: item?.id, idCheckIn: idCheckin });
 
@@ -701,7 +709,10 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             id: Guid.EMPTY,
             maKhachHang: 'KL', // todo makhachhang
             tenKhachHang: 'Khách lẻ',
-            soDienThoai: ''
+            soDienThoai: '',
+            conNo: 0,
+            tenNhomKhach: '',
+            isShow: false
         });
         await dbDexie.hoaDon
             .where('id')
@@ -1150,6 +1161,189 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
     // if (isLoadingData) {
     //     return <Loading />;
     // }
+    const today = new Date();
+    const [thuTrongKy, setThuTrongKy] = useState(0);
+    const [chiTrongKy, setChiTrongKy] = useState(0);
+    const [quyHDOld, setQuyHDOld] = useState<QuyHoaDonDto>({} as QuyHoaDonDto);
+    const [isShowModal, setisShowModal] = useState(false);
+    const [isShowThanhToanHD, setIsShowThanhToanHD] = useState(false);
+    const [pageDataSoQuy, setPageDataSoQuy] = useState<IPagedResultSoQuyDto<QuyHoaDonDto>>({
+        totalCount: 0,
+        totalPage: 0,
+        items: []
+    });
+    const idChiNhanhCookies = Cookies.get('IdChiNhanh') ?? '';
+
+    const [paramSearch, setParamSearch] = useState<ParamSearchSoQuyDto>({
+        textSearch: '',
+        currentPage: 1,
+        columnSort: 'ngayLapHoaDon',
+        typeSort: 'desc',
+        idChiNhanhs: [idChiNhanhCookies],
+        fromDate: format(today, 'yyyy-MM-01'),
+        toDate: format(lastDayOfMonth(today), 'yyyy-MM-dd'),
+        idLoaiChungTus: [LoaiChungTu.PHIEU_THU, LoaiChungTu.PHIEU_CHI],
+        idLoaiChungTuLienQuan: LoaiChungTu.ALL,
+        trangThais: [TrangThaiActive.ACTIVE]
+    });
+    const [selectedRowId, setSelectedRowId] = useState('');
+
+    const saveSoQuy = async (dataSave: QuyHoaDonDto, type: number) => {
+        setisShowModal(false);
+        setIsShowThanhToanHD(false);
+
+        // get thông tin các hình thức thanh toán để bind lại phần Tổng
+        const quyCT = dataSave?.quyHoaDon_ChiTiet;
+        let tienMat = 0,
+            tienCK = 0,
+            tienPos = 0,
+            tongThu = dataSave?.tongTienThu;
+        if (quyCT != undefined && quyCT.length > 0) {
+            tienMat = quyCT
+                ?.filter((x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.TIEN_MAT)
+                .reduce((currentValue: number, item: QuyChiTietDto) => {
+                    return item.tienThu + currentValue;
+                }, 0);
+            tienCK = quyCT
+                ?.filter((x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.CHUYEN_KHOAN)
+                .reduce((currentValue: number, item: QuyChiTietDto) => {
+                    return item.tienThu + currentValue;
+                }, 0);
+            tienPos = quyCT
+                ?.filter((x) => x.hinhThucThanhToan === HINH_THUC_THANH_TOAN.QUYET_THE)
+                .reduce((currentValue: number, item: QuyChiTietDto) => {
+                    return item.tienThu + currentValue;
+                }, 0);
+        }
+        if (dataSave?.idLoaiChungTu == LoaiChungTu.PHIEU_CHI) {
+            tienMat = tienMat > 0 ? -tienMat : 0;
+            tienCK = tienCK > 0 ? -tienCK : 0;
+            tienPos = tienPos > 0 ? -tienPos : 0;
+            tongThu = tongThu > 0 ? -tongThu : 0;
+
+            if (type === TypeAction.INSEART) {
+                setChiTrongKy(() => chiTrongKy - tongThu);
+            } else {
+                setChiTrongKy(() => chiTrongKy + (quyHDOld?.tongTienThu ?? 0) - tongThu);
+            }
+        } else {
+            if (type === TypeAction.INSEART) {
+                setThuTrongKy(() => thuTrongKy + tongThu);
+            } else {
+                setChiTrongKy(() => thuTrongKy - (quyHDOld?.tongTienThu ?? 0) + tongThu);
+            }
+        }
+
+        dataSave.tienMat = tienMat;
+        dataSave.tienChuyenKhoan = tienCK;
+        dataSave.tienQuyetThe = tienPos;
+        dataSave.tongTienThu = tongThu;
+
+        switch (type) {
+            case TypeAction.INSEART: // insert
+                {
+                    // phải gán lại ngày lập: để chèn dc dòng mới thêm lên trên cùng
+                    // dataSave.ngayLapHoaDon = new Date(dataSave.ngayLapHoaDon);
+                    setPageDataSoQuy({
+                        ...pageDataSoQuy,
+                        items: [dataSave, ...pageDataSoQuy.items],
+                        totalCount: pageDataSoQuy.totalCount + 1,
+                        totalPage: utils.getTotalPage(pageDataSoQuy.totalCount + 1, paramSearch.pageSize),
+                        sumTienMat: (pageDataSoQuy?.sumTienMat ?? 0) + tienMat,
+                        sumTienChuyenKhoan: (pageDataSoQuy?.sumTienChuyenKhoan ?? 0) + tienCK,
+                        sumTienQuyetThe: (pageDataSoQuy?.sumTienQuyetThe ?? 0) + tienPos,
+                        sumTongThuChi: (pageDataSoQuy?.sumTongThuChi ?? 0) + tongThu
+                    });
+                    setObjAlert({
+                        show: true,
+                        type: 1,
+                        mes: 'Thêm ' + dataSave.loaiPhieu + ' thành công'
+                    });
+                }
+                break;
+            case TypeAction.UPDATE:
+                setPageDataSoQuy({
+                    ...pageDataSoQuy,
+                    sumTienMat: (pageDataSoQuy?.sumTienMat ?? 0) + tienMat - (quyHDOld?.tienMat ?? 0),
+                    sumTienChuyenKhoan:
+                        (pageDataSoQuy?.sumTienChuyenKhoan ?? 0) + tienCK - (quyHDOld?.tienChuyenKhoan ?? 0),
+                    sumTienQuyetThe: (pageDataSoQuy?.sumTienQuyetThe ?? 0) + tienPos - (quyHDOld?.tienQuyetThe ?? 0),
+                    sumTongThuChi: (pageDataSoQuy?.sumTongThuChi ?? 0) + tongThu - (quyHDOld?.tongTienThu ?? 0),
+                    items: pageDataSoQuy.items.map((item) => {
+                        if (item.id === selectedRowId) {
+                            return {
+                                ...item,
+                                maHoaDon: dataSave.maHoaDon,
+                                ngayLapHoaDon: dataSave.ngayLapHoaDon,
+                                idLoaiChungTu: dataSave.idLoaiChungTu,
+                                loaiPhieu: dataSave.loaiPhieu,
+                                hinhThucThanhToan: dataSave.hinhThucThanhToan,
+                                sHinhThucThanhToan: dataSave.sHinhThucThanhToan,
+                                tongTienThu: dataSave.tongTienThu,
+                                maNguoiNop: dataSave.maNguoiNop,
+                                tenNguoiNop: dataSave.tenNguoiNop,
+                                idKhoanThuChi: dataSave.idKhoanThuChi,
+                                tenKhoanThuChi: dataSave.tenKhoanThuChi,
+                                txtTrangThai: dataSave.txtTrangThai,
+                                trangThai: dataSave.trangThai,
+                                noiDungThu: dataSave?.noiDungThu ?? '',
+                                tienMat: dataSave.tienMat,
+                                tienChuyenKhoan: dataSave.tienChuyenKhoan,
+                                tienQuyetThe: dataSave.tienQuyetThe
+                            };
+                        } else {
+                            return item;
+                        }
+                    })
+                });
+                setObjAlert({
+                    show: true,
+                    type: 1,
+                    mes: 'Cập nhật ' + dataSave.loaiPhieu + ' thành công'
+                });
+                break;
+            case TypeAction.DELETE:
+                break;
+            case TypeAction.RESTORE:
+                {
+                    setPageDataSoQuy({
+                        ...pageDataSoQuy,
+                        sumTienMat: (pageDataSoQuy?.sumTienMat ?? 0) + tienMat,
+                        sumTienChuyenKhoan: (pageDataSoQuy?.sumTienChuyenKhoan ?? 0) + tienCK,
+                        sumTienQuyetThe: (pageDataSoQuy?.sumTienQuyetThe ?? 0) + tienPos,
+                        sumTongThuChi: (pageDataSoQuy?.sumTongThuChi ?? 0) + tongThu,
+                        items: pageDataSoQuy.items.map((item) => {
+                            if (item.id === selectedRowId) {
+                                return {
+                                    ...item,
+                                    txtTrangThai: dataSave.txtTrangThai,
+                                    trangThai: dataSave.trangThai
+                                };
+                            } else {
+                                return item;
+                            }
+                        })
+                    });
+                }
+                break;
+        }
+    };
+
+    const [dialogVisible, setDialogVisible] = useState(false);
+    const [currentId, setCurrentId] = useState<string | null>(null);
+
+    const handleOpenDialog = (id: string | null = null) => {
+        setCurrentId(id);
+        setDialogVisible(true);
+    };
+
+    const handleCloseDialog = () => {
+        setDialogVisible(false);
+    };
+
+    const handleDialogSubmit = (dataSave: any, type: number) => {
+        handleCloseDialog();
+    };
 
     return (
         <>
@@ -1174,6 +1368,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
             <ModalSuDungGDV
                 isShowModal={isShowModalSuDungGDV}
                 idUpdate={customerChosed?.id}
+                maKhachHang={customerChosed?.maKhachHang}
                 onClose={() => setIsShowModalSuDungGDV(false)}
                 onOK={AgreeSuDungGDV}
             />
@@ -1201,6 +1396,12 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 onClosePopover={closePopoverGiamGia}
                 onUpdateGiamGia={changeGiamGiaHoaDon}
             />
+            {/* <CreateOrEditSoQuyDialog
+                visiable={dialogVisible}
+                idQuyHD={currentId}
+                onClose={handleCloseDialog}
+                onOk={handleDialogSubmit}
+            /> */}
             <Grid container minHeight={'86vh'} maxHeight={'86vh'}>
                 {!isThanhToanTienMat ? (
                     <Grid item lg={7} md={6} xs={12} zIndex={5}>
@@ -1320,12 +1521,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                 <Grid item lg={5} md={6} xs={12} sm={7}>
                     <Stack marginLeft={2} position={'relative'} height={'100%'}>
                         <Stack>
-                            <Stack
-                                direction={'row'}
-                                paddingBottom={2}
-                                maxHeight={57}
-                                borderBottom={'1px solid #cccc'}
-                                justifyContent={'space-between'}>
+                            <Stack direction={'row'} paddingBottom={2} maxHeight={48} justifyContent={'space-between'}>
                                 <Stack>
                                     <Stack direction={'row'} spacing={0.5} alignItems={'center'}>
                                         <Avatar />
@@ -1336,56 +1532,90 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                             }}>
                                             <Stack
                                                 direction={'row'}
+                                                spacing={3}
                                                 alignItems={'center'}
-                                                spacing={1}
                                                 title="Thay đổi khách hàng"
                                                 sx={{ cursor: 'pointer' }}>
-                                                <Typography
-                                                    variant="body2"
-                                                    fontWeight={500}
-                                                    className="lableOverflow"
-                                                    maxWidth={350}>
-                                                    {customerChosed?.tenKhachHang}
-                                                </Typography>
-                                                {!utils.checkNull_OrEmpty(customerChosed?.id ?? '') ? (
-                                                    <CloseOutlinedIcon
-                                                        color="error"
-                                                        titleAccess="Bỏ chọn khách hàng"
-                                                        sx={{ width: 20, cursor: 'pointer' }}
-                                                        onClick={(event) => {
-                                                            event.stopPropagation();
-                                                            RemoveCustomer();
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    <IconButton
-                                                        aria-label="add-customer"
-                                                        color="primary"
-                                                        title="Thêm khách hàng mới"
-                                                        onClick={(event) => {
-                                                            event.stopPropagation();
-                                                            showModalAddCustomer();
-                                                        }}>
-                                                        <AddOutlinedIcon color="info" sx={{ width: 20 }} />
-                                                    </IconButton>
-                                                )}
-                                            </Stack>
+                                                {/* Cột 1: Tên khách hàng, Nhóm khách hàng & Icon */}
+                                                <Stack direction="row" alignItems="center" spacing={1} maxWidth={250}>
+                                                    <Stack direction="column">
+                                                        <Typography
+                                                            variant="body2"
+                                                            fontWeight={500}
+                                                            className="lableOverflow">
+                                                            {customerChosed?.tenKhachHang ?? 'Chưa chọn khách hàng'}
+                                                        </Typography>
+                                                        {customerChosed?.isShow && ( // Chỉ hiển thị nhóm khách hàng nếu isShow = true
+                                                            <Typography
+                                                                variant="body2"
+                                                                fontWeight={300}
+                                                                className="lableOverflow"
+                                                                sx={{ textTransform: 'none', color: '#555' }}>
+                                                                Nhóm: {customerChosed?.tenNhomKhach}
+                                                            </Typography>
+                                                        )}
+                                                    </Stack>
 
-                                            <Stack direction={'row'} spacing={2} alignItems={'center'}>
-                                                <Typography color={'#ccc'} variant="caption">
-                                                    {customerChosed?.soDienThoai}
-                                                </Typography>
-                                                {customerHasGDV && (
-                                                    <AutoStoriesOutlinedIcon
-                                                        color="secondary"
-                                                        onClick={(event) => {
-                                                            event.stopPropagation();
-                                                            showModalSuDungGDV();
-                                                        }}
-                                                    />
+                                                    {/* Icon Xóa hoặc Thêm khách hàng (chỉ hiển thị 1 trong 2) */}
+                                                    {customerChosed?.isShow ? (
+                                                        <CloseOutlinedIcon
+                                                            color="error"
+                                                            titleAccess="Bỏ chọn khách hàng"
+                                                            sx={{ width: 20, cursor: 'pointer' }}
+                                                            onClick={(event) => {
+                                                                event.stopPropagation();
+                                                                RemoveCustomer();
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <IconButton
+                                                            aria-label="add-customer"
+                                                            color="primary"
+                                                            title="Thêm khách hàng mới"
+                                                            onClick={(event) => {
+                                                                event.stopPropagation();
+                                                                showModalAddCustomer();
+                                                            }}>
+                                                            <AddOutlinedIcon color="info" sx={{ width: 20 }} />
+                                                        </IconButton>
+                                                    )}
+                                                </Stack>
+
+                                                {/* Cột 2: Còn nợ & Số điện thoại (chỉ hiển thị nếu isShow = true) */}
+                                                {customerChosed?.isShow && (
+                                                    <Stack direction="column" maxWidth={250}>
+                                                        {customerChosed?.conNo != null &&
+                                                            customerChosed?.conNo != 0 && (
+                                                                <Typography
+                                                                    color={'#000000'}
+                                                                    variant="caption"
+                                                                    sx={{ fontWeight: 'bold' }}>
+                                                                    Còn nợ:{' '}
+                                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                                        customerChosed?.conNo ?? 0
+                                                                    )}{' '}
+                                                                    đ
+                                                                </Typography>
+                                                            )}
+                                                        <Typography color={'#000000'} variant="caption">
+                                                            Điện thoại: {customerChosed?.soDienThoai}
+                                                        </Typography>
+                                                    </Stack>
                                                 )}
                                             </Stack>
                                         </Stack>
+
+                                        {/* Icon mở modal Sử dụng dịch vụ (Chỉ hiển thị nếu isShow = true) */}
+                                        {customerChosed?.isShow && (
+                                            <AutoStoriesOutlinedIcon
+                                                color="secondary"
+                                                sx={{ marginLeft: 1, cursor: 'pointer' }}
+                                                onClick={(event) => {
+                                                    event.stopPropagation();
+                                                    showModalSuDungGDV();
+                                                }}
+                                            />
+                                        )}
                                     </Stack>
 
                                     <MenuWithDataFromDB
@@ -1417,7 +1647,6 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                             <Stack overflow={'auto'} maxHeight={'calc(84vh - 280px)!important'} zIndex={3}>
                                 {hoaDonChiTiet
                                     ?.sort((x, y) => {
-                                        // sap xep STT giamdan
                                         const a = x.stt;
                                         const b = y.stt;
                                         return a > b ? -1 : a < b ? 1 : 0;

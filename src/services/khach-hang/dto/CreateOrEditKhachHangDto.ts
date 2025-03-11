@@ -23,4 +23,7 @@ export interface CreateOrEditKhachHangDto {
     idQuanHuyen?: string;
     idKhachHangZOA?: string;
     zoaUserId?: string;
+    conNo?: number;
+    tenNhomKhach?: string;
+    isShow?: boolean;
 }

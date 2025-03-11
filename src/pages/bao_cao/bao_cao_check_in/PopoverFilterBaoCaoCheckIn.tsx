@@ -142,7 +142,6 @@ export default function PopoverFilterBaoCaoCheckIn(props: IPropsPopoverFilter<Pa
                         soNgayChuaCheckIn_From: null,
                         soNgayChuaCheckIn_To: null
                     });
-                    console.log('soNgayChuaCheckIn_changeGiaTriSoSanh ', newVal, valText);
                 }
                 break;
             case LoaiSoSanh_Number.EQUALS:

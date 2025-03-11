@@ -128,7 +128,7 @@ export default function ModalAddCustomerCheckIn(props: IPropModalCheckIn) {
             // remove cache
         } else {
             dataChosed.idKhachHang = cusChosed?.id.toString();
-            dataChosed.maKhachHang = cusChosed?.maKhachHang;
+            dataChosed.maKhachHang = cusChosed?.maKhachHang ?? '';
             dataChosed.tenKhachHang = cusChosed?.tenKhachHang;
             dataChosed.soDienThoai = cusChosed?.soDienThoai;
             const idCheckIn = await saveCheckIn(dataChosed, CheckIn_TabName.CUSTOMER);

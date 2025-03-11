@@ -15,7 +15,7 @@ import {
     Popover,
     Checkbox
 } from '@mui/material';
-import { Add, LocalOfferOutlined, Search } from '@mui/icons-material';
+import { Add, Category, DeleteOutline, LocalOfferOutlined, Search } from '@mui/icons-material';
 import { ReactComponent as FilterIcon } from '../../images/icons/i-filter.svg';
 // prop for send data from parent to child
 import { PropModal, PropConfirmOKCancel } from '../../utils/PropParentToChild';
@@ -99,14 +99,26 @@ const PageProduct = () => {
             items: list.items
         });
 
-        // check all: if allId this page exists in rowSelectionModel
         const arrIdThisPage = list.items?.map((x) => {
             return x.id ?? '';
         });
         const arrExists = rowSelectionModel?.filter((x) => arrIdThisPage.includes(x as string));
         setCheckAllRow(arrExists?.length == arrIdThisPage?.length && rowSelectionModel?.length !== 0);
     };
+    const GetListHangHoaDaXoa = async () => {
+        const list = await ProductService.Get_DMHangHoaDaXoa(filterPageProduct);
+        setPageDataProduct({
+            totalCount: list.totalCount,
+            totalPage: Utils.getTotalPage(list.totalCount, filterPageProduct.pageSize),
+            items: list.items
+        });
 
+        const arrIdThisPage = list.items?.map((x) => {
+            return x.id ?? '';
+        });
+        const arrExists = rowSelectionModel?.filter((x) => arrIdThisPage.includes(x as string));
+        setCheckAllRow(arrExists?.length == arrIdThisPage?.length && rowSelectionModel?.length !== 0);
+    };
     const GetListNhomHangHoa = async () => {
         await nhomHangHoaStore.getAllNhomHang();
     };
@@ -326,6 +338,7 @@ const PageProduct = () => {
                 type: 1,
                 mes: 'Xóa ' + rowHover?.tenLoaiHangHoa?.toLocaleLowerCase() + ' thành công'
             });
+            GetListHangHoa();
             setInforDeleteProduct({ ...inforDeleteProduct, show: false });
             setPageDataProduct((olds) => {
                 return {
@@ -383,8 +396,6 @@ const PageProduct = () => {
                     })
                 });
                 setRowSelectionModel([]);
-
-                // save diary
                 const arrIDHangHoa = rowSelectionModel as string[];
                 const lstPoduct = await ProductService.GetInforBasic_OfListHangHoa(arrIDHangHoa);
                 const sTenHangHoa = lstPoduct
@@ -460,7 +471,6 @@ const PageProduct = () => {
         } else {
             const errImport = data.filter((x: BangBaoLoiFileimportDto) => x.loaiErr === 2).length;
             if (errImport > 0) {
-                // import 1 số thành côg, 1 số thất bại
                 setObjAlert({
                     ...objAlert,
                     show: true,
@@ -605,6 +615,18 @@ const PageProduct = () => {
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         },
         {
+            field: 'giaVon',
+            headerName: 'Giá vốn',
+            minWidth: 100,
+            flex: 1,
+            renderCell: (params) => (
+                <Box display="flex" justifyContent="end" width="100%">
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
+                </Box>
+            ),
+            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
+        },
+        {
             field: 'soPhutThucHien',
             headerName: 'Thời gian (phút)',
             minWidth: 128,
@@ -682,61 +704,85 @@ const PageProduct = () => {
         }
     ];
     const filterContent = (
-        <Box className="page-box-left">
-            <Box
-                display="flex"
-                justifyContent="space-between"
-                borderBottom="1px solid #E6E1E6"
-                padding="12px"
-                borderRadius={'4px'}
-                sx={{ backgroundColor: 'var(--color-header-table)' }}>
-                <Typography fontSize="14px" fontWeight="700">
-                    Nhóm dịch vụ
-                </Typography>
+        <Box
+            className="page-box-left"
+            sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+            <Box>
+                <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    borderBottom="1px solid #E6E1E6"
+                    padding="12px"
+                    borderRadius={'4px'}
+                    sx={{ backgroundColor: 'var(--color-header-table)' }}>
+                    <Typography fontSize="14px" fontWeight="700">
+                        Nhóm dịch vụ
+                    </Typography>
 
-                <Add
+                    <Add
+                        sx={{
+                            transition: '.4s',
+                            height: '32px',
+                            cursor: 'pointer',
+                            width: '32px',
+                            borderRadius: '4px',
+                            padding: '4px 0px',
+                            border: '1px solid #cccc',
+                            display: abpCustom.isGrandPermission('Pages.DM_NhomHangHoa.Create') ? '' : 'none'
+                        }}
+                        onClick={() => showModalAddNhomHang()}
+                    />
+                </Box>
+                <Box
                     sx={{
-                        transition: '.4s',
-                        height: '32px',
-                        cursor: 'pointer',
-                        width: '32px',
-                        borderRadius: '4px',
-                        padding: '4px 0px',
-                        border: '1px solid #cccc',
-                        display: abpCustom.isGrandPermission('Pages.DM_NhomHangHoa.Create') ? '' : 'none'
-                    }}
-                    onClick={() => showModalAddNhomHang()}
-                />
+                        overflow: 'auto',
+                        maxHeight: '66vh',
+                        '&::-webkit-scrollbar': {
+                            width: '7px'
+                        },
+                        '&::-webkit-scrollbar-thumb': {
+                            bgcolor: 'rgba(0,0,0,0.1)',
+                            borderRadius: '4px'
+                        },
+                        '&::-webkit-scrollbar-track': {
+                            bgcolor: 'var(--color-bg)'
+                        }
+                    }}>
+                    <Stack spacing={1} paddingTop={1}>
+                        <TextField
+                            variant="standard"
+                            fullWidth
+                            placeholder="Tìm kiếm nhóm"
+                            InputProps={{ startAdornment: <Search /> }}
+                            onChange={(e) => searchNhomHang(e.target.value)}
+                        />
+                        <AccordionNhomHangHoa dataNhomHang={treeSearchNhomHangHoa} clickTreeItem={editNhomHangHoa} />
+                    </Stack>
+                </Box>
             </Box>
+
             <Box
                 sx={{
-                    overflow: 'auto',
-                    maxHeight: '66vh',
-                    // padding: '0px 24px',
-                    '&::-webkit-scrollbar': {
-                        width: '7px'
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                        bgcolor: 'rgba(0,0,0,0.1)',
-                        borderRadius: '4px'
-                    },
-                    '&::-webkit-scrollbar-track': {
-                        bgcolor: 'var(--color-bg)'
-                    }
+                    backgroundColor: 'var(--color-bg-light)',
+                    padding: 2,
+                    borderRadius: 1,
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                    cursor: 'pointer',
+                    marginTop: 'auto' // Đẩy xuống cuối
+                }}
+                onClick={() => {
+                    GetListHangHoaDaXoa();
                 }}>
-                <Stack spacing={1} paddingTop={1}>
-                    <TextField
-                        variant="standard"
-                        fullWidth
-                        placeholder="Tìm kiếm nhóm"
-                        InputProps={{ startAdornment: <Search /> }}
-                        onChange={(e) => searchNhomHang(e.target.value)}
-                    />
-                    <AccordionNhomHangHoa dataNhomHang={treeSearchNhomHangHoa} clickTreeItem={editNhomHangHoa} />
+                <Stack direction="row" alignItems="center" spacing={1}>
+                    <DeleteOutline sx={{ fontSize: 24, color: 'red' }} />
+                    <Typography color="red" fontWeight="bold">
+                        Ngừng kinh doanh
+                    </Typography>
                 </Stack>
             </Box>
         </Box>
     );
+
     return (
         <>
             <ModalNhomHangHoa trigger={triggerModalNhomHang} handleSave={saveNhomHang}></ModalNhomHangHoa>
