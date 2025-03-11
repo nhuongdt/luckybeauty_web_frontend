@@ -6,7 +6,7 @@ import { LoaiChungTu } from '../../lib/appconst';
 export default class HoaDonDto {
     id = Guid.create().toString();
     idKhachHang: string | null = null;
-    idChiNhanh?: string;
+    idChiNhanh?: string | null;
     idNhanVien? = null;
     idLoaiChungTu = LoaiChungTu.HOA_DON_BAN_LE;
     maHoaDon = '';
