@@ -8,7 +8,17 @@ import ColumnChartNew from './components/Charts/ColumnChartNew';
 import HotServicesNew from './components/Statistical/HotServicesNew';
 import Box from '@mui/material/Box';
 import OverView from './components/OverView/ovver-view';
-import { FormControlLabel, Grid, Radio, RadioGroup, SelectChangeEvent, Stack, Typography } from '@mui/material';
+import {
+    Button,
+    ButtonGroup,
+    FormControlLabel,
+    Grid,
+    Radio,
+    RadioGroup,
+    SelectChangeEvent,
+    Stack,
+    Typography
+} from '@mui/material';
 import dashboardStore from '../../stores/dashboardStore';
 import Cookies from 'js-cookie';
 import { observer } from 'mobx-react';
@@ -16,10 +26,10 @@ import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import MenuWithDataHasSearch from '../../components/Menu/MenuWithData_HasSearch';
 import { IList } from '../../services/dto/IList';
 import suggestStore from '../../stores/suggestStore';
-import { endOfMonth, format, startOfMonth } from 'date-fns';
+import { endOfMonth, format, startOfMonth, startOfWeek, endOfWeek, startOfYear, endOfYear } from 'date-fns';
 import DateFilterCustom from '../../components/DatetimePicker/DateFilterCustom';
 import { RequestFromToDto } from '../../services/dto/ParamSearchDto';
-import { DateType } from '../../lib/appconst';
+import { DateType, TimeType } from '../../lib/appconst';
 import ModalAllLichHenDoard from './components/Appointment/modal_all_lichhen';
 
 enum TopService_LoaiBaoCao {
@@ -50,11 +60,24 @@ const Dashboard: React.FC = () => {
     const [anchorDateTopService, setAnchorDateTopService] = useState<HTMLSpanElement | null>(null);
     const openDateFilterTopService = Boolean(anchorDateTopService);
 
+    const arrButtonGroup = [
+        { id: TimeType.WEEK, text: 'Tuần' },
+        { id: TimeType.MONTH, text: 'Tháng' },
+        { id: TimeType.YEAR, text: 'Năm' }
+    ];
+
     const [paramSearch, setParamSearch] = useState<RequestFromToDto>({
         dateType: DateType.HOM_NAY,
         fromDate: format(toDay, 'yyyy-MM-dd'),
         toDate: format(toDay, 'yyyy-MM-dd'),
         idChiNhanhs: [Cookies.get('IdChiNhanh') ?? '']
+    });
+    const [paramSearchDoanhThu, setParamSearchDoanhThu] = useState<RequestFromToDto>({
+        dateType: DateType.HOM_NAY,
+        fromDate: format(startOfWeek(toDay), 'yyyy-MM-dd'),
+        toDate: format(endOfWeek(toDay), 'yyyy-MM-dd'),
+        idChiNhanhs: [Cookies.get('IdChiNhanh') ?? ''],
+        timeType: TimeType.WEEK
     });
     const [paramSearchLichHen, setParamSearchLichHen] = useState<RequestFromToDto>({
         dateType: DateType.HOM_NAY,
@@ -80,24 +103,10 @@ const Dashboard: React.FC = () => {
         await dashboardStore.getThongKeSoLuong(paramSearch);
         await dashboardStore.getDanhSachLichHen(paramSearchLichHen);
         await dashboardStore.getThongKeHotService(paramSearchTopService);
-        await dashboardStore.getThongKeDoanhThu(paramSearch);
+        await dashboardStore.getThongKeDoanhThu(paramSearchDoanhThu);
         await dashboardStore.getThongKeLichHen(paramSearch);
     };
-    const sumTongTien = dashboardStore.thongKeDoanhThu?.reduce((sum, item) => sum + item.thangNay, 0);
-    const handleChangeDateType = async (event: SelectChangeEvent<string>) => {
-        const newValue = event.target.value as string;
-        setDashboardDateView(newValue);
-        await dashboardStore.onChangeDateType(event.target.value as string);
-        if (newValue === 'week') {
-            Cookies.set('dashBoardDateType', 'week');
-        } else if (newValue === 'day') {
-            Cookies.set('dashBoardDateType', 'day');
-        } else if (newValue === 'month') {
-            Cookies.set('dashBoardDateType', 'month');
-        } else if (newValue === 'year') {
-            Cookies.set('dashBoardDateType', 'year');
-        }
-    };
+    const sumTongTien = dashboardStore.thongKeDoanhThu?.reduce((sum, item) => sum + item.value, 0);
 
     const toggleChiNhanh = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorChiNhanh(event.currentTarget);
@@ -108,6 +117,8 @@ const Dashboard: React.FC = () => {
 
         if (arrIdChosed?.length > 0) {
             setLblChiNhanh(`Chi nhánh (${arrIdChosed?.length})`);
+        } else {
+            setLblChiNhanh('Tất cả');
         }
 
         const param = {
@@ -170,6 +181,44 @@ const Dashboard: React.FC = () => {
         await dashboardStore.getThongKeHotService(param);
     };
 
+    const DoanhThu_ChangeTimeType = async (type: number) => {
+        let from = '',
+            to = '';
+        switch (type) {
+            case TimeType.WEEK:
+                {
+                    from = format(startOfWeek(toDay), 'yyyy-MM-dd');
+                    to = format(endOfWeek(toDay), 'yyyy-MM-dd');
+                }
+                break;
+            case TimeType.MONTH:
+                {
+                    from = format(startOfYear(toDay), 'yyyy-MM-dd');
+                    to = format(endOfMonth(toDay), 'yyyy-MM-dd');
+                }
+                break;
+            case TimeType.YEAR:
+                {
+                    from = format(startOfYear(toDay), 'yyyy-MM-dd');
+                    to = format(endOfYear(toDay), 'yyyy-MM-dd');
+                }
+                break;
+        }
+        setParamSearchDoanhThu({
+            ...paramSearchDoanhThu,
+            timeType: type,
+            fromDate: from,
+            toDate: to
+        });
+        const param = {
+            ...paramSearchDoanhThu,
+            timeType: type,
+            fromDate: from,
+            toDate: to
+        };
+        await dashboardStore.getThongKeDoanhThu(param);
+    };
+
     return (
         <div style={{ height: 'auto' }}>
             <ModalAllLichHenDoard
@@ -191,12 +240,7 @@ const Dashboard: React.FC = () => {
                     spacing={1}
                     sx={{ padding: '8px 12px', background: 'wheat', borderRadius: '4px' }}>
                     {suggestStore?.suggestChiNhanh_byUserLogin?.length > 1 && (
-                        <Stack
-                            direction={'row'}
-                            alignItems={'center'}
-                            spacing={1.5}
-                            // display={{ xs: 'none', lg: 'flex', md: 'flex' }}
-                        >
+                        <Stack direction={'row'} alignItems={'center'} spacing={1.5}>
                             <Stack>
                                 <Stack direction={'row'} spacing={0.5} onClick={toggleChiNhanh}>
                                     <Typography variant="body1">{lblChiNhanh}</Typography>
@@ -350,7 +394,21 @@ const Dashboard: React.FC = () => {
                                 </Grid>
                                 <Grid item>
                                     <Box display={'flex'} justifyContent={'end'} width={'100%'}>
-                                        <Box
+                                        <ButtonGroup>
+                                            {arrButtonGroup?.map((x) => (
+                                                <Button
+                                                    key={x.id}
+                                                    variant={
+                                                        paramSearchDoanhThu?.timeType === x.id
+                                                            ? 'contained'
+                                                            : 'outlined'
+                                                    }
+                                                    onClick={() => DoanhThu_ChangeTimeType(x.id)}>
+                                                    {x.text}
+                                                </Button>
+                                            ))}
+                                        </ButtonGroup>
+                                        {/* <Box
                                             display={'flex'}
                                             justifyContent={'space-between'}
                                             alignItems={'center'}
@@ -388,7 +446,7 @@ const Dashboard: React.FC = () => {
                                                 }}>
                                                 Năm trước
                                             </Typography>
-                                        </Box>
+                                        </Box> */}
                                     </Box>
                                 </Grid>
                             </Grid>

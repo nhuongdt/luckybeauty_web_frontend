@@ -1,8 +1,9 @@
-import { Checkbox, Menu, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Checkbox, FormControlLabel, Menu, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { IList } from '../../services/dto/IList';
 import { CSSProperties } from 'styled-components';
 import { useState } from 'react';
+import utils from '../../utils/utils';
 
 type IPropsMenu = {
     open: boolean;
@@ -24,6 +25,13 @@ export default function MenuWithDataHasSearch({
     handleClose
 }: IPropsMenu) {
     const [arrIdChosed, setArrIdChosed] = useState<string[]>([]);
+    const [textSearch, setTextSearch] = useState<string>('');
+
+    const lstSearch = lstData?.filter(
+        (x) =>
+            utils.strToEnglish(x.text).indexOf(utils.strToEnglish(textSearch)) > -1 ||
+            (x?.text2 && utils.strToEnglish(x.text2).indexOf(utils.strToEnglish(textSearch)) > -1)
+    );
 
     const changeCheckBox = (id: string, isCheck: boolean) => {
         let arrNew: string[];
@@ -47,7 +55,7 @@ export default function MenuWithDataHasSearch({
         } else {
             arrNew = [];
         }
-        setArrIdChosed(arrNew);
+        setArrIdChosed([...arrNew]);
         if (choseMultipleItem) {
             choseMultipleItem(arrNew);
         }
@@ -56,25 +64,37 @@ export default function MenuWithDataHasSearch({
     return (
         <Menu
             id="menu-with-data-has-search"
+            autoFocus={false}
             anchorEl={anchorEl}
             open={open}
             onClose={handleClose}
             MenuListProps={{
                 'aria-labelledby': 'basic-button'
             }}>
-            <TextField size="small" InputProps={{ startAdornment: <SearchIcon /> }} variant="standard" />
+            <TextField
+                size="small"
+                InputProps={{ startAdornment: <SearchIcon /> }}
+                variant="standard"
+                onKeyDown={(e) => e.stopPropagation()}
+                value={textSearch}
+                onChange={(e) => setTextSearch(e.target.value)}
+            />
 
             {hasCheckBox && (
-                <Checkbox
-                    sx={{
-                        '&.MuiCheckbox-root': {
-                            paddingLeft: 0
+                <MenuItem>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={arrIdChosed?.length === lstData?.length}
+                                onChange={(e) => changeCheckAll(e.currentTarget.checked)}
+                            />
                         }
-                    }}
-                    onChange={(e) => changeCheckAll(e.currentTarget.checked)}
-                />
+                        label="Tất cả"
+                    />
+                </MenuItem>
             )}
-            {lstData?.map((x, index) => (
+
+            {lstSearch?.map((x, index) => (
                 <MenuItem
                     key={index}
                     onClick={() => {
@@ -82,16 +102,16 @@ export default function MenuWithDataHasSearch({
                     }}>
                     <Stack direction="row" spacing={1} alignItems={'center'}>
                         {hasCheckBox && (
-                            <Checkbox
-                                sx={{
-                                    '&.MuiCheckbox-root': {
-                                        paddingLeft: 0
-                                    }
-                                }}
-                                onChange={(e) => changeCheckBox(x.id, e.currentTarget.checked)}
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={arrIdChosed.includes(x.id)}
+                                        onChange={(e) => changeCheckBox(x.id, e.currentTarget.checked)}
+                                    />
+                                }
+                                label={x.text}
                             />
                         )}
-                        <Typography variant="body1"> {x.text}</Typography>
                     </Stack>
                 </MenuItem>
             ))}

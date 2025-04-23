@@ -1,3 +1,4 @@
+import { ICharDataDto } from '../dto/ICharDataDto';
 import { PagedResultDto } from '../dto/pagedResultDto';
 import { RequestFromToDto } from '../dto/ParamSearchDto';
 import http from '../httpService';
@@ -16,7 +17,7 @@ class DashboardService {
         const response = await http.post(`api/services/app/Dashboard/ThongKeLichHen`, input);
         return response.data.result;
     }
-    public async thongKeDoanhThu(input: RequestFromToDto) {
+    public async thongKeDoanhThu(input: RequestFromToDto): Promise<ICharDataDto[]> {
         const response = await http.post(`api/services/app/Dashboard/ThongKeDoanhThu`, input);
         return response.data.result;
     }

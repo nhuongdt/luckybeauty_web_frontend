@@ -9,13 +9,14 @@ import AppConsts from '../lib/appconst';
 import dashboardService from '../services/dashboard/dashboardService';
 import { format as format_date } from 'date-fns';
 import { RequestFromToDto } from '../services/dto/ParamSearchDto';
+import { ICharDataDto } from '../services/dto/ICharDataDto';
 
 class DashboardStore {
     filter!: RequestFromToDto;
     danhSachLichHen!: DanhSachLichHen[];
     countLichHen!: number;
     thongKeLichHen!: ThongKeLichHen[];
-    thongKeDoanhThu!: ThongKeDoanhThu[];
+    thongKeDoanhThu!: ICharDataDto[];
     danhSachDichVuHot!: DanhSachDichVuHot[];
     thongKeSoLuong!: ThongKeSoLuong;
     dashboardDateType!: string;

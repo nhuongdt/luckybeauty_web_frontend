@@ -19,12 +19,7 @@ const ColumnChartNew: React.FC = () => {
                     {payload.map((entry: any, index: number) => (
                         <div key={index}>
                             <p key={`value-${index}`} className="value" style={{ color: entry.color }}>
-                                {entry.name == 'thangTruoc'
-                                    ? 'Năm trước'
-                                    : entry.name == 'thangNay'
-                                    ? 'Năm này'
-                                    : entry.name}
-                                : {formatNumber(entry.value)}
+                                {formatNumber(entry.value)}
                             </p>
                         </div>
                     ))}
@@ -34,31 +29,31 @@ const ColumnChartNew: React.FC = () => {
 
         return null;
     };
-    const data =
-        dashboardStore.thongKeDoanhThu !== undefined &&
-        dashboardStore.thongKeDoanhThu != ([] as ThongKeDoanhThu[]) &&
-        dashboardStore.thongKeDoanhThu.length > 0
-            ? dashboardStore.thongKeDoanhThu.map((item) => {
-                  return {
-                      month: window.screen.width <= 768 ? 'T' + item.month : 'Tháng ' + item.month,
-                      thangNay: item.thangNay,
-                      thangTruoc: item.thangTruoc
-                  };
-              })
-            : [
-                  { month: window.screen.width <= 768 ? 'T1' : 'Tháng 1', thangNay: 0, thangTruoc: 0 },
-                  { month: window.screen.width <= 768 ? 'T2' : 'Tháng 2', thangNay: 0, thangTruoc: 0 },
-                  { month: window.screen.width <= 768 ? 'T3' : 'Tháng 3', thangNay: 0, thangTruoc: 0 },
-                  { month: window.screen.width <= 768 ? 'T4' : 'Tháng 4', thangNay: 0, thangTruoc: 0 },
-                  { month: window.screen.width <= 768 ? 'T5' : 'Tháng 5', thangNay: 0, thangTruoc: 0 },
-                  { month: window.screen.width <= 768 ? 'T6' : 'Tháng 6', thangNay: 0, thangTruoc: 0 },
-                  { month: window.screen.width <= 768 ? 'T7' : 'Tháng 7', thangNay: 0, thangTruoc: 0 },
-                  { month: window.screen.width <= 768 ? 'T8' : 'Tháng 8', thangNay: 0, thangTruoc: 0 },
-                  { month: window.screen.width <= 768 ? 'T9' : 'Tháng 9', thangNay: 0, thangTruoc: 0 },
-                  { month: window.screen.width <= 768 ? 'T10' : 'Tháng 10', thangNay: 0, thangTruoc: 0 },
-                  { month: window.screen.width <= 768 ? 'T11' : 'Tháng 11', thangNay: 0, thangTruoc: 0 },
-                  { month: window.screen.width <= 768 ? 'T12' : 'Tháng 12', thangNay: 0, thangTruoc: 0 }
-              ];
+    const data = dashboardStore.thongKeDoanhThu;
+    // dashboardStore.thongKeDoanhThu !== undefined &&
+    // dashboardStore.thongKeDoanhThu != ([] as ThongKeDoanhThu[]) &&
+    // dashboardStore.thongKeDoanhThu.length > 0
+    //     ? dashboardStore.thongKeDoanhThu.map((item) => {
+    //           return {
+    //               month: window.screen.width <= 768 ? 'T' + item.month : 'Tháng ' + item.month,
+    //               thangNay: item.thangNay,
+    //               thangTruoc: item.thangTruoc
+    //           };
+    //       })
+    //     : [
+    //           { month: window.screen.width <= 768 ? 'T1' : 'Tháng 1', thangNay: 0, thangTruoc: 0 },
+    //           { month: window.screen.width <= 768 ? 'T2' : 'Tháng 2', thangNay: 0, thangTruoc: 0 },
+    //           { month: window.screen.width <= 768 ? 'T3' : 'Tháng 3', thangNay: 0, thangTruoc: 0 },
+    //           { month: window.screen.width <= 768 ? 'T4' : 'Tháng 4', thangNay: 0, thangTruoc: 0 },
+    //           { month: window.screen.width <= 768 ? 'T5' : 'Tháng 5', thangNay: 0, thangTruoc: 0 },
+    //           { month: window.screen.width <= 768 ? 'T6' : 'Tháng 6', thangNay: 0, thangTruoc: 0 },
+    //           { month: window.screen.width <= 768 ? 'T7' : 'Tháng 7', thangNay: 0, thangTruoc: 0 },
+    //           { month: window.screen.width <= 768 ? 'T8' : 'Tháng 8', thangNay: 0, thangTruoc: 0 },
+    //           { month: window.screen.width <= 768 ? 'T9' : 'Tháng 9', thangNay: 0, thangTruoc: 0 },
+    //           { month: window.screen.width <= 768 ? 'T10' : 'Tháng 10', thangNay: 0, thangTruoc: 0 },
+    //           { month: window.screen.width <= 768 ? 'T11' : 'Tháng 11', thangNay: 0, thangTruoc: 0 },
+    //           { month: window.screen.width <= 768 ? 'T12' : 'Tháng 12', thangNay: 0, thangTruoc: 0 }
+    //       ];
     //const yTicks = [];
 
     return (
@@ -67,7 +62,7 @@ const ColumnChartNew: React.FC = () => {
                 <BarChart data={data}>
                     <CartesianGrid strokeDasharray="0 0" vertical={false} />
                     <XAxis
-                        dataKey="month"
+                        dataKey="label"
                         tick={{ fontSize: 14, fill: '#666466' }}
                         axisLine={{ stroke: '#E6E1E6' }}
                         tickMargin={9}
@@ -92,8 +87,8 @@ const ColumnChartNew: React.FC = () => {
                         content={<CustomTooltip />}
                     />
 
-                    <Bar dataKey="thangTruoc" stackId="stack" fill="#ff9900" barSize={12} />
-                    <Bar dataKey="thangNay" stackId="stack" fill="var(--color-main)" barSize={12} />
+                    <Bar dataKey="value" stackId="stack" fill="var(--color-main)" barSize={12} />
+                    {/* <Bar dataKey="thangNay" stackId="stack" fill="var(--color-main)" barSize={12} /> */}
                 </BarChart>
             </ResponsiveContainer>
         </div>

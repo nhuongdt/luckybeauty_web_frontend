@@ -27,7 +27,7 @@ import { FileUpload } from '../../../../services/dto/FileUpload';
 import uploadFileService from '../../../../services/uploadFileService';
 import ImportExcel from '../../../../components/ImportComponent/ImportExcel';
 import ActionRowSelect from '../../../../components/DataGrid/ActionRowSelect';
-import { addYears } from 'date-fns';
+import { addYears, format } from 'date-fns';
 import { ButtonNavigate } from '../../../../components/Button/ButtonNavigate';
 
 class ChiNhanhScreen extends Component {
@@ -326,7 +326,9 @@ class ChiNhanhScreen extends Component {
                 align: 'center',
                 flex: 0.6,
                 renderCell: (params) => (
-                    <Typography variant="body2">{new Date(params.value).toLocaleDateString('en-GB')}</Typography>
+                    <Typography variant="body2">
+                        {params?.value != null ? format(new Date(params.value), 'dd/MM/yyyy') : ''}
+                    </Typography>
                 ),
                 renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
             },
@@ -338,7 +340,9 @@ class ChiNhanhScreen extends Component {
                 align: 'center',
                 flex: 0.6,
                 renderCell: (params) => (
-                    <Typography variant="body2">{new Date(params.value).toLocaleDateString('en-GB')}</Typography>
+                    <Typography variant="body2">
+                        {params?.value != null ? format(new Date(params.value), 'dd/MM/yyyy') : ''}
+                    </Typography>
                 ),
                 renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
             },

@@ -115,7 +115,9 @@ export const TimeType = {
     MINUTES: 2,
     HOUR: 3,
     DAY: 4,
-    MONTH: 5
+    WEEK: 5,
+    MONTH: 6,
+    YEAR: 7
 };
 
 export const LoaiHoaHongDichVu = {
