@@ -1,4 +1,4 @@
-import { DateType } from '../../lib/appconst';
+import { DateType, TimeType } from '../../lib/appconst';
 
 export class ParamSearchDto {
     idChiNhanhs?: string[];
@@ -32,6 +32,7 @@ export class RequestFromToDto extends ParamSearchDto {
     fromDate?: string | null = null;
     toDate?: string | null = null;
     dateType?: string;
+    timeType?: number;
 
     constructor({
         idChiNhanhs = [''],
@@ -42,7 +43,8 @@ export class RequestFromToDto extends ParamSearchDto {
         typeSort = 'DESC',
         fromDate = null,
         toDate = null,
-        dateType = DateType.TAT_CA
+        dateType = DateType.TAT_CA,
+        timeType = TimeType.WEEK
     }) {
         super({
             idChiNhanhs: idChiNhanhs,
@@ -55,6 +57,7 @@ export class RequestFromToDto extends ParamSearchDto {
         this.fromDate = fromDate;
         this.toDate = toDate;
         this.dateType = dateType;
+        this.timeType = timeType;
     }
 }
 
