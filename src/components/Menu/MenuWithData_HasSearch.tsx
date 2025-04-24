@@ -26,25 +26,13 @@ export default function MenuWithDataHasSearch({
 }: IPropsMenu) {
     const [arrIdChosed, setArrIdChosed] = useState<string[]>([]);
     const [textSearch, setTextSearch] = useState<string>('');
+    const [isCheckAll, setIsCheckAll] = useState<boolean>(false);
 
     const lstSearch = lstData?.filter(
         (x) =>
             utils.strToEnglish(x.text).indexOf(utils.strToEnglish(textSearch)) > -1 ||
             (x?.text2 && utils.strToEnglish(x.text2).indexOf(utils.strToEnglish(textSearch)) > -1)
     );
-
-    const changeCheckBox = (id: string, isCheck: boolean) => {
-        let arrNew: string[];
-        if (isCheck) {
-            arrNew = [id, ...arrIdChosed];
-        } else {
-            arrNew = arrIdChosed?.filter((x) => x !== id);
-        }
-        setArrIdChosed(arrNew);
-        if (choseMultipleItem) {
-            choseMultipleItem(arrNew);
-        }
-    };
 
     const changeCheckAll = (isCheck: boolean) => {
         let arrNew: string[];
@@ -56,8 +44,31 @@ export default function MenuWithDataHasSearch({
             arrNew = [];
         }
         setArrIdChosed([...arrNew]);
+        setIsCheckAll(isCheck);
+
         if (choseMultipleItem) {
             choseMultipleItem(arrNew);
+        }
+    };
+
+    const choseItem = (item: IList) => {
+        const id = item?.id;
+        let arrNew: string[] = [];
+        if (hasCheckBox) {
+            setArrIdChosed((prev) => {
+                if (prev.includes(id)) {
+                    arrNew = prev.filter((x) => x !== id);
+                } else {
+                    arrNew = [...prev, id];
+                }
+                return [...arrNew];
+            });
+            setIsCheckAll(arrNew?.length === lstData?.length);
+            if (choseMultipleItem) {
+                choseMultipleItem(arrNew);
+            }
+        } else {
+            if (handleChoseItem) handleChoseItem(item);
         }
     };
 
@@ -81,37 +92,25 @@ export default function MenuWithDataHasSearch({
             />
 
             {hasCheckBox && (
-                <MenuItem>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={arrIdChosed?.length === lstData?.length}
-                                onChange={(e) => changeCheckAll(e.currentTarget.checked)}
-                            />
-                        }
-                        label="Tất cả"
-                    />
+                <MenuItem onClick={() => changeCheckAll(!isCheckAll)}>
+                    <FormControlLabel control={<Checkbox checked={isCheckAll} />} label="Tất cả" />
                 </MenuItem>
             )}
 
             {lstSearch?.map((x, index) => (
-                <MenuItem
-                    key={index}
-                    onClick={() => {
-                        if (handleChoseItem) handleChoseItem(x);
-                    }}>
+                <MenuItem key={index} onClick={() => choseItem(x)}>
                     <Stack direction="row" spacing={1} alignItems={'center'}>
                         {hasCheckBox && (
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={arrIdChosed.includes(x.id)}
-                                        onChange={(e) => changeCheckBox(x.id, e.currentTarget.checked)}
-                                    />
-                                }
-                                label={x.text}
+                            <Checkbox
+                                sx={{
+                                    '&.MuiCheckbox-root': {
+                                        paddingLeft: 0
+                                    }
+                                }}
+                                checked={arrIdChosed.includes(x.id)}
                             />
                         )}
+                        <Typography variant="body1"> {x.text}</Typography>
                     </Stack>
                 </MenuItem>
             ))}
