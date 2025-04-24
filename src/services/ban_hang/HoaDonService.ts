@@ -179,6 +179,13 @@ class HoaDonService {
         const result = await http.get(`api/services/app/HoaDon/CheckCustomer_hasGDV?customerId=${customerId}`);
         return result.data.result;
     };
+    CheckCustomer_hasTGT = async (customerId: string): Promise<boolean> => {
+        if (utils.checkNull_OrEmpty(customerId)) {
+            return false;
+        }
+        const result = await http.get(`api/services/app/HoaDon/CheckCustomer_hasTGT?customerId=${customerId}`);
+        return result.data.result;
+    };
     CheckGDV_DaSuDung = async (idGoiDV: string): Promise<boolean> => {
         if (utils.checkNull_OrEmpty(idGoiDV)) {
             return false;
