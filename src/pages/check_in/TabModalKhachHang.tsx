@@ -29,7 +29,12 @@ import abpCustom from '../../components/abp-custom';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import { KhachHangDto } from '../../services/khach-hang/dto/KhachHangDto';
 import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
-const TabKhachHang = ({ handleChoseCus, isShowKhachLe = false }: any) => {
+type TabKhachHangProps = {
+    handleChoseCus: (customerChosed: KhachHangItemDto | null) => void;
+    isShowKhachLe: boolean;
+    isShowAllCustomer?: boolean; // thungan: chỉ get khach nobooking, other: get all
+};
+const TabKhachHang = ({ handleChoseCus, isShowKhachLe = false, isShowAllCustomer = false }: TabKhachHangProps) => {
     const firsLoad = useRef(true);
     const windowWidth = useWindowWidth();
 
@@ -43,8 +48,13 @@ const TabKhachHang = ({ handleChoseCus, isShowKhachLe = false }: any) => {
         skipCount: 1
     } as PagedKhachHangResultRequestDto);
 
-    const GetKhachHang_noBooking = async (paramSearch: PagedKhachHangResultRequestDto) => {
-        const data = await khachHangService.GetKhachHang_noBooking(paramSearch);
+    const GetListCustomer = async (paramSearch: PagedKhachHangResultRequestDto) => {
+        let data: PagedResultDto<KhachHangItemDto> = { items: [], totalCount: 0, totalPage: 0 };
+        if (isShowAllCustomer) {
+            data = await khachHangService.getAll(paramSearch);
+        } else {
+            data = await khachHangService.GetKhachHang_noBooking(paramSearch);
+        }
         setPageDataCustomer({
             ...pageDataCustomer,
             items: data?.items,
@@ -59,7 +69,7 @@ const TabKhachHang = ({ handleChoseCus, isShowKhachLe = false }: any) => {
 
     const debounceDropDown = useRef(
         debounce(async (paramSearch) => {
-            await GetKhachHang_noBooking(paramSearch);
+            await GetListCustomer(paramSearch);
         }, 500)
     ).current;
 
@@ -77,12 +87,12 @@ const TabKhachHang = ({ handleChoseCus, isShowKhachLe = false }: any) => {
             firsLoad.current = false;
             return;
         }
-        GetKhachHang_noBooking(paramSearch);
+        GetListCustomer(paramSearch);
     }, [paramSearch.skipCount]);
 
     const changeCustomer = (dataSave: KhachHangItemDto | null) => {
         setIsShowModalAddCus(false);
-        handleChoseCus(dataSave, 0);
+        handleChoseCus(dataSave);
     };
 
     const saveOKCustomer = (cusNew: KhachHangDto) => {
@@ -100,7 +110,7 @@ const TabKhachHang = ({ handleChoseCus, isShowKhachLe = false }: any) => {
             cuocHenGanNhat: new Date()
         };
 
-        handleChoseCus(data, 0);
+        handleChoseCus(data);
     };
 
     const showModalAddCus = () => {

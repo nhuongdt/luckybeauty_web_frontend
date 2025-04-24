@@ -34,10 +34,11 @@ export const ModalCheckin_FormType = {
 export interface IPropModalCheckIn extends IPropModal<PageKhachHangCheckInDto> {
     isNew: boolean; // dùng ở Thu ngân: khi muốn thay đổi khách hàng (vì: idChekIn của khách lẻ = empty)
     idChiNhanh?: string;
+    isShowAllCustomer?: boolean; // used to tabKhachHang (if page checking:  chỉ get khach nobooking, other: get all)
 }
 
 export default function ModalAddCustomerCheckIn(props: IPropModalCheckIn) {
-    const { idChiNhanh, idUpdate, isShowModal, typeForm, isNew, onClose, onOK } = props;
+    const { idChiNhanh, idUpdate, isShowModal, isShowAllCustomer, typeForm, isNew, onClose, onOK } = props;
     const [currentTab, setCurrentTab] = useState(CheckIn_TabName.BOOKING);
     const [objAlert, setObjAlert] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
     const [objCheckIn, setObjCheckIn] = useState<KHCheckInDto>({} as KHCheckInDto);
@@ -95,7 +96,7 @@ export default function ModalAddCustomerCheckIn(props: IPropModalCheckIn) {
         onOK(isNew ? TypeAction.INSEART : TypeAction.UPDATE, dataChosed);
     };
 
-    const choseCustomer_fromTabKhachHang = async (cusChosed: KhachHangItemDto) => {
+    const choseCustomer_fromTabKhachHang = async (cusChosed: KhachHangItemDto | null) => {
         const idKhachHang = cusChosed?.id.toString() ?? '';
         const check = await checkSaveCheckin(idKhachHang);
         if (!check) {
@@ -293,7 +294,11 @@ export default function ModalAddCustomerCheckIn(props: IPropModalCheckIn) {
                         {currentTab === CheckIn_TabName.BOOKING ? (
                             <TabCuocHen handleChoseCusBooking={choseCustomer_fromBooking} />
                         ) : (
-                            <TabKhachHang handleChoseCus={choseCustomer_fromTabKhachHang} isShowKhachLe={!isNew} />
+                            <TabKhachHang
+                                handleChoseCus={choseCustomer_fromTabKhachHang}
+                                isShowKhachLe={!isNew}
+                                isShowAllCustomer={isShowAllCustomer}
+                            />
                         )}
                     </Box>
                 </DialogContent>

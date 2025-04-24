@@ -1,11 +1,10 @@
-import { Button, Dialog, Stack, TextField, Typography } from '@mui/material';
+import { Button, Stack, TextField, Typography } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PrintIcon from '@mui/icons-material/Print';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import ButtonOnlyIcon from '../../components/Button/ButtonOnlyIcon';
 import DatePickerCustom from '../../components/DatetimePicker/DatePickerCustom';
 import { FC, useContext, useEffect, useRef, useState } from 'react';
 import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
@@ -30,12 +29,11 @@ import { TaiKhoanNganHangDto } from '../../services/so_quy/Dto/TaiKhoanNganHangD
 import { TrangThaiHoaDon } from '../../services/ban_hang/HoaDonConst';
 import uploadFileService from '../../services/uploadFileService';
 import PaymentsForm from '../ban_hang/thu_ngan/PaymentsForm';
-import { FormNumber } from '../../enum/FormNumber';
 import abpCustom from '../../components/abp-custom';
 import ModalUpdatePhieuThuHoaDon from '../thu_chi/so_quy/components/modal_update_phieu_thu_hoa_don';
 import QuyHoaDonDto from '../../services/so_quy/QuyHoaDonDto';
 import { HoaDonRequestDto } from '../../services/dto/ParamSearchDto';
-import AppConsts, { DateType, LoaiChungTu, LoaiHoaHongHoaDon, LoaiNhatKyThaoTac, TypeAction } from '../../lib/appconst';
+import AppConsts, { DateType, LoaiChungTu, LoaiNhatKyThaoTac } from '../../lib/appconst';
 
 const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: number; updateTabKey: () => void }> = ({
     itemHD,
@@ -425,6 +423,7 @@ const TabThongTinHoaDon: FC<{ itemHD: PageHoaDonDto | null; tongThanhToanNew: nu
                 isShowModal={isShowModalChangeCus}
                 onOK={onChangeCustomer}
                 onClose={() => setIsShowModalChangeCus(false)}
+                isShowAllCustomer={true}
             />
             <ConfirmDelete
                 isShow={confirmDialog.show}

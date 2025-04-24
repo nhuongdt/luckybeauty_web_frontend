@@ -387,6 +387,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                 isShowModal={isShowModalCheckIn}
                 onOK={onChangeCustomer}
                 onClose={() => setIsShowModalCheckIn(false)}
+                isShowAllCustomer={true}
             />
             <Dialog open={open} onClose={gotoBack} maxWidth="xl" fullWidth>
                 <SnackbarAlert

@@ -38,6 +38,13 @@ class KhachHangService {
         return result.data.result;
     }
     public async getDetail(id: string): Promise<ICustomerDetail_FullInfor> {
+        if (utils.checkNull_OrEmpty(id)) {
+            return {
+                id: '',
+                maKhachHang: 'KL',
+                tenKhachHang: 'Khách lẻ'
+            } as ICustomerDetail_FullInfor;
+        }
         const response = await http.get(`api/services/app/KhachHang/GetKhachHangDetail?id=${id}`);
         return response.data.result;
     }
