@@ -18,7 +18,7 @@ import { CreateOrEditChiNhanhDto } from '../../../../../services/chi_nhanh/Dto/c
 import { Form, Formik } from 'formik';
 import chiNhanhService from '../../../../../services/chi_nhanh/chiNhanhService';
 import MonochromePhotosOutlinedIcon from '@mui/icons-material/MonochromePhotosOutlined';
-import AppConsts from '../../../../../lib/appconst';
+import AppConsts, { LoaiNhatKyThaoTac } from '../../../../../lib/appconst';
 import uploadFileService from '../../../../../services/uploadFileService';
 import utils from '../../../../../utils/utils';
 import { NumericFormat } from 'react-number-format';
@@ -26,6 +26,12 @@ import { format as formatDate } from 'date-fns';
 import Cookies from 'js-cookie';
 import DatePickerRequiredCustom from '../../../../../components/DatetimePicker/DatePickerRequiredCustom';
 import DialogButtonClose from '../../../../../components/Dialog/ButtonClose';
+import SnackbarAlert from '../../../../../components/AlertDialog/SnackbarAlert';
+import { boolean } from 'yup';
+import { preventContextMenu } from '@fullcalendar/core/internal';
+import { title } from 'node:process';
+import { CreateNhatKyThaoTacDto } from '../../../../../services/nhat_ky_hoat_dong/dto/CreateNhatKyThaoTacDto';
+import nhatKyHoatDongService from '../../../../../services/nhat_ky_hoat_dong/nhatKyHoatDongService';
 interface ChiNhanhProps {
     isShow: boolean;
     onSave: () => void;
@@ -33,11 +39,21 @@ interface ChiNhanhProps {
     formRef: CreateOrEditChiNhanhDto;
     title: React.ReactNode;
 }
+
+type AlterProps = {
+    showAlert: boolean;
+    type?: number;
+    title: string;
+    handleClose: () => void;
+};
 class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
     state = {
         branchLogo: '',
         googleDrive_fileId: '',
-        fileImage: {} as File
+        fileImage: {} as File,
+
+        isShowAlter: false,
+        alterMes: ''
     };
     UNSAFE_componentWillReceiveProps(nextProp: any): void {
         if (nextProp.formRef !== undefined) {
@@ -64,11 +80,72 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
             };
         }
     };
+
+    checkSave = async (item: CreateOrEditChiNhanhDto) => {
+        const checkExistCN = await chiNhanhService.CheckExist_TenChiNhanh(item?.id, item?.tenChiNhanh ?? '');
+        if (checkExistCN) {
+            this.setState((prev) => ({
+                ...prev,
+                isShowAlter: true,
+                alterMes: 'Tên chi nhánh đã tồn tại'
+            }));
+            return false;
+        }
+        const checkOverChiNhanh = await chiNhanhService.CheckOver_ChiNhanh();
+        if (checkOverChiNhanh) {
+            this.setState((prev) => ({
+                ...prev,
+                isShowAlter: true,
+                alterMes: 'Đã vượt số chi nhánh tối đa'
+            }));
+            return false;
+        }
+        return true;
+    };
+
+    handleCloseAlter = () => {
+        this.setState((prev) => ({
+            ...prev,
+            isShowAlter: false,
+            alterMes: ''
+        }));
+    };
+    saveDiarry = async (itemOld: CreateOrEditChiNhanhDto, itemNew: CreateOrEditChiNhanhDto) => {
+        let sLoai = '',
+            loaiNK = LoaiNhatKyThaoTac.INSEART,
+            sDiaryOld = '';
+        if (utils.checkNull_OrEmpty(itemNew?.id)) {
+            sLoai = `Thêm mới`;
+        } else {
+            sLoai = `Cập nhật`;
+            loaiNK = LoaiNhatKyThaoTac.UPDATE;
+            sDiaryOld = ` <br /> Thông tin cũ: <br /> Mã chi nhánh ${itemOld?.maChiNhanh}
+     <br /> Tên chi nhánh ${itemOld?.maChiNhanh}
+     <br /> Số điện thoại ${itemOld?.soDienThoai}`;
+        }
+
+        const diary = {
+            idChiNhanh: Cookies.get('IdChiNhanh') ?? null,
+            chucNang: `Quản lý chi nhánh`,
+            noiDung: `${sLoai} chi nhánh ${itemNew?.tenChiNhanh}`,
+            noiDungChiTiet: `${sLoai} chi nhánh ${itemNew?.tenChiNhanh}, Mã chi nhánh: ${itemNew?.maChiNhanh},
+                 SĐT: ${itemNew?.soDienThoai}, Địa chỉ: ${itemNew?.diaChi} ${sDiaryOld}`,
+            loaiNhatKy: loaiNK
+        } as CreateNhatKyThaoTacDto;
+        await nhatKyHoatDongService.createNhatKyThaoTac(diary);
+    };
+
     render(): ReactNode {
         const { formRef, onSave, onCLose, title, isShow } = this.props;
         const initValues: CreateOrEditChiNhanhDto = formRef;
         return (
             <Dialog open={isShow} onClose={onCLose} fullWidth maxWidth={'sm'}>
+                <SnackbarAlert
+                    showAlert={this.state.isShowAlter}
+                    title={this.state.alterMes}
+                    type={0}
+                    handleClose={this.handleCloseAlter}
+                />
                 <DialogTitle className="modal-title">
                     {title}
                     <DialogButtonClose onClose={onCLose} />
@@ -78,6 +155,10 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                         initialValues={initValues}
                         validationSchema={rules}
                         onSubmit={async (values) => {
+                            const check = await this.checkSave(values);
+                            if (!check) {
+                                return;
+                            }
                             values.id = values.id == '' ? AppConsts.guidEmpty : values.id;
                             values.idCongTy = Cookies.get('IdCuaHang') ?? AppConsts.guidEmpty;
                             let fileId = this.state.googleDrive_fileId;
@@ -89,6 +170,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                             }
                             values.logo = fileId !== '' ? `https://drive.google.com/uc?export=view&id=${fileId}` : '';
                             await chiNhanhService.CreateOrEdit(values);
+                            await this.saveDiarry(formRef, values);
                             onSave();
                         }}>
                         {({ handleChange, values, errors, touched, setFieldValue, isSubmitting }) => (

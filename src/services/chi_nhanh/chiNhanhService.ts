@@ -9,6 +9,16 @@ import { SuggestChiNhanhDto } from '../suggests/dto/SuggestChiNhanhDto';
 import { ChiNhanhDto } from './Dto/chiNhanhDto';
 import { CreateOrEditChiNhanhDto } from './Dto/createOrEditChiNhanhDto';
 class ChiNhanhService {
+    public async CheckExist_TenChiNhanh(idChiNhanh: string, tenChiNhanh: string): Promise<boolean> {
+        const result = await http.get(
+            `api/services/app/ChiNhanh/CheckExist_TenChiNhanh?idChiNhanh=${idChiNhanh}&tenChiNhanh=${tenChiNhanh}`
+        );
+        return result.data.result;
+    }
+    public async CheckOver_ChiNhanh(): Promise<boolean> {
+        const result = await http.get(`api/services/app/ChiNhanh/CheckOver_ChiNhanh`);
+        return result.data.result;
+    }
     public async GetAll(input: PagedRequestDto): Promise<PagedResultDto<ChiNhanhDto>> {
         const result = await http.get('api/services/app/ChiNhanh/GetAllChiNhanh', {
             params: input
