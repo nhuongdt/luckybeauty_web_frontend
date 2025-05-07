@@ -723,7 +723,12 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
         await dbDexie.hoaDon
             .where('id')
             .equals(hoadon?.id)
-            .modify((o: PageHoaDonDto) => (o.idKhachHang = null));
+            .modify((o: PageHoaDonDto) => {
+                o.idKhachHang = null;
+                o.tenKhachHang = 'Khách lẻ';
+                o.maKhachHang = 'KL';
+                o.soDienThoai = '';
+            });
     };
 
     const CheckDangSuDungGDV = (type: number) => {
@@ -1418,7 +1423,7 @@ export default function PageThuNgan(props: IPropsPageThuNgan) {
                                                             đ
                                                         </Typography>
                                                     )}
-                                                    {!utils.checkNull_OrEmpty(customerChosed?.id ?? '') && (
+                                                    {!utils.checkNull(customerChosed?.soDienThoai ?? '') && (
                                                         <Typography color={'#000000'} variant="caption">
                                                             Điện thoại: {customerChosed?.soDienThoai}
                                                         </Typography>
