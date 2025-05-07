@@ -201,21 +201,22 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         await suggestStore.Zalo_GetAccessToken();
     }
     async getData() {
+        console.log('this.state.timeFrom? ', this.state.timeFrom?.toString(), this.state.timeFrom);
         const khachHangs = await khachHangService.getAll({
-            keyword: this.state.keyword,
-            maxResultCount: this.state.rowPerPage,
-            skipCount: this.state.currentPage,
+            textSearch: this.state.keyword,
+            pageSize: this.state.rowPerPage,
+            currentPage: this.state.currentPage,
             loaiDoiTuong: 0,
-            sortBy: this.state.sortBy,
-            sortType: this.state.sortType,
-            timeFrom: this.state.timeFrom,
-            timeTo: this.state.timeTo,
-            creationTime: this.state.creationTime,
+            columnSort: this.state.sortBy,
+            typeSort: this.state.sortType,
+            fromDate: this.state.timeFrom?.toString(),
+            toDate: this.state.timeTo?.toString(),
+            creationTimeFrom: this.state.creationTime?.toString(),
             gioiTinh: this.state.gioiTinh,
             tongChiTieuDen: this.state.tongChiTieuDen,
             tongChiTieuTu: this.state.tongChiTieuTu,
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined,
-            idNhomKhach: this.state.idNhomKhach == '' ? undefined : this.state.idNhomKhach
+            idChiNhanhs: [Cookies.get('IdChiNhanh') ?? ''],
+            idNhomKhachs: [this.state.idNhomKhach == '' ? '' : this.state.idNhomKhach]
         });
         await this.setState({
             rowTable: khachHangs.items,
@@ -770,7 +771,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 )
             },
             {
-                field: 'theGiaTri',
+                field: 'soDuTheGiaTri',
                 minWidth: 150,
                 headerName: 'Thẻ giá trị',
                 headerAlign: 'right',

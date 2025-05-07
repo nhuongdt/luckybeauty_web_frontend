@@ -29,6 +29,8 @@ import abpCustom from '../../components/abp-custom';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import { KhachHangDto } from '../../services/khach-hang/dto/KhachHangDto';
 import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
+import { ParamSearchCustomerDto } from '../../services/khach-hang/dto/ParamSearchCustomerDto';
+import { LoaiKhachHang } from '../../enum/LoaiKhachHang';
 type TabKhachHangProps = {
     handleChoseCus: (customerChosed: KhachHangItemDto | null) => void;
     isShowKhachLe: boolean;
@@ -51,7 +53,13 @@ const TabKhachHang = ({ handleChoseCus, isShowKhachLe = false, isShowAllCustomer
     const GetListCustomer = async (paramSearch: PagedKhachHangResultRequestDto) => {
         let data: PagedResultDto<KhachHangItemDto> = { items: [], totalCount: 0, totalPage: 0 };
         if (isShowAllCustomer) {
-            data = await khachHangService.getAll(paramSearch);
+            const param: ParamSearchCustomerDto = {
+                loaiDoiTuong: LoaiKhachHang.KHACH_HANG,
+                textSearch: paramSearch?.keyword,
+                currentPage: paramSearch?.skipCount,
+                pageSize: paramSearch?.maxResultCount
+            };
+            data = await khachHangService.getAll(param);
         } else {
             data = await khachHangService.GetKhachHang_noBooking(paramSearch);
         }

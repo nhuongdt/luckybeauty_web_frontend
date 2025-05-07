@@ -12,12 +12,13 @@ import QueryString from 'qs';
 import { CreateOrEditNhomKhachDto } from './dto/CreateOrEditNhomKhachDto';
 import { PagedRequestDto } from '../dto/pagedRequestDto';
 import { PagedResultDto } from '../dto/pagedResultDto';
-import { HoatDongKhachHang, ThongTinKhachHangTongHopDto } from './dto/ThongTinKhachHangTongHopDto';
+import { HoatDongKhachHang } from './dto/ThongTinKhachHangTongHopDto';
 import { ILichSuDatLich } from './dto/ILichSuDatLich';
 import { LichSuGiaoDich } from './dto/LichSuGiaoDich';
+import { ParamSearchCustomerDto } from './dto/ParamSearchCustomerDto';
 
 class KhachHangService {
-    public async getAll(input: PagedKhachHangResultRequestDto): Promise<PagedResultDto<KhachHangItemDto>> {
+    public async getAll(input: ParamSearchCustomerDto): Promise<PagedResultDto<KhachHangItemDto>> {
         const result = await http.post(`api/services/app/KhachHang/Search`, input);
         return result.data.result;
     }
