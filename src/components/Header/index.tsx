@@ -8,6 +8,10 @@ import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import KeyboardDoubleArrowRightOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowRightOutlined';
+
 import {
     Grid,
     Box,
@@ -26,7 +30,11 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    Tooltip
+    Tooltip,
+    Switch,
+    Stack,
+    Toolbar,
+    Card
 } from '@mui/material';
 import './header.css';
 import LuckybeautyLogo from '../../images/luckybeautylogo.png';
@@ -56,6 +64,43 @@ import utils from '../../utils/utils';
 import suggestStore from '../../stores/suggestStore';
 import impersonationService, { Impersonation } from '../../services/impersonation/impersonationService';
 import NotificationStore from '../../stores/notificationStore';
+import { useColorMode } from '../../stores/data-context/ThemContext';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
+import MenuIcon from '@mui/icons-material/Menu';
+
+interface AppBarProps extends MuiAppBarProps {
+    open?: boolean;
+}
+const drawerWidth = 240;
+const AppBar = styled(MuiAppBar, {
+    shouldForwardProp: (prop) => prop !== 'open'
+})<AppBarProps>(({ theme }) => ({
+    zIndex: theme.zIndex.drawer + 1,
+    '&.MuiAppBar-root': {
+        boxShadow: 'none'
+    },
+    border: `1px solid ${theme.palette.grey[300]}`,
+    backgroundColor: theme.palette.background.default,
+    transition: theme.transitions.create(['width', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen
+    }),
+    variants: [
+        {
+            props: ({ open }) => open,
+            style: {
+                marginLeft: drawerWidth,
+                width: `calc(100% - ${drawerWidth}px)`,
+
+                transition: theme.transitions.create(['width', 'margin'], {
+                    easing: theme.transitions.easing.sharp,
+                    duration: theme.transitions.duration.enteringScreen
+                })
+            }
+        }
+    ]
+}));
 //import TawkMessenger from '../../lib/tawk_chat';
 interface HeaderProps {
     collapsed: boolean;
@@ -78,6 +123,9 @@ const Header: React.FC<HeaderProps> = (
     const open = Boolean(anchorEl);
     const openThongBao = Boolean(ThongBaoAnchorEl);
     const openSettingThongBao = Boolean(settingThongBao);
+    const [isLightMode, setIsLightMode] = useState(true);
+    const { toggleColorMode, mode } = useColorMode();
+
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -217,83 +265,27 @@ const Header: React.FC<HeaderProps> = (
         setIsDragging(false);
     };
 
-    return (
-        <Box display="flex" className="header" sx={{ position: 'fixed', right: '0', top: '0', zIndex: 20 }}>
-            {' '}
-            <Grid container className={'header-container'} justifyContent="space-between">
-                <Grid item xs={6} sx={{ textAlign: 'left', display: 'flex', alignItems: 'center' }}>
-                    <Box
-                        display="flex"
-                        gap="8px"
-                        marginLeft="16px"
-                        alignItems={'baseline'}
-                        // onClick={() => {
-                        //     navigate('/home');
-                        // }}
-                    >
-                        <img style={{ width: '2rem', height: '2rem' }} src={LuckybeautyLogo} />
-                        {window.screen.width <= 650 ? null : (
-                            <Typography
-                                color="#319DFF"
-                                fontSize="1.375rem"
-                                variant="body1"
-                                sx={{
-                                    opacity: collapsed && !isChildHovered ? '0' : '1',
-                                    transform: collapsed && !isChildHovered ? 'translateX(-40px)' : 'translateX(0)',
-                                    transition: '.4s'
-                                }}>
-                                Lucky Beauty
-                            </Typography>
-                        )}
-                    </Box>
-                    <Button
-                        sx={{
-                            minWidth: 'unset!important',
-                            marginLeft: collapsed && !isChildHovered ? '-116px' : '0',
-                            marginTop: '8px',
-                            backgroundColor: 'unset!important',
-                            transition: '.4s',
-                            ':hover': {
-                                backgroundColor: 'unset!important'
-                            },
-                            ':hover .icon1': {
-                                color: 'rgba(49, 157, 255, 1)!important'
-                            },
-                            ':hover .icon2': {
-                                color: 'rgba(49, 157, 255, 0.7)'
-                            },
-                            '& .MuiTouchRipple-root': {
-                                display: 'none'
-                            },
-                            transform: collapsed && !isChildHovered ? 'rotate(-180deg)' : 'rotate(0deg)'
-                        }}
-                        onClick={toggle}>
-                        <ArrowBackIosIcon
-                            className="icon1"
-                            sx={{ color: 'rgba(49, 157, 255, 0.7)', fontSize: '16px' }}
-                        />
-                        <ArrowBackIosIcon
-                            className="icon2"
-                            sx={{
-                                color: 'rgba(49, 157, 255, 0.4)',
-                                fontSize: '16px',
-                                marginLeft: '-8px'
-                            }}
-                        />
-                    </Button>
-                </Grid>
-                <Grid item xs={6} sx={{ textAlign: 'right', float: 'right' }}>
-                    <Box display="flex" sx={{ marginRight: '30px', alignItems: 'center', justifyContent: 'end' }}>
-                        {/* <Tooltip title={'Hỗ trợ'}>
-                            <ChatIcon
-                                onClick={() => {
-                                    tawkChatRef.current.toggle();
-                                }}
-                                style={{ marginRight: 16 }}
-                            />
-                        </Tooltip> */}
+    const changeColorMode = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsLightMode(event.target.checked);
+        toggleColorMode;
+    };
 
-                        <Box display="flex">
+    return (
+        <AppBar position="fixed" open={collapsed}>
+            <Toolbar sx={{ padding: 'unset' }}>
+                <Stack direction={'row'} justifyContent={collapsed ? 'end' : 'space-between'} width={'100%'}>
+                    <Box
+                        onClick={toggle}
+                        sx={[{ cursor: 'pointer', transition: '0.2s' }, collapsed && { display: 'none' }]}>
+                        <img style={{ width: '2rem', height: '2rem' }} src={LuckybeautyLogo} />
+                        <KeyboardDoubleArrowRightOutlinedIcon />
+                    </Box>
+                    <Stack direction="row" alignItems={'center'}>
+                        <Stack direction="row" alignItems={'center'}>
+                            <Stack direction="row" spacing={1} alignItems={'center'}>
+                                <Typography>{mode === 'light' ? 'Light mode' : 'Dark mode'}</Typography>
+                                <Switch checked={mode === 'light'} onChange={toggleColorMode} />
+                            </Stack>
                             <LocationIcon />
                             <Select
                                 sx={{
@@ -321,7 +313,7 @@ const Header: React.FC<HeaderProps> = (
                                     );
                                 })}
                             </Select>
-                        </Box>
+                        </Stack>
 
                         <Badge
                             color="error"
@@ -396,7 +388,7 @@ const Header: React.FC<HeaderProps> = (
                                                     gap: '3px',
                                                     aignItems: 'center'
                                                 }}>
-                                                <Typography variant="body1" color="#4C4B4C" fontWeight="700">
+                                                <Typography variant="body1" fontWeight="700">
                                                     Thông báo
                                                 </Typography>
                                                 <Box
@@ -812,18 +804,10 @@ const Header: React.FC<HeaderProps> = (
                         </Menu>
                         {!open && <ExpandMoreIcon />}
                         {open && <ExpandLessIcon />}
-                    </Box>
-                </Grid>
-            </Grid>
-            {/* <TawkMessenger
-                propertyId={'6629be0b1ec1082f04e68f36'}
-                widgetId="1hs9gso7p"
-                ref={tawkChatRef}
-                onLoad={() => {
-                    tawkChatRef.current.hideWidget();
-                }}
-            /> */}
-        </Box>
+                    </Stack>
+                </Stack>
+            </Toolbar>
+        </AppBar>
     );
 };
 export default observer(Header);

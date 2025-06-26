@@ -17,7 +17,20 @@ import { PagedRequestDto } from '../../services/dto/pagedRequestDto';
 import { inject, observer } from 'mobx-react';
 import NotificationStore from '../../stores/notificationStore';
 import Stores from '../../stores/storeIdentifier';
+import { styled } from '@mui/material/styles';
+import { CssBaseline, IconButton, Toolbar, Typography } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+
+const DrawerHeader = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar
+}));
 const isAuthenticated = (): boolean => {
     const accessToken = Cookies.get('Abp.AuthToken');
     if (accessToken && !accessToken.includes('error')) {
@@ -31,6 +44,10 @@ const isAuthenticated = (): boolean => {
 };
 interface IMainAppLayout {
     notificationStore: NotificationStore;
+}
+
+interface AppBarProps extends MuiAppBarProps {
+    open?: boolean;
 }
 
 const MainAppLayout: React.FC<IMainAppLayout> = (props) => {
@@ -76,7 +93,9 @@ const MainAppLayout: React.FC<IMainAppLayout> = (props) => {
         getPermissions();
         GetAllCongTy();
     }, []);
-    const [open, setOpen] = React.useState(!isAuthenticated);
+    // const [open, setOpen] = React.useState(!isAuthenticated);
+    const [open, setOpen] = React.useState(true);
+
     const navigate = useNavigate();
     useEffect(() => {
         setOpen(!isAuthenticated);
@@ -117,49 +136,93 @@ const MainAppLayout: React.FC<IMainAppLayout> = (props) => {
     const changeChiNhanh = (item: SuggestChiNhanhDto) => {
         setChiNhanhCurrent(item);
     };
+
+    const drawerWidth = 240;
+    const AppBar = styled(MuiAppBar, {
+        shouldForwardProp: (prop) => prop !== 'open'
+    })<AppBarProps>(({ theme }) => ({
+        zIndex: theme.zIndex.drawer + 1,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen
+        }),
+        variants: [
+            {
+                props: ({ open }) => open,
+                style: {
+                    marginLeft: drawerWidth,
+                    width: `calc(100% - ${drawerWidth}px)`,
+                    transition: theme.transitions.create(['width', 'margin'], {
+                        easing: theme.transitions.easing.sharp,
+                        duration: theme.transitions.duration.enteringScreen
+                    })
+                }
+            }
+        ]
+    }));
+    const handleDrawerOpen = () => {
+        setOpen(true);
+    };
+
+    const handleDrawerClose = () => {
+        setOpen(false);
+    };
     return (
         <Container maxWidth={false} disableGutters={true}>
             {window.screen.width > 650 ? (
-                <Box>
-                    <AppSiderMenu
-                        collapsed={!collapsed}
-                        toggle={toggle}
-                        onHoverChange={handleChildHoverChange}
-                        CookieSidebar={CookieSidebar}
-                    />
-                    <Box
-                        sx={{
-                            marginLeft: !collapsed ? '240px' : '0px',
-                            transition: '.4s'
-                        }}>
+                <AppContext.Provider value={{ chinhanhCurrent, congty }}>
+                    <Box sx={{ display: 'flex' }}>
                         <Header
-                            collapsed={collapsed}
-                            toggle={toggle}
+                            collapsed={open}
+                            toggle={() => setOpen(!open)}
                             onClick={toggle}
                             isChildHovered={isChildHovered}
                             CookieSidebar={CookieSidebar}
                             handleChangeChiNhanh={changeChiNhanh}
                             notificationStore={notificationStore}
                         />
-                        <Box
-                            padding={2}
-                            paddingTop={0}
-                            sx={{
-                                borderBottom: 'solid 0.1rem #e6e1e6',
-                                borderRight: 'solid 0.1rem #e6e1e6',
-                                borderLeft: 'solid 0.1rem #e6e1e6',
-                                marginTop: '70px',
-                                minHeight: 'calc(100vh - 70px)',
-                                bgcolor: 'rgba(245,247,244,1)'
-                            }}>
-                            <AppContext.Provider value={{ chinhanhCurrent, congty }}>
-                                <Outlet />
-                            </AppContext.Provider>
-                            <LoginAlertDialog open={open} confirmLogin={confirm} />
+                        <AppSiderMenu openDrawer={open} handleDrawerClose={() => setOpen(false)} />
+                        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                            <DrawerHeader />
+                            <Outlet />
                         </Box>
                     </Box>
-                </Box>
+                </AppContext.Provider>
             ) : (
+                // <Box>
+                //
+                //     <Box
+                //         sx={{
+                //             marginLeft: !collapsed ? '240px' : '0px',
+                //             transition: '.4s'
+                //         }}>
+                //         <Header
+                //             collapsed={collapsed}
+                //             toggle={toggle}
+                //             onClick={toggle}
+                //             isChildHovered={isChildHovered}
+                //             CookieSidebar={CookieSidebar}
+                //             handleChangeChiNhanh={changeChiNhanh}
+                //             notificationStore={notificationStore}
+                //         />
+                //         <Box
+                //             padding={2}
+                //             paddingTop={0}
+                //             sx={{
+                //                 borderBottom: 'solid 0.1rem #e6e1e6',
+                //                 borderRight: 'solid 0.1rem #e6e1e6',
+                //                 borderLeft: 'solid 0.1rem #e6e1e6',
+                //                 marginTop: '70px',
+                //                 minHeight: 'calc(100vh - 70px)',
+                //                 bgcolor: 'background.default'
+                //             }}>
+                //             <AppContext.Provider value={{ chinhanhCurrent, congty }}>
+                //                 <Outlet />
+                //             </AppContext.Provider>
+                //             <LoginAlertDialog open={open} confirmLogin={confirm} />
+                //         </Box>
+                //     </Box>
+                // </Box>
                 <Box>
                     <Header
                         collapsed={collapsed}
@@ -181,7 +244,7 @@ const MainAppLayout: React.FC<IMainAppLayout> = (props) => {
                                 borderLeft: 'solid 0.1rem #e6e1e6',
                                 marginTop: '70px',
                                 minHeight: 'calc(100vh - 70px)',
-                                bgcolor: 'rgba(248,248,248,1)'
+                                bgcolor: 'background.default'
                             }}>
                             <AppContext.Provider value={{ chinhanhCurrent, congty }}>
                                 <Outlet />

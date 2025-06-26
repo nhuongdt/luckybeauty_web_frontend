@@ -1,6 +1,6 @@
 .header {
     align-items: center;
-    background-color: #ffffff;
+    background-color: var(--color-bg);
     border: solid 0.1rem #e6e1e6;
     box-sizing: border-box;
     height: 70px;

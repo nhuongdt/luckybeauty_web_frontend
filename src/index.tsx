@@ -13,6 +13,7 @@ import abpUserConfigurationService from './services/abpUserConfigurationService'
 import utils from './utils/utils';
 import initializeStores from './stores/storeInitializer';
 import { Provider } from 'mobx-react';
+import { ColorModeProvider } from './stores/data-context/ThemContext';
 
 declare var abp: any;
 
@@ -31,7 +32,9 @@ abpUserConfigurationService.getAll().then((data) => {
     const stores = initializeStores();
     root.render(
         <Provider {...stores}>
-            <App />
+            <ColorModeProvider>
+                <App />
+            </ColorModeProvider>
         </Provider>
     );
 });

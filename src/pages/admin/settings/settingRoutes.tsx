@@ -1,4 +1,6 @@
 import LoadableComponent from '../../../components/Loadable';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+
 import { ReactComponent as SettingIcon } from '../../../images/settingIcon.svg';
 import { ReactComponent as SetingActive } from '../../../images/settingActive.svg';
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
@@ -9,7 +11,7 @@ const SettingRoutes: RouteProps[] = [
         permission: 'Pages.CongTy',
         title: 'Cài đặt',
         name: 'caidat',
-        icon: <SettingIcon width="20px" />,
+        icon: <SettingsOutlinedIcon width="20px" />,
         iconActive: <SetingActive width="20px" />,
         showInMenu: true,
         isLayout: false,

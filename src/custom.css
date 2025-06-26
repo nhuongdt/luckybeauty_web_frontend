@@ -1,9 +1,9 @@
 :root {
-    --color-main: #007FC7;
-    --color-second:#9c27b0;
+    /* --color-main: #007fc7; */
+    --color-second: #9c27b0;
     --color-text-blur: rgb(153, 150, 153); /*chữ mờ */
     --color-title: #00284c;
-    --color-bg: #e5f3ff; 
+    /* --color-bg: #e5f3ff;  */
     --color-bg-vung-nhan-manh: rgb(245 241 241);
     --color-text-secondary: #839bb1;
     --white: #fff;
@@ -256,13 +256,13 @@
 
 .btn-outline-hover {
     border-color: var(--border-color) !important;
-    transition: 0.3s!important;
+    transition: 0.3s !important;
     color: #525f7a !important;
-    background-color: white!important;
+    background-color: white !important;
 }
 
 .btn-outline-hover:hover {
-    border-color: var(--color-main) !important; 
+    border-color: var(--color-main) !important;
 }
 
 .btn-container-hover {

@@ -38,7 +38,6 @@ enum TopService_LoaiBaoCao {
 }
 const Dashboard: React.FC = () => {
     const toDay = new Date();
-    const [dashboardDateView, setDashboardDateView] = useState('day');
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
 

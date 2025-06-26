@@ -5,6 +5,21 @@ import { BsDot } from 'react-icons/bs';
 import LoadableComponent from '../Loadable';
 import { ReactNode } from 'react';
 import { ReactComponent as HomeIcon2 } from '../../images/home-2.svg';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+import EventIcon from '@mui/icons-material/Event';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
+import SupervisedUserCircleOutlinedIcon from '@mui/icons-material/SupervisedUserCircleOutlined';
+import ContactPhoneOutlinedIcon from '@mui/icons-material/ContactPhoneOutlined';
+import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
+import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
+import PortraitOutlinedIcon from '@mui/icons-material/PortraitOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
+import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
+import ListOutlinedIcon from '@mui/icons-material/ListOutlined';
 import { ReactComponent as CalendarIcon2 } from '../../images/calendarMenu.svg';
 import { ReactComponent as ServicesIcon } from '../../images/serviceMenuIcon.svg';
 import { ReactComponent as ShopIcon } from '../../images/shopMenu.svg';
@@ -22,6 +37,9 @@ import { ReactComponent as ReportActive } from '../../images/reportActive.svg';
 import { ReactComponent as AdminActive } from '../../images/admin2.svg';
 import { ReactComponent as MoneyIcon } from '../../images/moneys.svg';
 import { ReactComponent as MoneyActive } from '../../images/moneysActive.svg';
+import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
+import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined';
+import CreditCardOutlinedIcon from '@mui/icons-material/CreditCardOutlined';
 import SettingRoutes from '../../pages/admin/settings/settingRoutes';
 import { AppFeatures } from '../../enum/Features';
 type RenderRouteProps = {
@@ -174,8 +192,8 @@ export const appRouters: AppRouteProps = {
                     name: 'dashboard',
                     permission: '',
                     title: 'Trang chủ',
-                    icon: <HomeIcon2 width="20px" />,
-                    iconActive: <HomeActive width="20px" />,
+                    icon: <HomeOutlinedIcon width="20px" />,
+                    iconActive: <HomeRoundedIcon width="20px" />,
                     children: [],
                     showInMenu: true,
                     isLayout: false,
@@ -186,40 +204,52 @@ export const appRouters: AppRouteProps = {
                     name: 'lich hen',
                     permission: 'Pages.Booking',
                     title: 'Lịch hẹn',
-                    icon: <CalendarIcon2 width="20px" />,
+                    icon: <CalendarMonthOutlinedIcon width="20px" />,
                     children: [],
-                    iconActive: <LichActive width="20px" />,
+                    iconActive: <EventIcon width="20px" />,
                     showInMenu: true,
                     isLayout: false,
                     component: LoadableComponent(() => import('../../pages/appoinments'))
                 },
                 {
+                    path: '/page-ban-hang',
+                    permission: 'Pages.HoaDon.Create',
+                    title: 'Bán hàng',
+                    name: 'thungan',
+                    icon: <ShoppingCartOutlinedIcon width="20px" />,
+                    children: [],
+                    iconActive: <LichActive width="20px" />,
+                    showInMenu: true,
+                    isLayout: false,
+                    component: LoadableComponent(() => import('../../pages/ban_hang/thu_ngan/index'))
+                },
+                {
                     path: '/ban-hangs',
                     name: 'banhang',
                     permission: 'Pages.HoaDon',
-                    title: 'Bán hàng',
+                    title: 'Hóa đơn',
                     iconActive: <ShopActive width="20px" />,
-                    icon: <ShopIcon width="20px" />,
+                    icon: <ListOutlinedIcon width="20px" />,
                     children: [
-                        {
-                            path: '/page-ban-hang',
-                            permission: 'Pages.HoaDon.Create',
-                            title: 'Thu ngân',
-                            name: 'thungan',
-                            icon: <BsDot style={{ fontSize: 20 }} />,
-                            iconActive: null,
-                            children: [],
+                        // {
+                        //     path: '/page-ban-hang',
+                        //     permission: 'Pages.HoaDon.Create',
+                        //     title: 'Thu ngân',
+                        //     name: 'thungan',
+                        //     icon: <BsDot style={{ fontSize: 20 }} />,
+                        //     iconActive: null,
+                        //     children: [],
 
-                            showInMenu: true,
-                            isLayout: false,
-                            component: LoadableComponent(() => import('../../pages/ban_hang/thu_ngan/index'))
-                        },
+                        //     showInMenu: true,
+                        //     isLayout: false,
+                        //     component: LoadableComponent(() => import('../../pages/ban_hang/thu_ngan/index'))
+                        // },
                         {
                             path: '/giao-dich-thanh-toan',
                             permission: 'Pages.HoaDon',
-                            title: 'Danh sách hóa đơn',
+                            title: 'Hóa đơn lẻ',
                             name: 'giaoDichThanhToan',
-                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            icon: <ReceiptOutlinedIcon style={{ fontSize: 20 }} />,
                             iconActive: null,
                             children: [],
                             showInMenu: true,
@@ -233,7 +263,7 @@ export const appRouters: AppRouteProps = {
                             permission: 'Pages.GoiDichVu',
                             title: 'Gói dịch vụ',
                             name: 'goidichvu',
-                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            icon: <BusinessCenterOutlinedIcon style={{ fontSize: 20 }} />,
                             iconActive: null,
                             children: [],
                             showInMenu: true,
@@ -246,7 +276,7 @@ export const appRouters: AppRouteProps = {
                             permission: 'Pages.TheGiaTri',
                             title: 'Thẻ giá trị',
                             name: 'thegiatri',
-                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            icon: <CreditCardOutlinedIcon style={{ fontSize: 20 }} />,
                             iconActive: null,
                             children: [],
                             showInMenu: true,
@@ -264,7 +294,7 @@ export const appRouters: AppRouteProps = {
                     permission: 'Pages.KhachHang',
                     title: 'Khách hàng',
                     name: 'khachhang',
-                    icon: <ClientIcon width="20px" />,
+                    icon: <ContactPhoneOutlinedIcon width="20px" />,
                     iconActive: <ClientActive width="20px" />,
                     showInMenu: true,
                     isLayout: false,
@@ -327,7 +357,7 @@ export const appRouters: AppRouteProps = {
                     path: '/dich-vus',
                     permission: 'Pages.DM_HangHoa',
                     title: 'Dịch vụ',
-                    icon: <ServicesIcon width="20px" />,
+                    icon: <ListAltOutlinedIcon width="20px" />,
                     iconActive: <ServiceActive width="20px" />,
                     name: 'dichvu',
                     showInMenu: true,
@@ -361,36 +391,36 @@ export const appRouters: AppRouteProps = {
                     component: null
                 },
                 {
-                    path: '/thu-chi',
+                    path: '/so-quy',
                     permission: 'Pages.QuyHoaDon',
-                    title: 'Thu chi',
-                    icon: <MoneyIcon width="20px" />,
+                    title: 'Sổ quỹ',
+                    icon: <MonetizationOnOutlinedIcon width="20px" />,
                     iconActive: <MoneyActive width="20px" />,
                     name: 'thuChi',
                     showInMenu: true,
                     isLayout: false,
                     children: [
-                        {
-                            path: '/so-quy',
-                            permission: 'Pages.QuyHoaDon',
-                            title: 'Sổ quỹ',
-                            icon: <BsDot style={{ fontSize: 20 }} />,
-                            iconActive: null,
-                            name: 'thuChi',
-                            showInMenu: true,
-                            isLayout: false,
-                            children: [],
-                            component: LoadableComponent(() => import('../../pages/thu_chi/so_quy'))
-                        }
+                        // {
+                        //     path: '/so-quy',
+                        //     permission: 'Pages.QuyHoaDon',
+                        //     title: 'Sổ quỹ',
+                        //     icon: <BsDot style={{ fontSize: 20 }} />,
+                        //     iconActive: null,
+                        //     name: 'thuChi',
+                        //     showInMenu: true,
+                        //     isLayout: false,
+                        //     children: [],
+                        //     component: LoadableComponent(() => import('../../pages/thu_chi/so_quy'))
+                        // }
                     ],
-                    component: null
+                    component: LoadableComponent(() => import('../../pages/thu_chi/so_quy'))
                 },
                 {
                     path: '/employee',
                     permission: 'Pages.NhanSu',
                     title: 'Nhân viên',
                     name: 'nhanvien',
-                    icon: <EmployeeIcon width="20px" />,
+                    icon: <PeopleOutlinedIcon width="20px" />,
                     iconActive: <EmployeeActive width="20px" />,
                     showInMenu: true,
                     isLayout: false,
@@ -452,7 +482,7 @@ export const appRouters: AppRouteProps = {
                     permission: 'Pages.BaoCao',
                     title: 'Báo cáo',
                     name: 'baocao',
-                    icon: <ReportIcon width="20px" />,
+                    icon: <AssessmentOutlinedIcon width="20px" />,
                     iconActive: <ReportActive width="20px" />,
                     showInMenu: true,
                     isLayout: false,
@@ -554,7 +584,7 @@ export const appRouters: AppRouteProps = {
                     path: 'admin',
                     permission: 'Pages.Administration',
                     title: 'Quản trị',
-                    icon: <AdminIcon width="20px" />,
+                    icon: <ManageAccountsOutlinedIcon width="20px" />,
                     iconActive: <AdminActive width="20px" />,
                     name: 'QuanTri',
                     showInMenu: true,
