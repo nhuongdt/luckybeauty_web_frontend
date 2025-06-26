@@ -4,8 +4,9 @@ import { BrowserRouter } from 'react-router-dom';
 import { Routes } from './components/routers';
 import { SnackbarProvider, MaterialDesignContent } from 'notistack';
 import { ReactComponent as SuccessIcon } from './images/success.svg';
-import styled from 'styled-components';
+import { styled } from '@mui/material/styles';
 import notificationStore from './stores/notificationStore';
+import { ColorModeProvider } from './stores/data-context/ThemContext';
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
     '&.notistack-MuiContent-success': {
