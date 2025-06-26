@@ -9,7 +9,7 @@ import utils from '../../utils/utils';
 import { Guid } from 'guid-typescript';
 import BadgeFistCharOfName from '../Badge/FistCharOfName';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { CSSProperties } from 'styled-components';
+import { CSSProperties } from 'react';
 import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
 
 export type IPropAutoComplete = {

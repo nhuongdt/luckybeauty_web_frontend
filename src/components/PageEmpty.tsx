@@ -1,6 +1,6 @@
 import { Stack, Typography } from '@mui/material';
 import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
-import { CSSProperties } from 'styled-components';
+import { CSSProperties } from 'react';
 
 export type IPropPageEmpty = {
     text?: string;

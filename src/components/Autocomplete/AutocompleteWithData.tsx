@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { Autocomplete, Grid, TextField, Typography, Stack } from '@mui/material';
 import { IDataAutocomplete } from '../../services/dto/IDataAutocomplete';
-import { CSSProperties } from 'styled-components';
+import { CSSProperties } from 'react';
 
 export interface IPropsAutocompleteWithData {
     label?: string;

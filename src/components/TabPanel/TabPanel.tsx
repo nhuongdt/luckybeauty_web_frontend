@@ -1,5 +1,5 @@
 import { Box, Stack } from '@mui/material';
-import { CSSProperties } from 'styled-components';
+import { CSSProperties } from 'react';
 
 interface TabPanelProps {
     children?: React.ReactNode;

@@ -1,7 +1,7 @@
 import { debounce, ListSubheader, Menu, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { IList } from '../../services/dto/IList';
-import { CSSProperties } from 'styled-components';
+import { CSSProperties } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';

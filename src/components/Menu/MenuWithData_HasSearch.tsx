@@ -1,7 +1,7 @@
 import { Checkbox, FormControlLabel, Menu, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { IList } from '../../services/dto/IList';
-import { CSSProperties } from 'styled-components';
+import { CSSProperties } from 'react';
 import { useState } from 'react';
 import utils from '../../utils/utils';
 
